@@ -1,0 +1,47 @@
+<div>
+    <select wire:model="{{ $wireModel }}" class="form-control" id="{{ $id }}"></select>
+</div>
+
+@push('css')
+    <link href="{{ asset('backend/admin/lib/select2/css/select2.min.css') }}" rel="stylesheet">
+@endpush
+
+@push('js')
+    <script src="{{ asset('backend/admin/lib/select2/js/select2.min.js') }}"></script>
+@endpush
+
+@script
+<script>
+    let formData = {};
+    document.addEventListener('livewire:navigated', function(){
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            if(typeof component?.snapshot?.data?.data === "undefined"){
+                return;
+            }
+            formData = component?.snapshot?.data?.data[0] ?? formData;
+            if(el === document.getElementById('{{ $id }}')){
+                $('#{{ $id }}').select2({
+                    ajax: {
+                        url: '{{ route('utilities.stock.select2search') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (data) {
+                            return {
+                                searchTerm: data.term // search term
+                            };
+                        },
+                        processResults: function (response) {
+                            return {
+                                results: response
+                            };
+                        },
+                    },
+                    placeholder: '{{ $placeholder }}',
+                    searchInputPlaceholder: '{{ $placeholder }}',
+                    dropdownParent: $('#modal-holder'),
+                })
+            }
+        })
+    });
+</script>
+@endscript

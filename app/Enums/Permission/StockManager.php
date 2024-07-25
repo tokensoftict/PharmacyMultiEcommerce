@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Enums\Permission;
+
+enum StockManager
+{
+    const CONFIG = [
+        'name' => 'Stock Manager',
+        'label' => 'Stock Manager',
+        'description' => 'Manage Stock Manager Module',
+        'status' => '1',
+        'visibility' => '1',
+        'order' => '1',
+        'icon' => 'icon',
+    ];
+
+
+    const PERMISSION = [
+        [
+            "name" => "backend.admin.stock_manager.list_stock",
+            "module_id" => "2",
+            "label" => "List Stock",
+            "visibility" => "1",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_restriction",
+            "module_id" => "2",
+            "label" => "Stock Restriction",
+            "visibility" => "1",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_restriction.upload",
+            "module_id" => "2",
+            "label" => "Upload Stock Restriction",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_size",
+            "module_id" => "2",
+            "label" => "Stock Size",
+            "visibility" => "1",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_size.update",
+            "module_id" => "2",
+            "label" => "Update Stock Size",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_size.destroy",
+            "module_id" => "2",
+            "label" => "Destroy Stock Size",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_size.create",
+            "module_id" => "2",
+            "label" => "Create Stock Size",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_size.upload",
+            "module_id" => "2",
+            "label" => "Upload Stock Size",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+    ];
+
+}

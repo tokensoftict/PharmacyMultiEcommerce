@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Services\Stock;
+
+use App\Models\Manufacturer;
+use App\Models\NewStockArrival;
+use App\Models\OrderProduct;
+use App\Models\Productcategory;
+use App\Models\PromotionItem;
+use App\Models\Stock;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class StockService
+{
+    /**
+     * @return LengthAwarePaginator
+     */
+    public final function getBestSellers() : LengthAwarePaginator
+    {
+        return OrderProduct::query()->with(['stock'])
+            ->select("stock_id")
+            ->groupBy('stock_id')
+            ->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+
+    /**
+     * @param int $manufacturer_id
+     * @return LengthAwarePaginator
+     */
+    public final function getByManufacturer(Manufacturer|int $manufacturer) : LengthAwarePaginator
+    {
+        if(! $manufacturer instanceof Manufacturer){
+            $manufacturer = Manufacturer::findOrFail($manufacturer);
+        }
+       return  Stock::where("manufacturer_id", $manufacturer->id)
+            ->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+    /**
+     * @param Productcategory|int $productcategory
+     * @return LengthAwarePaginator
+     */
+    public final function getByProductCategories(Productcategory|int $productcategory) : LengthAwarePaginator
+    {
+        if(! $productcategory instanceof Productcategory){
+            $productcategory = Productcategory::findOrFail($productcategory);
+        }
+        return  Stock::where("productcategory_id", $productcategory->id)
+            ->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+
+    /**
+     * @return LengthAwarePaginator
+     */
+    public final function getFeaturedStock() : LengthAwarePaginator
+    {
+        return Stock::query()->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+
+    /**
+     * @return LengthAwarePaginator
+     */
+    public final function getSpecialOffers() : LengthAwarePaginator
+    {
+        return Stock::query()->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+
+    /**
+     * @param Stock|int $stock
+     * @return Stock
+     */
+    public final function getStock(Stock|int $stock) : Stock
+    {
+        if(! $stock instanceof Stock){
+            $stock->findOrFail($stock);
+        }
+
+        return $stock;
+    }
+
+    /**
+     * @return LengthAwarePaginator
+     */
+    public final function getPromotionalStock() : LengthAwarePaginator
+    {
+        return PromotionItem::query()->where("status_id", status("Approved"))->with(['stock'])->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+
+    /**
+     * @return LengthAwarePaginator
+     */
+    public final function getNewArrivalsStock() : LengthAwarePaginator
+    {
+        return NewStockArrival::query()->orderBy("id", "DESC")->limit(30)->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+}
