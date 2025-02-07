@@ -42,17 +42,25 @@ class SupermarketUser extends Model
 	protected $casts = [
 		'user_id' => 'int',
 		'address_id' => 'int',
+        'payment_method_id' => 'int',
+        'delivery_method_id' => 'int',
 		'status' => 'bool',
 		'customer_group_id' => 'int',
 		'customer_type_id' => 'int',
 		'customer_local_id' => 'int',
 		'cart' => 'json',
-		'wishlist' => 'json'
+		'wishlist' => 'json',
+        'checkout' => 'json',
+        'ordertotals' => 'json',
+        'coupon_data' => 'json',
+        'remove_order_total' => 'json',
 	];
 
 	protected $fillable = [
 		'user_id',
 		'address_id',
+        'payment_method_id',
+        'delivery_method_id',
 		'status',
 		'customer_group_id',
 		'customer_type_id',
@@ -60,7 +68,11 @@ class SupermarketUser extends Model
 		'customer_local_id',
 		'phone',
 		'cart',
-		'wishlist'
+		'wishlist',
+        'checkout',
+        'ordertotals',
+        'coupon_data',
+        'remove_order_total'
 	];
 
     protected $with = ['customer_group', 'customer_type'];

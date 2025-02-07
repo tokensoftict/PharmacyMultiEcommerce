@@ -10,5 +10,13 @@ Route::prefix("account")->namespace("Account")->group(function(){
     Route::post("/verify-phone", ['as' => 'account.verify-phone', 'uses' => "PhoneNumberVerificationController"])->middleware(['auth:sanctum']);
     Route::post("/resend-verification", ['as' => 'account.resend-verification', 'uses' => "ResendVerificationController"])->middleware(['auth:sanctum']);
     Route::get("/me", ["as" => "account.me", "uses" => "MeController"])->middleware(['auth:sanctum']);;
+    Route::get("/my-qrcode", ["as" => "account.my-qrcode", "uses" => "QRCodeController"])->middleware(['auth:sanctum']);;
     Route::get("/logout", ["as" => "account.logout", "uses" => "LogoutController"])->middleware(['auth:sanctum']);
+
+
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::post("/change-password", ["as" => "account.change-password", "uses" => "ChangePasswordController"]);
+    });
 });
+
+

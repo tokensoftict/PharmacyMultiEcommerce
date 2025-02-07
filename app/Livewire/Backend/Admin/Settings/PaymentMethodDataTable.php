@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Settings;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Traits\DynamicDataTableExport;
 use App\Traits\DynamicDataTableFormModal;
@@ -76,7 +77,7 @@ class PaymentMethodDataTable extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return PaymentMethod::query()->where("domain", request()->getHost());
+        return PaymentMethod::query()->where("app_id", ApplicationEnvironment::$model_id);
     }
 
 

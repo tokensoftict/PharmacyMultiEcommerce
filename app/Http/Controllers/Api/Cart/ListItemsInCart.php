@@ -9,6 +9,7 @@ use App\Http\Resources\Api\Stock\StockInCartResource;
 use App\Models\Stock;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 
 class ListItemsInCart extends ApiController
@@ -19,30 +20,14 @@ class ListItemsInCart extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
-        $user = $request->user();
-        $applicationModel = ApplicationEnvironment::$appRelated;
-        $application = $user->$applicationModel()->first();
-        $cart = $application->cart ?? [];
+        $checkoutUser = getApplicationModel();
+        if(!$checkoutUser) {
+            return $this->sendErrorResponse("Application user error, Please restart the application to complete your checkout", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-        $stocks = Stock::whereKey(array_keys($cart))->get();
-        $totalItemsInCarts = 0;
-        $stocks = $stocks->map(function($stock) use ($cart, &$totalItemsInCarts){
-            $price = $stock->{ApplicationEnvironment::$stock_model_string}->price;
-            $stock->cart_quantity = $cart[$stock->id]['quantity'];
-            $stock->added_date = $cart[$stock->id]['date'];
-            $stock->price = $price;
-            $stock->total = ($cart[$stock->id]['quantity'] * $price);
-            $totalItemsInCarts+= ($cart[$stock->id]['quantity'] * $price);
-            return $stock;
-        });
-
-        return $this->sendSuccessResponse([
-            "items" =>StockInCartResource::collection($stocks),
-            "meta" => [
-                "noItems" => $stocks->count(),
-                "totalItemsInCarts" =>number_format($totalItemsInCarts, 2)
-            ]
-        ]);
+        return $this->sendSuccessResponse(
+            $checkoutUser->getShoppingCartItems()
+        );
     }
 
 }

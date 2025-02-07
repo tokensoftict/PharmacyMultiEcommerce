@@ -34,8 +34,8 @@ return new class extends Migration
             $table->unsignedBigInteger("payment_address_id");
             $table->unsignedBigInteger("shipping_address_id");
             $table->text('payment_gateway_response')->nullable();
-            $table->text('checkout_data')->nullable();
-            $table->text('ordertotals')->nullable();
+            $table->json('checkout_data')->nullable();
+            $table->json('ordertotals')->nullable();
             $table->bigInteger('no_of_cartons')->nullable();
             $table->string('prove_of_payment', 100)->nullable();
             $table->json('order_validation_error')->nullable();

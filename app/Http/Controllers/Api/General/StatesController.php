@@ -15,16 +15,16 @@ use Illuminate\Http\Request;
 
 class StatesController extends ApiController
 {
+
     /**
+     * @param Country $country
      * @param Request $request
      * @return JsonResponse
      */
     public function __invoke(Country $country, Request $request) : JsonResponse
     {
-        return $this->sendPaginatedSuccessResponse(
-            GeneralResource::collection(
-                State::query()->select("id", "name")->where("country_id", $country->id)->orderBy("name", "ASC")->paginate(config("app.PAGINATE_NUMBER"))
-            )->response()->getData(true)
+        return $this->sendSuccessResponse(
+            State::query()->select("id", "name")->where("country_id", $country->id)->orderBy("name", "ASC")->get()
         );
     }
 }

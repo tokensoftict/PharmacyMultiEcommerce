@@ -2,34 +2,22 @@
 
 namespace App\Repositories;
 
+use App\Models\PaymentMethod;
+
 class PatRepository
 {
-    public function __constuct()
+    /**
+     * @param PaymentMethod $paymentMethod
+     * @param array|null $data
+     * @return array
+     */
+    public final function confirmPayment(PaymentMethod $paymentMethod, ?array $data) : array
     {
-        //
+        $settings = $paymentMethod->template_settings_value;
+        return [
+            "status" => true,
+            "data" => $settings
+        ];
     }
 
-    public function add($request,$shipping){
-        $shipping->template_settings_value = json_encode($request->data);
-        $shipping->update();
-        return $shipping;
-    }
-
-    public function confirm_payment($payment, $data){
-        $settings = json_decode($payment->template_settings_value,true);
-        return array("status" => true, "data" => $settings);
-    }
-
-    public function checkouttemplate($payment){
-        return '';
-    }
-
-    public function checkouttemplateMobile($payment){
-        return "";
-    }
-
-    public function get_dynamic_data($checkoutData)
-    {
-        return [];
-    }
 }

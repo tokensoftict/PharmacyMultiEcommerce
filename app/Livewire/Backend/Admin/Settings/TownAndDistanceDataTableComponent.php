@@ -175,10 +175,12 @@ class TownAndDistanceDataTableComponent extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Fixed Delivery Cost", "fixed_shipping_amount")
                 ->sortable(),
+            /*
             Column::make("Delivery Days", "delivery_days")
                 ->format(function($value, $row, Column $column){
                     return implode(",", $value);
                 })->sortable(),
+            */
         ];
     }
 

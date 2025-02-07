@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Classes\ApplicationEnvironment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -82,4 +83,15 @@ class Address extends Model
 	{
 		return $this->hasMany(Order::class, 'shipping_address_id');
 	}
+
+
+    public function getFullAddressAttribute()
+    {
+        return $this->address_1.", ".$this->address_2.", ".$this->town->name.", ".$this->state->name.", ".$this->country->name;
+    }
+
+    public function isDefault()
+    {
+        return $this->id  === ApplicationEnvironment::getApplicationRelatedModel()?->address_id;
+    }
 }

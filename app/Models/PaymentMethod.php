@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Classes\ApplicationEnvironment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -62,4 +63,27 @@ class PaymentMethod extends Model
 	{
 		return $this->hasMany(Order::class);
 	}
+    public function isDefault()
+    {
+        return $this->id  === ApplicationEnvironment::getApplicationRelatedModel()?->payment_method_id;
+    }
+
+    public function getDescriptionAttribute()
+    {
+        if($this->code == "Bank")  return $this->attributes['description']. $this->appendBankTransferAccount();
+        return $this->attributes['description'];
+    }
+
+
+    public function appendBankTransferAccount()
+    {
+        $html = "";
+        foreach($this->template_settings_value as $setting) {
+            $html.="<p><b>Bank Name</b> : ".$setting['bank']."</p>";
+            $html.="<p><b>Account Name</b> : ".$setting['name']."</p>";
+            $html.="<p><b>Account Number</b> : ".$setting['number']."</p>";
+        }
+
+        return $html;
+    }
 }

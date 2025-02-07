@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Settings;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Models\DeliveryMethod;
 use App\Traits\DynamicDataTableExport;
@@ -77,7 +78,7 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return DeliveryMethod::query();
+        return DeliveryMethod::query()->where("app_id", ApplicationEnvironment::$model_id);
     }
 
 

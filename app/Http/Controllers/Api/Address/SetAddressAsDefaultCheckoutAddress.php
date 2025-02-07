@@ -22,6 +22,7 @@ class SetAddressAsDefaultCheckoutAddress extends ApiController
     }
 
     /**
+     * @param Address $address
      * @param Request $request
      * @return JsonResponse
      */
@@ -32,10 +33,10 @@ class SetAddressAsDefaultCheckoutAddress extends ApiController
         $application = $user->$applicationModel()->first();
 
         if($this->addressService->isDeletedThis($address)){
-            return $this->errorResponse("Address not Found or has been Deleted", Response::HTTP_BAD_REQUEST);
+            return $this->errorResponse("Address not found or has been deleted", Response::HTTP_BAD_REQUEST);
         }
 
-        $application->setDefaultAddress($address);
+        $application?->setDefaultAddress($address);
 
         return $this->showOne(new AddressListResource($address));
     }

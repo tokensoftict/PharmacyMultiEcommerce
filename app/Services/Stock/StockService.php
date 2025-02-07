@@ -2,6 +2,7 @@
 
 namespace App\Services\Stock;
 
+use App\Classes\ApplicationEnvironment;
 use App\Models\Manufacturer;
 use App\Models\NewStockArrival;
 use App\Models\OrderProduct;
@@ -17,7 +18,10 @@ class StockService
      */
     public final function getBestSellers() : LengthAwarePaginator
     {
-        return OrderProduct::query()->with(['stock'])
+        return OrderProduct::query()->with(['stock', 'stock.'.ApplicationEnvironment::$stock_model_string])
+            ->whereHas('order', function ($query) {
+                $query->where('customer_type', get_class(ApplicationEnvironment::getApplicationRelatedModel()));
+            })
             ->select("stock_id")
             ->groupBy('stock_id')
             ->paginate(config("app.PAGINATE_NUMBER"));

@@ -1,8 +1,8 @@
 <?php
 
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\Settings;
-use App\Models\Usergroup;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -641,4 +641,73 @@ function statuses()
     return Cache::remember('status',144000,function(){
         return \App\Models\Status::all();
     });
+}
+
+
+function getApplicationModel()
+{
+   return ApplicationEnvironment::getApplicationRelatedModel();
+}
+
+
+function getAvailablePaymentOption($deliveryCode)
+{
+    $paymentOptions = [
+        "Pickup" => [
+            "Bank",
+            "Pat",
+            "Paystack",
+            "Flutterwave"
+        ],
+        "Dwi" => [
+            "Bank",
+            "Paystack",
+            "Flutterwave"
+        ],
+        "Doi" => [
+            "Bank",
+            "Paystack",
+            "Flutterwave"
+        ],
+        "Dsd" => [
+            "Bank",
+            "Paystack",
+            "Flutterwave"
+        ]
+    ];
+
+    return $paymentOptions[$deliveryCode];
+}
+
+function generateUniqueNumber() {
+    do {
+        $number = '';
+        while (strlen($number) < 10) {
+            $randomBytes = random_int(0, 9); // Generates a cryptographically secure random digit
+            $number .= $randomBytes;
+        }
+    } while (\App\Models\Order::where('invoice_no', $number)->exists());
+
+    return $number;
+}
+
+function generateUniqueid($length = 10) {
+    do {
+        $characters = 'ABCDEFGHIJKLMNO0123456789PQRSTUVWXYZ';
+        $string = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $string .= $characters[random_int(0, strlen($characters) - 1)];
+        }
+
+        $order = \App\Models\Order::where('order_id', $string)->exists();
+        $orderproduct = \App\Models\OrderProduct::where('order_product_id', $string)->exists();
+
+    } while ($order || $orderproduct);
+
+    return $string;
+}
+
+function carbonize($date) : Carbon {
+    return (new Carbon($date));
 }

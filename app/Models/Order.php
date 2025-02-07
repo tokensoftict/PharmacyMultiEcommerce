@@ -80,7 +80,9 @@ class Order extends Model
 		'sales_representative_id' => 'int',
 		'coupon_information' => 'json',
 		'voucher_information' => 'json',
-		'cart_cache' => 'json'
+		'cart_cache' => 'json',
+        'checkout_data' => 'json',
+        'ordertotals' => 'json'
 	];
 
 	protected $fillable = [

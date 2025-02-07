@@ -16,16 +16,16 @@ use Illuminate\Http\Request;
 
 class LocalGovernmentController extends ApiController
 {
+
     /**
+     * @param State $state
      * @param Request $request
      * @return JsonResponse
      */
     public function __invoke(State $state, Request $request) : JsonResponse
     {
-        return $this->sendPaginatedSuccessResponse(
-            GeneralResource::collection(
-                LocalGovt::query()->select("id", "name")->where("state_id", $state->id)->orderBy("name", "ASC")->paginate(config("app.PAGINATE_NUMBER"))
-            )->response()->getData(true)
+        return $this->sendSuccessResponse(
+            LocalGovt::query()->select("id", "name")->where("state_id", $state->id)->orderBy("name", "ASC")->get()
         );
     }
 }

@@ -10,6 +10,7 @@ use App\Traits\StockModelTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 /**
  * Class Stock
@@ -55,7 +56,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Stock extends Model
 {
-    use StockModelTrait;
+    use StockModelTrait, Searchable;
+
 	protected $table = 'stocks';
 
 	protected $casts = [
@@ -100,7 +102,29 @@ class Stock extends Model
 		'user_id'
 	];
 
-	public function classification()
+    protected $with = ['stock_sizes', 'classification', 'productgroup', 'manufacturer', 'promotion_items'];
+
+
+    public function toSearchableArray()
+    {
+        $array = $this->toArray();
+
+        if($this->wholessales_stock_prices) {
+            $array['wholesales'] = $this->wholessales_stock_prices->toArray();
+        } else {
+            $array['wholesales'] = false;
+        }
+
+        if($this->supermarkets_stock_prices) {
+            $array['retail'] = $this->supermarkets_stock_prices->toArray();
+        } else {
+            $array['retail'] = false;
+        }
+
+        return $array;
+    }
+
+    public function classification()
 	{
 		return $this->belongsTo(Classification::class);
 	}
@@ -139,6 +163,7 @@ class Stock extends Model
 	{
 		return $this->hasMany(PromotionItem::class);
 	}
+
 
 	public function stock_restrictions()
 	{

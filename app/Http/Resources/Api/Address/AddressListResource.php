@@ -19,8 +19,13 @@ class AddressListResource extends JsonResource
             "name" => $this->name,
             "address_1" => $this->address_1,
             "address_2" => $this->address_2,
-            "country" => $this->country->name,
-            "state" => $this->state->name,
+            "country" => $this->country?->name,
+            "state" => $this->state?->name,
+            "town" => $this->town?->name,
+            "isDefault" => $this->isDefault(),
+            "stateObject" => ['id' => $this->state?->id, 'name' =>$this->state?->name],
+            "countryObject" => ['id' => $this->country?->id, 'name' =>$this->country?->name],
+            "townObject" => ['id' =>  $this->town?->id, 'name' => $this->town?->name],
         ];
     }
 }

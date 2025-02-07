@@ -2,36 +2,31 @@
 
 namespace App\Repositories;
 
+use App\Models\DeliveryMethod;
+
 class PickupRepository
 {
-    public function __constuct()
+    /**
+     * @param array|null $shoppingCart
+     * @param DeliveryMethod $methodOfDelivery
+     * @param array|null $extraData
+     * @return array
+     */
+    public final function calculateDeliveryTotal(?array $shoppingCart, DeliveryMethod $methodOfDelivery , ?array $extraData) : array
     {
-        //
-    }
+        $applicationUser = getApplicationModel();
 
-    public function add($request,$shipping){
-        $shipping->template_settings_value = json_encode($request->data);
-        $shipping->update();
-        return $shipping;
-    }
-
-    public function calculate_delivery_code($delivery, $deliverydata){
-        return [
-            'name'=>$deliverydata->name,
-            'amount'=>0
+        if(!$applicationUser) return [
+            'status' => false,
+            'name'=>$methodOfDelivery->name,
+            'amount'=>0,
+            'error' => ["Application user error, Please restart the application to complete your checkout"]
         ];
-    }
 
-    public function checkouttemplate($payment){
-        return '';
-    }
-
-    public function checkouttemplateMobile($payment){
-        return "";
-    }
-
-    public function get_dynamic_data($checkoutData)
-    {
-        return [];
+        return [
+            'status' => true,
+            'name'=>$methodOfDelivery->name,
+            'amount'=>0,
+        ];
     }
 }

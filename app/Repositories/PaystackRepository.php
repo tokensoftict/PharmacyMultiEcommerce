@@ -2,27 +2,34 @@
 
 namespace App\Repositories;
 
+use App\Models\PaymentMethod;
+
 defined('PAYSTACK_VERIFY_URL') OR define("PAYSTACK_VERIFY_URL","https://api.paystack.co/transaction/verify/");
 
 class PaystackRepository
 {
-    public function __constuct()
+
+    /**
+     * @param PaymentMethod $paymentMethod
+     * @param array|null $data
+     * @return array
+     */
+    public final function confirmPayment(PaymentMethod $paymentMethod, ?array $data) : array
     {
+        $settings = $paymentMethod->template_settings_value;
+        $confirm = $this->validatePayStackPayment($data['reference'], $settings['sec_key']);
 
-    }
-    public function add($request,$payment){
-        $payment->template_settings_value = json_encode($request->data);
-        $payment->update();
-        return $payment;
-    }
-
-    public function confirm_payment($payment, $data){
-        $settings = json_decode($payment->template_settings_value,true);
-        return $this->validate_paystack_payment($data['reference'], $settings['sec_key']);
+        return $confirm;
     }
 
 
-    public function validate_paystack_payment($ref, $sec_key){
+    /**
+     * @param $ref
+     * @param $sec_key
+     * @return array
+     */
+    public final function validatePayStackPayment($ref, $sec_key) : array
+    {
         $result = array();
         $url = PAYSTACK_VERIFY_URL . $ref;
         $ch = curl_init();
@@ -56,15 +63,13 @@ class PaystackRepository
         }
     }
 
-    public function checkouttemplate($payment){
-        return '';
-    }
 
-    public function checkouttemplateMobile($payment){
-        return "";
-    }
-
-    public function calculate_charges($total){
+    /**
+     * @param $total
+     * @return array
+     */
+    public final function calculateCharges(int|float $total) : array
+    {
         $percent = 1.5;
         $charges = ($percent/100) * $total;
         if($total > 2500){
@@ -77,12 +82,16 @@ class PaystackRepository
             $charges = round($charges,2);
         }
         return [
-            'name'=>"Paystack Local Transaction Charge",
+            'name'=>"PayStack Local Transaction Charge",
             'amount'=>$charges
         ];
     }
 
-    function is_decimal( $val )
+    /**
+     * @param int|float $val
+     * @return bool
+     */
+    function is_decimal(int|float $val) : bool
     {
         return is_numeric( $val ) && floor( $val ) != $val;
     }

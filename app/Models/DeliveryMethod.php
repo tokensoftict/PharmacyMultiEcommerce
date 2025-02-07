@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Classes\ApplicationEnvironment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -62,4 +63,9 @@ class DeliveryMethod extends Model
 	{
 		return $this->hasMany(Order::class);
 	}
+
+    public function isDefault()
+    {
+        return $this->id  === ApplicationEnvironment::getApplicationRelatedModel()?->delivery_method_id;
+    }
 }

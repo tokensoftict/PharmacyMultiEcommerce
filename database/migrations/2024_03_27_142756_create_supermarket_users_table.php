@@ -24,6 +24,11 @@ return new class extends Migration
             $table->string('phone',20)->nullable();
             $table->json('cart')->nullable();
             $table->json('wishlist')->nullable();
+            $table->json('checkout')->nullable();
+
+            $table->json('ordertotals')->nullable();
+            $table->json('coupon_data')->nullable();
+            $table->json('remove_order_total')->nullable();
             $table->timestamps();
         });
     }

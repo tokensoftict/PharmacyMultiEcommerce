@@ -77,7 +77,7 @@ class StockSizeDatatable extends ExportDataTableComponent
         return [
             Column::make("Stock", "stock_id")
                 ->format(function($value, $row, Column $column){
-                    return $row->stock->name;
+                    return $row?->stock?->name;
                 })
                 ->sortable(),
             Column::make("Category", "stock_id")

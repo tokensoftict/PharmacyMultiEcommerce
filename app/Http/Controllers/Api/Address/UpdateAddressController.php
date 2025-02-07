@@ -41,11 +41,10 @@ class UpdateAddressController extends ApiController
                 "town_id" => $request->get("town_id"),
             ]);
 
-        if($request->has("setAsDefault")){
+        if($request->has("setAsDefault") and $request->get("setAsDefault") === "1"){
             //set the default address to the newly create address
             $application->setDefaultAddress($address);
         }
-
         return $this->showOne(new AddressListResource($address));
     }
 }

@@ -2,49 +2,43 @@
 
 namespace App\Repositories;
 
+use App\Models\DeliveryMethod;
+use PhpParser\Node\NullableType;
+
 class DwiRepository
 {
-    public function __constuct()
-    {
-        //
-    }
 
-    public function delete($request,$shipping){
-        $settings = $shipping->template_settings_value;
-        $settings = json_decode($settings,true);
-        unset($settings[$request->index]);
-        $newset = [];
-        foreach($settings as $setting){
-            $newset[] = $setting;
+    /**
+     * @param array|null $shoppingCart
+     * @param DeliveryMethod $methodOfDelivery
+     * @param array|null $extraData
+     * @return array
+     */
+    public function calculateDeliveryTotal(?array $shoppingCart, DeliveryMethod $methodOfDelivery , ?array $extraData) : array
+    {
+
+        if(is_string($extraData['template_settings'])) {
+            $extraData['template_settings'] = json_decode($extraData['template_settings'], true);
         }
-        $shipping->template_settings_value = json_encode($newset);
-        $shipping->update();
-        return $shipping;
-    }
 
-    public function add($request,$shipping){
-        $settings = $shipping->template_settings_value;
-        $settings = json_decode($settings,true);
-        $settings[] = $request->data;
-        $shipping->template_settings_value = json_encode($settings);
-        $shipping->update();
-        return $shipping;
-    }
+        $deliverySelected = collect($methodOfDelivery->template_settings_value)->filter(function ($value) use ($extraData){
+            return $value['name'] == ( $extraData['template_settings']['name'] ??  $extraData['template_settings']['title']);
+        })->first();
 
-    public function calculate_delivery_code($delivery, $deliverydata){
-        $location = $delivery['location'];
-        $template_settings_value = $deliverydata->template_settings_value;
-        $template_settings_value = json_decode($template_settings_value , true);
-        $selected = $template_settings_value[$location];
+        if(!$deliverySelected){
+            return [
+                'status' => false,
+                'name'=>$methodOfDelivery->name,
+                'amount'=>0,
+                'error' => ['Unable able to determine your delivery price, please try again!']
+            ];
+        }
+
         return [
-          'name'=>$deliverydata->name.'[ '.$selected['name'].' ]',
-          'amount'=>$selected['amount'],
+            'status' => true,
+            'name'=>$methodOfDelivery->name.'[ '.$deliverySelected['name'].' ]',
+            'amount'=>$deliverySelected['amount'],
         ];
-    }
-
-    public function get_dynamic_data($checkoutData)
-    {
-        return [];
     }
 
 }

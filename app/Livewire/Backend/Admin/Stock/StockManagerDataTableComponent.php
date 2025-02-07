@@ -49,7 +49,7 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return ApplicationEnvironment::$stock_model::query()->with(['stock.productgroup','stock.manufacturer','stock.classification','stock.productcategory']);
+        return ApplicationEnvironment::$stock_model::query()->with(['stock.productgroup','stock.manufacturer','stock.classification','stock.productcategory', 'stock.promotion_item']);
         //return Stock::query()->with(['productgroup','manufacturer','classification','productcategory', 'stock_price']);
     }
 

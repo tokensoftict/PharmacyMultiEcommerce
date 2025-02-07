@@ -77,7 +77,7 @@ new #[Layout('layout.auth')] class extends Component
                 <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
                     <img src="{{ asset("images/logo.png") }}" alt="phoenix" width="58" /></div>
             </a>
-            <h4 class="text-body-highlight">Reset new password</h4>
+            <h4 class="text-body-highlight">Reset Password</h4>
             <p class="text-body-tertiary">Type your new password</p>
         </div>
         <form class="mt-5" wire:submit="resetPassword">

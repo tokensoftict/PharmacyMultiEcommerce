@@ -25,8 +25,15 @@ return new class extends Migration
             $table->string('premises_licence')->nullable();
             $table->unsignedBigInteger('customer_local_id')->nullable();
             $table->string('phone',20)->nullable();
+            $table->unsignedBigInteger('sales_representative_id')->nullable();
             $table->json('cart')->nullable();
             $table->json('wishlist')->nullable();
+            $table->json('checkout')->nullable();
+
+            $table->json('ordertotals')->nullable();
+            $table->json('coupon_data')->nullable();
+            $table->json('remove_order_total')->nullable();
+
             $table->timestamps();
         });
     }

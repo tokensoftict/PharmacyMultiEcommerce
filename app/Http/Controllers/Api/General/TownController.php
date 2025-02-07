@@ -17,16 +17,16 @@ use Illuminate\Http\Request;
 
 class TownController extends ApiController
 {
+
     /**
+     * @param State $state
      * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke(LocalGovt $localGovt, Request $request) : JsonResponse
+    public function __invoke(State $state, Request $request) : JsonResponse
     {
-        return $this->sendPaginatedSuccessResponse(
-            GeneralResource::collection(
-                Town::query()->select("id", "name")->where("local_govt_id", $localGovt->id)->orderBy("name", "ASC")->paginate(config("app.PAGINATE_NUMBER"))
-            )->response()->getData(true)
+        return $this->sendSuccessResponse(
+            Town::query()->select("id", "name")->where("state_id", $state->id)->orderBy("name", "ASC")->get()
         );
     }
 }

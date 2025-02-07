@@ -36,12 +36,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('api/v1')
                 ->domain(config('app.SUPERMARKET_DOMAIN'))
                 ->namespace('App\Http\Controllers\Api')
+                ->group(base_path("routes/api_general.php"))
                 ->group(base_path("routes/supermarket.api.php"));
 
             Route::middleware([DetectApplicationEnvironment::class, ForceJsonResponse::class, 'api'])
                 ->prefix('api/v1')
                 ->domain(config('app.WHOLESALES_DOMAIN'))
                 ->namespace('App\Http\Controllers\Api')
+                ->group(base_path("routes/api_general.php"))
                 ->group(base_path("routes/wholesales.api.php"));
 
             Route::middleware([DetectApplicationEnvironment::class, ForceJsonResponse::class, 'api'])

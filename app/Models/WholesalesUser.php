@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $address_id
  * @property bool $status
  * @property int|null $customer_group_id
+ * @property int|null $sales_representative_id
  * @property string|null $business_name
  * @property int|null $customer_type_id
  * @property string|null $device_key
@@ -49,13 +50,20 @@ class WholesalesUser extends Model
 		'customer_group_id' => 'int',
 		'customer_type_id' => 'int',
 		'customer_local_id' => 'int',
+        'sales_representative_id' => 'int',
 		'cart' => 'json',
-		'wishlist' => 'json'
+		'wishlist' => 'json',
+        'checkout' => 'json',
+        'ordertotals' => 'json',
+        'coupon_data' => 'json',
+        'remove_order_total' => 'json',
 	];
 
 	protected $fillable = [
 		'user_id',
 		'address_id',
+        'payment_method_id',
+        'delivery_method_id',
 		'status',
 		'customer_group_id',
 		'business_name',
@@ -66,7 +74,12 @@ class WholesalesUser extends Model
 		'customer_local_id',
 		'phone',
 		'cart',
-		'wishlist'
+		'wishlist',
+        'checkout',
+        'ordertotals',
+        'coupon_data',
+        'remove_order_total',
+        'sales_representative_id'
 	];
 
     protected $with = ['customer_group', 'customer_type'];

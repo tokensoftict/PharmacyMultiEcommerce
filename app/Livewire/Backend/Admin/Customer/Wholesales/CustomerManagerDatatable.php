@@ -63,8 +63,7 @@ class CustomerManagerDatatable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return WholesalesUser::query()->with(['customer_group'])
-            ->join('users','wholesales_users.user_id','=', 'users.id');
+        return WholesalesUser::query()->with(['customer_group', 'user', 'customer_type']);
     }
 
     public function mount()
@@ -76,12 +75,14 @@ class CustomerManagerDatatable extends DataTableComponent
     public static function  mountColumn() : array
     {
         return [
-            Column::make("First Name", "firstname")->sortable(),
-            Column::make("Last Name", "lastname")->sortable(),
-            Column::make("Email", "email")->sortable(),
+            Column::make("First Name", "user.firstname")->sortable(),
+            Column::make("Last Name", "user.lastname")->sortable(),
+            Column::make("Email", "user.email")->sortable(),
             Column::make("Business Name", "business_name")->sortable(),
-            Column::make("Type", "type")->sortable(),
-            Column::make("Phone Number", "phone")->sortable(),
+            Column::make("Type", "customer_type.name")->format(function($value, $row, Column $column){
+                return  $value?->customer_type?->name ?? "";
+            })->sortable(),
+            Column::make("Phone Number", "user.phone")->sortable(),
             Column::make("Exist On Local", "customer_local_id")
                 ->format(function($value, $row, Column $column){
                     return match ($value){
