@@ -22,7 +22,7 @@ class QRCodeController extends ApiController
             'id' => $user->id,
         ];
 
-        return QrCode::size(500)
+        return QrCode::size(200)
             ->backgroundColor(255, 255, 255)
             ->margin(1)
             ->generate(

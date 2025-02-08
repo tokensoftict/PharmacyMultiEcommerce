@@ -14,7 +14,7 @@ class HomeController extends ApiController
     {
         $data = [
             "topBrands" => [5, 7, 20, 4, 6, 8, 3, 7, 5],
-                /*
+
             "banners" => [
                 [
                     "ref" => "productcategories",
@@ -59,7 +59,7 @@ class HomeController extends ApiController
                     "label" => "Pain Management",
                 ],
             ],
-            */
+
             "productLists" => [
                 [
                     "type" => "manufacturers",
