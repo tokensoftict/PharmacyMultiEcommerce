@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Account;
 
 use App\Http\Controllers\ApiController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -11,7 +12,8 @@ class QRCodeController extends ApiController
 
     public function __invoke(Request $request)
     {
-        $user = $request->user();
+        $user = User::find($request->get('id'));
+
         $information = [
             'first_name' => $user->firstname,
             'last_name' => $user->lastname,
