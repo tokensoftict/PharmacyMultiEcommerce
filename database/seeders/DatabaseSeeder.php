@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             DeliveryMethodSeeder::class,
             PaymentMethodSeeder::class,
             StatusSeeder::class,
-            MeilisearchSeeder::class
+            //MeilisearchSeeder::class
         ]);
 
     }

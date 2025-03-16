@@ -91,7 +91,7 @@ class ImageGalleryComponentDataTable extends ExportDataTableComponent
             Column::make("Title", "title")
                 ->sortable(),
             Column::make('image', 'image')
-            ->format(fn($value, $row, Column $column) => '<div class="img-group"><img class="img wd-30 ht-30 rounded-circle" src="'.$value.'"/></div>')->html(),
+            ->format(fn($value, $row, Column $column) => '<div class="img-group"><img width="53" class="d-block border border-translucent rounded-2" src="'.$value.'"/></div>')->html(),
         ];
     }
 

@@ -12,6 +12,7 @@ enum PromotionalManager
         'visibility' => '1',
         'order' => '1',
         'icon' => 'icon',
+        'app_id' => [2,3]
     ];
 
 

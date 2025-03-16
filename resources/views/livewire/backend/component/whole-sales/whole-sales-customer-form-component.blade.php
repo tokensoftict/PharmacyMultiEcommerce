@@ -2,6 +2,7 @@
 <script>
     window.removeEventListener('closeWholesalesCustomerModal', closeWholesalesCustomerModal);
     window.removeEventListener('openWholesalesCustomerModal', openWholesalesCustomerModal);
+    window.removeEventListener('creatingCustomerOnSuccess', creatingCustomerOnSuccess);
 
     window.wholesalesCustomerModal = undefined;
 
@@ -9,7 +10,7 @@
   window.generatePassword  = function()
     {
         const password = Math.random().toString(36).slice(-8);
-        Livewire.getByName('pages.backend.admin.component.whole-sales.whole-sales-customer-form-component')[0].set('formData.user.password', password);
+        Livewire.getByName('backend.component.whole-sales.whole-sales-customer-form-component')[0].set('formData.user.password', password, false);
         return false;
     }
 
@@ -41,8 +42,17 @@
         window.wholesalesCustomerModal.hide();
     }
 
+
+    function creatingCustomerOnSuccess() {
+        window.wholesalesCustomerModal.hide();
+       setTimeout(function(){
+           window.location.reload();
+       }, 2000 )
+    }
+
     window.addEventListener('closeWholesalesCustomerModal', closeWholesalesCustomerModal);
     window.addEventListener('openWholesalesCustomerModal', openWholesalesCustomerModal);
+    window.addEventListener('creatingCustomerOnSuccess', creatingCustomerOnSuccess);
 
     document.addEventListener('livewire:navigated',function(){
         Livewire.hook('morph.updated', ({ el, component }) => {
@@ -129,7 +139,9 @@
                         </a>
 
                         <h5 class="tx-18 tx-sm-20 mg-b-20">Create New Wholesales Customer</h5>
-                        <p class="tx-13 tx-color-03 mg-b-30">After Creating an wholesale customer, An Email will be sent to the customers email address, if this is the first time you are creating the customer <span class="tx-color-02">But If this is not the first time</span> The customer can log in with account created before.</p>
+                        <p class="tx-13 tx-color-03 mg-b-30">
+                            After creating a wholesale customer, an email will be sent to the customer's email address if this is the first time you are creating the customer. However, if this is not the first time, the customer can log in with the previously created account.
+                        </p>
 
                         <div class="col-12" id="modal-holder">
                             <div class="d-sm-flex">
@@ -152,6 +164,12 @@
                                         <label for="last_name" class="form-label">Last Name</label>
                                         <input type="text" class="form-control" wire:model="formData.user.lastname" id="last_name" placeholder="Last Name">
                                         @error("formData.user.lastname") <span class="text-danger d-block">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <input type="text" class="form-control" wire:model="formData.user.phone" id="last_name" placeholder="Phone Number">
+                                        @error("formData.user.phone") <span class="text-danger d-block">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="mb-3">
@@ -178,15 +196,11 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="business_cac_certificate" class="form-label">Business CAC Certificate</label>
-                                        <input type="file" class="form-control" wire:model="formData.wholesale.cac_document" id="business_cac_certificate" placeholder="Business CAC Certificate">
-                                        @error("formData.wholesale.cac_document") <span class="text-danger d-block">{{ $message }}</span> @enderror
+                                        <x-form-file-manager key="business_cac_certificate" id="business_cac_certificate" model="formData.wholesale.cac_document" placeholder="Select Business CAC Certificate" label="Business CAC Certificate"/>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="business_premises_license" class="form-label">Business Premises Licence</label>
-                                        <input type="file" class="form-control" wire:model="formData.wholesale.premises_licence" placeholder="Business Premises Licence">
-                                        @error("formData.wholesale.premises_licence") <span class="text-danger d-block">{{ $message }}</span> @enderror
+                                        <x-form-file-manager key="business_premises_license" id="business_premises_license" model="formData.wholesale.business_premises_license" placeholder="Select Business Premises Licence" label="Business Premises Licence"/>
                                     </div>
 
                                     <div class="mb-3">

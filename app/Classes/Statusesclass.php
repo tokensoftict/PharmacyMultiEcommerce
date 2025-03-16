@@ -64,6 +64,10 @@ class Statusesclass
             'name'=>'In-Progress',
             'label'=>'warning'
         ],
+        [
+            'name'=>'Opened',
+            'label'=>'success'
+        ],
     ];
 
 

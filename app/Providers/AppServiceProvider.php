@@ -4,10 +4,13 @@ namespace App\Providers;
 
 use App\Classes\Settings;
 use App\Http\Middleware\DetectApplicationEnvironment;
+use App\Listeners\PushNotificationFailedListener;
+use App\Listeners\PushNotificationSendListener;
+use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire;
-use Spatie\Valuestore\Valuestore;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,5 +37,15 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability) {
             return $user->hasRole('Super Administrator') ? true : null;
         });
+
+        \Event::listen(
+            NotificationFailed::class ,
+            PushNotificationFailedListener::class
+        );
+
+        \Event::listen(
+            NotificationSent::class,
+            PushNotificationSendListener::class
+        );
     }
 }

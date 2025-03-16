@@ -123,6 +123,11 @@ class Order extends Model
 		return $this->belongsTo(App::class);
 	}
 
+    public function customer()
+    {
+        return $this->morphTo();
+    }
+
 	public function customer_group()
 	{
 		return $this->belongsTo(CustomerGroup::class);

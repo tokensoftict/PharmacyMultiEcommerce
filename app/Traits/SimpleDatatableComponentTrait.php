@@ -23,6 +23,11 @@ trait SimpleDatatableComponentTrait
     public array $breadcrumbs;
 
     public String $pageHeaderTitle;
+
+    public String $filterTable;
+
+    public array $filter = [];
+    public String $filterResetLink = "";
     public function configure(): void
     {
         $this->setPrimaryKey('id')

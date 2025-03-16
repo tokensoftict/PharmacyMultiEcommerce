@@ -13,7 +13,9 @@
         {{ $this->actionPermission['create_link']['label'] }}
     </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 @endif
-
+@php
+//Livewire.getByName('{{ $toolbarButton['modal'] }}')[0].openModal(); return false;
+ @endphp
 
 @if(isset($this->toolbarButtons))
     @foreach($this->toolbarButtons as $key => $toolbarButton)
@@ -25,3 +27,10 @@
         @endif
     @endforeach
 @endif
+@if(env('APP_DEBUG'))
+<script>
+    document.addEventListener('livewire:navigated', function(){
+        console.log( Livewire.all());
+    })
+@endif
+</script>

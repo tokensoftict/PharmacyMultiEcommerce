@@ -9,6 +9,7 @@ namespace App\Models;
 use App\Traits\ApplicationUserTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class SupermarketUser
@@ -35,7 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class SupermarketUser extends Model
 {
-    use ApplicationUserTrait;
+    use ApplicationUserTrait, Notifiable;
 
 	protected $table = 'supermarket_users';
 
@@ -86,6 +87,11 @@ class SupermarketUser extends Model
 	{
 		return $this->belongsTo(CustomerType::class);
 	}
+
+    public function order()
+    {
+        return $this->morphMany(Order::class, 'customer');
+    }
 
 	public function user()
 	{

@@ -9,6 +9,7 @@ use App\Models\OrderTotal;
 use App\Models\Stock;
 use App\Repositories\DsdRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Collection;
 
 trait ApplicationUserCheckoutTrait
 {
@@ -51,6 +52,22 @@ trait ApplicationUserCheckoutTrait
         });
 
         return StockInWishlistResource::collection($stocks);
+    }
+
+    public final function getCart() : Collection
+    {
+        $cart = $this->cart ?? [];
+        $stocks = Stock::whereKey(array_keys($cart))->get();
+        $totalItemsInCarts = 0;
+        return $stocks->map(function($stock) use ($cart, &$totalItemsInCarts){
+            $price = $stock->{ApplicationEnvironment::$stock_model_string}->price;
+            $stock->cart_quantity = $cart[$stock->id]['quantity'];
+            $stock->added_date = $cart[$stock->id]['date'];
+            $stock->price = $price;
+            $stock->total = ($cart[$stock->id]['quantity'] * $price);
+            $totalItemsInCarts+= ($cart[$stock->id]['quantity'] * $price);
+            return $stock;
+        });
     }
 
     /**

@@ -3,7 +3,10 @@
 namespace App\Livewire\Backend\Admin\Customer\Wholesales;
 
 use App\Livewire\Backend\Component\WholeSales\WholeSalesCustomerFormComponent;
+use App\Models\Address;
 use App\Models\AppUser;
+use App\Models\CustomerGroup;
+use App\Models\CustomerType;
 use App\Models\WholesalesUser;
 use App\Traits\DynamicDataTableExport;
 use App\Traits\DynamicDataTableFormModal;
@@ -16,31 +19,45 @@ class CustomerManagerDatatable extends DataTableComponent
 {
     use SimpleDatatableComponentTrait, DynamicDataTableExport, DynamicDataTableFormModal;
 
-    protected $model = AppUser::class;
+    protected $model = WholesalesUser::class;
 
     public static String $permissionComponentName = 'wholesales_customer_manager';
 
     public function __construct()
     {
-        $this->rowAction = ['edit', 'destroy'];
+        $this->rowAction = ['edit'];
 
         $this->actionPermission = [
-            'create_new_customer'=> 'backend.admin.settings.customer_manager.wholesales.create'
+            'create_new_customer'=> 'backend.admin.customer_manager.wholesales.create',
+            'edit' => 'backend.admin.customer_manager.wholesales.update',
+            'view' => 'backend.admin.customer_manager.wholesales.view',
+        ];
+//backend.admin.sales_rep_manager.view_report
+        $this->extraRowAction = ['view'];
+
+        $this->extraRowActionButton = [
+            [
+                'label' => 'View',
+                'type' => 'link',
+                'route' => "backend.admin.customer_manager.wholesales.view",
+                'permission' => 'view',
+                'class' => 'btn btn-sm btn-outline-success',
+                'icon' => 'fa fa-eye-o',
+            ]
         ];
 
-        $this->extraRowAction = [];
 
         $this->toolbarButtons = [
             WholeSalesCustomerFormComponent::class =>[
                 'label' => 'New Customer',
                 'type' => 'component',
-                'route' => "backend.admin.settings.customer_manager.wholesales.create",
+                'route' => "backend.admin.customer_manager.wholesales.create",
                 'permission' => 'create_new_customer',
                 'class' => 'btn btn-sm btn-outline-success',
                 'icon' => 'fa fa-plus',
                 'component' => WholeSalesCustomerFormComponent::class,
                 'is' => 'modal',
-                'modal' => 'pages.backend.admin.component.whole-sales.whole-sales-customer-form-component',
+                'modal' => 'backend.component.whole-sales.whole-sales-customer-form-component',
                 'parameters' =>[]
             ]
         ];
@@ -68,8 +85,24 @@ class CustomerManagerDatatable extends DataTableComponent
 
     public function mount()
     {
-        $this->data = [];
-        $this->modalName = "Wholesales Customer Manager";
+        $this->modalName = "Customer";
+
+        $this->data = [
+            'business_name' => ['label' => 'Business Name', 'type'=>'text'],
+            'customer_type_id' => ['label' => 'Customer Type', 'type' => 'select', 'options' => CustomerType::select('id', 'name')->where('status', 1)->get()->toArray()],
+            'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select', 'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()],
+            'phone' => ['label' => 'Business Phone Number', 'type'=>'text'],
+            //'address_id' => ['label' => 'Address', 'type' => 'select', 'options' => []],
+           // 'sales_representative_id' => ['label' => 'Sales Representative', 'type'=>'text'],
+        ];
+
+        $this->newValidateRules = [
+            'business_name' => 'required|min:3',
+            'phone' => 'required',
+        ];
+        $this->updateValidateRules = $this->newValidateRules;
+
+        $this->initControls();
     }
 
     public static function  mountColumn() : array
@@ -79,10 +112,13 @@ class CustomerManagerDatatable extends DataTableComponent
             Column::make("Last Name", "user.lastname")->sortable(),
             Column::make("Email", "user.email")->sortable(),
             Column::make("Business Name", "business_name")->sortable(),
-            Column::make("Type", "customer_type.name")->format(function($value, $row, Column $column){
-                return  $value?->customer_type?->name ?? "";
-            })->sortable(),
-            Column::make("Phone Number", "user.phone")->sortable(),
+            Column::make("Type", "customer_type.name")
+                ->format(fn($value, $row, Column $column) => $value)
+                ->sortable(),
+            Column::make("Group", "customer_group.name")
+                ->format(fn($value, $row, Column $column) => $value)
+                ->sortable(),
+            Column::make("Number", "user.phone")->sortable(),
             Column::make("Exist On Local", "customer_local_id")
                 ->format(function($value, $row, Column $column){
                     return match ($value){
@@ -98,9 +134,6 @@ class CustomerManagerDatatable extends DataTableComponent
                         '0' => '<span class="badge text-bg-danger">Inactive</span>'
                     ][$value];
                 })->sortable()->html(),
-            Column::make("Group", "customer_group_id")
-                ->format(fn($value, $row, Column $column) => $row?->customer_group?->name)
-                ->sortable(),
         ];
     }
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer("model_id")->nullable();
             $table->string('description')->nullable();
             $table->string('logo', 100)->nullable();
+            $table->boolean('show')->default(false);
             $table->string('domain', 50);
             $table->string('link', 100);
             $table->string('type', 20)->comment("TYPE OF APPS");

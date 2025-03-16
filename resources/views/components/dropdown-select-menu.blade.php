@@ -52,23 +52,29 @@
                 if(isset($ajax)){
             @endphp
             text_search.addEventListener('keyup', debounce(function (){
-                $.getJSON('{{ $ajax }}?s='+text_search.value, function (success){
-                    const data = success.data;
-                    if(data.length > 0) {
-                        let html = '';
-                        data.forEach(function (item) {
-                            html += '<li class="li_{{ $id }}"><a class="dropdown-item"  style="cursor: pointer; font-weight: bolder" data-value="' + item['id'] + '" data-label="' + (item['text'] ?? item['name']) + '">' + (item['text'] ?? item['name']) + '</a></li>'
-                        })
-                        document.getElementById('li_holder_{{ $id }}').innerHTML = html;
-                        $('.li_{{ $id }} a').off("click");
-                        $('.li_{{ $id }} a').on("click", function () {
-                            const hiddenValueHolder = document.getElementById('text_id_{{ $id }}');
-                            hiddenValueHolder.value = $(this).attr('data-value');
-                            hiddenValueHolder.dispatchEvent(new Event('input'));
-                            $('#dropdownMenuButton{{ $id }}').html($(this).attr('data-label'));
-                        });
-                    }
-                });
+                if(text_search.value.length > 3) {
+                    $.getJSON('{{ $ajax }}?s=' + text_search.value, function (success) {
+                        document.getElementById('li_holder_{{ $id }}').innerHTML = "";
+                        const data = success.data;
+                        if (data.length > 0 && text_search.value.length > 0) {
+                            let html = '';
+                            data.forEach(function (item) {
+                                html += '<li class="li_{{ $id }}"><a class="dropdown-item"  style="cursor: pointer; font-weight: bolder" data-value="' + item['id'] + '" data-label="' + (item['text'] ?? item['name']) + '">' + (item['text'] ?? item['name']) + '</a></li>'
+                            })
+                            document.getElementById('li_holder_{{ $id }}').innerHTML = html;
+                            $('.li_{{ $id }} a').off("click");
+                            $('.li_{{ $id }} a').on("click", function () {
+                                const hiddenValueHolder = document.getElementById('text_id_{{ $id }}');
+                                hiddenValueHolder.value = $(this).attr('data-value');
+                                hiddenValueHolder.dispatchEvent(new Event('input'));
+                                $('#dropdownMenuButton{{ $id }}').html($(this).attr('data-label'));
+                            });
+                        }
+
+                    });
+                } else {
+                    document.getElementById('li_holder_{{ $id }}').innerHTML = "";
+                }
             },500));
             @php
                 }else{
@@ -86,7 +92,7 @@
                 }
             });
 
-            const options = JSON.parse('{!! json_encode($options) !!}');
+            const options = JSON.parse('{!! json_encode(Arr::only($options, ['id', 'name', 'text'])) !!}');
             options.forEach(function (item) {
                 if(@this.get('{{ $attributes['wire:model'] ?? $attributes['wire:model.live'] }}') == item.id){
                     $('#dropdownMenuButton{{ $id }}').html(item.text ?? item.name);

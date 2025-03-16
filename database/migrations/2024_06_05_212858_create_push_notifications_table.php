@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json("device_ids")->nullable();
             $table->foreignId("app_id")->constrained()->cascadeOnDelete();
             $table->bigInteger("no_of_device")->nullable();
-            $table->string("action");
+            $table->string("action")->nullable();
             $table->string("type")->default('topic');
             $table->bigInteger("total_view")->default(0);
             $table->bigInteger("total_sent")->default(0);

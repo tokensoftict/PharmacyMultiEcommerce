@@ -22,7 +22,7 @@ trait DynamicDataTableRowAction
                         )
                         ||
                         (
-                            isset($this->actionPermission['edit']) &&
+                            isset($this->actionPermission['destroy']) &&
                             userCanView($this->actionPermission['destroy'])
                         )
                     )) {
@@ -86,9 +86,9 @@ trait DynamicDataTableRowAction
                     foreach ($button['parameters'] as $key=>$value){
                         $params[$key] = $row->{$value};
                     }
-                    $extraButtonAction .= '<a  href="' . route($button['route'],  $params) . '" class="' . ($button['class'] ?? 'btn btn-default') . '">' . $button['label'] . '</a>';
+                    $extraButtonAction .= '<a  href="' . route($button['route'],  $params) . '" class="' . ($button['class'] ?? 'btn btn-default') . '"><i class="'.$button['icon'].'"></i> ' . $button['label'] . '</a>';
                 }else {
-                    $extraButtonAction .= '<a  href="' . route($button['route'], $row->id) . '" class="' . ($button['class'] ?? 'btn btn-default') . '">' . $button['label'] . '</a>';
+                    $extraButtonAction .= '<a  href="' . route($button['route'], $row->id) . '" class="' . ($button['class'] ?? 'btn btn-default') . '"><i class="'.$button['icon'].'"></i> ' . $button['label'] . '</a>';
                 }
             }
 
@@ -97,6 +97,12 @@ trait DynamicDataTableRowAction
                 if($button['is'] === 'modal') {
                     $extraButtonAction .= '<a  wire:click.prevent="openCustomModal('.$row.')" href="#'.$button['modal'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="openCustomModal(' .$row. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="openCustomModal(' .$row. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
                 }
+            }
+
+            if($button['type'] == "method")
+            {
+                $method = $button['method'];
+                $extraButtonAction .= '<a  wire:click.prevent="'.$method.'('.$row.')" href="#'.$button['method'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="'.$method.'(' .$row. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="'.$method.'(' .$row. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
             }
         }
 
@@ -110,11 +116,18 @@ trait DynamicDataTableRowAction
         foreach ($this->rowSpinner as $spinner) {
             if(userCanView($this->actionPermission[$spinner['field']])) {
                 $rowSpinner [] = Column::make($spinner['label'], $spinner['field'],)
-                    ->format(function ($value, $row, Column $column) {
-                        return '<div class="custom-control custom-switch">
-                            <input wire:change="toggle(' . $row->id . ')" type="checkbox" class="custom-control-input" id="customSwitch' . $row->id . '" ' . ($row->status ? 'checked' : '') . '>
-                            <label class="custom-control-label" for="customSwitch' . $row->id . '"></label>
-                          </div>';
+                    ->format(function ($value, $row, Column $column) use ($spinner){
+                        if(isset($spinner['handler'])){
+                            return '<div class="form-check form-switch">
+                                  <input wire:change="'.$spinner['handler'].'(' . $row->id . ')" class="form-check-input" id="customSwitch_' .$spinner['handler']. $row->id . '" ' . ($row->{$spinner['handler']} ? 'checked' : '') . ' type="checkbox" />
+                                  <label class="form-check-label" for="customSwitch' .$spinner['handler']. $row->id . '"></label>
+                                </div>';
+                        } else {
+                            return '<div class="form-check form-switch">
+                                  <input wire:change="toggle(' . $row->id . ')" class="form-check-input" id="customSwitch' . $row->id . '" ' . ($row->status ? 'checked' : '') . ' type="checkbox" />
+                                  <label class="form-check-label" for="customSwitch' . $row->id . '"></label>
+                                </div>';
+                        }
                     })->html();
             }
         }

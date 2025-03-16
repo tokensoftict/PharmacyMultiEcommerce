@@ -62,12 +62,6 @@ class HomeController extends ApiController
 
             "productLists" => [
                 [
-                    "type" => "manufacturers",
-                    "id" => 3,
-                    "limit" => 15,
-                    "label" => "Official Tuyil Pharmacy Store",
-                ],
-                [
                     "type" => "productcategories",
                     "id" => 5,
                     "limit" => 15,

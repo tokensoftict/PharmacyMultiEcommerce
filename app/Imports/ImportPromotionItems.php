@@ -24,6 +24,8 @@ class ImportPromotionItems implements ToCollection,WithHeadingRow
     public function collection(Collection $collection)
     {
         foreach ($collection as $row){
+            $row = $row->toArray();
+            if(empty($row['promo_price']) || $row['promo_price'] == "") continue;
             $this->promotionItems[] = new PromotionItem([
                 'promotion_id' => $this->promotion->id,
                 'stock_id' => $row['id'],

@@ -12,7 +12,10 @@ new #[Layout('layout.auth')] class extends Component
 
     public function mount()
     {
-        $this->myapps = \App\Models\AppUser::with(['app'])->where('user_id', auth()->id())->get();
+        $this->myapps = auth()->user()->app_users()->with('app')->whereHas('app', function($query){
+            $query->where("show", '1');
+        })->get();
+
     }
 
 }

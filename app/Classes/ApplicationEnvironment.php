@@ -21,6 +21,7 @@ class ApplicationEnvironment
     public static string|null $name,$description, $logo, $domain, $link, $type, $id, $model_id;
     public static string $appModel, $appRelated;
     public static string $stock_model, $stock_model_string;
+    public static string $frontEndAppName;
 
     public static function createApplicationEnvironment(App $application) : void
     {
@@ -40,7 +41,7 @@ class ApplicationEnvironment
             6 => "supermarkets_stock_prices",
             default=>"wholessales_stock_prices",
         };
-
+        self::$frontEndAppName = App::where('model_id', $application->model_id)->where('type', 'Frontend')->first()->name;
         $appUser = AppUser::where("app_id", $application->id)->first();
 
         if($appUser){

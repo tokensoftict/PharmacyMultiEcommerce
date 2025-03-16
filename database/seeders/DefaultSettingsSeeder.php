@@ -19,7 +19,7 @@ class DefaultSettingsSeeder extends Seeder
                 'lang'=> 'en-US',
                 'dir' => 'ltr',
                 'horizontal_shape' => 'default',
-                'title' => 'Tokensoft Phoenix Livewire Starter Kit'
+                'title' => 'Pharmacy Ecommerce Application',
             ]
         );
     }

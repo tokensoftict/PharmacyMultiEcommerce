@@ -20,27 +20,41 @@ class SalesRepManagerDataTable extends ExportDataTableComponent
 
     protected $model = SalesRepresentative::class;
 
+
     public function __construct()
     {
-        $this->extraRowAction = [];
+
+        $this->extraRowAction = ['view'];
+
+        $this->extraRowActionButton = [
+            [
+                'label' => 'View Dashboard',
+                'type' => 'link',
+                'route' => "backend.admin.sales_rep_manager.view_report",
+                'permission' => 'view',
+                'class' => 'btn btn-sm btn-outline-success',
+                'icon' => 'fa fa-eye-o',
+            ]
+        ];
 
         $this->toolbarButtons = [
-            'pages/backend/admin/component/salesrep/createsalesrep' =>[
-                'label' => 'New Sales Rep',
+            'backend/component/salesrep/createsalesrep' =>[
+                'label' => 'New Sales Representative',
                 'type' => 'component',
                 'route' => "backend.admin.settings.sales_rep_manager.create",
                 'permission' => 'create_new_sales_rep',
                 'class' => 'btn btn-sm btn-outline-success',
                 'icon' => 'fa fa-plus',
-                'component' => 'pages.backend.admin.component.salesrep.createsalesrep',
+                'component' => 'backend.component.salesrep.createsalesrep',
                 'is' => 'modal',
-                'modal' => 'pages.backend.admin.component.salesrep.createsalesrep',
+                'modal' => 'backend.component.salesrep.createsalesrep',
                 'parameters' =>[]
             ]
         ];
 
         $this->actionPermission = [
-            'create_new_sales_rep'=> 'backend.admin.settings.sales_rep_manager.create'
+            'create_new_sales_rep'=> 'backend.admin.settings.sales_rep_manager.create',
+            'view' => 'backend.admin.customer_manager.wholesales.view',
         ];
 
 

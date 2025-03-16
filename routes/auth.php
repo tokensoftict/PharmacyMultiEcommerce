@@ -20,5 +20,6 @@ Route::domain(config('app.AUTH_DOMAIN'))->group(function (){
     });
     Route::middleware(['auth', 'verified'])->group(function () {
         Volt::route('select-application', 'pages.auth.select-application')->name('select-application');
+        Route::get('logout', 'App\Http\Controllers\Auth\LogoutController')->name('logout-web');
     });
 });

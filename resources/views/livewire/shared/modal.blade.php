@@ -2,6 +2,10 @@
     {{  $pageHeaderTitle ?? "" }}
 @endsection
 
+@section('filterTable')
+    {!! $filterTable  !!}
+@endsection
+
 @push('breadcrumbs')
     @if(isset($this->breadcrumbs))
         @foreach($this->breadcrumbs as $breadcrumb)
@@ -13,7 +17,6 @@
         @endforeach
     @endif
 @endpush
-
 
 
 <div  wire:ignore.self class="modal fade" id="simpleComponentModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -60,6 +63,18 @@
                                     </div>
                                     @error("formData.".$key) <span class="text-danger">{{ $message }}</span> @enderror
                                 @endif
+
+                                @if($value['type'] === "ajax-dropdown")
+                                    <div class="mb-3">
+                                        <label class="form-label">{{ $value['label'] }}</label>
+                                        <div class="wd-md-100p" id="select2Parent{{ $key }}">
+                                            <x-dropdown-select-menu placeholder="{{ $value['label'] }}" wire:model="formData.{{ $key }}" :id="$key" :ajax="$value['search-route'] ?? route('utilities.user.search')"/>
+                                        </div>
+                                    </div>
+                                    @error("formData.".$key) <span class="text-danger">{{ $message }}</span> @enderror
+                                @endif
+
+
                                 @if($value['type'] === "textarea")
                                     <div class="mb-3">
                                         <label class="form-label">{{ $value['label'] }}</label>
@@ -122,10 +137,10 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ $value['label'] }}</label>
                                         <input class="form-control" type="file" wire:model="formData.{{ $key }}" name="{{ $key }}" placeholder="{{ $value['label'] }}" >
+                                        @if(isset($value['template']))
+                                            <a href="#" wire:click="{{ $value['template'] }}()">{{ $value['templateLabel'] }}</a>
+                                        @endif
                                     </div>
-                                    @if(isset($value['template']))
-                                        <a href="#" wire:click="{{ $value['template'] }}()">{{ $value['templateLabel'] }}</a>
-                                    @endif
                                 @endif
                             @endforeach
                         </div>
@@ -150,9 +165,22 @@
     }else{
         myModal = ""
     }
+
+
+    function openModalWithLoading(obj)
+    {
+        var opener = window.open('{{ route('file-manager.index') }}?parentLink={{  url('') }}', 'FileManager', 'width=900,height=650');
+        function listenForMessage(event) {
+            obj(event.data);
+            window.removeEventListener("message", listenForMessage);
+        }
+        window.addEventListener("message", listenForMessage);
+    }
+
+
+
     function hydrated()
     {
-
         myModal = new bootstrap.Modal(document.getElementById("simpleComponentModal"), {
             backdrop: 'static',
             keyboard: false,

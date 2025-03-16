@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $model_id
  * @property string|null $description
  * @property string|null $logo
+ * @property bool $show
  * @property string $domain
  * @property string $link
  * @property string $type
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $updated_at
  * 
  * @property Collection|User[] $users
+ * @property Collection|CouponUsageHistory[] $coupon_usage_histories
  * @property Collection|Coupon[] $coupons
  * @property Collection|DeliveryMethod[] $delivery_methods
  * @property Collection|NewStockArrival[] $new_stock_arrivals
@@ -33,10 +35,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property Collection|PaymentMethod[] $payment_methods
  * @property Collection|PromotionItem[] $promotion_items
  * @property Collection|Promotion[] $promotions
+ * @property Collection|PushNotificationStock[] $push_notification_stocks
  * @property Collection|PushNotification[] $push_notifications
- * @property Collection|StockPrice[] $stock_prices
+ * @property Collection|SupermarketsStockPrice[] $supermarkets_stock_prices
  * @property Collection|VoucherCode[] $voucher_codes
  * @property Collection|Voucher[] $vouchers
+ * @property Collection|WholessalesStockPrice[] $wholessales_stock_prices
  *
  * @package App\Models
  */
@@ -45,7 +49,8 @@ class App extends Model
 	protected $table = 'apps';
 
 	protected $casts = [
-		'model_id' => 'int'
+		'model_id' => 'int',
+		'show' => 'bool'
 	];
 
 	protected $fillable = [
@@ -53,6 +58,7 @@ class App extends Model
 		'model_id',
 		'description',
 		'logo',
+		'show',
 		'domain',
 		'link',
 		'type'
@@ -63,6 +69,11 @@ class App extends Model
 		return $this->belongsToMany(User::class, 'app_users')
 					->withPivot('id', 'domain', 'user_type_type', 'user_type_id')
 					->withTimestamps();
+	}
+
+	public function coupon_usage_histories()
+	{
+		return $this->hasMany(CouponUsageHistory::class);
 	}
 
 	public function coupons()
@@ -105,14 +116,19 @@ class App extends Model
 		return $this->hasMany(Promotion::class);
 	}
 
+	public function push_notification_stocks()
+	{
+		return $this->hasMany(PushNotificationStock::class);
+	}
+
 	public function push_notifications()
 	{
 		return $this->hasMany(PushNotification::class);
 	}
 
-	public function stock_prices()
+	public function supermarkets_stock_prices()
 	{
-		return $this->hasMany(StockPrice::class);
+		return $this->hasMany(SupermarketsStockPrice::class);
 	}
 
 	public function voucher_codes()
@@ -123,5 +139,10 @@ class App extends Model
 	public function vouchers()
 	{
 		return $this->hasMany(Voucher::class);
+	}
+
+	public function wholessales_stock_prices()
+	{
+		return $this->hasMany(WholessalesStockPrice::class);
 	}
 }

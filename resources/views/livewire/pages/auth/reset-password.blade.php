@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Settings;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -11,13 +12,20 @@ use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 use \Illuminate\Support\Facades\Lang;
 
-new #[Layout('layout.auth')] class extends Component
-{
+new #[Layout('layout.auth')] class extends Component {
     #[Locked]
     public string $token = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
+
+
+    private Settings $settings;
+
+    public function boot(Settings $settings)
+    {
+        $this->settings = $settings;
+    }
 
     /**
      * Mount the component.
@@ -73,25 +81,32 @@ new #[Layout('layout.auth')] class extends Component
 <div>
 
     <div class="auth-form-box">
-        <div class="text-center mb-7"><a class="d-flex flex-center text-decoration-none mb-4" href="{{ asset('') }}">
+        <div class="text-center mb-7">
+            <a class="d-flex flex-center text-decoration-none mb-4" href="{{ asset('') }}">
                 <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
-                    <img src="{{ asset("images/logo.png") }}" alt="phoenix" width="58" /></div>
+                    <img src="{{(isset($this->store['logo']) && $this->store['logo'] !== NULL) ? (is_string($this->store['logo']) ? asset('logo/'.$this->store['logo']) : $this->store['logo']->temporaryUrl()) : asset('logo/placholder.jpg') }}"
+                         alt="phoenix" width="200"/>
+                </div>
             </a>
             <h4 class="text-body-highlight">Reset Password</h4>
             <p class="text-body-tertiary">Type your new password</p>
         </div>
         <form class="mt-5" wire:submit="resetPassword">
-            <input class="form-control mb-2" wire:model="email" id="email" type="email" required autofocus autocomplete="username" placeholder="Email" />
+            <input class="form-control mb-2" wire:model="email" id="email" type="email" required autofocus
+                   autocomplete="username" placeholder="Email"/>
             @error('email')
             <span class="d-block text-danger small mb-2">{{ $message }}</span>
             @enderror
 
-            <input class="form-control mb-2" wire:model="password" id="password" type="password" required name="password" placeholder="New Password" autocomplete="new-password" />
+            <input class="form-control mb-2" wire:model="password" id="password" type="password" required
+                   name="password" placeholder="New Password" autocomplete="new-password"/>
             @error('password')
-            <span  class="d-block text-danger small mb-2">{{ $message }}</span>
+            <span class="d-block text-danger small mb-2">{{ $message }}</span>
             @enderror
 
-            <input class="form-control mb-4" wire:model="password_confirmation" id="password_confirmation" name="password_confirmation" type="password" required placeholder="Confirm Password" autocomplete="new-password" />
+            <input class="form-control mb-4" wire:model="password_confirmation" id="password_confirmation"
+                   name="password_confirmation" type="password" required placeholder="Confirm Password"
+                   autocomplete="new-password"/>
             @error('password_confirmation')
             <span class="d-block text-danger small mb-2">{{ $message }}</span>
             @enderror

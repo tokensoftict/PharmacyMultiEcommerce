@@ -74,9 +74,8 @@ class LocalGovtDataTable extends ExportDataTableComponent
     public function mount()
     {
         $this->modalName = "Local Government";
-
         $this->data = [
-            'state_id' => ['label' => 'State', 'type'=>'select',  'options'=> statesByCountry(config('app.DEFAULT_COUNTRY_ID'))->toArray(), 'placeholder' => "Select State"],
+            'state_id' => ['label' => 'State', 'type'=>'select',  'options'=> array_values(statesByCountry(config('app.DEFAULT_COUNTRY_ID'))->toArray()), 'placeholder' => "Select State"],
             'name' => ['label' => 'Local Government Name', 'type'=>'text'],
         ];
 

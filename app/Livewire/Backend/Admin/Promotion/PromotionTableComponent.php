@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Backend\Admin\Promotion;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\AppLists;
 use App\Classes\ExportDataTableComponent;
 use App\Exports\ExportPromotionTemplate;
 use App\Imports\ImportPromotionItems;
+use App\Models\App;
 use App\Models\CustomerGroup;
 use App\Models\CustomerType;
 use App\Models\Promotion;
@@ -25,6 +27,8 @@ class PromotionTableComponent extends ExportDataTableComponent
     use SimpleDatatableComponentTrait, DynamicDataTableExport, DynamicDataTableFormModal, WithFileUploads;
 
     protected $model = Promotion::class;
+
+    public ?int $promotion = NULL;
 
     public static String $permissionComponentName = 'promotion_manager';
 
@@ -60,7 +64,10 @@ class PromotionTableComponent extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return Promotion::query()->withCount(['promotion_items', 'customer_type', 'customer_group'])->with(['status', 'user', 'customer_group', 'customer_type']);
+        return Promotion::query()
+            ->where('app_id', ApplicationEnvironment::$model_id)
+            ->withCount(['promotion_items', 'customer_type', 'customer_group'])
+            ->with(['status', 'user', 'customer_group', 'customer_type']);
     }
 
     public function mount()
@@ -70,7 +77,9 @@ class PromotionTableComponent extends ExportDataTableComponent
         $this->data = [
             'name' => ['label' => 'Promotion Name', 'type'=>'text'],
             'status_id' => ['type' => 'hidden', 'value' => status('Pending'), 'showValue'=> false],
-            'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select', 'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()],
+            'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select',
+                'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()
+            ],
             'customer_type_id' => ['label' => 'Customer Type', 'type' => 'select',
                 'options' => CustomerType::select('id','name')->where('status', 1)->get()->toArray()
             ],
@@ -84,18 +93,20 @@ class PromotionTableComponent extends ExportDataTableComponent
             'end_date' => ['label' => 'Valid From', 'type' =>'datepicker'],
             'file' => ['label' => 'Upload Promo Stocks', 'type' =>'file', 'template' => 'exportTemplate', 'templateLabel' => 'Download Template'],
             'created' => ['type' => 'hidden', 'value' => now()->format("Y-m-d"), 'showValue'=> false],
-            'created_by' => ['label' => 'Created By', 'showValue'=> true ,'type'=>'hidden' ,'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
+            'user_id' => ['label' => 'Created By', 'showValue'=> true ,'type'=>'hidden' ,'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
+            'app_id' => ['label' => 'Environment', 'showValue'=> false ,'type'=>'hidden' ,'value' =>ApplicationEnvironment::$model_id]
         ];
 
         $this->newValidateRules = [
             'name' => 'required|min:3',
             'from_date' => 'required',
             'end_date' => 'required',
-            'domain' => 'required',
             'file' => 'required',
         ];
 
-        $this->updateValidateRules = $this->newValidateRules;
+        $updateValidationRules = $this->newValidateRules;
+        unset($updateValidationRules['file']);
+        $this->updateValidateRules = $updateValidationRules;
 
         $this->initControls();
     }
@@ -103,6 +114,11 @@ class PromotionTableComponent extends ExportDataTableComponent
     public function editCreatedCallBack($value)
     {
         return User::find($value)->name;
+    }
+
+    public function editAppIdCallBack($value)
+    {
+        return App::where('model_id', $value)->first()->name;
     }
 
     public static function  mountColumn() : array
@@ -126,17 +142,17 @@ class PromotionTableComponent extends ExportDataTableComponent
                 }),
             Column::make("Customer Group", "customer_group_id")
                 ->format(function($value, $row, Column $column){
-                    return $row->customer_group->name;
+                    return $row?->customer_group?->name ?? "";
                 })
                 ->sortable(),
             Column::make("Customer Type", "customer_type_id")
                 ->format(function($value, $row, Column $column){
-                    return $row->customer_type->name;
+                    return $row?->customer_type?->name ?? "";
                 })
                 ->sortable(),
             Column::make("Status", "status_id")
                 ->format(function($value, $row, Column $column){
-                    return $row->customer_type->name;
+                    return showStatus($value);
                 })->html()
                 ->sortable(),
         ];
@@ -149,10 +165,13 @@ class PromotionTableComponent extends ExportDataTableComponent
      */
     public final function onUpdate(Promotion $promotion)
     {
-        $promotion->promotion_items()->delete();
-        $promotion->promotion_items()->saveMany(
-            $this->importPromotionItems($promotion)
-        );
+        if(isset($this->formData['file'])) {
+            $promotion->promotion_items()->delete();
+            $promotion->promotion_items()->saveMany(
+                $this->importPromotionItems($promotion)
+            );
+            $this->promotion = NULL;
+        }
     }
 
 
@@ -162,9 +181,27 @@ class PromotionTableComponent extends ExportDataTableComponent
      */
     public final function onCreate(Promotion $promotion)
     {
-        $promotion->promotion_items()->saveMany(
-            $this->importPromotionItems($promotion)
-        );
+        $items = $this->importPromotionItems($promotion);
+        $promotion->promotion_items()->saveMany($items);
+        $this->promotion = NULL;
+    }
+
+
+    /**
+     * @return void
+     */
+    public final function onNew()
+    {
+        $this->promotion = NULL;
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @return void
+     */
+    public final function onEdit(Promotion $promotion)
+    {
+        $this->promotion = $promotion->id;
     }
 
     /**
@@ -173,6 +210,7 @@ class PromotionTableComponent extends ExportDataTableComponent
      */
     public final function onDestroy(Promotion $promotion)
     {
+        $this->promotion = NULL;
         $promotion->promotion_items()->delete();
     }
 
@@ -184,7 +222,7 @@ class PromotionTableComponent extends ExportDataTableComponent
     public final function importPromotionItems(Promotion $promotion) : array
     {
         $importPromotion = new ImportPromotionItems($promotion);
-        Excel::import(new $importPromotion, $this->file);
+        Excel::import($importPromotion, $this->formData['file']);
         return $importPromotion->getPromotionalItems();
     }
 
@@ -194,6 +232,11 @@ class PromotionTableComponent extends ExportDataTableComponent
      */
     public final function exportTemplate() : BinaryFileResponse
     {
-        return Excel::download(new ExportPromotionTemplate(), 'stock-promotional-template-'.todaysDate().'.xlsx');
+        if(!is_null($this->promotion)) {
+            return Excel::download(new ExportPromotionTemplate($this->promotion), 'stock-promotional-template-' . todaysDate() . '.xlsx');
+        }
+        else {
+            return Excel::download(new ExportPromotionTemplate(), 'stock-promotional-template-' . todaysDate() . '.xlsx');
+        }
     }
 }

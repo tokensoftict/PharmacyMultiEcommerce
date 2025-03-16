@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Stock;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Livewire\Backend\Component\UploadStockSizeComponent;
 use App\Models\StockSize;
@@ -44,7 +45,7 @@ class StockSizeDatatable extends ExportDataTableComponent
               'icon' => 'fa fa-cloud',
               'component' => UploadStockSizeComponent::class,
               'is' => 'modal',
-              'modal' => 'pages.backend.admin.component.upload-stock-size-component',
+              'modal' => 'backend.component.upload-stock-size-component',
               'parameters' =>[]
           ]
         ];
@@ -68,7 +69,7 @@ class StockSizeDatatable extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return StockSize::query()->with(['stock', 'stock.productcategory']);
+        return StockSize::query()->with(['stock', 'stock.productcategory'])->whereHas('stock.'.ApplicationEnvironment::$stock_model_string);
     }
 
 

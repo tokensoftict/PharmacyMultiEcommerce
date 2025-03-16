@@ -9,11 +9,10 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Models\Permission;
 
 /**
  * Class Module
- *
+ * 
  * @property int $id
  * @property string $name
  * @property string|null $label
@@ -24,7 +23,8 @@ use Spatie\Permission\Models\Permission;
  * @property string|null $icon
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
+ * 
+ * @property Collection|App[] $apps
  * @property Collection|Permission[] $permissions
  *
  * @package App\Models
@@ -48,6 +48,13 @@ class Module extends Model
 		'order',
 		'icon'
 	];
+
+	public function apps()
+	{
+		return $this->belongsToMany(App::class, 'module_app_mappers')
+					->withPivot('id')
+					->withTimestamps();
+	}
 
 	public function permissions()
 	{

@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
                 mkdir(public_path('storage/users'), 0777, true);
             }
 
-            Avatar::create(config('app.SUPER_ADMINISTRATOR'))->save(public_path('storage/users/superadmin.png'));
+            Avatar::create(config('app.SUPER_ADMINISTRATOR'))->save(public_path('storage/users/1.png'));
 
             DB::table('users')->insert([
                 'firstname' => 'Self',
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
                 'password' => bcrypt(123456),
-                'image' => 'storage/users/superadmin.png',
+                'image' => 'storage/users/1.png',
                 'phone' => '08130610626'
             ]);
 
@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
                 $user->assignRole(config('app.SUPER_ADMINISTRATOR'));
             }
 
-            $apps = App::all();
+            $apps = App::where('show', true)->get();
 
             foreach ($apps as $app){
                 $appLink = AppLists::insertAppModelByDomain($app->domain, $user);

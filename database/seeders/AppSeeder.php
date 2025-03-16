@@ -21,7 +21,8 @@ class AppSeeder extends Seeder
                 'model_id' => NULL,
                 'domain' => config('app.ADMIN_DOMAIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.ADMIN_DOMAIN').config('app.PORT_POSTFIX'),
-                'type' => 'Backend'
+                'type' => 'Backend',
+                'show' => false,
             ],
             [
                 'name' => 'Wholesales Administrator Application',
@@ -30,7 +31,8 @@ class AppSeeder extends Seeder
                 'model_id' => 5,
                 'domain' => config('app.WHOLESALES_ADMIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.WHOLESALES_ADMIN').config('app.PORT_POSTFIX'),
-                'type' => 'Backend'
+                'type' => 'Backend',
+                'show' => true,
             ],
             [
                 'name' => 'Supermarket Administrator Application',
@@ -39,7 +41,8 @@ class AppSeeder extends Seeder
                 'model_id' => 6,
                 'domain' => config('app.SUPERMARKET_ADMIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.SUPERMARKET_ADMIN').config('app.PORT_POSTFIX'),
-                'type' => 'Backend'
+                'type' => 'Backend',
+                'show' => true,
             ],
             [
                 'name' => 'Sales Rep Administrator Application',
@@ -48,7 +51,8 @@ class AppSeeder extends Seeder
                 'model_id' => NULL,
                 'domain' => config('app.SALES_REPRESENTATIVES'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.SALES_REPRESENTATIVES').config('app.PORT_POSTFIX'),
-                'type' => 'Backend'
+                'type' => 'Backend',
+                'show' => true,
             ],
             [
                 'name' => 'Wholesales',
@@ -57,7 +61,8 @@ class AppSeeder extends Seeder
                 'model_id' => 5,
                 'domain' => config('app.WHOLESALES_DOMAIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.WHOLESALES_DOMAIN').config('app.PORT_POSTFIX'),
-                'type' => 'Frontend'
+                'type' => 'Frontend',
+                'show' => true,
             ],
             [
                 'name' => 'SuperMarket',
@@ -66,7 +71,8 @@ class AppSeeder extends Seeder
                 'model_id' => 6,
                 'domain' => config('app.SUPERMARKET_DOMAIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.SUPERMARKET_DOMAIN').config('app.PORT_POSTFIX'),
-                'type' => 'Frontend'
+                'type' => 'Frontend',
+                'show' => true,
             ],
             [
                 'name' => 'Authentication',
@@ -75,7 +81,8 @@ class AppSeeder extends Seeder
                 'model_id' => NULL,
                 'domain' => config('app.AUTH_DOMAIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.AUTH_DOMAIN').config('app.PORT_POSTFIX'),
-                'type' => 'Frontend'
+                'type' => 'Frontend',
+                'show' => false,
             ],
             [
                 'name' => 'Local Server Data Push',
@@ -84,7 +91,8 @@ class AppSeeder extends Seeder
                 'model_id' => NULL,
                 'domain' => config('app.PUSH_DOMAIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.PUSH_DOMAIN').config('app.PORT_POSTFIX'),
-                'type' => 'Frontend'
+                'type' => 'Frontend',
+                'show' => false,
             ],
             [
                 'name' => 'Images Application',
@@ -93,7 +101,8 @@ class AppSeeder extends Seeder
                 'model_id' => NULL,
                 'domain' => config('app.IMAGES_DOMAIN'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.IMAGES_DOMAIN').config('app.PORT_POSTFIX'),
-                'type' => 'Frontend'
+                'type' => 'Frontend',
+                'show' => false,
             ]
         ];
 

@@ -61,6 +61,7 @@ trait DynamicDataTableFormModal
     public final function initControls()
     {
         $validateRules = [];
+        $updateValidationRules = [];
         foreach ($this->data as $key => $value) {
 
             if($value['type'] == "hidden"){
@@ -68,12 +69,18 @@ trait DynamicDataTableFormModal
             }else {
                 $this->formData[$key] = "";
             }
+
             if(isset($this->newValidateRules[$key])) {
                 $validateRules['formData.' . $key] = $this->newValidateRules[$key];
             }
 
+            if(isset($this->updateValidateRules[$key])) {
+                $updateValidationRules['formData.' . $key] = $this->updateValidateRules[$key];
+            }
         }
-        $this->updateValidateRules = $this->newValidateRules = $validateRules;
+
+        $this->newValidateRules = $validateRules;
+        $this->updateValidateRules = $updateValidationRules;
 
     }
 
@@ -152,6 +159,10 @@ trait DynamicDataTableFormModal
 
         $this->saveButton = "Save";
 
+        if(method_exists($this, "onNew")) {
+            $this->onNew();
+        }
+
         $this->dispatch("openModal", ['clearField' => true]);
     }
 
@@ -193,6 +204,10 @@ trait DynamicDataTableFormModal
         $this->modalTitle = $this->saveButton = "Update";
 
         $data = $this->loadModel($id);
+
+        if(method_exists($this, "onEdit")) {
+            $this->onEdit($data);
+        }
 
         $this->formData = $data->toArray();
 

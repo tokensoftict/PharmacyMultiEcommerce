@@ -6,8 +6,10 @@
 
 namespace App\Models;
 
+use App\Traits\ApplicationUserTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class SalesRepresentative
@@ -29,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
 class SalesRepresentative extends Model
 {
 	protected $table = 'sales_representatives';
+    use ApplicationUserTrait, Notifiable;
 
 	protected $casts = [
 		'user_id' => 'int',
@@ -56,5 +59,15 @@ class SalesRepresentative extends Model
     public function app_user()
     {
         return $this->morphOne(AppUser::class,'user_type');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'sales_representative_id');
+    }
+
+    public function wholesales_users()
+    {
+       return $this->hasMany(WholesalesUser::class, 'sales_representative_id');
     }
 }

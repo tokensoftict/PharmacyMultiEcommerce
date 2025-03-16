@@ -231,4 +231,11 @@ trait ApplicationUserTrait
         $this->cart = NULL;
         return $this->update();
     }
+
+
+    public function routeNotificationForFcm()
+    {
+        return $this->device_key;
+    }
+
 }

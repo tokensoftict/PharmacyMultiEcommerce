@@ -35,13 +35,13 @@ new class  extends Component
 
             AppUser::updateOrCreate(
                 [
-                    'user_id' => $this->salesRep,
-                    'app_type' => SalesRepresentative::class,
+                    'user_type_id' => $this->salesRep,
+                    'user_type_type' => SalesRepresentative::class,
                     'domain' => AppLists::getApp($rep)
                 ],
                 [
-                    'user_id' => $this->salesRep,
-                    'app_type' => SalesRepresentative::class,
+                    'user_type_id' => $this->salesRep,
+                    'user_type_type' => SalesRepresentative::class,
                     'app_id' => $rep->id,
                     'domain' => AppLists::getApp($rep),
                 ]
@@ -81,7 +81,7 @@ new class  extends Component
             setTimeout(function(){
                 salesModal.hide();
                 window.location.reload();
-            }, 2500)
+            }, 3500)
         }
     }
 
@@ -108,16 +108,17 @@ new class  extends Component
                                 <div class="mb-3">
                                     <label class="form-label" for="salesRep_select2">Search For Users</label>
                                     <div class="wd-md-100p" id="salesRep_select2_parent">
-                                        <x-dropdown-select-menu placeholder="Search For Users" wire:model="salesRep" id="sales_rep" :ajax="route('utilities.stock.user_search')"/>
+                                        <x-dropdown-select-menu placeholder="Search For Users" wire:model="salesRep" id="sales_rep" :ajax="route('utilities.user.search')"/>
                                     </div>
                                 </div>
                             </div>
                             @if (session()->has('status'))
                             <div class="col-12">
-                                <div class="alert alert-success" role="alert">{{ \session('status') }}</div>
+                                <div class="alert alert-success" role="alert">{!!  \session('status') !!}</div>
                             </div>
                             @endif
                         </div>
+                        <br/>
                     </div>
                     <div class="modal-footer ">
                         <button type="submit" wire:target="createSalesRepresentatives" wire:loading.attr="disabled" class="btn btn-phoenix-primary">
@@ -127,6 +128,7 @@ new class  extends Component
                         <button type="button" wire:target="createSalesRepresentatives" wire:loading.attr="disabled" class="btn btn-phoenix-danger" onclick="window.dispatchEvent(new CustomEvent('closeSalesRepModal'))" data-dismiss="modal" aria-label="Close">Cancel</button>
                     </div>
                 </div>
+            </div>
         </form>
     </div>
 </div>

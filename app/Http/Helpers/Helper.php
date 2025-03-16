@@ -3,12 +3,16 @@
 
 use App\Classes\ApplicationEnvironment;
 use App\Classes\Settings;
+use App\Models\PushNotification;
+use App\Notifications\DevicePushNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 use Spatie\Valuestore\Valuestore;
 
 function _GET($url, $payload = []) : array|bool
@@ -257,7 +261,7 @@ function getRandomString_AlphaNumSigns($length)
 function random_text($length)
 {
     $pool[0] = "abcdefghjkmnpqrstuvwxyz";
-   // $pool[1] = "-_";
+    // $pool[1] = "-_";
     return randomString_Generator($length, $pool);
 }
 
@@ -333,9 +337,9 @@ function monthlyDateRange(){
     return $range;
 }
 
-function getUserMenu()
+function getUserMenu($app_id)
 {
-    $menus = loadMenu();
+    $menus = loadMenu($app_id);
     $userMenus = '<a class="nav-link ' . ('admin.dashboard' === \Route::currentRouteName() ? 'active' : '') . '" href="'.route("admin.dashboard").'" role="button" data-bs-toggle="" aria-expanded="false"><div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="home"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text">Dashboard</span></span></div></a>';
 
     foreach ($menus as $menu){
@@ -413,19 +417,27 @@ function computeUserMenu()
     return $usermenu;
 }
 
-function loadMenu($refresh = false)
+function loadMenu($app_id, $refresh = false)
 {
-    if($refresh === true) Cache::forget('module-with-permission-list');
-    return Cache::remember('module-with-permission-list',86400, function(){
-        return \App\Models\Module::with(['permissions'])->get();
+    if($refresh === true) Cache::forget('module-with-permission-list-'.$app_id);
+    return Cache::remember('module-with-permission-list-'.$app_id,86400, function() use($app_id){
+        return \App\Models\Module::with(['permissions'=>function($query) use ($app_id){
+            $query->whereHas('apps',function($query) use ($app_id){
+                $query->where('app_id', $app_id);
+            });
+        }])->whereHas('apps', function ($query) use ($app_id){
+            $query->where('app_id', $app_id);
+        })->get();
     });
 }
 
-function permissions($refresh = false)
+function permissions($app_id, $refresh = false)
 {
-    if($refresh === true) Cache::forget('permission-list');
-    return Cache::remember('permission-list', 86400, function (){
-        return \Spatie\Permission\Models\Permission::all();
+    if($refresh === true) Cache::forget('permission-list-'.$app_id);
+    return Cache::remember('permission-list-'.$app_id, 86400, function () use($app_id){
+        return \App\Models\Permission::query()->whereHas('apps', function ($query) use ($app_id){
+            $query->where('app_id', $app_id);
+        });
     });
 }
 
@@ -462,7 +474,7 @@ function customerGroups()
 function statesByCountry($country_id)
 {
     return states()->filter(function($state) use ($country_id){
-       return $state->country_id == $country_id;
+        return $state->country_id == $country_id;
     });
 }
 
@@ -567,17 +579,17 @@ function getCurrentLabel($options, $value) : string
 
 function label($text, $type = 'default', $extra = 'sm')
 {
-   return '<span class="badge badge-phoenix fs-10 badge-phoenix-'.$type.'"><span class="badge-label">'.$text.'</span>'.
-    (match ($type){
-        'default', 'secondary' => '<span class="ms-1" data-feather="plus" style="height:12.8px;width:12.8px;"></span>',
-        'primary' => '<span class="ms-1" data-feather="package" style="height:12.8px;width:12.8px;"></span>',
-        'success' => '<span class="ms-1" data-feather="check" style="height:12.8px;width:12.8px;"></span>',
-        'info' => '<span class="ms-1" data-feather="info" style="height:12.8px;width:12.8px;"></span>',
-        'warning' => '<span class="ms-1" data-feather="alert-octagon" style="height:12.8px;width:12.8px;"></span>',
-        'danger', 'error' => '<span class="ms-1" data-feather="x" style="height:12.8px;width:12.8px;"></span>',
-        default => '<span class="ms-1" data-feather="plus" style="height:12.8px;width:12.8px;"></span>'
-    })
-    .'</span>';
+    return '<span class="badge badge-phoenix fs-10 badge-phoenix-'.$type.'"><span class="badge-label">'.$text.'</span>'.
+        (match ($type){
+            'default', 'secondary' => '<span class="ms-1" data-feather="plus" style="height:12.8px;width:12.8px;"></span>',
+            'primary' => '<span class="ms-1" data-feather="package" style="height:12.8px;width:12.8px;"></span>',
+            'success' => '<span class="ms-1" data-feather="check" style="height:12.8px;width:12.8px;"></span>',
+            'info' => '<span class="ms-1" data-feather="info" style="height:12.8px;width:12.8px;"></span>',
+            'warning' => '<span class="ms-1" data-feather="alert-octagon" style="height:12.8px;width:12.8px;"></span>',
+            'danger', 'error' => '<span class="ms-1" data-feather="x" style="height:12.8px;width:12.8px;"></span>',
+            default => '<span class="ms-1" data-feather="plus" style="height:12.8px;width:12.8px;"></span>'
+        })
+        .'</span>';
 }
 
 
@@ -594,7 +606,7 @@ function status($status){
         });
 
 
-    return $st->first()->id;
+    return $st->first()->id ?? 0;
 }
 
 function status_name($status){
@@ -646,7 +658,7 @@ function statuses()
 
 function getApplicationModel()
 {
-   return ApplicationEnvironment::getApplicationRelatedModel();
+    return ApplicationEnvironment::getApplicationRelatedModel();
 }
 
 
@@ -710,4 +722,17 @@ function generateUniqueid($length = 10) {
 
 function carbonize($date) : Carbon {
     return (new Carbon($date));
+}
+
+
+function sendNotificationToDevice(PushNotification $notification) : void
+{
+    foreach ($notification->push_notification_customers()->where('status_id', status('Pending'))->get() as $customer) {
+        //$customer->status_id = status('Dispatched');
+        //$customer->save();
+        $customer->customer->notify(new DevicePushNotification($notification));
+
+       // $customer->status_id = status('Complete');
+        $customer->save();
+    }
 }

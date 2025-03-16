@@ -44,7 +44,7 @@ trait UserModelTrait
 
     public function sales_representative()
     {
-        return $this->hasOne(SalesRepresentative::class);
+        return $this->hasOne(SalesRepresentative::class, 'sales_representative_id');
     }
 
 

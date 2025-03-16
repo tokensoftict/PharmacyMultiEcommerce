@@ -18,7 +18,7 @@ new class extends Component
                 <li class="nav-item">
                     <div class="nav-item-wrapper">
 
-                        {!! getUserMenu() !!}
+                        {!! getUserMenu(\App\Classes\ApplicationEnvironment::$id) !!}
 
                     </div>
 

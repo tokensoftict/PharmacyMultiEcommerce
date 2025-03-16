@@ -1,12 +1,20 @@
 <?php
 
+use App\Classes\Settings;
 use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layout.auth')] class extends Component
-{
+new #[Layout('layout.auth')] class extends Component {
     public string $email = '';
+
+
+    private Settings $settings;
+
+    public function boot(Settings $settings)
+    {
+        $this->settings = $settings;
+    }
 
     /**
      * Send a password reset link to the provided email address.
@@ -40,19 +48,21 @@ new #[Layout('layout.auth')] class extends Component
 <div class="auth-form-box">
     <div class="text-center"><a class="d-flex flex-center text-decoration-none mb-4" href="{{ asset("") }}">
             <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
-                <img src="{{ asset("images/logo.png") }}" alt="logo" width="58" />
+                <img src="{{(isset($this->store['logo']) && $this->store['logo'] !== NULL) ? (is_string($this->store['logo']) ? asset('logo/'.$this->store['logo']) : $this->store['logo']->temporaryUrl()) : asset('logo/placholder.jpg') }}"
+                     alt="phoenix" width="200"/>
             </div>
         </a>
         <h4 class="text-body-highlight">Forgot your password?</h4>
-        <p class="text-body-tertiary mb-5">Enter your email below and we will <br class="d-md-none" />send you <br class="d-none d-xxl-block" />a reset link</p>
+        <p class="text-body-tertiary mb-5">Enter your email below and we will <br class="d-md-none"/>send you <br
+                    class="d-none d-xxl-block"/>a reset link</p>
         <form class="d-flex align-items-center mb-5">
             @if (session('status'))
                 <div class="mt-3 mb-0 alert alert-warning">
                     {{ session('status') }}
                 </div>
             @endif
-            <input class="form-control flex-1" id="email" wire:model="email" type="email" placeholder="Email" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <input class="form-control flex-1" id="email" wire:model="email" type="email" placeholder="Email"/>
+            <x-input-error :messages="$errors->get('email')" class="mt-2"/>
             <button class="btn btn-phoenix-primary ms-2">Send<span class="fas fa-chevron-right ms-2"></span></button>
         </form>
         <a class="fs-9 fw-bold" href="{{ route("login") }}">Back to Login</a>

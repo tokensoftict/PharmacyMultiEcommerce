@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\Permission\CouponManager;
 use App\Enums\Permission\CustomerManager;
+use App\Enums\Permission\MedReminder;
 use App\Enums\Permission\OrderManager;
 use App\Enums\Permission\PromotionalManager;
 use App\Enums\Permission\PushNotification;
@@ -35,6 +36,8 @@ class PopulatePermissions extends Command
      */
     protected $description = 'Command description';
 
+    protected $permissionAppIDS = [2,3];
+
     /**
      * Execute the console command.
      */
@@ -59,6 +62,7 @@ class PopulatePermissions extends Command
             StockManager::class,
             CustomerManager::class,
             SalesRepManager::class,
+            MedReminder::class,
             PushNotification::class,
             CouponManager::class,
             VoucherManager::class,
@@ -70,11 +74,20 @@ class PopulatePermissions extends Command
         {
             $_module = $module::CONFIG;
             $permissions = $module::PERMISSION;
+            $app_id =  $_module['app_id'];
+            unset($_module['app_id']);
 
-            $module = Module::updateOrCreate($_module, Arr::except($_module,['id']));
+            $createdModule = Module::updateOrCreate($_module, Arr::except($_module,['id']));
+            $createdModule->apps()->sync($app_id);
             foreach ($permissions as $permission)
             {
-                Permission::updateOrCreate(['name' => $permission['name'], 'module_id' =>  $module->id, 'guard_name' =>$permission['guard_name'] ], Arr::except($permission,['id']));
+                $spatiePermission = Permission::updateOrCreate(['name' => $permission['name'], 'module_id' =>  $createdModule->id, 'guard_name' =>$permission['guard_name'] ], Arr::except($permission,['id', 'app_id']));
+                $normalPermission = \App\Models\Permission::find($spatiePermission->id);
+                if(isset($permission['app_id'])) {
+                    $normalPermission->apps()->sync($permission['app_id']);
+                } else {
+                    $normalPermission->apps()->sync($app_id);
+                }
             }
         }
 
@@ -98,8 +111,11 @@ class PopulatePermissions extends Command
 
         Schema::enableForeignKeyConstraints();
 
-        Cache::forget('module-with-permission-list');
-        Cache::forget('permission-list');
-        return Command::SUCCESS;
+        foreach ($this->permissionAppIDS as $appID) {
+            Cache::forget('module-with-permission-list-'.$appID);
+            Cache::forget('permission-list-'.$appID);
+            Cache::clear();
+            return Command::SUCCESS;
+        }
     }
 }

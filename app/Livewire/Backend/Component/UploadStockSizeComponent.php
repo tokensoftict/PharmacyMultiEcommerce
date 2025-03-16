@@ -4,6 +4,7 @@ namespace App\Livewire\Backend\Component;
 
 use App\Exports\StockSizesExport;
 use App\Imports\ImportTownDistance;
+use App\Imports\StockSizeImport;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
@@ -42,7 +43,7 @@ class UploadStockSizeComponent extends Component
             return false;
         }
 
-        Excel::import(new ImportTownDistance, $this->file);
+        Excel::import(new StockSizeImport(), $this->file);
 
         $this->dispatch('closeUploadStockSize', ['status' => true]);
 

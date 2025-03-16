@@ -12,6 +12,7 @@ enum StockManager
         'visibility' => '1',
         'order' => '1',
         'icon' => 'icon',
+        'app_id' => [2,3]
     ];
 
 
@@ -83,6 +84,33 @@ enum StockManager
             "name" => "backend.admin.stock_manager.stock_size.upload",
             "module_id" => "2",
             "label" => "Upload Stock Size",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.set_featured",
+            "module_id" => "2",
+            "label" => "Set Stock as Featured",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.special_offer",
+            "module_id" => "2",
+            "label" => "Set Stock as Special Offer",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.view",
+            "module_id" => "2",
+            "label" => "View Stock",
             "visibility" => "0",
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",

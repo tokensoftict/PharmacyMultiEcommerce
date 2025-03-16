@@ -9,6 +9,7 @@ namespace App\Models;
 use App\Traits\ApplicationUserTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class WholesalesUser
@@ -39,7 +40,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class WholesalesUser extends Model
 {
-    use ApplicationUserTrait;
+    use ApplicationUserTrait, Notifiable;
 
 	protected $table = 'wholesales_users';
 
@@ -89,6 +90,11 @@ class WholesalesUser extends Model
 		return $this->belongsTo(CustomerGroup::class);
 	}
 
+    public function order()
+    {
+        return $this->morphMany(Order::class, 'customer');
+    }
+
 	public function customer_type()
 	{
 		return $this->belongsTo(CustomerType::class);
@@ -102,5 +108,10 @@ class WholesalesUser extends Model
     public function app_user()
     {
         return $this->morphOne(AppUser::class,'user_type');
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class, 'address_id');
     }
 }

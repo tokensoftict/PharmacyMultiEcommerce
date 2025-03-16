@@ -22,8 +22,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function (){
             Route::middleware([DetectApplicationEnvironment::class, 'web'])->group(base_path("routes/auth.php"));
-            Route::middleware([DetectApplicationEnvironment::class, 'web'])->group(base_path("routes/supermaket.admin.php"));
-            Route::middleware([DetectApplicationEnvironment::class, 'web'])->group(base_path("routes/wholesales.admin.php"));
+
+            Route::middleware([DetectApplicationEnvironment::class, 'web'])
+                ->domain(config('app.SUPERMARKET_ADMIN'))
+                ->group(base_path("routes/admin_general.php"))
+                ->group(base_path("routes/supermaket.admin.php"));
+            Route::middleware([DetectApplicationEnvironment::class, 'web'])
+                ->domain(config('app.WHOLESALES_ADMIN'))
+                ->group(base_path("routes/admin_general.php"))
+                ->group(base_path("routes/wholesales.admin.php"));
+
             Route::middleware([DetectApplicationEnvironment::class,'web'])->group(base_path("routes/utilities.php"));
 
             /**  API ROUTE STATE HERE */

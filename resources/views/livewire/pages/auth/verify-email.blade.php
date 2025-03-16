@@ -41,7 +41,9 @@ new #[Layout('layout.auth')] class extends Component
 ?>
 
 <div class="auth-form-box">
-    <p class="text-center mb-6 mx-auto"><img class="mb-7 d-dark-none" src="{{ asset("images/icons/illustrations/11.png") }}" alt="phoenix" /><img class="mb-7 d-light-none" src="{{ asset("images/spot-illustrations/dark_1.png") }}" alt="{{ config("app.name") }}" />
+    <p class="text-center mb-6 mx-auto">
+        <img class="mb-7 d-dark-none" src="{{ asset("images/icons/illustrations/11.png") }}" alt="phoenix" />
+        <img class="mb-7 d-light-none" src="{{ asset("images/spot-illustrations/dark_1.png") }}" alt="{{ config("app.name") }}" />
     <div class="mb-6">
         <h4 class="text-body-highlight">Account Verification</h4>
         <p class="text-body-tertiary">Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.</p>

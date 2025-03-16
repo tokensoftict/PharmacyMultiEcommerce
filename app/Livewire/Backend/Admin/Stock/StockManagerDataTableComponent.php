@@ -8,6 +8,7 @@ use App\Classes\PermissionAttribute;
 use App\Traits\DynamicDataTableExport;
 use App\Traits\DynamicDataTableFormModal;
 use App\Traits\SimpleDatatableComponentTrait;
+use DB;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\Stock;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,12 +24,28 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
 
     public function __construct()
     {
+        $this->model = ApplicationEnvironment::$stock_model;
 
         $this->rowAction = [];
 
-        $this->actionPermission = [];
+        $this->actionPermission = [
+            'view' => 'backend.admin.stock_manager.view',
+            'featured' => 'backend.admin.stock_manager.set_featured',
+            'special_offer' => 'backend.admin.stock_manager.special_offer',
+        ];
 
-        $this->extraRowAction = [];
+        $this->extraRowAction = ['view'];
+
+        $this->extraRowActionButton = [
+            [
+                'label' => 'View',
+                'type' => 'link',
+                'route' => "backend.admin.stock_manager.view",
+                'permission' => 'view',
+                'class' => 'btn btn-sm btn-outline-primary',
+                'icon' => 'fa fa-eye-o',
+            ]
+        ];
 
         $this->pageHeaderTitle = "Stock Lists";
 
@@ -44,6 +61,18 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
             ]
         ];
 
+        $this->rowSpinner = [
+            [
+                'label' => 'Featured',
+                'field' => 'featured',
+                'handler' => 'featured'
+            ],
+            [
+                'label' => 'Special Offer',
+                'field' => 'special_offer',
+                'handler' => 'special_offer'
+            ]
+        ];
 
     }
 
@@ -82,14 +111,26 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
                 ->format(fn($value, $row, Column $column) => money($value))
                 ->sortable(),
             Column::make("Quantity", "quantity")->sortable(),
-            Column::make("Last Updated", "updated_at")->sortable(),
         ];
     }
 
-
-    #[PermissionAttribute('View', 'view', 'backend.admin.stock_manager.list_stock')]
-    public function view()
+    public function special_offer($id) : void
     {
+        DB::transaction(function () use ($id){
+            $model = $this->model::find($id);
+            $model->special_offer = !$model->special_offer;
+            $model->save();
+        });
+        $this->dispatch('$refresh');
+    }
 
+    public function featured($id) : void
+    {
+        DB::transaction(function () use ($id){
+            $model = $this->model::find($id);
+            $model->featured = !$model->featured;
+            $model->save();
+        });
+        $this->dispatch('$refresh');
     }
 }

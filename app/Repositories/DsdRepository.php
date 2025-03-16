@@ -111,6 +111,7 @@ class DsdRepository
         if(!isset($door_step_down_distance->delivery_days)) return false;
 
         $days = $door_step_down_distance->delivery_days;
+        if(!is_array($days)) $days = [$days];
 
         $add = $door_step_down_distance->no." ".$door_step_down_distance->frequency;
 

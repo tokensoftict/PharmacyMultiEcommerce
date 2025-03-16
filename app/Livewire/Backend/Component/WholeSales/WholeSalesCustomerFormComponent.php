@@ -12,7 +12,6 @@ use Livewire\WithFileUploads;
 
 class WholeSalesCustomerFormComponent extends Component
 {
-    use WithFileUploads;
     public array $state_id;
     public array $town_id;
     public array $country_id;
@@ -69,7 +68,7 @@ class WholeSalesCustomerFormComponent extends Component
 
         $this->customer_group_id = customerGroups()->toArray();
 
-        $this->town_id =statesByCountry(config('app.DEFAULT_COUNTRY_ID'))->toArray();
+        $this->town_id = statesByCountry(config('app.DEFAULT_COUNTRY_ID'))->toArray();
 
         $this->data['state_id']['options'] = statesByCountry(config('app.DEFAULT_COUNTRY_ID'))->values()->toArray();
         $this->data['customer_type_id']['options'] = customerTypes()->toArray();
@@ -85,11 +84,12 @@ class WholeSalesCustomerFormComponent extends Component
             'formData.user.lastname'  => 'required',
             'formData.user.email'       => 'required|email',
             'formData.user.password'    => 'required|min:6|max:36',
+            'formData.user.phone'       => 'required',
             //validating wholesales information
 
             'formData.wholesale.business_name'   => 'required',
-            'formData.wholesale.cac_document' => 'sometimes|mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
-            'formData.wholesale.premises_licence' => 'sometimes|mimes:jpeg,jpg,bmp,png,gif,svg,pdf',
+            'formData.wholesale.cac_document' => 'required',
+            'formData.wholesale.premises_licence' => 'required',
             'formData.wholesale.customer_type_id' =>'required',
             'formData.wholesale.customer_group_id' =>'required',
             'formData.wholesale.phone' =>'required',
@@ -111,6 +111,7 @@ class WholeSalesCustomerFormComponent extends Component
             'formData.user.email.required'       => 'Please enter customers Email',
             'formData.user.email.email'       => 'Please enter a valid Email Address',
             'formData.user.password.required'    => 'Please enter Password',
+            'formData.user.phone.required'    => 'Please enter Phone Number',
             'formData.user.password.min'    => 'Password must be between 6 and 36 character',
             'formData.user.password.max'    => 'Password must be between 6 and 36 character',
             //validating wholesales information
@@ -156,13 +157,12 @@ class WholeSalesCustomerFormComponent extends Component
 
         return DB::transaction(function(){
 
-
-            if($this->formData['wholesale']['premises_licence']){
+            if(isset($this->formData['wholesale']['premises_licence'])){
                 $premises_licence = md5($this->formData['wholesale']['premises_licence'] . microtime()).'.'.$this->formData['wholesale']['premises_licence']->extension();
                 $this->formData['wholesale']['premises_licence']->storeAs('documents', $premises_licence);
             }
 
-            if($this->formData['wholesale']['cac_document']){
+            if(isset($this->formData['wholesale']['cac_document'])){
                 $cac_document = md5($this->formData['wholesale']['cac_document'] . microtime()).'.'.$this->formData['wholesale']['cac_document']->extension();
                 $this->formData['wholesale']['cac_document']->storeAs('documents', $cac_document);
             }
@@ -173,7 +173,7 @@ class WholeSalesCustomerFormComponent extends Component
 
             $app = $this->appUserService->createAppUser($user, $wholesale);
 
-            $address = $this->addressService->createAddress($app, $this->formData['wholesale']);
+            $address = $this->addressService->createAddress($user, $this->formData['wholesale']);
 
             $this->wholeSalesCustomerService->attachDefaultAddressToCustomer($address, $wholesale);
 
@@ -181,6 +181,10 @@ class WholeSalesCustomerFormComponent extends Component
                 "success",
                 "Customer has been created successfully",
             );
+
+            $this->dispatch('creatingCustomerOnSuccess');
+
+            return $user;
 
         });
 

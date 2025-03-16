@@ -61,6 +61,7 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface
     protected $casts = [
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
+        'created_at' => 'datetime',
         'last_seen' => 'datetime'
     ];
 
