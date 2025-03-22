@@ -10,6 +10,8 @@ use App\Traits\ApplicationUserTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class WholesalesUser
@@ -38,9 +40,9 @@ use Illuminate\Notifications\Notifiable;
  *
  * @package App\Models
  */
-class WholesalesUser extends Model
+class WholesalesUser extends Model implements HasMedia
 {
-    use ApplicationUserTrait, Notifiable;
+    use ApplicationUserTrait, Notifiable, interactsWithMedia;
 
 	protected $table = 'wholesales_users';
 

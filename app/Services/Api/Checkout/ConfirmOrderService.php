@@ -30,7 +30,7 @@ class ConfirmOrderService
             ];
         }
 
-        if(count($this->checkoutUser->cart) == 0) {
+        if(count($this->checkoutUser->cart ?? []) == 0) {
             return [
                 "status" => false,
                 "message" => "Your Shopping cart is empty"
@@ -84,9 +84,11 @@ class ConfirmOrderService
 
 
         //lets check if user has a coupon in its profile already applied
-        if(!empty($checkoutUser->coupon_data) and $checkoutUser->coupon_data != "{}") {
-            $coupon = $checkoutUser->coupon_data;
-            $this->totalToPay = $this->totalToPay - ($coupon->amount ?? 0); // remove the coupon amount from the total to pay
+        if(!empty($this->checkoutUser->coupon_data) and $this->checkoutUser->coupon_data != "{}") {
+            $coupon = $this->checkoutUser->coupon_data;
+            $this->totalToPay = $this->totalToPay + ($coupon['amount'] ?? 0); // remove the coupon amount from the total to pay
+            unset($coupon['id']); // remove the id because i dont want the mobile app to make this a check box
+            $coupon['hasCoupon'] = true;
             $this->paymentAnalysisList[] = $coupon;
         }
 

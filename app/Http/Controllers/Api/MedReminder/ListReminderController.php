@@ -25,10 +25,8 @@ class ListReminderController extends ApiController
      */
     public function __invoke() : JsonResponse
     {
-        return $this->sendPaginatedSuccessResponse(
-            MedReminderResource::collection(
-                $this->medReminderService->listMedReminders(request()->user())
-            )->response()->getData(true)
+        return $this->sendSuccessResponse(
+            MedReminderResource::collection($this->medReminderService->listMedReminders(request()->user()))
         );
     }
 }

@@ -51,17 +51,25 @@ class ApplicationEnvironment
             );
         }
 
+        if(str_contains(self::$domain, "auth")) {
+            self::$appModel = SupermarketUser::class;
+            self::$appRelated =  Str::snake(
+                (new \ReflectionClass(SupermarketUser::class))->getShortName()
+            );
+        }
+
     }
 
 
     /**
-     * @return WholesalesUser|SupermarketUser
+     * @return WholesalesUser|SupermarketUser|bool
      */
-    public static function getApplicationRelatedModel() : WholesalesUser | SupermarketUser
+    public static function getApplicationRelatedModel() : WholesalesUser | SupermarketUser | bool
     {
         $user = request()->user();
         $applicationModel = self::$appRelated;
-        return $user->$applicationModel()->first();
+        if($applicationModel == "user") $applicationModel = "supermarket_user";
+        return $user?->$applicationModel()?->first();
     }
 
     /**

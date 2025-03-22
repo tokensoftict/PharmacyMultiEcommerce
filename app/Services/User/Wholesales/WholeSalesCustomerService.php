@@ -9,9 +9,11 @@ use Illuminate\Support\Arr;
 
 class WholeSalesCustomerService
 {
+
     /**
      * @param array $data
-     * @return User
+     * @param User $user
+     * @return WholesalesUser
      */
     public final function createCustomer(array $data, User $user) : WholesalesUser
     {
@@ -23,8 +25,17 @@ class WholeSalesCustomerService
                 ['customer_group_id', 'business_name', 'type', 'cac_document', 'premises_licence', 'phone', 'address_id']
             );
 
+
             $data['user_id'] = $user->id;
             $customer  = WholesalesUser::create($data);
+
+            $cac = business_certificate()->addMediaFromRequest("cac_document")->toMediaCollection('medialibrary');
+            $premises = premises_licence()->addMediaFromRequest("premises_licence")->toMediaCollection('medialibrary');
+
+            $customer->cac_document = getMediaFullPath($cac);
+            $customer->premises_licence = getMediaFullPath($premises);
+            $customer->save();
+
         }else{
 
             $customer = $this->updateCustomer($customer->user_id, $data);
@@ -37,7 +48,7 @@ class WholeSalesCustomerService
     /**
      * @param int $id
      * @param array $data
-     * @return User|bool
+     * @return WholesalesUser
      */
     public final function updateCustomer(int $id, array $data) : WholesalesUser
     {

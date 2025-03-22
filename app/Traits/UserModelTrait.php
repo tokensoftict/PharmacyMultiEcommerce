@@ -6,7 +6,9 @@ use App\Models\SupermarketUser;
 use App\Models\User;
 use App\Models\WholesalesUser;
 use App\Notifications\NewAccountRegistration;
+use App\Services\Api\MedReminder\MedReminderService;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Collection;
 
 trait UserModelTrait
 {
@@ -30,7 +32,7 @@ trait UserModelTrait
         return "$this->firstname $this->lastname";
     }
 
-    public final function updateDeviceKey(string $key) : void
+    public final function updateDeviceKey(string|null $key) : void
     {
         if(empty($key)) return;
         $this->wholesales_user()?->update(["device_key" => $key]);
@@ -67,6 +69,11 @@ trait UserModelTrait
     public static function selfSystem() : User
     {
         return User::find(1);
+    }
+
+    public final function medReminderSchedule() : Collection
+    {
+        return (new MedReminderService())->getMedRemindersLocalNotification($this);
     }
 }
 

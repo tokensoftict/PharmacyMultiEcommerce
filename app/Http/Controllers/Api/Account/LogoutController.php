@@ -16,7 +16,10 @@ class LogoutController extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
+        $user = auth("sanctum")->user();
+        $user->updateDeviceKey(NULL);
+        $schedulesIDS = $user->medReminderSchedule()->pluck("id")->toArray();
         auth("sanctum")->user()->tokens()->delete();
-        return $this->sendSuccessMessageResponse("Logout was successful");
+        return $this->sendSuccessResponse($schedulesIDS);
     }
 }

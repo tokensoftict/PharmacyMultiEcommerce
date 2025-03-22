@@ -38,7 +38,7 @@ class DevicePushNotification extends Notification
         $fcm->name("{$this->pushNotification->title}");
 
         $data = [];
-        $data ['action'] = $this->pushNotification->action;
+        $data ['notificationType'] = $this->pushNotification->action;
         if($this->pushNotification->stocks->count() > 0) {
             $stocks = $this->pushNotification->stocks->map(function ($stock) {
                 return $stock['stock_id'];
@@ -48,8 +48,18 @@ class DevicePushNotification extends Notification
         }
 
         if(!is_null($this->pushNotification->payload)) {
-            $data ['payload'] = json_encode($this->pushNotification->payload);
+            $data ['extra'] = json_encode($this->pushNotification->payload);
         }
+
+        //setEnvironment
+
+        $data['environment'] = match ( $this->pushNotification->app->model_id) {
+            6 => "supermarket",
+            4 => "sales_representative",
+            default => "wholesales"
+        };
+
+
 
         $fcm->data($data);
 

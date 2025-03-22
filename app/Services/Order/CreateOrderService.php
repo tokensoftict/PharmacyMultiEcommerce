@@ -39,7 +39,7 @@ class CreateOrderService
         $attributes['payment_method_id'] = $attributes['payment_method_id'] ??  $checkoutUser->getCheckoutPaymentMethod();
         $attributes['delivery_method_id'] = $attributes['delivery_method_id'] ?? $checkoutUser->getCheckoutDeliveryMethod()['deliveryMethod'];
         $attributes['comment'] = $attributes['comment'] ?? " ";
-        $attributes['status_id'] = $attributes['status_id'] ?? status("Pending");
+        $attributes['status_id'] = $attributes['status_id'] ?? status("Processing");
         $attributes['payment_address_id'] = $checkoutUser->getCheckoutAddress() ?? $checkoutUser->getDefaultAddress();
         $attributes['shipping_address_id'] = $checkoutUser->getCheckoutAddress() ?? $checkoutUser->getDefaultAddress();
         $attributes['checkout_data'] = $attributes['checkout_data'] ?? $checkoutUser->checkout;

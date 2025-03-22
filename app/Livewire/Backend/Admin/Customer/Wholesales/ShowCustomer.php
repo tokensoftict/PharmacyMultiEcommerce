@@ -28,4 +28,10 @@ class ShowCustomer extends Component
     {
         return view('livewire.backend.admin.customer.wholesales.show-customer');
     }
+
+
+    public function approveStore()
+    {
+        
+    }
 }

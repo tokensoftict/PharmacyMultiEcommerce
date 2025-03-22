@@ -6,10 +6,13 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\MedReminder\MedReminderRequest;
 use App\Http\Resources\Api\MedReminder\MedReminderResource;
 use App\Http\Resources\Api\MedReminder\MedReminderScheduleResource;
+use App\Models\MedReminder;
+use App\Models\MedReminderSchedule;
 use App\Services\Api\MedReminder\MedReminderService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class CreateReminderController extends ApiController
+class UpdateReminderScheduleStatusController extends ApiController
 {
     public MedReminderService  $medReminderService;
 
@@ -19,16 +22,15 @@ class CreateReminderController extends ApiController
         $this->medReminderService = $medReminderService;
     }
 
+
     /**
-     * @param MedReminderRequest $request
+     * @param MedReminderSchedule $medReminderSchedule
+     * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke(MedReminderRequest $request) : JsonResponse
+    public function __invoke(MedReminderSchedule $medReminderSchedule, Request $request) : JsonResponse
     {
-        $medReminder =  $this->medReminderService->create($request->all());
-        return $this->sendSuccessResponse([
-            'medReminder' => new MedReminderResource($medReminder),
-            'schedules' => MedReminderScheduleResource::collection($medReminder->med_reminder_schedules)
-        ]);
+        $medReminderSchedule = $this->medReminderService->updateSchedule($medReminderSchedule, $request->all());
+        return $this->showOne(new MedReminderScheduleResource($medReminderSchedule));
     }
 }

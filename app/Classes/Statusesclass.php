@@ -68,6 +68,26 @@ class Statusesclass
             'name'=>'Opened',
             'label'=>'success'
         ],
+        [
+            'name'=>'Packing',
+            'label'=>'primary'
+        ],
+        [
+            'name'=>'Waiting For Payment',
+            'label'=>'primary'
+        ],
+        [
+            'name'=>'Processing',
+            'label'=>'warning'
+        ],
+        [
+            'name'=>'Payment Confirmed',
+            'label'=>'primary'
+        ],
+        [
+            'name'=>'Validation Error',
+            'label'=>'danger'
+        ],
     ];
 
 

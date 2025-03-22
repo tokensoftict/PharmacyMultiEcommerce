@@ -3,11 +3,14 @@
 namespace App\Services\Api\MedReminder;
 
 use App\Classes\ApplicationEnvironment;
+use App\Http\Resources\Api\MedReminder\MedReminderResource;
 use App\Models\MedReminder;
 use App\Models\MedReminderSchedule;
 use App\Models\User;
 use App\Services\Utilities\PushNotificationService;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use NumberFormatter;
 
@@ -37,6 +40,7 @@ class MedReminderService
         } else {
             $data['normal_schedules'] = NULL;
         }
+
         return $data;
     }
 
@@ -106,8 +110,8 @@ class MedReminderService
     private function intervalSchedulesGenerator(MedReminder $medReminder) : array
     {
         $startDate = $medReminder->start_date_time;
-        $totalDosage = $medReminder->total_dosage_in_package - $medReminder->total_dosage_taken;
-        $dosage = $medReminder->dosage;
+        $totalDosage = (float)$medReminder->total_dosage_in_package - (float)$medReminder->total_dosage_taken;
+        $dosage = (float)$medReminder->dosage;
         $interval = $medReminder->interval.' '.$medReminder->every;
 
         $schedules = [];
@@ -129,8 +133,8 @@ class MedReminderService
     private function normalScheduleGenerator(MedReminder $medReminder) : array
     {
         $startDate = date('Y-m-d', strtotime($medReminder->start_date_time));
-        $totalDosage = $medReminder->total_dosage_in_package;
-        $dosage = $medReminder->dosage;
+        $totalDosage = (float)$medReminder->total_dosage_in_package;
+        $dosage = (float)$medReminder->dosage;
 
         $schedules = [];
         $numberOfTimes = ceil($totalDosage/$dosage);
@@ -152,7 +156,7 @@ class MedReminderService
 
         $numberOfTimes =  (int)ceil($numberOfTimes / $timesToTakePerDay);
 
-        for ($i = 1; $i <= $numberOfTimes; $i++) {
+        for ($i = 0; $i <= $numberOfTimes; $i++) {
             foreach ($dayTimes as $day) {
                 if(isset($medReminder->normal_schedules[$day]) and !empty($medReminder->normal_schedules[$day]) and $medReminder->normal_schedules[$day]!="") {
                     $daytime = $day;
@@ -176,29 +180,19 @@ class MedReminderService
             $medReminder = MedReminder::find($medReminder);
         }
 
-        $schedules = [];
-        foreach ($medReminder->med_reminder_schedules as $schedule) {
-            $schedules[] = [
-                'id' => $schedule->id,
-                'title' => $schedule->title,
-                'schedule_time' => carbonize($schedule->scheduled_at)->toDateTimeString()
-            ];
-        }
 
-        $data = [
-            'schedules' => $schedules,
-        ];
+        $data = (new MedReminderResource($medReminder))->toArray(request());
 
         $notifications = [
             ["title" => "New Medication Reminder Added", "body" => "A new medication schedule has been created for you. Review and accept the reminder now!"],
             ["title" => "Your Medication Plan is Ready", "body" => "A new med reminder has been created for you. Check the details and confirm your schedule."],
             ["title" => "Medication Reminder Assigned", "body" => "A medication plan has been set for you. Tap to review and accept it."],
             ["title" => "New Med Reminder Waiting for Approval", "body" => "A medication schedule has been added for you. Review it and start tracking your meds!"],
-            ["title" => "Doctor Scheduled Your Medication", "body" => "Your doctor has set up a new medication reminder. Check it out and accept the schedule."],
-            ["title" => "Important: Medication Schedule Created", "body" => "A new medication plan has been set for you. Tap to review and confirm your reminders."],
-            ["title" => "Stay on Track! New Medication Reminder", "body" => "A doctor has set up a medication reminder for you. Open the app to view and approve it."],
+            ["title" => "A New Scheduled Your Medication", "body" => "A new medication plan has set up a new medication reminder. Check it out and accept the schedule."],
+            ["title" => "Important: Medication Schedule Created", "body" => "A new medication plan has been set for you. review and confirm your reminders."],
+            ["title" => "Stay on Track! New Medication Reminder", "body" => "A new medication has set up a medication reminder for you. Open the app to view and approve it."],
             ["title" => "Your Medication Routine Just Got Updated", "body" => "A new med reminder has been added to your schedule. Tap to check and accept it."],
-            ["title" => "Action Needed: Medication Schedule Added", "body" => "Your doctor has assigned a new medication reminder. Review and activate it now."],
+            ["title" => "Action Needed: Medication Schedule Added", "body" => "A new medication plan has assigned a new medication reminder. Review and activate it now."],
             ["title" => "A New Prescription Reminder Awaits You", "body" => "A doctor has created a medication schedule for you. Open the app to review and accept it."]
         ];
 
@@ -210,7 +204,7 @@ class MedReminderService
         $this->pushNotificationService
             ->setApplicationEnvironment(ApplicationEnvironment::$id)
             ->createNotification($randomNotification)
-            ->setAction("MED-REMINDER-SCHEDULES")
+            ->setAction("APPROVE_MED_REMINDER_SCHEDULES")
             ->setPayload($data)
             ->setUserCustomer($medReminder->user_id)
             ->approve()
@@ -230,21 +224,38 @@ class MedReminderService
 
     /**
      * @param User $user
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return Collection
      */
-    public final function listMedReminders(User $user) : LengthAwarePaginator
+    public final function listMedReminders(User $user) : Collection
     {
-        return MedReminder::query()->where('user_id', $user->id)->orderBy('id', 'desc')->paginate(config('app.pagination_limit'));
+        return MedReminder::query()->with(['stock'])->where('user_id', $user->id)->orderBy('id', 'desc')->get();
     }
 
 
     /**
      * @param User $user
-     * @return LengthAwarePaginator
+     * @return Collection
+     */
+    public final function getMedRemindersLocalNotification(User $user) : Collection
+    {
+       return  MedReminderSchedule::query()
+            ->whereHas('med_reminder', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->where(function ($query) {
+                $query->orWhere("scheduled_at", ">", Carbon::now())
+                    ->orWhere("snoozed_at", ">", Carbon::now());
+            })
+            ->whereIn('status', ['Pending', 'Cancelled'])->get();
+    }
+
+
+    /**
+     * @param User $user
+     * @return Collection
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public final function listSchedules(User $user) : LengthAwarePaginator
+    public final function listSchedules(User $user) : Collection
     {
         $medReminderSchedules =  MedReminderSchedule::query()
             ->whereHas('med_reminder', function ($query) use ($user) {
@@ -258,9 +269,44 @@ class MedReminderService
             });
         }
 
-        $medReminderSchedules ->orderBy('scheduled_at')->paginate(config('app.pagination_limit'));
+        if(request()->has('filter') && request()->get('filter') == 'custom-date') {
+            $medReminderSchedules->where(function ($query) {
+                $query->orWhereBetween('scheduled_at', [(new Carbon(request()->get('custom-date')))->startOfDay()->toDateTimeString(), (new Carbon(request()->get('custom-date')))->endOfDay()->toDateTimeString()])
+                    ->orWhereBetween('snoozed_at', [(new Carbon(request()->get('custom-date')))->startOfDay()->toDateTimeString(), (new Carbon(request()->get('custom-date')))->endOfDay()->toDateTimeString()]);
+            });
+        }
 
-        return $medReminderSchedules->paginate(config('app.pagination_limit'));
+        if(request()->has('filter') && request()->get('filter') == 'reminder-id') {
+            $medReminderSchedules->where("med_reminder_id", request()->get('reminder-id'));
+        }
+
+        return $medReminderSchedules ->orderBy('scheduled_at')->get();
+    }
+
+
+    /**
+     * @param MedReminderSchedule $medReminderSchedule
+     * @param array $data
+     * @return MedReminderSchedule
+     */
+    public final function updateSchedule(MedReminderSchedule $medReminderSchedule, array $data) : MedReminderSchedule
+    {
+        if(\Arr::has($data, 'snoozed_at')) {
+            $snoozed_at = date('Y-m-d H:i:s', strtotime($data['snoozed_at']));
+            $medReminderSchedule->snoozed_at = (new Carbon($snoozed_at))->toDateTimeString();
+        }
+
+        if(\Arr::has($data, 'status') and !\Arr::has($data, 'snoozed_at')) {
+            $medReminderSchedule->status = $data['status'];
+
+            if($data['status'] == 'Completed') {
+                $medReminderSchedule->med_reminder->increment('total_dosage_taken', $medReminderSchedule->med_reminder->dosage);
+            }
+
+        }
+
+        $medReminderSchedule->save();
+        return $medReminderSchedule->refresh();
     }
 
 }

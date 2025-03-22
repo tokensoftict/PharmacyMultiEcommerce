@@ -204,6 +204,9 @@ new class extends Component {
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                                                 <button class="dropdown-item" type="button"
+                                                        onclick="selectInterval('minutes', this)">Minutes
+                                                </button>
+                                                <button class="dropdown-item" type="button"
                                                         onclick="selectInterval('hours', this)">Hours
                                                 </button>
                                                 <button class="dropdown-item" type="button"

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Coupon;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\AppLists;
 use App\Classes\ExportDataTableComponent;
 use App\Models\CustomerGroup;
@@ -92,6 +93,7 @@ class CouponDatatable extends ExportDataTableComponent
             'status_id' => ['type' => 'hidden', 'value' => status('Pending'), 'showValue'=> false],
             'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select', 'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()],
             'created_by' => ['label' => 'Created By', 'showValue'=> true ,'type'=>'hidden' ,'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
+            'app_id' => ['label' => 'Environment', 'showValue'=> false ,'type'=>'hidden' ,'value' =>ApplicationEnvironment::$model_id]
         ];
 
         $this->newValidateRules = [

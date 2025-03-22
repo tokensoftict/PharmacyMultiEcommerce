@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use LivewireFilemanager\Filemanager\Models\Folder;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 use Spatie\Valuestore\Valuestore;
@@ -735,4 +736,28 @@ function sendNotificationToDevice(PushNotification $notification) : void
        // $customer->status_id = status('Complete');
         $customer->save();
     }
+}
+
+function business_certificate()
+{
+    return Folder::where("slug", "business-certificate")->first();
+}
+
+function premises_licence()
+{
+    return Folder::where("slug", "business-premises-license")->first();
+}
+
+function proof_of_payment()
+{
+    $proofOfPayment = Folder::where("slug", "proof-of-payment")->first();
+    if(!$proofOfPayment){
+        $proofOfPayment = new Folder();
+        $proofOfPayment->parent_id = 1;
+        $proofOfPayment->slug = "proof-of-payment";
+        $proofOfPayment->name = "Proof of Payment";
+        $proofOfPayment->save();
+    }
+
+    return $proofOfPayment;
 }

@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Middleware\DetectApplicationEnvironment;
 use Illuminate\Support\Facades\Route;
-
+//->middleware([DetectApplicationEnvironment::class])
 Route::prefix("account")->namespace("Account")->group(function(){
     Route::post("/login", ["as" => "account.login", "uses" => "LoginController"]);
     Route::post("/signup", ['as' => 'account.signup', 'uses' => "SignupController"]);

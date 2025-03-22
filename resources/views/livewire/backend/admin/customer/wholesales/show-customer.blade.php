@@ -32,10 +32,14 @@
         </div>
         <div class="col-auto">
             <div class="row g-3">
-                <!--<div class="col-auto"><button class="btn btn-phoenix-danger"><span class="fa-solid fa-trash-can me-2"></span>Delete customer</button></div> -->
-                <button type="button"  onclick="Livewire.getByName('backend.component.resetpassword')[0].openModal(); return false;" class="btn btn-phoenix-danger"><span class="fas fa-key me-2"></span>
+                @if($this->wholesalesUser instanceof \App\Models\WholesalesUser)
+                    @if( $this->wholesalesUser->status == "0")
+                        <div class="col-auto"><button wire:click="" class="btn btn-primary"><span class="fa-solid fa-check"></span> Approve Store</button></div>
+                    @endif
+                @endif
+                    <div class="col-auto"> <button type="button"  onclick="Livewire.getByName('backend.component.resetpassword')[0].openModal(); return false;" class="btn btn-danger"><span class="fas fa-key me-2"></span>
                     Reset password
-                </button>
+                        </button></div>
             </div>
         </div>
     </div>

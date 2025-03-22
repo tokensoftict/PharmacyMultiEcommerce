@@ -26,10 +26,10 @@ class ListAllSchedulesController extends ApiController
      */
     public function __invoke() : JsonResponse
     {
-        return $this->sendPaginatedSuccessResponse(
+        return $this->sendSuccessResponse(
             MedReminderScheduleResource::collection(
                 $this->medReminderService->listSchedules(request()->user())
-            )->response()->getData(true)
+            )
         );
     }
 }

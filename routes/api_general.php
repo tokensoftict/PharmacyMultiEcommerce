@@ -74,6 +74,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
 
         Route::get("confirm_order", ["as" => "checkout.confirm_order", "uses" => "ConfirmOrderController"]);
         Route::get("confirm_payment", ["as" => "checkout.confirm_payment", "uses" => "ConfirmPaymentController"]);
+
+        Route::get("door_step_delivery_analysis", ["as" => "checkout.door_step_delivery_analysis", "uses" => "CalculateDoorStepDeliveryCalculation"]);
     });
 
 

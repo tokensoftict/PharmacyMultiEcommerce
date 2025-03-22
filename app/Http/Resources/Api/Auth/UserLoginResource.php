@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\Auth;
 
+use App\Http\Resources\Api\MedReminder\MedReminderScheduleResource;
 use App\Models\AppUser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,6 +29,7 @@ class UserLoginResource extends JsonResource
             "phone_verified_status" => !is_null($this->phone_verified_at),
             "phone" => $this->phone,
             "image" => asset($this->image),
+            "medSchedules" => MedReminderScheduleResource::collection($this->medReminderSchedule())
         ];
 
         $apps = [];
@@ -44,7 +46,7 @@ class UserLoginResource extends JsonResource
                 "domain" => $app->domain,
                 "info" => $app->user_type,
                 "logo" => $app->app->logo,
-                "name" => $app->app->name,
+                "name" => strtolower($app->app->name),
                 "link" => $app->app->link,
                 "addresses" => $app->addresses
             ];

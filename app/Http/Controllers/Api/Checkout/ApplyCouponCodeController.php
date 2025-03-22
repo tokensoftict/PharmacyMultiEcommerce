@@ -115,10 +115,10 @@ class ApplyCouponCodeController extends ApiController
                 }
             }
 
-            $count = $discount->couponUsageHistories()->where()->where('user_type_id',$checkoutUser->id)->where('user_type_type', get_class($checkoutUser))->count();
+            $count = $discount->couponUsageHistories()->where('user_type_id',$checkoutUser->id)->where('user_type_type', get_class($checkoutUser))->count();
 
-            if($count >= $discount->noofuse) {
-                return $this->sendErrorResponse("You have reached the maximum usage allowed for this coupon", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+            if($count > 0 and $count >= $discount->noofuse) {
+                return $this->sendErrorResponse("You have reached the maximum usage allowed for this coupon $count >= $discount->noofuse", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
 
         }

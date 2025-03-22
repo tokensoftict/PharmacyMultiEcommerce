@@ -66,8 +66,9 @@ class CreateOrderProductService
         $cart = $this->checkOutUser->cart;
         $stockIds = array_keys($cart);
         $cartStocks = [];
-        Stock::whereIn('id', $stockIds)->get()->each(function ($stock) use (&$stockIds, &$cartStocks) {
+        Stock::whereIn('id', $stockIds)->get()->each(function ($stock) use (&$stockIds, &$cartStocks, &$cart) {
             $stockIds['stock'] = $stock;
+            $stockIds['quantity'] = $cart[$stock->id]['quantity'];
             $cartStocks [] = new OrderProduct(
                 $this->formatOrderProductAttributes($stockIds)
             );
