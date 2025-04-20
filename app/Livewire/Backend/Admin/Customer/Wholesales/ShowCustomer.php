@@ -6,6 +6,7 @@ use App\Classes\ApplicationEnvironment;
 use App\Models\SupermarketUser;
 use App\Models\WholesalesUser;
 use App\Models\WholessalesStockPrice;
+use App\Services\User\Wholesales\WholeSalesCustomerService;
 use Livewire\Component;
 
 class ShowCustomer extends Component
@@ -32,6 +33,10 @@ class ShowCustomer extends Component
 
     public function approveStore()
     {
-        
+        if($this->wholesalesUser instanceof WholesalesUser) {
+            $service = app(WholeSalesCustomerService::class);
+            $this->wholesalesUser = $service->activateBusiness($this->wholesalesUser);
+            $this->alert("success", "Business has been activated and approved successfully");
+        }
     }
 }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('usage_status', ['USED', 'NOT-USED']);
             $table->foreignId('voucher_id')->constrained()->cascadeOnDelete();
             $table->foreignId("app_id")->nullable()->constrained()->nullOnDelete();
-            $table->nullableMorphs("user");
+            $table->nullableMorphs("customer");
             $table->foreignId('customer_type_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('customer_group_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('status_id')->nullable()->constrained()->nullOnDelete();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Push;
 
 use App\Http\Controllers\ApiController;
 use App\Models\Classification;
+use App\Services\Kafka\ProcessGeneralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,15 +25,16 @@ class ClassificationPushController extends ApiController
             if($request->has("action")){
 
                 $model = match ($request->get('action')){
-                    'new' => Classification::create($data),
-                    'update' => Classification::where("id", $data)->update($data),
+                    'new' => ProcessGeneralService::createClassification($data),
+                    'update' => ProcessGeneralService::updateManufacturer($data),
                     'destroy' => Classification::where("id", $data)->delete()
                 };
 
                 return $this->showOne($model);
+
             }else if(count($data) > 1){
                 // this is a bulk insert so where to use Bulk insertion method
-                DB::table("classifications")->insert($data);
+                ProcessGeneralService::createClassification($data);
 
                 return $this->sendSuccessResponse([]);
             }

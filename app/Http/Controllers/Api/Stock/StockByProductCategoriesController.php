@@ -22,11 +22,12 @@ class StockByProductCategoriesController extends ApiController
     }
 
     /**
+     * @param Productcategory $productcategory
      * @param Request $request
      * @return JsonResponse
      */
     public function __invoke(Productcategory $productcategory, Request $request) : JsonResponse
-    {sleep(5);
+    {
         return $this->sendPaginatedSuccessResponse(
             StockListResource::collection(
                 $this->service->getByProductCategories($productcategory)

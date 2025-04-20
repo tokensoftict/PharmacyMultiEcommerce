@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Settings;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Classes\PermissionAttribute;
 use App\Models\CustomerGroup;
@@ -33,7 +34,7 @@ class CustomerTypeComponentDataTable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],

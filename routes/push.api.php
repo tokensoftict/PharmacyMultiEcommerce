@@ -8,3 +8,4 @@ Route::post('productcategories', ['as' => 'push.productcategories', 'uses' => 'A
 Route::post('productgroups', ['as' => 'push.productgroups', 'uses' => 'App\Http\Controllers\Push\ProductGroupPushController']);
 Route::post('stocks', ['as' => 'push.stocks', 'uses' => 'App\Http\Controllers\Push\StockPushController']);
 Route::post('new_arrivals', ['as' => 'push.new_arrivals', 'uses' => 'App\Http\Controllers\Push\NewArrivalPushController']);
+Route::post('existing_customer', ['as' => 'push.existing_customer', 'uses' => 'App\Http\Controllers\Push\CustomerPushController']);

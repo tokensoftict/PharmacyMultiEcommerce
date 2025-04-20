@@ -30,7 +30,7 @@ class OrderDataTableReportComponent extends OrderDataTableComponent
 
         $this->pageHeaderTitle  = "Orders Report";
 
-        $this->filterResetLink = route('backend.admin.order.report');
+        $this->filterResetLink = route(ApplicationEnvironment::$storePrefix.'backend.admin.order.report');
 
         $this->filterTable      = \View::make('filter.order', ['filterResetLink' => $this->filterResetLink])->render();
     }

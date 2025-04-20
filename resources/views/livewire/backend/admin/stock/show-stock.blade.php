@@ -1,7 +1,7 @@
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.stock_manager.list_stock') }}">Stock List</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.stock_manager.list_stock') }}">Stock List</a></li>
     <li class="breadcrumb-item active">Stock #{{ $this->selectedStock->stock->id }}</li>
 @endpush
 

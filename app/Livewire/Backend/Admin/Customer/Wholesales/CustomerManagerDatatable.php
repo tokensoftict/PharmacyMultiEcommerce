@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Customer\Wholesales;
 
+use App\Classes\ApplicationEnvironment;
 use App\Livewire\Backend\Component\WholeSales\WholeSalesCustomerFormComponent;
 use App\Models\Address;
 use App\Models\AppUser;
@@ -66,7 +67,7 @@ class CustomerManagerDatatable extends DataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
@@ -118,7 +119,7 @@ class CustomerManagerDatatable extends DataTableComponent
             Column::make("Group", "customer_group.name")
                 ->format(fn($value, $row, Column $column) => $value)
                 ->sortable(),
-            Column::make("Number", "user.phone")->sortable(),
+            Column::make("Phone", "user.phone")->sortable(),
             Column::make("Exist On Local", "customer_local_id")
                 ->format(function($value, $row, Column $column){
                     return match ($value){

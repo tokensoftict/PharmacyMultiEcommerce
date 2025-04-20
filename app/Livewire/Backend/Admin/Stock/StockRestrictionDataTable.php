@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Stock;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Livewire\Backend\Component\StockRestrictionComponent;
 use App\Models\CustomerType;
@@ -32,17 +33,21 @@ class StockRestrictionDataTable extends ExportDataTableComponent
     {
         $this->rowAction = [];
 
-        $this->extraRowAction = ['upload_restriction_stock'];
+        $this->extraRowAction = [
+            'upload_restriction_stock',
+            'view'
+        ];
 
         $this->actionPermission = [
-            'upload_restriction_stock' => 'backend.admin.stock_manager.upload'
+            'upload_restriction_stock' => 'backend.admin.stock_manager.stock_restriction.upload',
+            'view' => 'backend.admin.stock_manager.stock_restriction.view_stocks',
         ];
 
         $this->extraRowActionButton = [
             CustomerType::class =>  [
                 'label' => 'Upload Stock',
                 'type' => 'component',
-                'route' => "backend.admin.stock_manager.upload",
+                'route' => "backend.admin.stock_manager.stock_restriction.upload",
                 'permission' => 'upload_restriction_stock',
                 'class' => 'btn btn-sm btn-outline-primary',
                 'icon' => 'fa fa-cloud',
@@ -50,6 +55,17 @@ class StockRestrictionDataTable extends ExportDataTableComponent
                 'is' => 'modal',
                 'modal' => 'stock-restriction-component',
                 'parameters' =>[]
+            ],
+            [
+                'label' => 'View Stocks',
+                'type' => 'link',
+                'route' => "backend.admin.stock_manager.stock_restriction.view_stocks",
+                'permission' => 'view',
+                'class' => 'btn btn-sm btn-outline-success',
+                'icon' => 'fa fa-eye-o',
+                'parameters' =>[
+                    'id' => 'id',
+                ]
             ]
         ];
 
@@ -57,7 +73,7 @@ class StockRestrictionDataTable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],

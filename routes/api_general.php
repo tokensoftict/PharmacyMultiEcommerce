@@ -2,6 +2,23 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::prefix("stock")->namespace("Stock")->group(function(){
+    Route::get("{stock}/show", ["as" => "stock.show", "uses" => "StockController"]);
+});
+Route::prefix("general")->namespace("General")->group(function(){
+    Route::get("/manufacturers", ["as" => "manufacturer.list", "uses" => "ManufacturerController"]);
+    Route::get("/product_categories", ["as" => "product_categories.list", "uses" => "ProductCategoryController"]);
+    Route::get("/product_manufacturers", ["as" => "product_categories.list", "uses" => "ProductManufacturerController"]);
+    Route::get("/classifications", ["as" => "classifications.list", "uses" => "ClassificationController"]);
+    Route::get("/productgroups", ["as" => "productgroups.list", "uses" => "ProductGroupController"]);
+    Route::get("/countries", ["as" => "countries.list", "uses" => "CountriesController"]);
+    Route::get("{country}/states", ["as" => "states.list", "uses" => "StatesController"]);
+    Route::get("{state}/lgas", ["as" => "lgas.list", "uses" => "LocalGovernmentController"]);
+    Route::get("{state}/towns", ["as" => "towns.list", "uses" => "TownController"]);
+
+    Route::get("/payment_method", ["as" => "payment_method.list", "uses" => "PaymentMethodListController"]);
+    Route::get("/delivery_method", ["as" => "delivery_method.list", "uses" => "DeliveryMethodListController"]);
+});
 Route::middleware(['auth:sanctum'])->group(function(){
 
     Route::prefix("stock")->namespace("Stock")->group(function(){
@@ -11,23 +28,11 @@ Route::middleware(['auth:sanctum'])->group(function(){
         Route::get("/new-arrivals", ["as" => "stock.new-arrivals", "uses" => "NewArrivalsStockController"]);
         Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.by_manufacturer", "uses" => "StockByManufacturerController"]);
         Route::get("/{productcategory}/by_productcategory", ["as" => "stock.by_productcategory", "uses" => "StockByProductCategoriesController"]);
-        Route::get("{stock}/show", ["as" => "stock.show", "uses" => "StockController"]);
+        Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.manufacturer", "uses" => "StockByProductManufacturerController"]);
+
     });
 
     Route::prefix("general")->namespace("General")->group(function(){
-        Route::get("/manufacturers", ["as" => "manufacturer.list", "uses" => "ManufacturerController"]);
-        Route::get("/product_categories", ["as" => "product_categories.list", "uses" => "ProductCategoryController"]);
-        Route::get("/classifications", ["as" => "classifications.list", "uses" => "ClassificationController"]);
-        Route::get("/productgroups", ["as" => "productgroups.list", "uses" => "ProductGroupController"]);
-        Route::get("/countries", ["as" => "countries.list", "uses" => "CountriesController"]);
-        Route::get("{country}/states", ["as" => "states.list", "uses" => "StatesController"]);
-        Route::get("{state}/lgas", ["as" => "lgas.list", "uses" => "LocalGovernmentController"]);
-        Route::get("{state}/towns", ["as" => "towns.list", "uses" => "TownController"]);
-        Route::get("/home", ["as" => "home.list", "uses" => "HomeController"]);
-
-        Route::get("/payment_method", ["as" => "payment_method.list", "uses" => "PaymentMethodListController"]);
-        Route::get("/delivery_method", ["as" => "delivery_method.list", "uses" => "DeliveryMethodListController"]);
-
         Route::get("/{deliveryMethod}/delivery_method", ["as" => "delivery_method.setDefault", "uses" => "SetDeliveryMethodAsDefaultDeliveryMethodController"]);
         Route::get("/{paymentMethod}/payment_method", ["as" => "payment_method.setDefault", "uses" => "SetPaymentMethodAsDefaultPaymentMethodController"]);
     });

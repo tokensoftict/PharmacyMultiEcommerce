@@ -78,41 +78,38 @@ new #[Layout('layout.auth')] class extends Component {
     }
 }; ?>
 
-<div>
 
-    <div class="auth-form-box">
-        <div class="text-center mb-7">
-            <a class="d-flex flex-center text-decoration-none mb-4" href="{{ asset('') }}">
-                <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
-                    <img src="{{(isset($this->store['logo']) && $this->store['logo'] !== NULL) ? (is_string($this->store['logo']) ? asset('logo/'.$this->store['logo']) : $this->store['logo']->temporaryUrl()) : asset('logo/placholder.jpg') }}"
-                         alt="phoenix" width="200"/>
-                </div>
-            </a>
-            <h4 class="text-body-highlight">Reset Password</h4>
-            <p class="text-body-tertiary">Type your new password</p>
+
+<div class="text-center mb-6">
+    <h4 class="text-body-highlight">Reset new password</h4>
+    <p class="text-body-tertiary">Type your new password</p>
+    <form class="mt-5" wire:submit="resetPassword">
+        <input class="form-control mb-2" wire:model="email" id="email" type="email" required autofocus
+               autocomplete="username" placeholder="Email"/>
+        @error('email')
+        <span class="d-block text-danger small mb-2">{{ $message }}</span>
+        @enderror
+
+        <div class="position-relative mb-2" data-password="data-password">
+            <input class="form-control form-icon-input pe-6" wire:model="password" id="password" type="password" placeholder="Type new password" data-password-input="data-password-input" />
         </div>
-        <form class="mt-5" wire:submit="resetPassword">
-            <input class="form-control mb-2" wire:model="email" id="email" type="email" required autofocus
-                   autocomplete="username" placeholder="Email"/>
-            @error('email')
+        @error('password')
             <span class="d-block text-danger small mb-2">{{ $message }}</span>
-            @enderror
+        @enderror
 
-            <input class="form-control mb-2" wire:model="password" id="password" type="password" required
-                   name="password" placeholder="New Password" autocomplete="new-password"/>
-            @error('password')
+        <div class="position-relative mb-4" data-password="data-password">
+            <input class="form-control form-icon-input pe-6" wire:model="password_confirmation" id="confirmPassword" type="password" placeholder="Confirm new password" data-password-input="data-password-input" />
+        </div>
+        @error('password_confirmation')
             <span class="d-block text-danger small mb-2">{{ $message }}</span>
-            @enderror
+        @enderror
 
-            <input class="form-control mb-4" wire:model="password_confirmation" id="password_confirmation"
-                   name="password_confirmation" type="password" required placeholder="Confirm Password"
-                   autocomplete="new-password"/>
-            @error('password_confirmation')
-            <span class="d-block text-danger small mb-2">{{ $message }}</span>
-            @enderror
-
-            <button class="btn btn-primary w-100" type="submit">Reset Password</button>
-        </form>
-    </div>
-
+        <button class="btn btn-danger w-100" type="submit">Set Password</button>
+        <br/><br/>
+       <p> <a class="fs-9 fw-bold" href="{{ route("login") }}">Back to Login</a></p>
+    </form>
 </div>
+
+
+
+

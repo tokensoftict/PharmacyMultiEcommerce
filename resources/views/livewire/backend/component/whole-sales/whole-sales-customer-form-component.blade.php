@@ -42,6 +42,11 @@
         window.wholesalesCustomerModal.hide();
     }
 
+    function forceCloseWholesalesCustomerModal(e)
+    {
+        window.wholesalesCustomerModal.hide();
+    }
+
 
     function creatingCustomerOnSuccess() {
         window.wholesalesCustomerModal.hide();
@@ -53,7 +58,7 @@
     window.addEventListener('closeWholesalesCustomerModal', closeWholesalesCustomerModal);
     window.addEventListener('openWholesalesCustomerModal', openWholesalesCustomerModal);
     window.addEventListener('creatingCustomerOnSuccess', creatingCustomerOnSuccess);
-
+    window.addEventListener('forceCloseWholesalesCustomerModal', forceCloseWholesalesCustomerModal)
     document.addEventListener('livewire:navigated',function(){
         Livewire.hook('morph.updated', ({ el, component }) => {
 
@@ -200,7 +205,7 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <x-form-file-manager key="business_premises_license" id="business_premises_license" model="formData.wholesale.business_premises_license" placeholder="Select Business Premises Licence" label="Business Premises Licence"/>
+                                        <x-form-file-manager key="business_premises_license" id="business_premises_license" model="formData.wholesale.premises_licence" placeholder="Select Business Premises Licence" label="Business Premises Licence"/>
                                     </div>
 
                                     <div class="mb-3">
@@ -265,7 +270,7 @@
                             <span wire:loading wire:target="save,update" class="spinner-border spinner-border-sm me-2" role="status"></span>
                             Save
                         </button>
-                        <button type="button" wire:target="save,update" class="btn btn-phoenix-danger mg-sm-l-5" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button"  class="btn btn-phoenix-danger mg-sm-l-5"  onclick="window.dispatchEvent(new CustomEvent('forceCloseWholesalesCustomerModal'))" data-bs-dismiss="modal">Cancel</button>
                     </div>
                     <!-- modal-footer -->
                 </form>

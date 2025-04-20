@@ -17,6 +17,10 @@ class LoginWithVerificationToken
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if(auth()->check()) {
+            auth()->logout();
+        }
+
         if(!auth()->user()){
             if($request->get("auth_token")) {
                 $jsonUser = json_decode(decrypt($request->get("auth_token")), true);

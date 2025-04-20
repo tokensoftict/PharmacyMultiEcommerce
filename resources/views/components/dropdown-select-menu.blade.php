@@ -1,4 +1,4 @@
-@props(['options' => [], 'model', 'id'=>generateRandomString(5), 'class', 'placeholder'=>"Select Item", 'value', 'ajax'])
+@props(['options' => [], 'model', 'id'=>generateRandomString(5), 'class', 'placeholder'=>"Select Item", 'value', 'ajax', 'editModel', 'editColumn'])
 
 <style>
     .no-hover{
@@ -147,9 +147,17 @@
         });
     </script>
     <div class="dropdown dropdownMenuButton{{ $id }}">
-        <input type="text" {{ $attributes }} style="display: none;"  id="text_id_{{ $id }}" />
+        @if ($attributes->isNotEmpty())
+            <input style="display: none" type="text"  {{ $attributes }}   id="text_id_{{ $id }}" />
+        @else
+            <input style="display: none"  type="text" wire:model="{{ $model }}" class="{{ $class }}"  id="text_id_{{ $id }}" />
+        @endif
         <button  class="btn-select-toggle btn btn-phoenix-secondary form-control dropdown-toggle w-100 text-start"  type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span wire:ignore id="dropdownMenuButton{{ $id }}">{{ isset($value) ? getCurrentLabel($options, $value) : $placeholder }}</span>
+            @if(isset($ajax))
+                <span id="dropdownMenuButton{{ $id }}">{{ $value=="" ? $placeholder : $editModel::find($value)->{$editColumn} }}</span>
+            @else
+                <span wire:ignore id="dropdownMenuButton{{ $id }}">{{ isset($value) ? getCurrentLabel($options, $value) : $placeholder }}</span>
+            @endif
         </button>
         <ul class="dropdown-menu w-100 dropdown-menu-end"  aria-labelledby="dropdownMenuButton">
             <div class="dropdown-item no-hover"><input placeholder="Search for item" type="text" class="form-control form-control-sm text_search_{{ $id }}"/></div>

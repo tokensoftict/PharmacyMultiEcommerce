@@ -19,6 +19,7 @@
         "livewire/livewire": "^3.5",
         "livewire/volt": "^1.6",
         "maatwebsite/excel": "^3.1",
+        "mateusjunges/laravel-kafka": "^2.5",
         "meilisearch/meilisearch-php": "^1.12",
         "predis/predis": "^2.3",
         "rappasoft/laravel-livewire-tables": "3.2",

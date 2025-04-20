@@ -2,6 +2,7 @@
 
 use App\Exceptions\PsgdcExceptionsHandler;
 use App\Http\Middleware\DataPushApiMiddleware;
+use App\Http\Middleware\DetectWholesalesSalesRepresentativesImpersonation;
 use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -23,38 +24,52 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function (){
             Route::middleware([DetectApplicationEnvironment::class, 'web'])->group(base_path("routes/auth.php"));
 
-            Route::middleware([DetectApplicationEnvironment::class, 'web'])
+            Route::middleware(['auth',DetectApplicationEnvironment::class, 'web','verified'])
                 ->domain(config('app.SUPERMARKET_ADMIN'))
+                ->name("supermarket.admin.")
                 ->group(base_path("routes/admin_general.php"))
                 ->group(base_path("routes/supermaket.admin.php"));
-            Route::middleware([DetectApplicationEnvironment::class, 'web'])
+
+
+            Route::middleware(['auth',DetectApplicationEnvironment::class, 'web','verified'])
                 ->domain(config('app.WHOLESALES_ADMIN'))
+                ->name("wholesales.admin.")
                 ->group(base_path("routes/admin_general.php"))
                 ->group(base_path("routes/wholesales.admin.php"));
 
-            Route::middleware([DetectApplicationEnvironment::class,'web'])->group(base_path("routes/utilities.php"));
+            Route::middleware(['web'])
+                ->group(base_path("routes/utilities.php"));
 
             /**  API ROUTE STATE HERE */
-
-            Route::middleware([DetectApplicationEnvironment::class, ForceJsonResponse::class ,'api', DataPushApiMiddleware::class])
+            Route::middleware(['api',DetectApplicationEnvironment::class, ForceJsonResponse::class , DataPushApiMiddleware::class])
                 ->domain(config('app.DATA_PUSH_DOMAIN'))
                 ->group(base_path("routes/push.api.php"));
 
-            Route::middleware([DetectApplicationEnvironment::class, ForceJsonResponse::class, 'api'])
+            Route::middleware(['api',DetectApplicationEnvironment::class, ForceJsonResponse::class])
                 ->prefix('api/v1')
                 ->domain(config('app.SUPERMARKET_DOMAIN'))
                 ->namespace('App\Http\Controllers\Api')
+                ->name("supermarket.")
                 ->group(base_path("routes/api_general.php"))
                 ->group(base_path("routes/supermarket.api.php"));
 
-            Route::middleware([DetectApplicationEnvironment::class, ForceJsonResponse::class, 'api'])
+            Route::middleware(['api', DetectWholesalesSalesRepresentativesImpersonation::class, DetectApplicationEnvironment::class,ForceJsonResponse::class])
                 ->prefix('api/v1')
                 ->domain(config('app.WHOLESALES_DOMAIN'))
+                ->name("wholesales.")
                 ->namespace('App\Http\Controllers\Api')
                 ->group(base_path("routes/api_general.php"))
                 ->group(base_path("routes/wholesales.api.php"));
 
-            Route::middleware([DetectApplicationEnvironment::class, ForceJsonResponse::class, 'api'])
+            Route::middleware(['api', DetectApplicationEnvironment::class,ForceJsonResponse::class])
+                ->prefix('api/v1')
+                ->domain(config('app.SALES_REPRESENTATIVES'))
+                ->name("sales_representatives.")
+                ->namespace('App\Http\Controllers\Api')
+                ->group(base_path("routes/sales_rep.php"));
+
+
+            Route::middleware(['api',DetectApplicationEnvironment::class, ForceJsonResponse::class])
                 ->prefix('api/v1')
                 ->domain(config('app.AUTH_DOMAIN'))
                 ->namespace('App\Http\Controllers\Api')
@@ -62,7 +77,7 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function(NotFoundHttpException | ModelNotFoundException | ValidationException | AuthenticationException  | Exception $e, Request $request){

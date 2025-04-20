@@ -32,8 +32,8 @@ new class  extends Component
 @endsection
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.settings.delivery_methods') }}">Delivery Methods</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.settings.delivery_methods') }}">Delivery Methods</a></li>
     <li class="breadcrumb-item active">{{ $this->deliveryMethod->name }} Settings</li>
 @endpush
 

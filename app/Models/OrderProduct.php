@@ -59,6 +59,7 @@ class OrderProduct extends Model
 		'stock_id',
 		'local_id',
 		'name',
+        'error',
 		'model',
 		'quantity',
 		'price',
@@ -68,6 +69,14 @@ class OrderProduct extends Model
 		'app_id',
 		'sales_representative_id'
 	];
+
+
+    protected $appends =  ['localid'];
+
+    public function getLocalidAttribute()
+    {
+        return $this->local_id ?? false;
+    }
 
 	public function app()
 	{

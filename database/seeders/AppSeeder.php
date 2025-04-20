@@ -15,7 +15,7 @@ class AppSeeder extends Seeder
     {
         $applications = [
             [
-                'name' => 'Administrator Administrator Application',
+                'name' => 'Administrator Administrator',
                 'description' => NULL,
                 'logo' => NULL,
                 'model_id' => NULL,
@@ -25,8 +25,8 @@ class AppSeeder extends Seeder
                 'show' => false,
             ],
             [
-                'name' => 'Wholesales Administrator Application',
-                'description' => NULL,
+                'name' => '📦 Wholesales Administrator',
+                'description' => 'Oversee products, bulk orders and operations',
                 'logo' => NULL,
                 'model_id' => 5,
                 'domain' => config('app.WHOLESALES_ADMIN'),
@@ -35,8 +35,8 @@ class AppSeeder extends Seeder
                 'show' => true,
             ],
             [
-                'name' => 'Supermarket Administrator Application',
-                'description' => NULL,
+                'name' => '🛒 Supermarket Administrator',
+                'description' => 'Manage products, orders, and staff in Store',
                 'logo' => NULL,
                 'model_id' => 6,
                 'domain' => config('app.SUPERMARKET_ADMIN'),
@@ -45,18 +45,18 @@ class AppSeeder extends Seeder
                 'show' => true,
             ],
             [
-                'name' => 'Sales Rep Administrator Application',
-                'description' => NULL,
+                'name' => '💼 Sales Rep Administrator',
+                'description' => 'Refer customers, grow your network, and earn rewards.',
                 'logo' => NULL,
                 'model_id' => NULL,
                 'domain' => config('app.SALES_REPRESENTATIVES'),
                 'link' => config('app.HTTP_PROTOCOL'). config('app.SALES_REPRESENTATIVES').config('app.PORT_POSTFIX'),
-                'type' => 'Backend',
-                'show' => true,
+                'type' => 'Frontend',
+                'show' => false,
             ],
             [
                 'name' => 'Wholesales',
-                'description' => NULL,
+                'description' => 'Buy medications and health supplies in bulk.',
                 'logo' => NULL,
                 'model_id' => 5,
                 'domain' => config('app.WHOLESALES_DOMAIN'),
@@ -66,7 +66,7 @@ class AppSeeder extends Seeder
             ],
             [
                 'name' => 'SuperMarket',
-                'description' => NULL,
+                'description' => 'Shop groceries, household essentials, and more.',
                 'logo' => NULL,
                 'model_id' => 6,
                 'domain' => config('app.SUPERMARKET_DOMAIN'),
@@ -76,7 +76,7 @@ class AppSeeder extends Seeder
             ],
             [
                 'name' => 'Authentication',
-                'description' => NULL,
+                'description' => '',
                 'logo' => NULL,
                 'model_id' => NULL,
                 'domain' => config('app.AUTH_DOMAIN'),

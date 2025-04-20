@@ -4,6 +4,7 @@
 use App\Classes\ApplicationEnvironment;
 use App\Classes\Settings;
 use App\Models\PushNotification;
+use App\Models\SalesRepresentative;
 use App\Notifications\DevicePushNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Junges\Kafka\Facades\Kafka;
+use Junges\Kafka\Message\Message;
 use LivewireFilemanager\Filemanager\Models\Folder;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
@@ -211,6 +214,10 @@ function money($amt)
 {
     return number_format($amt, 2);
 }
+function formatNumber($amt)
+{
+    return number_format($amt);
+}
 function toCap($string)
 {
     return strtoupper(strtolower($string));
@@ -283,16 +290,7 @@ function softwareStampWithDate($width = "100px") {
     return "<br>
     Generated @". date('Y-m-d H:i A') ;
 }
-function string_to_secret(string $string = NULL)
-{
-    if (!$string) return NULL;
 
-    $length = strlen($string);
-    $visibleCount = (int) round($length / 4);
-    $hiddenCount = $length - ($visibleCount * 2);
-
-    return substr($string, 0, $visibleCount) . str_repeat('*', $hiddenCount) . substr($string, ($visibleCount * -1), $visibleCount);
-}
 function split_name($name)
 {
     $name = trim($name);
@@ -338,17 +336,94 @@ function monthlyDateRange(){
     return $range;
 }
 
+
+function getUserMenu2($app_id)
+{
+    if(!in_array($app_id, [2,3]))  return "";
+    $menus = loadMenu($app_id);
+    $userMenus = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-8 me-2 uil-chart-pie"></span>Home</a>
+                    <ul class="dropdown-menu navbar-dropdown-caret">
+                        <li>
+                            <a class="dropdown-item ' . ('admin.dashboard' === \Route::currentRouteName() ? 'active' : '') . '" href="'.route(ApplicationEnvironment::$storePrefix."admin.dashboard").'">
+                                <div class="dropdown-item-wrapper"><span class="me-2 uil" data-feather="shopping-cart"></span>Dashboard</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>';
+    $num = 1;
+    $other = false;
+    foreach ($menus as $index => $menu) {
+        if($num > 3) {
+            if($other === false) {
+                $userMenus .= '<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                            <span class="uil fs-8 me-2 uil-cube"></span>Other Modules</a>';
+                $userMenus .= '<ul class="dropdown-menu navbar-dropdown-caret">';
+                $userMenus.='';
+                $other = true;
+            }
+            if (accessToModule($menu->id)) {
+                $userMenus.='<li class="dropdown dropdown-inside">
+                            <a class="dropdown-item dropdown-toggle" id="customization" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                    <div class="dropdown-item-wrapper">
+                    <span class="uil fs-8 uil-angle-right lh-1 dropdown-indicator-icon"></span>
+                    <span>
+                    <span class="me-2 uil" data-feather="settings"></span>
+                    ' . toSentence($menu->label) . '
+                    </span>
+                    </div></a> <ul class="dropdown-menu">';
+                foreach ($menu->permissions as $link) {
+                    if ($link->visibility == "1") {
+                        $userMenus.= '<li><a class="dropdown-item ' . (ApplicationEnvironment::$storePrefix . $link->name === \Route::currentRouteName() ? 'active' : '') . '" href="' . route(ApplicationEnvironment::$storePrefix . $link->name) . '">
+                        <div class="dropdown-item-wrapper"><span class="me-2 uil"></span>' . Str::plural($link->label) . '</div>
+                      </a></li>';
+                    }
+                }
+                $userMenus.= '</ul></li>';
+            }
+
+           if(($menus->count() - 1) === $index) {
+               $userMenus .= '';
+               $userMenus .= '</ul>';
+               $userMenus .= '</li>';
+           }
+
+        }else {
+            if (accessToModule($menu->id)) {
+                $userMenus .= '<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                            <span class="uil fs-8 me-2 uil-cube"></span>' . toSentence($menu->label) . '</a>';
+                $userMenus .= '<ul class="dropdown-menu navbar-dropdown-caret">';
+                foreach ($menu->permissions as $link) {
+                    if ($link->visibility == "1") {
+                        $userMenus .= '<li>
+                                    <a class="dropdown-item ' . (ApplicationEnvironment::$storePrefix . $link->name === \Route::currentRouteName() ? 'active' : '') . '" href="' . route(ApplicationEnvironment::$storePrefix . $link->name) . '">
+                                        <div class="dropdown-item-wrapper"><span class="me-2 uil"></span>' . Str::plural($link->label) . '</div>
+                                    </a>
+                                </li>';
+                    }
+                }
+                $userMenus .= '</ul>';
+                $userMenus .= '</li>';
+            }
+            $num++;
+        }
+    }
+    return $userMenus;
+}
+
+
 function getUserMenu($app_id)
 {
     $menus = loadMenu($app_id);
-    $userMenus = '<a class="nav-link ' . ('admin.dashboard' === \Route::currentRouteName() ? 'active' : '') . '" href="'.route("admin.dashboard").'" role="button" data-bs-toggle="" aria-expanded="false"><div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="home"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text">Dashboard</span></span></div></a>';
+    $userMenus = '<a class="nav-link ' . ('admin.dashboard' === \Route::currentRouteName() ? 'active' : '') . '" href="'.route(ApplicationEnvironment::$storePrefix."admin.dashboard").'" role="button" data-bs-toggle="" aria-expanded="false"><div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="home"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text">Dashboard</span></span></div></a>';
 
     foreach ($menus as $menu){
         if(accessToModule($menu->id)){
             $userMenus.='<p class="navbar-vertical-label">'.Str::upper($menu->label) .'</p>';
             foreach ($menu->permissions as $link){
                 if($link->visibility == "1"){
-                    $userMenus.='<a class="nav-link ' . ($link->name === \Route::currentRouteName() ? 'active' : '') . '" href="'.route($link->name).'" role="button" data-bs-toggle="" aria-expanded="false"><div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="home"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text">'.Str::plural($link->label).'</span></span></div></a>';
+                    $userMenus.='<a class="nav-link ' . (ApplicationEnvironment::$storePrefix.$link->name === \Route::currentRouteName() ? 'active' : '') . '" href="'.route(ApplicationEnvironment::$storePrefix.$link->name).'" role="button" data-bs-toggle="" aria-expanded="false"><div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="home"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text">'.Str::plural($link->label).'</span></span></div></a>';
                 }
             }
         }
@@ -401,7 +476,7 @@ function computeUserMenu()
 {
     $menus = loadMenu();
     $usermenu = '<li class="nav-label">Dashboard</li>';
-    $usermenu.= '<li class="nav-item '.("backend.admin.dashboard" === \Route::currentRouteName() ? 'active' : ''). '"><a wire:navigate href="'.route('backend.admin.dashboard').'" class="nav-link"><i data-feather="shopping-bag"></i> <span>Sales Dashboard</span></a></li>';
+    $usermenu.= '<li class="nav-item '.("backend.admin.dashboard" === \Route::currentRouteName() ? 'active' : ''). '"><a wire:navigate href="'.route(ApplicationEnvironment::$storePrefix.'backend.admin.dashboard').'" class="nav-link"><i data-feather="shopping-bag"></i> <span>Sales Dashboard</span></a></li>';
 
     foreach ($menus as $menu)
     {
@@ -409,7 +484,7 @@ function computeUserMenu()
             $usermenu .= '<li class="nav-label mg-t-25">' . Str::upper($menu->label) . '</li>';
             foreach ($menu->permissions as $link) {
                 if ($link->visibility == "1") {
-                    $usermenu .= '<li class="nav-item ' . ($link->name === \Route::currentRouteName() ? 'active' : '') . '"><a wire:navigate  href="' . route($link->name) . '" class="nav-link"><i data-feather="globe"></i> <span>' . Str::plural($link->label) . '</span></a></li>';
+                    $usermenu .= '<li class="nav-item ' . ($link->name === \Route::currentRouteName() ? 'active' : '') . '"><a href="' . route(ApplicationEnvironment::$storePrefix.$link->name) . '" class="nav-link"><i data-feather="globe"></i> <span>' . Str::plural($link->label) . '</span></a></li>';
                 }
             }
         }
@@ -531,9 +606,12 @@ function userCanView($permission)
 
 function accessToModule($module_id)
 {
+    if(!request()->user()) {
+        return false;
+    }
     if(request()->user()->hasAnyRole('Super Administrator')) return true;
 
-    return  permissions()->contains(function ($permission) use($module_id){
+    return  permissions(\App\Classes\ApplicationEnvironment::$id)->contains(function ($permission) use($module_id){
         return ($permission->module_id === $module_id && $permission->visibility == '1' && auth()->user()->can($permission->name));
     });
 }
@@ -733,7 +811,7 @@ function sendNotificationToDevice(PushNotification $notification) : void
         //$customer->save();
         $customer->customer->notify(new DevicePushNotification($notification));
 
-       // $customer->status_id = status('Complete');
+        // $customer->status_id = status('Complete');
         $customer->save();
     }
 }
@@ -748,6 +826,15 @@ function premises_licence()
     return Folder::where("slug", "business-premises-license")->first();
 }
 
+function generateUniqueReferralCode()
+{
+    do {
+        $code = 'SR' . strtoupper(Str::random(6));
+    } while (SalesRepresentative::where('code', $code)->exists());
+
+    return $code;
+}
+
 function proof_of_payment()
 {
     $proofOfPayment = Folder::where("slug", "proof-of-payment")->first();
@@ -760,4 +847,18 @@ function proof_of_payment()
     }
 
     return $proofOfPayment;
+}
+
+function publishToKafka($topic, $action, $message)
+{
+    $message = new Message(
+        headers: ['AUTH' => bcrypt(config("app.KAFKA_HEADER_KEY"))],
+        body: ["action" => $action, "data" => $message],
+    );
+
+    try {
+        Kafka::publish()->onTopic($topic)->withMessage($message)->send();
+    } catch (Exception $e) {
+        Log::error($e);
+    }
 }

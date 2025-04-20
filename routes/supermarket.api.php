@@ -1,5 +1,9 @@
 <?php
 
+Route::prefix("general")->namespace("General")->group(function(){
+    Route::get("/home", ["as" => "supermarket.list", "uses" => "SupermarketHomeController"]);
+});
+
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::prefix("med-reminder")->namespace("MedReminder")->group(function(){
         Route::get("/list", ["as" => "med-reminder.list", "uses" => "ListReminderController"]);

@@ -32,6 +32,7 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
             'view' => 'backend.admin.stock_manager.view',
             'featured' => 'backend.admin.stock_manager.set_featured',
             'special_offer' => 'backend.admin.stock_manager.special_offer',
+            'stock.admin_status' => 'backend.admin.stock_manager.admin_status',
         ];
 
         $this->extraRowAction = ['view'];
@@ -51,7 +52,7 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
@@ -62,6 +63,11 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
         ];
 
         $this->rowSpinner = [
+            [
+                'label' => 'Status',
+                'field' => 'stock.admin_status',
+                'handler' => 'admin_status'
+            ],
             [
                 'label' => 'Featured',
                 'field' => 'featured',
@@ -79,7 +85,6 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
     public function builder(): Builder
     {
         return ApplicationEnvironment::$stock_model::query()->with(['stock.productgroup','stock.manufacturer','stock.classification','stock.productcategory', 'stock.promotion_item']);
-        //return Stock::query()->with(['productgroup','manufacturer','classification','productcategory', 'stock_price']);
     }
 
     public function mount()
@@ -93,6 +98,7 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
     public static function  mountColumn() : array
     {
         return [
+            Column::make("ID", "stock.id")->searchable()->sortable(),
             ImageColumn::make('Image', 'stock.image')
                 ->location(
                     fn($row) => $row->image === NULL ?  asset('logo/placholder.jpg') : asset('images/'.$row->image)
@@ -130,6 +136,16 @@ class StockManagerDataTableComponent extends ExportDataTableComponent
             $model = $this->model::find($id);
             $model->featured = !$model->featured;
             $model->save();
+        });
+        $this->dispatch('$refresh');
+    }
+
+    public function admin_status($id) : void
+    {
+        DB::transaction(function () use ($id){
+            $model = $this->model::find($id);
+            $model->stock->admin_status = !$model->stock->admin_status;
+            $model->stock->save();
         });
         $this->dispatch('$refresh');
     }

@@ -23,7 +23,7 @@ class AppUserService
             'app_id' => App::where("domain", AppLists::getApp($attachUser))->first()->id
         ];
 
-        return AppUser::create($data);
+        return AppUser::updateOrCreate($data, $data);
     }
 
 }

@@ -34,6 +34,7 @@ enum StockManager
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",
             "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
         ],
         [
             "name" => "backend.admin.stock_manager.stock_restriction.upload",
@@ -43,6 +44,17 @@ enum StockManager
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",
             "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
+        ],
+        [
+            "name" => "backend.admin.stock_manager.stock_restriction.view_stocks",
+            "module_id" => "2",
+            "label" => "View Stocks in Stock Restriction",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
         ],
         [
             "name" => "backend.admin.stock_manager.stock_size",
@@ -52,6 +64,7 @@ enum StockManager
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",
             "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
         ],
         [
             "name" => "backend.admin.stock_manager.stock_size.update",
@@ -61,6 +74,7 @@ enum StockManager
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",
             "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
         ],
         [
             "name" => "backend.admin.stock_manager.stock_size.destroy",
@@ -70,6 +84,7 @@ enum StockManager
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",
             "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
         ],
         [
             "name" => "backend.admin.stock_manager.stock_size.create",
@@ -79,6 +94,7 @@ enum StockManager
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",
             "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
         ],
         [
             "name" => "backend.admin.stock_manager.stock_size.upload",
@@ -88,6 +104,7 @@ enum StockManager
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",
             "updated_at" => "2024-03-26 11:54:16",
+            'app_id' => [2]
         ],
         [
             "name" => "backend.admin.stock_manager.set_featured",
@@ -102,6 +119,15 @@ enum StockManager
             "name" => "backend.admin.stock_manager.special_offer",
             "module_id" => "2",
             "label" => "Set Stock as Special Offer",
+            "visibility" => "0",
+            "guard_name" => "web",
+            "created_at" => "2024-03-26 11:54:16",
+            "updated_at" => "2024-03-26 11:54:16",
+        ],
+        [
+            "name" => "backend.admin.stock_manager.admin_status",
+            "module_id" => "2",
+            "label" => "Enable / Disable Stock Online",
             "visibility" => "0",
             "guard_name" => "web",
             "created_at" => "2024-03-26 11:54:16",

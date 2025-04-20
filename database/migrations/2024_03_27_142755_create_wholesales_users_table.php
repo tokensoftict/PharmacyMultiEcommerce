@@ -29,7 +29,7 @@ return new class extends Migration
             $table->json('cart')->nullable();
             $table->json('wishlist')->nullable();
             $table->json('checkout')->nullable();
-
+            $table->dateTime('last_activity_date')->nullable();
             $table->json('ordertotals')->nullable();
             $table->json('coupon_data')->nullable();
             $table->json('remove_order_total')->nullable();

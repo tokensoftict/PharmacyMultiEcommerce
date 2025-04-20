@@ -38,4 +38,10 @@ class Manufacturer extends Model
 		'seo',
 		'status'
 	];
+
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class);
+    }
 }

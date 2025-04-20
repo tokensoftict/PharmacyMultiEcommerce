@@ -88,6 +88,18 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface
         'remember_token'
     ];
 
+    protected $appends =  ['cus_exist'];
+
+    public function getCusExistAttribute()
+    {
+        return "";
+    }
+
+    public final function getNameAttribute()
+    {
+        return ucwords($this->firstname)." ".ucwords($this->lastname);
+    }
+
     public function apps()
     {
         return $this->belongsToMany(App::class, 'app_users')
@@ -150,12 +162,20 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface
         return $this->hasMany(WholesalesUser::class);
     }
 
+    public function wholesales_admins()
+    {
+        return $this->hasMany(WholesalesAdmin::class);
+    }
+
+    public function supermarket_admins()
+    {
+        return $this->hasMany(SupermarketAdmin::class);
+    }
 
     public function app_users()
     {
         return $this->hasMany(AppUser::class);
     }
-
 
 
 }

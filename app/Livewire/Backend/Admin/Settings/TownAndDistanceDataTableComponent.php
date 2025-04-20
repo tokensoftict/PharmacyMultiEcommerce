@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Settings;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Livewire\Backend\Component\UploadTownsAndDistanceComponent;
 use App\Models\DeliveryTownDistance;
@@ -34,7 +35,7 @@ class TownAndDistanceDataTableComponent extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
@@ -57,7 +58,7 @@ class TownAndDistanceDataTableComponent extends ExportDataTableComponent
                   'icon' => 'fa fa-cloud',
                   'component' => UploadTownsAndDistanceComponent::class,
                   'is' => 'modal',
-                  'modal' => 'pages.backend.admin.component.upload-towns-and-distance-component',
+                  'modal' => 'backend.component.upload-towns-and-distance-component',
                   'parameters' =>[]
               ]
         ];

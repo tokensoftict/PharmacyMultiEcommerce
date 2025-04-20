@@ -1,10 +1,10 @@
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
     @if(\App\Classes\ApplicationEnvironment::$stock_model === \App\Models\WholessalesStockPrice::class)
-        <li class="breadcrumb-item"><a href="{{ route('backend.admin.wholesales.customer_manager.list') }}">Customer List</a></li>
+        <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.wholesales.customer_manager.list') }}">Customer List</a></li>
     @else
-        <li class="breadcrumb-item"><a href="{{ route('backend.admin.supermarket.customer_manager.list') }}">Customer List</a></li>
+        <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.supermarket.customer_manager.list') }}">Customer List</a></li>
     @endif
     <li class="breadcrumb-item active">Customer #{{ $this->wholesalesUser->id }}</li>
 @endpush
@@ -34,12 +34,13 @@
             <div class="row g-3">
                 @if($this->wholesalesUser instanceof \App\Models\WholesalesUser)
                     @if( $this->wholesalesUser->status == "0")
-                        <div class="col-auto"><button wire:click="" class="btn btn-primary"><span class="fa-solid fa-check"></span> Approve Store</button></div>
+                        <div class="col-auto"><button wire:click="approveStore"  wire:confirm="Are you sure you want approved this business, this can not be reversed?" class="btn btn-primary"><span class="fa-solid fa-check"></span> Approve Store</button></div>
                     @endif
                 @endif
-                    <div class="col-auto"> <button type="button"  onclick="Livewire.getByName('backend.component.resetpassword')[0].openModal(); return false;" class="btn btn-danger"><span class="fas fa-key me-2"></span>
-                    Reset password
-                        </button></div>
+                <div class="col-auto"> <button type="button"  onclick="Livewire.getByName('backend.component.resetpassword')[0].openModal(); return false;" class="btn btn-danger"><span class="fas fa-key me-2"></span>
+                        Reset password
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -126,11 +127,11 @@
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <p class="text-body fs-9">CAC Document :</p>
-                                    <a href="#" class="fw-semibold fs-9">View Document</a>
+                                    <a target="_blank" href="{{ $this->wholesalesUser?->cac_document ?? "#" }}" class="fw-semibold fs-9">View Document</a>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <p class="text-body fs-9">Premises Licence :</p>
-                                    <a href="#" class="fw-semibold fs-9">View Document</a>
+                                    <a target="_blank" href="{{ $this->premises_licence?->premises_licence ?? "#" }}" class="fw-semibold fs-9">View Document</a>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <p class="text-body fs-9">Business Phone Number :</p>
@@ -191,7 +192,7 @@
                             <tbody>
                             @foreach($this->wholesalesUser->order as $order)
                                 <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                    <td class="order align-middle white-space-nowrap ps-0"><a class="fw-semibold" href="{{ route('backend.admin.order.view', $order->id) }}">#{{ $order->id }}</a></td>
+                                    <td class="order align-middle white-space-nowrap ps-0"><a class="fw-semibold" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">#{{ $order->id }}</a></td>
                                     <td class="total align-middle text-end fw-semibold pe-7 text-body-highlight">{{ money($order->total) }}</td>
                                     <td class="payment_status align-middle white-space-nowrap text-start fw-bold text-body-tertiary">{!! showStatus($order->status_id) !!}</td>
                                     <td class="fulfilment_status align-middle white-space-nowrap text-start fw-bold text-body-tertiary">{{ $order->payment_method->name }}</td>
@@ -200,7 +201,7 @@
                                     <td class="align-middle white-space-nowrap text-end pe-0 ps-5">
                                         <div class="btn-reveal-trigger position-static"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h fs-10"></span></button>
                                             <div class="dropdown-menu dropdown-menu-end py-2">
-                                                <a class="dropdown-item" href="{{ route('backend.admin.order.view', $order->id) }}">View</a>
+                                                <a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">View</a>
                                             </div>
                                         </div>
                                     </td>
@@ -257,5 +258,5 @@
             </div>
         </div>
     </div>
-    @livewire("backend.component.resetpassword", ['user' => $this->wholesalesUser->user], "reset-sales-rep-password"))
+    @livewire("backend.component.resetpassword", ['user' => $this->wholesalesUser->user], "reset-sales-rep-password")
 </div>

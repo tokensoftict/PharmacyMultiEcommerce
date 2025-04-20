@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Push;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\Manufacturer;
+use App\Services\Kafka\ProcessGeneralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,15 +26,15 @@ class ManufacturerPushController extends ApiController
             if($request->has("action")){
 
                 $model = match ($request->get('action')){
-                    'new' => Manufacturer::create($data),
-                    'update' => Manufacturer::where("id", $data)->update($data),
+                    'new' => ProcessGeneralService::createManufacturer($data),
+                    'update' => ProcessGeneralService::updateManufacturer($data),
                     'destroy' => Manufacturer::where("id", $data)->delete()
                 };
 
                 return $this->showOne($model);
             }else if(count($data) > 1){
                 // this is a bulk insert so where to use Bulk insertion method
-                DB::table("manufacturers")->insert($data);
+                ProcessGeneralService::createManufacturer($data);
 
                 return $this->sendSuccessResponse([]);
             }

@@ -55,10 +55,11 @@ enum VoucherManager
         ],
         [
             "name" => "backend.admin.voucher.view_report",
-            "label" => "View Voucher Report",
+            "label" => "View Voucher",
             "visibility" => "0",
             "guard_name" => "web",
         ],
+
     ];
 
 }

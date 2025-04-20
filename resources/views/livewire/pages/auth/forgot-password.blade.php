@@ -33,40 +33,53 @@ new #[Layout('layout.auth')] class extends Component {
         );
 
         if ($status != Password::RESET_LINK_SENT) {
-            $this->addError('email', $status);
-
+            $this->addError('email', __($status));
+            session()->flash('error', __($status));
             return;
         }
 
         $this->reset('email');
 
-        session()->flash('status', $status);
+        session()->flash('status', __($status));
     }
 }
 ?>
 
-<div class="auth-form-box">
-    <div class="text-center"><a class="d-flex flex-center text-decoration-none mb-4" href="{{ asset("") }}">
-            <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
-                <img src="{{(isset($this->store['logo']) && $this->store['logo'] !== NULL) ? (is_string($this->store['logo']) ? asset('logo/'.$this->store['logo']) : $this->store['logo']->temporaryUrl()) : asset('logo/placholder.jpg') }}"
-                     alt="phoenix" width="200"/>
-            </div>
-        </a>
+<div class="px-xxl-5">
+    <div class="text-center mb-6">
         <h4 class="text-body-highlight">Forgot your password?</h4>
-        <p class="text-body-tertiary mb-5">Enter your email below and we will <br class="d-md-none"/>send you <br
-                    class="d-none d-xxl-block"/>a reset link</p>
-        <form class="d-flex align-items-center mb-5">
-            @if (session('status'))
-                <div class="mt-3 mb-0 alert alert-warning">
-                    {{ session('status') }}
+        <p class="text-body-tertiary mb-5">Enter your email below and we will send <br class="d-sm-none" />you a reset link</p>
+        @if(session()->has('status'))
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-success alert-sma alert-dismissible fade show" role="alert">
+                        <strong>{{ session('status') }}.</strong>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 </div>
-            @endif
-            <input class="form-control flex-1" id="email" wire:model="email" type="email" placeholder="Email"/>
-            <x-input-error :messages="$errors->get('email')" class="mt-2"/>
-            <button class="btn btn-phoenix-primary ms-2">Send<span class="fas fa-chevron-right ms-2"></span></button>
+            </div>
+        @endif
+        @if(session()->has('error'))
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-danger alert-sma alert-dismissible fade show" role="alert">
+                        <strong>{{ session('error') }}.</strong>
+                        <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        @endif
+        <form class="d-flex align-items-center mb-5" wire:submit="sendPasswordResetLink">
+            <input class="form-control flex-1" id="email"  wire:model="email" type="email"  placeholder="Email Address" />
+            <button class="btn btn-danger ms-2" type="submit">
+                Send <span class="fas fa-chevron-right ms-2"></span>
+            </button>
         </form>
         <a class="fs-9 fw-bold" href="{{ route("login") }}">Back to Login</a>
     </div>
 </div>
+
+
+
 
 

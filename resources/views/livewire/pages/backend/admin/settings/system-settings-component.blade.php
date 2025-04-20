@@ -3,7 +3,7 @@
 @endsection
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">System Settings</li>
 @endpush
 

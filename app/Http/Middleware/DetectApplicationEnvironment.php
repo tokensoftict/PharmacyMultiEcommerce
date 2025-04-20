@@ -21,9 +21,7 @@ class DetectApplicationEnvironment
         $domain = $request->getHost();
         $app = App::where("domain", $domain)->first();
         if(!$app)  throw new UnexpectedValueException('Unable to create application environment');
-
         ApplicationEnvironment::createApplicationEnvironment($app);
-
         return $next($request);
     }
 }

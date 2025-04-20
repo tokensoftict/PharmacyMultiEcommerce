@@ -28,6 +28,10 @@ class DatabaseSeeder extends Seeder
             DeliveryMethodSeeder::class,
             PaymentMethodSeeder::class,
             StatusSeeder::class,
+            CustomerGroupSeeder::class,
+            CustomerTypeSeeder::class,
+            MedialibraryFolderSeeders::class,
+            OrderTotalSeeder::class
             //MeilisearchSeeder::class
         ]);
 

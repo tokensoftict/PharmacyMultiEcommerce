@@ -17,9 +17,10 @@ class MeController extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
-
+        $user = $request->user();
+        $user->updateDeviceKey($request->get("deviceKey", false));
         return $this->showOne(
-            new UserLoginResource($request->user())
+            new UserLoginResource($user)
         );
     }
 }

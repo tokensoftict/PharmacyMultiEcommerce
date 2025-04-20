@@ -1,8 +1,8 @@
 
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.order.list') }}">Order List</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.list') }}">Order List</a></li>
     <li class="breadcrumb-item active">Order #{{ $this->order->order_id }}</li>
 @endpush
 @script
@@ -37,8 +37,8 @@
                     </button>
                     <div class="dropdown"><button class="btn text-body dropdown-toggle dropdown-caret-none ps-3 pe-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">More action<span class="fas fa-chevron-down ms-2"></span></button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('backend.admin.order.update', $this->order->id) }}">Edit Order</a></li>
-                            <li><a class="dropdown-item" href="{{ route('backend.admin.order.update_product', $this->order->id) }}">Edit Order Products</a></li>
+                            <li><a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.update', $this->order->id) }}">Edit Order</a></li>
+                            <li><a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.update_product', $this->order->id) }}">Edit Order Products</a></li>
                         </ul>
                     </div>
                 </div>

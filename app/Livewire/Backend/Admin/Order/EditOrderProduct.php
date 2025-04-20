@@ -4,6 +4,7 @@ namespace App\Livewire\Backend\Admin\Order;
 
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Services\Order\CreateOrderService;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -12,11 +13,12 @@ class EditOrderProduct extends Component
 
     public Order $order;
     public array $products;
+    public array $removedStock = [];
 
     public function mount()
     {
         $this->products = $this->order->order_products->map(function ($item) {
-            return ['id' => $item->id, 'quantity' => $item->quantity, 'price' => $item->price];
+            return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price];
         })->toArray();
     }
 
@@ -25,12 +27,15 @@ class EditOrderProduct extends Component
         return view('livewire.backend.admin.order.edit-order-product');
     }
 
-
-
     public function saveChanges()
     {
         if(count($this->products) > 0) {
-            return \DB::transaction(function () {
+            $status =  \DB::transaction(function () {
+
+                if(count($this->removedStock) > 0) {
+                    OrderProduct::where("id", $this->removedStock)->delete();
+                }
+
                 foreach ($this->products as $product) {
                     OrderProduct::find($product['id'])->update([
                         'quantity' => $product['quantity'],
@@ -50,9 +55,14 @@ class EditOrderProduct extends Component
                 $orderTotal->save();
 
 
+                //if this is door step delivery
+                if($this->order->delivery_method->code === "Dsd") {
+                    //coming right back for you
+                }
+
                 $total = $this->order->order_total_orders()->sum('value');
 
-                $this->order->status_id = status('Pending');
+                $this->order->status_id = status("Submitted");
                 $this->order->total = $total;
                 $this->order->save();
 
@@ -65,9 +75,24 @@ class EditOrderProduct extends Component
 
                 return true;
             });
+
+            if($status) {
+                (new CreateOrderService())->orderItemChanged($this->order);
+            }
+
+            return $status;
         }
+    }
 
 
+    public function deleteItem($index) {
+        $this->products = $this->order->order_products->filter(function ($item) use ($index) {
+            if($index != $item->id) {
+                return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price];
+            }
+            return false;
+        })->toArray();
+        $this->removedStock[] = $index;
     }
 
 }

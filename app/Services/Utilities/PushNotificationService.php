@@ -6,6 +6,7 @@ use App\Models\App;
 use App\Models\PushNotification;
 use App\Models\PushNotificationCustomer;
 use App\Models\PushNotificationStock;
+use App\Models\SalesRepresentative;
 use App\Models\Stock;
 use App\Models\SupermarketsStockPrice;
 use App\Models\SupermarketUser;
@@ -61,6 +62,14 @@ class PushNotificationService
             "type",
             "status",
         ]);
+
+        if(!isset($data["status"])){
+            $data["status"] = "DRAFT";
+        }
+
+        if(!isset($data["app_id"])){
+            $data["app_id"] = $this->app->id;
+        }
 
         $data['user_id'] = request()?->user()?->id ?? User::selfSystem()->id;
         $this->pushNotification = PushNotification::create($data);
@@ -126,7 +135,7 @@ class PushNotificationService
         if($this->pushNotification->status === "APPROVED"){
             sendNotificationToDevice($this->pushNotification);
         }
-       return $this;
+        return $this;
     }
 
 
@@ -186,6 +195,23 @@ class PushNotificationService
 
         return $this;
     }
+
+
+    /**
+     * @param SupermarketUser|WholesalesUser|SalesRepresentative $user
+     * @return $this
+     */
+    public final function determineCustomerTypeAndSetCustomer(SupermarketUser|WholesalesUser|SalesRepresentative $user) : self
+    {
+        if($user instanceof WholesalesUser){
+            $this->setWholesaleCustomer($user);
+        } else {
+            return $this->setSuperMarketCustomer($user);
+        }
+
+        return $this;
+    }
+
 
     /**
      * @param Stock|int $stock

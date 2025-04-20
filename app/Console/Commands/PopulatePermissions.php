@@ -11,6 +11,7 @@ use App\Enums\Permission\PushNotification;
 use App\Enums\Permission\SalesRepManager;
 use App\Enums\Permission\Settings;
 use App\Enums\Permission\StockManager;
+use App\Enums\Permission\UserManager;
 use App\Enums\Permission\VoucherManager;
 use App\Models\Module;
 use Illuminate\Console\Command;
@@ -67,7 +68,8 @@ class PopulatePermissions extends Command
             CouponManager::class,
             VoucherManager::class,
             OrderManager::class,
-            PromotionalManager::class
+            PromotionalManager::class,
+            UserManager::class
         ];
 
         foreach ($modules as $module)

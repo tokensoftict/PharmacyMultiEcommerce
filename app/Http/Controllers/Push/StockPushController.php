@@ -8,6 +8,8 @@ use App\Models\Stock;
 use App\Models\StockPrice;
 use App\Models\SupermarketsStockPrice;
 use App\Models\WholessalesStockPrice;
+use App\Services\Kafka\ProcessGeneralService;
+use App\Services\Kafka\ProcessStockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,8 +26,8 @@ class StockPushController extends ApiController
             if($request->has("action")){
 
                 $model = match ($request->get('action')){
-                    'new' => Stock::create($data),
-                    'update' => Stock::where("id", $data)->update($data),
+                    'new' => ProcessStockService::createStock($data),
+                    'update' => ProcessStockService::updateStock($data),
                     'destroy' => Stock::where("id", $data)->delete()
                 };
 

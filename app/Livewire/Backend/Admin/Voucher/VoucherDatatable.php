@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Backend\Admin\Voucher;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\AppLists;
 use App\Classes\ExportDataTableComponent;
 use App\Models\CustomerGroup;
 use App\Models\CustomerType;
-use App\Models\PushNotification;
 use App\Models\User;
 use App\Models\Voucher;
 use App\Models\VoucherCode;
@@ -15,9 +15,7 @@ use App\Traits\DynamicDataTableExport;
 use App\Traits\DynamicDataTableFormModal;
 use App\Traits\SimpleDatatableComponentTrait;
 use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use App\Models\Coupon;
 
 class VoucherDatatable extends ExportDataTableComponent
 {
@@ -33,17 +31,34 @@ class VoucherDatatable extends ExportDataTableComponent
             'edit' => 'backend.admin.voucher.update',
             'destroy' => 'backend.admin.voucher.destroy',
             'create'   => 'backend.admin.voucher.create',
+            'view_report' => 'backend.admin.voucher.view_report'
         ];
 
 
         $this->extraRowAction = [];
+
+
+        $this->extraRowActionButton = [
+            [
+                'label' => 'View Codes',
+                'type' => 'link',
+                'route' => "backend.admin.voucher.view_report",
+                'permission' => 'view_report',
+                'class' => 'btn btn-sm btn-outline-primary',
+                'icon' => 'fa fa-eye-o',
+                'parameters' => [
+                    'id' =>'id'
+                ]
+            ]
+        ];
+
 
         $this->pageHeaderTitle = "Voucher Manager";
 
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
@@ -88,6 +103,7 @@ class VoucherDatatable extends ExportDataTableComponent
             'status_id' => ['type' => 'hidden', 'value' => status('Pending'), 'showValue'=> false],
             'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select', 'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()],
             'created_by' => ['label' => 'Created By', 'showValue'=> true ,'type'=>'hidden' ,'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
+            'app_id' => ['label' => 'Environment', 'showValue'=> false ,'type'=>'hidden' ,'value' =>ApplicationEnvironment::$model_id]
         ];
 
         $this->newValidateRules = [
@@ -114,7 +130,7 @@ class VoucherDatatable extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return Voucher::query()->with(['status', 'user', 'customer_group', 'customer_type', 'voucher_codes']);
+        return Voucher::query()->with(['status', 'user', 'customer_group', 'customer_type', 'voucher_codes'])->where('app_id',ApplicationEnvironment::$model_id);
     }
 
     public static function  mountColumn() : array
@@ -157,7 +173,8 @@ class VoucherDatatable extends ExportDataTableComponent
             $voucherCodes[] = new VoucherCode([
                 'name' => $voucher->name,
                 'type' => $voucher->type,
-                'code' => generateRandom(8),
+                'app_id' => $voucher->app_id,
+                'code' => strtoupper(generateRandom(8)),
                 'domain' => $voucher->domain,
                 'created_by' => $voucher->created_by,
                 'status_id' => $voucher->status_id,
@@ -185,6 +202,7 @@ class VoucherDatatable extends ExportDataTableComponent
             $voucherCodes[] = new VoucherCode([
                 'name' => $voucher->name,
                 'type' => $voucher->type,
+                'app_id' => $voucher->app_id,
                 'code' => strtoupper(generateRandom(8)),
                 'domain' => $voucher->domain,
                 'created_by' => $voucher->created_by,

@@ -68,7 +68,7 @@ class MedReminderDataTableComponent extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
@@ -89,8 +89,7 @@ class MedReminderDataTableComponent extends ExportDataTableComponent
     public function mount()
     {
         $this->modalName = "MedReminder";
-        $this->data = [
-        ];
+        $this->data = [];
     }
 
 

@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $usage_status
  * @property int $voucher_id
  * @property int|null $app_id
- * @property string|null $user_type
- * @property int|null $user_id
+ * @property string|null $customer_type
+ * @property int|null $customer_id
  * @property int|null $customer_type_id
  * @property int|null $customer_group_id
  * @property int|null $status_id
@@ -34,7 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property App|null $app
  * @property User|null $user
  * @property CustomerGroup|null $customer_group
- * @property CustomerType|null $customer_type
+ * @property CustomerType|null $customer_type_type
  * @property Status|null $status
  * @property Voucher $voucher
  *
@@ -67,8 +67,8 @@ class VoucherCode extends Model
 		'usage_status',
 		'voucher_id',
 		'app_id',
-		'user_type',
-		'user_id',
+		'customer_type',
+		'customer_id',
 		'customer_type_id',
 		'customer_group_id',
 		'status_id',
@@ -85,12 +85,17 @@ class VoucherCode extends Model
 		return $this->belongsTo(User::class, 'created_by');
 	}
 
+    public function customer()
+    {
+        return $this->morphTo();
+    }
+
 	public function customer_group()
 	{
 		return $this->belongsTo(CustomerGroup::class);
 	}
 
-	public function customer_type()
+	public function customer_type_type()
 	{
 		return $this->belongsTo(CustomerType::class);
 	}

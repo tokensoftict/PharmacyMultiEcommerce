@@ -23,9 +23,6 @@ class AppServiceProvider extends ServiceProvider
             return Settings::make(storage_path('app/settings.json'));
         });
 
-        Livewire::addPersistentMiddleware([
-            DetectApplicationEnvironment::class
-        ]);
 
     }
 
@@ -38,14 +35,14 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('Super Administrator') ? true : null;
         });
 
+
+        Livewire::addPersistentMiddleware([
+            DetectApplicationEnvironment::class
+        ]);
+
         \Event::listen(
             NotificationFailed::class ,
             PushNotificationFailedListener::class
-        );
-
-        \Event::listen(
-            NotificationSent::class,
-            PushNotificationSendListener::class
         );
     }
 }

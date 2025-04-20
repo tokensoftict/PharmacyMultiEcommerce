@@ -12,7 +12,7 @@
             @if($breadcrumb['active'] === true)
                 <li class="breadcrumb-item active">{{ $breadcrumb['name'] }}</li>
             @else
-                <li class="breadcrumb-item"><a href="{{ $breadcrumb['route'] }}">{{ $breadcrumb['name'] }}</a></li>
+                <li class="breadcrumb-item"><a href="{{  $breadcrumb['route'] }}">{{ $breadcrumb['name'] }}</a></li>
             @endif
         @endforeach
     @endif
@@ -119,13 +119,13 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ $value['label'] }}</label>
                                         <div class="wd-md-100p" id="select2Parent{{ $key }}">
-                                            <x-utilities.general.stock-search-component :placeholder="$value['placeholder']" :classname="''" :wireModel="'formData.'.$key" :id="$value['id']"/>
+                                            <x-utilities.general.stock-search-component :value="$this->formData[$key]" :placeholder="$value['placeholder']" :classname="''" :wireModel="'formData.'.$key" :id="$value['id']"/>
                                         </div>
                                         @error("formData.".$key) <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
                                 @endif
 
-                                @if($value['type'] == "datepicker")
+                                @if($value['type'] === "datepicker")
                                     <div class="mb-3">
                                         <label class="form-label">{{ $value['label'] }}</label>
                                         <input class="form-control" type="date"  wire:model="formData.{{ $key }}"  name="{{ $key }}"  placeholder="{{ $value['label'] }}">

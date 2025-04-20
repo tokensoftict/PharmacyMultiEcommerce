@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Customer;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Traits\DynamicDataTableExport;
 use App\Traits\DynamicDataTableFormModal;
@@ -33,7 +34,7 @@ class CustomerSearchHistoryDataTable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],

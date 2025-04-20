@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\SalesRep;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\BooleanColumn;
 use App\Classes\ExportDataTableComponent;
 use App\Models\CustomerSearchHistory;
@@ -55,6 +56,7 @@ class SalesRepManagerDataTable extends ExportDataTableComponent
         $this->actionPermission = [
             'create_new_sales_rep'=> 'backend.admin.settings.sales_rep_manager.create',
             'view' => 'backend.admin.customer_manager.wholesales.view',
+            'status' => 'backend.admin.sales_rep_manager.toggle'
         ];
 
 
@@ -62,13 +64,20 @@ class SalesRepManagerDataTable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
             [
                 'name' => "Sale Representatives List",
                 'active' =>true
+            ]
+        ];
+
+        $this->rowSpinner = [
+            [
+                'label' => 'Account Status  ',
+                'field' => 'status'
             ]
         ];
     }
@@ -101,6 +110,9 @@ class SalesRepManagerDataTable extends ExportDataTableComponent
             Column::make("Phone Number", "user.phone")
                 ->searchable()
                 ->sortable(),
+            Column::make("Referral Code", "code")
+                ->searchable()
+                ->sortable(),
             BooleanColumn::make("Invitation Status", "invitation_status")
                 ->sortable(),
             Column::make("Invitation Date", "invitation_sent_date")
@@ -113,8 +125,6 @@ class SalesRepManagerDataTable extends ExportDataTableComponent
                     return $value  ? $value->format('l, F jS, Y') : "";
                 })
                 ->sortable(),
-            BooleanColumn::make('Status', 'status')
-            ->sortable()
         ];
     }
 }

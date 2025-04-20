@@ -45,7 +45,7 @@ class CouponDatatable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
@@ -121,7 +121,7 @@ class CouponDatatable extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return Coupon::query()->with(['status', 'user', 'customer_group', 'customer_type']);
+        return Coupon::query()->with(['status', 'user', 'customer_group', 'customer_type'])->where('app_id',ApplicationEnvironment::$model_id);
     }
 
     public static function  mountColumn() : array

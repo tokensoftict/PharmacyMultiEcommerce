@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Push;
 
 use App\Http\Controllers\ApiController;
 use App\Models\Productcategory;
+use App\Services\Kafka\ProcessGeneralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ProductCategoryPushController extends ApiController
 {
@@ -19,8 +21,8 @@ class ProductCategoryPushController extends ApiController
             if($request->has("action")){
 
                 $model = match ($request->get('action')){
-                    'new' => Productcategory::create($data),
-                    'update' => Productcategory::where("id", $data)->update($data),
+                    'new' => ProcessGeneralService::createCategory($data),
+                    'update' => ProcessGeneralService::updateCategory($data),
                     'destroy' => Productcategory::where("id", $data)->delete()
                 };
 
@@ -32,7 +34,7 @@ class ProductCategoryPushController extends ApiController
                 return $this->sendSuccessResponse([]);
             }
 
-            return $this->errorResponse("Unknown Action", Response::HTTP_BAD_REQUEST);
+            return $this->errorResponse("Unknown Action", ResponseAlias::HTTP_BAD_REQUEST);
         });
     }
 }

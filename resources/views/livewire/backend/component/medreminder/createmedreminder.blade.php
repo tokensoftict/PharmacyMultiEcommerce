@@ -145,6 +145,9 @@ new class extends Component {
                                     <label class="form-label" for="salesRep_select2">Select Customers</label>
                                     <div class="wd-md-100p" id="salesRep_select2_parent">
                                         <x-dropdown-select-menu placeholder="Search Customer" wire:model="user_id"
+                                                                :edit-model="\App\Models\User::class"
+                                                                edit-column="name"
+                                                                :value="$this->user_id ?? ''"
                                                                 id="user_id" :ajax="route('utilities.user.search')"/>
                                         @error("user_id") <span
                                                 class="text-danger d-block">{{ $message }}</span> @enderror
@@ -155,6 +158,9 @@ new class extends Component {
                                     <div class="wd-md-100p" id="salesRep_select2_parent">
                                         <x-dropdown-select-menu placeholder="Search Stock" wire:model="stock_id"
                                                                 id="stock_id"
+                                                                :edit-model="\App\Models\Stock::class"
+                                                                edit-column="name"
+                                                                :value="$this->stock_id ?? ''"
                                                                 :ajax="route('utilities.stock.select2search')"/>
                                         @error("stock_id") <span
                                                 class="text-danger d-block">{{ $message }}</span> @enderror

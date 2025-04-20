@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Settings;
 
+use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Classes\PermissionAttribute;
 use App\Models\LocalGovt;
@@ -35,7 +36,7 @@ class LocalGovtDataTable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],
@@ -55,6 +56,7 @@ class LocalGovtDataTable extends ExportDataTableComponent
                 'route' => "backend.admin.settings.address_and_town",
                 'permission' => 'address_and_town',
                 'class' => 'btn btn-sm btn-outline-primary',
+                'icon' => 'fa fa-eye-o',
                 'parameters' => [
                     'state'=>'state_id',
                     'localGovt' => 'id'

@@ -4,6 +4,7 @@ namespace App\Livewire\Backend\Component\WholeSales;
 
 use App\Services\User\AddressService;
 use App\Services\User\AppUserService;
+use App\Services\User\Supermarket\SupermarketCustomerService;
 use App\Services\User\UserAccountService;
 use App\Services\User\Wholesales\WholeSalesCustomerService;
 use Illuminate\Support\Facades\DB;
@@ -25,39 +26,41 @@ class WholeSalesCustomerFormComponent extends Component
     public String $action = "New";
 
     private WholeSalesCustomerService $wholeSalesCustomerService;
+    private SupermarketCustomerService $supermarketCustomerService;
     private UserAccountService $userAccountService;
 
     private AddressService $addressService;
     private AppUserService $appUserService;
 
 
-    public function boot(WholeSalesCustomerService $wholeSalesCustomerService, UserAccountService $userAccountService, AddressService $addressService, AppUserService $appUserService)
+    public function boot(SupermarketCustomerService $supermarketCustomerService, WholeSalesCustomerService $wholeSalesCustomerService, UserAccountService $userAccountService, AddressService $addressService, AppUserService $appUserService)
     {
         $this->wholeSalesCustomerService = $wholeSalesCustomerService;
         $this->userAccountService = $userAccountService;
         $this->addressService = $addressService;
         $this->appUserService = $appUserService;
+        $this->supermarketCustomerService = $supermarketCustomerService;
     }
 
     public function mount()
     {
         $this->formData['user'] = [
-            'first_name',
-            'last_name',
-            'email',
-            'password'
+            'firstname' => "",
+            'lastname'=> "",
+            'email'=> "",
+            'password'=> "",
         ];
 
         $this->formData['wholesale'] = [
-            'business_name',
-            'business_cac_certificate',
-            'business_premises_license',
-            'customer_type_id',
-            'customer_group_id',
-            'phone',
-            'business_email_address',
-            'business_address_1',
-            'business_address_2',
+            'business_name' => "",
+            'cac_document' => "",
+            'premises_licence' => "",
+            'customer_type_id' => "",
+            'customer_group_id' => "",
+            'phone' => "",
+            'business_email_address' => "",
+            'business_address_1' => "",
+            'business_address_2' => "",
             'state_id' => "",
             'town_id' => ""
         ];
@@ -117,8 +120,10 @@ class WholeSalesCustomerFormComponent extends Component
             //validating wholesales information
 
             'formData.wholesale.business_name.required'   => 'Please enter Business Name',
-            'formData.wholesale.business_cac_certificate.sometimes' => 'Please upload pdf or and image file supported extension (jpeg,jpg,bmp,png,gif,svg,pdf)',
-            'formData.wholesale.business_premises_license.sometimes' => 'Please upload pdf or and image file supported extension (jpeg,jpg,bmp,png,gif,svg,pdf)',
+
+            'formData.wholesale.cac_document.required' => 'Please upload business cac document',
+            'formData.wholesale.premises_licence.required' => 'Please upload business premises license',
+
             'formData.wholesale.customer_type_id.required' =>'Please select business type',
             'formData.wholesale.customer_group_id.required' =>'Please select business group',
             'formData.wholesale.phone.required' =>'Please enter business phone number',
@@ -157,25 +162,27 @@ class WholeSalesCustomerFormComponent extends Component
 
         return DB::transaction(function(){
 
-            if(isset($this->formData['wholesale']['premises_licence'])){
-                $premises_licence = md5($this->formData['wholesale']['premises_licence'] . microtime()).'.'.$this->formData['wholesale']['premises_licence']->extension();
-                $this->formData['wholesale']['premises_licence']->storeAs('documents', $premises_licence);
-            }
-
-            if(isset($this->formData['wholesale']['cac_document'])){
-                $cac_document = md5($this->formData['wholesale']['cac_document'] . microtime()).'.'.$this->formData['wholesale']['cac_document']->extension();
-                $this->formData['wholesale']['cac_document']->storeAs('documents', $cac_document);
-            }
-
             $user = $this->userAccountService->createUserAccount($this->formData['user']);
 
-            $wholesale = $this->wholeSalesCustomerService->createCustomer($this->formData['wholesale'] ,$user);
+            $this->wholeSalesCustomerService->userPassword = $this->formData['user']['password'];
 
-            $app = $this->appUserService->createAppUser($user, $wholesale);
+            $wholesale = $this->wholeSalesCustomerService->createCustomer($this->formData['wholesale'] ,$user);
+            $supermarket = $this->supermarketCustomerService->createCustomer(
+                [
+                    'status' => true,
+                    'customer_group_id' => $this->formData['wholesale']['customer_group_id'],
+                    'customer_type_id' => $this->formData['wholesale']['customer_type_id'],
+                    'phone' => $this->formData['wholesale']['phone'],
+                ]
+                ,$user);
+
+            $this->appUserService->createAppUser($user, $wholesale);
+            $this->appUserService->createAppUser($user, $supermarket);
 
             $address = $this->addressService->createAddress($user, $this->formData['wholesale']);
 
             $this->wholeSalesCustomerService->attachDefaultAddressToCustomer($address, $wholesale);
+            $this->supermarketCustomerService->attachDefaultAddressToCustomer($address, $supermarket);
 
             $this->alert(
                 "success",

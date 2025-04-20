@@ -47,7 +47,7 @@ class ExportTownDistance implements FromCollection, WithHeadings
                 'Town Distance' => ($distance ? $distance->town_distance : ""),
                 'Minimum Delivery Cost' => ($distance ? $distance->minimum_shipping_amount : ""),
                 'Fixed Delivery Cost' =>  ($distance ? $distance->fixed_shipping_amount : ""),
-                'Delivery Days' =>  ($distance ? implode(",",$distance->delivery_days) : ""),
+                'Delivery Days' =>  ($distance ? implode(",",(is_array($distance->delivery_days) ? $distance->delivery_days : [$distance->delivery_days])) : ""),
                 'No' =>($distance ? $distance->no : 1),
                 'Frequency' => ($distance ? $distance->frequency : ""),
             ];

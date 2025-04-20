@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Push;
 
 use App\Http\Controllers\ApiController;
 use App\Models\Productgroup;
+use App\Services\Kafka\ProcessGeneralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +21,8 @@ class ProductGroupPushController extends ApiController
             if($request->has("action")){
 
                 $model = match ($request->get('action')){
-                    'new' => Productgroup::create($data),
-                    'update' => Productgroup::where("id", $data)->update($data),
+                    'new' => ProcessGeneralService::createStockGroup($data),
+                    'update' => ProcessGeneralService::updateStockGroup($data),
                     'destroy' => Productgroup::where("id", $data)->delete()
                 };
 

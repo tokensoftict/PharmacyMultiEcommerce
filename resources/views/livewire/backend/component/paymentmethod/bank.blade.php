@@ -67,8 +67,8 @@ new class  extends Component
 @endsection
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.settings.payment_methods') }}">Payment Methods</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.settings.payment_methods') }}">Payment Methods</a></li>
     <li class="breadcrumb-item active">{{ $this->paymentMethod->name }} Settings</li>
 @endpush
 

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name')->index()->nullable();
             $table->string('seo')->index()->nullable();
             $table->text("description")->nullable();
+            $table->boolean('admin_status')->default(true);
 
             $table->foreignId("productcategory_id")->nullable()->constrained()->nullOnDelete();
             $table->foreignId("manufacturer_id")->nullable()->constrained()->nullOnDelete();

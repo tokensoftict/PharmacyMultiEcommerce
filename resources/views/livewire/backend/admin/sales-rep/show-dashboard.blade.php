@@ -1,6 +1,6 @@
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.sales_rep_manager.list') }}">Sales Representative List</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.sales_rep_manager.list') }}">Sales Representative List</a></li>
     <li class="breadcrumb-item active">Sales Representative #{{ $this->salesRepresentative->id }}</li>
 @endpush
 
@@ -12,7 +12,10 @@
         </div>
         <div class="col-auto">
             <div class="row g-3">
-                <!--<div class="col-auto"><button class="btn btn-phoenix-danger"><span class="fa-solid fa-trash-can me-2"></span>Delete customer</button></div> -->
+                <div class="col-auto">
+                    @if(is_null($this->salesRepresentative->invitation_approval_date))
+                        <button class="btn btn-phoenix-success"  wire:target="resendInvitation" wire:loading.attr="disabled"  wire:click="resendInvitation" wire:confirm="Are you sure you want resend the invitation ?"><span class="fas fa-reload me-2"></span>Resend Activation Email</button></div>
+                   @endif
                 <div class="col-auto">
                     <button type="button"  onclick="Livewire.getByName('backend.component.resetpassword')[0].openModal(); return false;" class="btn btn-phoenix-danger"><span class="fas fa-key me-2"></span>
                         Reset password
@@ -22,7 +25,7 @@
         </div>
     </div>
     <div class="row g-5 mt-2">
-        <div class="col-12 col-xxl-4">
+        <div class="col-12 col-xxl-3">
             <div class="col-12 col-md-7 col-xxl-12">
                 <div class="card h-100 h-xxl-auto">
                     <div class="card-body d-flex flex-column justify-content-between pb-3">
@@ -81,11 +84,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-xxl-8">
+        <div class="col-12 col-xxl-9">
             <div class="row justify-content-between">
                 <div class="col-6 col-md-4 col-xxl-4 text-center border-translucent border-start-xxl border-end-xxl-0 border-bottom-xxl-0 border-end border-bottom pb-4 pb-xxl-0 ">
                     <span class="uil fs-5 lh-1 uil-users-alt text-primary"></span>
-                    <h1 class="fs-5 pt-3"> {{ \App\Models\WholesalesUser::where('sales_representative_id', $this->salesRepresentative->id)->count() }}</h1>
+                    <h1 class="fs-5 pt-3"> {{ $this->reportService->getTotalNumberOfCustomers()  }}</h1>
                     <p class="fs-9 mb-0">Total Customers</p>
                 </div>
 
@@ -137,12 +140,12 @@
                                 </tr>
                                 </thead>
                                 <tbody class="list" id="members-table-body">
-                                @foreach($this->salesRepresentative->wholesales_users as $customer)
+                                @foreach($this->reportService->getCustomers() as $customer)
                                     <tr class="hover-actions-trigger btn-reveal-trigger position-static">
                                         <td class="fs-9 align-middle ps-0 py-3">
                                             <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row='{"customer":{"avatar":"/team/25.webp","name":"Michael Jenkins"},"email":"jenkins@example.com","mobile":"+3026138829","city":"Philadelphia","lastActive":"12 hours ago","joined":"Oct 3, 8:30 AM"}' /></div>
                                         </td>
-                                        <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route('backend.admin.customer_manager.wholesales.view', $customer->id) }}">
+                                        <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.customer_manager.wholesales.view', $customer->id) }}">
                                                 <div class="avatar avatar-m"><img class="rounded-circle" src="{{ asset($customer->user->image) }}" alt="" /></div>
                                                 <h6 class="mb-0 ms-3 fw-semibold">{{ $customer->business_name }}</h6>
                                             </a></td>
@@ -195,22 +198,22 @@
                                 </tr>
                                 </thead>
                                 <tbody class="list" id="members-table-body">
-                                    @foreach($this->salesRepresentative->orders as $order)
-                                        <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                            <td class="fs-9 align-middle ps-0 py-3">
-                                                <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox" data-bulk-select-row='{"customer":{"avatar":"/team/25.webp","name":"Michael Jenkins"},"email":"jenkins@example.com","mobile":"+3026138829","city":"Philadelphia","lastActive":"12 hours ago","joined":"Oct 3, 8:30 AM"}' /></div>
-                                            </td>
-                                            <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route('backend.admin.customer_manager.wholesales.view', $order->customer->id) }}">
-                                                    <div class="avatar avatar-m"><img class="rounded-circle" src="{{ asset($order->customer->user->image) }}" alt="" /></div>
-                                                    <h6 class="mb-0 ms-3 fw-semibold">{{ $order->customer->business_name }}</h6>
-                                                </a></td>
-                                            <td class="email align-middle white-space-nowrap"><a class="fw-semibold" href="{{ route('backend.admin.customer_manager.wholesales.view', $order->customer->id) }}">{{ $order->customer->business_name }}</a></td>
-                                            <td class="email align-middle white-space-nowrap"><a class="fw-semibold" href="mailto:{{ $order->customer->business_email }}">{{ $order->customer->business_email }}</a></td>
-                                            <td class="mobile_number align-middle white-space-nowrap"><a class="fw-bold text-body-emphasis" href="{{ route('backend.admin.order.view', $order->id) }}">#{{ $order->order_no }}</a></td>
-                                            <td class="last_active align-middle text-end white-space-nowrap text-body-tertiary">{{ $order->order_date }}</td>
-                                            <td class="joined align-middle white-space-nowrap text-body-tertiary text-end">{{ money($order->total) }}</td>
-                                        </tr>
-                                    @endforeach
+                                @foreach($this->reportService->getCustomerOrders() as $order)
+                                    <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                                        <td class="fs-9 align-middle ps-0 py-3">
+                                            <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox"  /></div>
+                                        </td>
+                                        <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.customer_manager.wholesales.view', $order->customer->id) }}">
+                                                <div class="avatar avatar-m"><img class="rounded-circle" src="{{ asset($order->customer->user->image) }}" alt="" /></div>
+                                                <h6 class="mb-0 ms-3 fw-semibold">{{ $order->customer->business_name }}</h6>
+                                            </a></td>
+                                        <td class="email align-middle white-space-nowrap"><a class="fw-semibold" href="mailto:{{ $order->customer->business_email }}">{{ $order->customer->user->email }}</a></td>
+                                        <td class="email align-middle white-space-nowrap"><a class="fw-semibold" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">{{ $order->order_id }}</a></td>
+                                        <td class="mobile_number align-middle white-space-nowrap"><a class="fw-bold text-body-emphasis" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">#{{ $order->invoice_no }}</a></td>
+                                        <td class="last_active align-middle text-end white-space-nowrap text-body-tertiary">{{ $order->order_date->format('F jS, Y') }}</td>
+                                        <td class="joined align-middle white-space-nowrap text-body-tertiary text-end">{{ money($order->total) }}</td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -228,6 +231,6 @@
         </div>
     </div>
 
-    @livewire("backend.component.salesrep.addcustomer", ['salesRepresentative' => $this->salesRepresentative], "add-customer-to-sales-rep"))
-    @livewire("backend.component.resetpassword", ['user' => $this->salesRepresentative->user], "reset-sales-rep-password"))
+    @livewire("backend.component.salesrep.addcustomer", ['salesRepresentative' => $this->salesRepresentative], "add-customer-to-sales-rep")
+    @livewire("backend.component.resetpassword", ['user' => $this->salesRepresentative->user], "reset-sales-rep-password")
 </div>

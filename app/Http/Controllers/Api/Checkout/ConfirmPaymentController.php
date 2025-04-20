@@ -68,6 +68,8 @@ class ConfirmPaymentController extends ApiController
             $order = $this->createOrderTotalService->create($order);
             $checkoutUser->prepareUserAccountForNewOrder();
 
+            $this->createOrderService->processOrder($order);
+
             return $this->showOne(
                 $order
             );

@@ -17,7 +17,8 @@ class GeneralResource extends JsonResource
     {
         $data = [
             'id' => $this->id,
-            'name' => $this->name
+            'name' => $this->name,
+            'image' => $this?->image
         ];
 
         if($this->relationLoaded('stocks')){

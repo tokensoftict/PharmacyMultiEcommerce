@@ -2,7 +2,11 @@
 
 namespace App\Livewire\Backend\Admin\SalesRep;
 
+use App\Classes\ApplicationEnvironment;
+use App\Mail\SalesRep\SalesRepInvitationMail;
 use App\Models\SalesRepresentative;
+use App\Services\SalesRepresentative\ReportService;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class ShowDashboard extends Component
@@ -10,25 +14,19 @@ class ShowDashboard extends Component
 
     public SalesRepresentative $salesRepresentative;
     public string $from, $to, $month, $totalDispatchedCount, $totalDispatchedSum;
-
+    private ReportService $reportService;
     public function mount()
     {
-        $this->from = date('Y-m-01');
-        $this->to = date('Y-m-t');
 
-        if(isset(request()->from) && isset(request()->to)){
-            $this->from = request()->from;
-            $this->to = request()->to;
-        }
+        $this->reportService = app(ReportService::class);
+        $this->reportService->setSalesRepresentative($this->salesRepresentative);
 
-        if(date("m",strtotime($this->from)) == date("m",strtotime($this->to))){
-            $this->month = date('F');
-        }else{
-            $this->month = date("F d Y",strtotime($this->from))." - ".date("F d Y",strtotime($this->to));
-        }
+        $this->month =  $this->reportService->month;
+        $this->from = $this->reportService->from;
+        $this->to = $this->reportService->to;
 
-        $this->totalDispatchedCount = $this->salesRepresentative->orders()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->whereBetween('order_date',[$this->from,$this->to])->count();
-        $this->totalDispatchedSum =  $this->salesRepresentative->orders()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->whereBetween('order_date',[$this->from,$this->to])->sum('total');
+        $this->totalDispatchedCount = $this->reportService->geTotalOrderDispatchedCount();
+        $this->totalDispatchedSum =  $this->reportService->geTotalOrderDispatchedSum();
     }
 
 
@@ -37,4 +35,18 @@ class ShowDashboard extends Component
         return view('livewire.backend.admin.sales-rep.show-dashboard');
     }
 
+
+    /**
+     * @return void
+     */
+    public function resendInvitation()
+    {
+        $token = sha1(md5(generateRandomString(50)));
+        $this->salesRepresentative->token = $token;
+        $this->salesRepresentative->save();
+        $this->salesRepresentative->fresh();
+        $link = route(ApplicationEnvironment::$storePrefix.'sales-representative.sales_rep.accept-invitation', $this->salesRepresentative->token);
+        Mail::to($this->salesRepresentative->user->email)->send(new SalesRepInvitationMail($this->salesRepresentative, $link));
+        $this->alert('success', 'An Invitation Email has been re-sent to ' . $this->salesRepresentative->user->email . " " . $this->salesRepresentative->user->name . " will become a sales representative when they accept the invite  &#128513;");
+    }
 }

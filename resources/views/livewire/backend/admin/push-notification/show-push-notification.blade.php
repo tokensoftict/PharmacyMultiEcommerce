@@ -1,6 +1,6 @@
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.push_notification.list') }}">Push Notification List</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.push_notification.list') }}">Push Notification List</a></li>
     <li class="breadcrumb-item active">Push Notification #{{ $this->pushNotification->id }}</li>
 @endpush
 
@@ -114,7 +114,7 @@
                                         <tbody class="list" id="members-table-body">
                                         @foreach($this->pushNotification->push_notification_customers as $customer)
                                             <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                                <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route('backend.admin.customer_manager.wholesales.view', $customer->customer->id) }}">
+                                                <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.customer_manager.wholesales.view', $customer->customer->id) }}">
                                                         <div class="avatar avatar-m"><img class="rounded-circle" src="{{ asset($customer->customer->user->image) }}" alt="" /></div>
                                                         <h6 class="mb-0 ms-3 fw-semibold">{{ $customer->customer->business_name ??  $customer->customer->user->firstname." ".$customer->customer->user->lastname}}</h6>
                                                     </a>
@@ -151,7 +151,7 @@
                                 <tbody class="list" id="members-table-body">
                                 @foreach($this->pushNotification->stocks as $stock)
                                     <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                        <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route('backend.admin.stock_manager.view', $stock->stock->{\App\Classes\ApplicationEnvironment::$stock_model_string}->id) }}">
+                                        <td class="customer align-middle white-space-nowrap"><a class="d-flex align-items-center text-body text-hover-1000" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.stock_manager.view', $stock->stock->{\App\Classes\ApplicationEnvironment::$stock_model_string}->id) }}">
                                                 <div class="avatar avatar-m"><img class="rounded-circle" src="{{ asset($stock->stock->product_image) }}" alt="" /></div>
                                                 <h6 class="mb-0 ms-3 fw-semibold">{{ $stock->stock->name }}</h6>
                                             </a>

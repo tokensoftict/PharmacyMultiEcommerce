@@ -11,6 +11,7 @@ Route::domain(config('app.AUTH_DOMAIN'))->group(function (){
         Volt::route('register', 'pages.auth.register')->name('register');
         Volt::route('forgot-password', 'pages.auth.forgot-password')->name('password.request');
         Volt::route('reset-password/{token}', 'pages.auth.reset-password')->name('password.reset');
+        Volt::route('email-verified-successfully', 'pages.auth.verification-successful')->name('email.verification.successful');
     });
 
     Route::middleware([LoginWithVerificationToken::class])->group(function () {

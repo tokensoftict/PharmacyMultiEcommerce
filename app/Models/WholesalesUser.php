@@ -33,7 +33,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property array|null $wishlist
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
+ * @property Carbon|null $last_activity_date
  * @property CustomerGroup|null $customer_group
  * @property CustomerType|null $customer_type
  * @property User|null $user
@@ -60,6 +60,7 @@ class WholesalesUser extends Model implements HasMedia
         'ordertotals' => 'json',
         'coupon_data' => 'json',
         'remove_order_total' => 'json',
+        'last_activity_date' => 'datetime',
 	];
 
 	protected $fillable = [
@@ -82,7 +83,8 @@ class WholesalesUser extends Model implements HasMedia
         'ordertotals',
         'coupon_data',
         'remove_order_total',
-        'sales_representative_id'
+        'sales_representative_id',
+        'last_activity_date'
 	];
 
     protected $with = ['customer_group', 'customer_type'];
@@ -95,6 +97,11 @@ class WholesalesUser extends Model implements HasMedia
     public function order()
     {
         return $this->morphMany(Order::class, 'customer');
+    }
+
+    public function voucher()
+    {
+        return $this->morphMany(VoucherCode::class, 'customer');
     }
 
 	public function customer_type()
@@ -116,4 +123,5 @@ class WholesalesUser extends Model implements HasMedia
     {
         return $this->belongsTo(Address::class, 'address_id');
     }
+
 }

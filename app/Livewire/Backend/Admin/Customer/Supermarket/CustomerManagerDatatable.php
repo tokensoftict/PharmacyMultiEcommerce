@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Customer\Supermarket;
 
+use App\Classes\ApplicationEnvironment;
 use App\Livewire\Backend\Component\WholeSales\WholeSalesCustomerFormComponent;
 use App\Models\Address;
 use App\Models\AppUser;
@@ -54,7 +55,7 @@ class CustomerManagerDatatable extends DataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route('admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' =>false
             ],

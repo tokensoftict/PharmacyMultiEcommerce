@@ -37,18 +37,20 @@ class UserLoginResource extends JsonResource
         $frontEndApps = AppUser::where("user_id", $this->id)
             ->whereHas("app", function ($query){
                 $query->where("type", "Frontend");
-            })->get();
+            })->orderBy('app_id', 'desc')->get();
 
         foreach ($frontEndApps as $app)
         {
             $apps[] = [
                 "app_id" => $app->id,
                 "domain" => $app->domain,
+                "description" => $app->app->description,
                 "info" => $app->user_type,
                 "logo" => $app->app->logo,
                 "name" => strtolower($app->app->name),
                 "link" => $app->app->link,
-                "addresses" => $app->addresses
+                "addresses" => $app->addresses,
+                "last_seen" => $app->last_activity_date ? $app->last_activity_date->format("F jS, Y g:i A") :  now()->format("F jS, Y g:i A"),
             ];
         }
 

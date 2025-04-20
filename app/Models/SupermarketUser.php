@@ -27,7 +27,7 @@ use Illuminate\Notifications\Notifiable;
  * @property array|null $wishlist
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
+ * @property Carbon|null $last_activity_date
  * @property CustomerGroup|null $customer_group
  * @property CustomerType|null $customer_type
  * @property User|null $user
@@ -55,6 +55,7 @@ class SupermarketUser extends Model
         'ordertotals' => 'json',
         'coupon_data' => 'json',
         'remove_order_total' => 'json',
+        'last_activity_date' => 'datetime',
 	];
 
 	protected $fillable = [
@@ -73,7 +74,8 @@ class SupermarketUser extends Model
         'checkout',
         'ordertotals',
         'coupon_data',
-        'remove_order_total'
+        'remove_order_total',
+        'last_activity_date'
 	];
 
     protected $with = ['customer_group', 'customer_type'];
@@ -101,5 +103,10 @@ class SupermarketUser extends Model
     public function app_user()
     {
         return $this->morphOne(AppUser::class,'user_type');
+    }
+
+    public function voucher()
+    {
+        return $this->morphMany(VoucherCode::class, 'customer');
     }
 }

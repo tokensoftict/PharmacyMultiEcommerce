@@ -4,8 +4,11 @@ namespace App\Classes;
 
 use App\Models\App;
 use App\Models\AppUser;
+use App\Models\SalesRepresentative;
+use App\Models\SupermarketAdmin;
 use App\Models\SupermarketsStockPrice;
 use App\Models\SupermarketUser;
+use App\Models\WholesalesAdmin;
 use App\Models\WholesalesUser;
 use App\Models\WholessalesStockPrice;
 use Illuminate\Database\Eloquent\Model;
@@ -18,10 +21,11 @@ class ApplicationEnvironment
 
     public static App $application;
 
-    public static string|null $name,$description, $logo, $domain, $link, $type, $id, $model_id;
+    public static string|null $name,$description, $logo, $domain, $link, $type, $id, $model_id = null;
     public static string $appModel, $appRelated;
     public static string $stock_model, $stock_model_string;
     public static string $frontEndAppName;
+    public static string $storePrefix;
 
     public static function createApplicationEnvironment(App $application) : void
     {
@@ -33,7 +37,10 @@ class ApplicationEnvironment
         self::$type = $application->type;
         self::$id = $application->id;
         self::$model_id = $application->model_id;
-        self::$stock_model = match ($application->model_id){
+        $subdomain = Str::before(request()->getHost(), '.');
+        $subdomain.=".admin.";
+        self::$storePrefix = $subdomain;
+        self::$stock_model = match ($application->model_id) {
             6 => SupermarketsStockPrice::class,
             default=>WholessalesStockPrice::class,
         };
@@ -42,7 +49,12 @@ class ApplicationEnvironment
             default=>"wholessales_stock_prices",
         };
         self::$frontEndAppName = App::where('model_id', $application->model_id)->where('type', 'Frontend')->first()->name;
-        $appUser = AppUser::where("app_id", $application->id)->first();
+        if(request()->user()){
+            $appUser = AppUser::where("app_id", $application->id)->where('user_id', request()->user()->id)->first();
+        } else {
+            $appUser = AppUser::where("app_id", $application->id)->first();
+        }
+
 
         if($appUser){
             self::$appModel = $appUser->user_type_type;
@@ -58,18 +70,26 @@ class ApplicationEnvironment
             );
         }
 
+        if(isset(self::$appRelated)) {
+            $appUser = self::getApplicationRelatedModel();
+            if ($appUser and !str_contains(self::$domain, "auth") and request()->user()) {
+                $appUser->updateLastActivity();
+            }
+        }
+
+
     }
 
 
     /**
-     * @return WholesalesUser|SupermarketUser|bool
+     * @return WholesalesUser|SupermarketUser|WholesalesAdmin|SupermarketAdmin|SalesRepresentative|bool
      */
-    public static function getApplicationRelatedModel() : WholesalesUser | SupermarketUser | bool
+    public static function getApplicationRelatedModel() : WholesalesUser | SupermarketUser | WholesalesAdmin | SupermarketAdmin | SalesRepresentative| bool
     {
         $user = request()->user();
         $applicationModel = self::$appRelated;
         if($applicationModel == "user") $applicationModel = "supermarket_user";
-        return $user?->$applicationModel()?->first();
+        return $user?->$applicationModel()?->first() ?? false;
     }
 
     /**

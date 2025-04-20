@@ -118,10 +118,17 @@ class Order extends Model
 		'cart_cache'
 	];
 
+    protected $appends = ['user'];
+
 	public function app()
 	{
 		return $this->belongsTo(App::class);
 	}
+
+    public function getUserAttribute()
+    {
+        return $this->customer?->user ?? ["cus_exist" => "", "phone" => ""];
+    }
 
     public function customer()
     {

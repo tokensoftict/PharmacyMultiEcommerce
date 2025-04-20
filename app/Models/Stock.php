@@ -32,6 +32,7 @@ use Laravel\Scout\Searchable;
  * @property int $box
  * @property int $carton
  * @property bool $sachet
+ * @property bool $admin_status
  * @property string|null $image
  * @property bool $is_wholesales
  * @property int $max
@@ -74,6 +75,7 @@ class Stock extends Model
 		'box' => 'int',
 		'carton' => 'int',
 		'sachet' => 'bool',
+        'admin_status' => 'bool',
 		'is_wholesales' => 'bool',
 		'max' => 'int',
 		'user_id' => 'int'
@@ -98,6 +100,7 @@ class Stock extends Model
 		'sachet',
 		'image',
 		'is_wholesales',
+        'admin_status',
 		'max',
 		'user_id'
 	];

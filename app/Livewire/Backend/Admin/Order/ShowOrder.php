@@ -19,7 +19,7 @@ class ShowOrder extends Component
 
     public function rePackOrder()
     {
-        $this->order->status_id = status('Pending');
+        $this->order->status_id = status('Submitted');
         $this->order->save();
         $this->alert(
             "success",

@@ -8,7 +8,7 @@
 
 
 @if(isset($this->actionPermission['create_link']) && userCanView($this->actionPermission['create_link']['route']))
-    <a  href="{{ route($this->actionPermission['create_link']['route']) }}" wire:navigate type="button" class="btn btn-outline-success">
+    <a  href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.$this->actionPermission['create_link']['route']) }}" wire:navigate type="button" class="btn btn-outline-success">
         <i class="fa fa-plus"></i>
         {{ $this->actionPermission['create_link']['label'] }}
     </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

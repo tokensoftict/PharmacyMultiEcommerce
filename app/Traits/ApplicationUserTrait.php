@@ -238,4 +238,11 @@ trait ApplicationUserTrait
         return $this->device_key;
     }
 
+
+    public function updateLastActivity() : void
+    {
+        $this->last_activity_date = now();
+        $this->save();
+    }
+
 }

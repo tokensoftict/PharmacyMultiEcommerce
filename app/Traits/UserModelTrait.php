@@ -2,8 +2,10 @@
 namespace App\Traits;
 
 use App\Models\SalesRepresentative;
+use App\Models\SupermarketAdmin;
 use App\Models\SupermarketUser;
 use App\Models\User;
+use App\Models\WholesalesAdmin;
 use App\Models\WholesalesUser;
 use App\Notifications\NewAccountRegistration;
 use App\Services\Api\MedReminder\MedReminderService;
@@ -46,7 +48,7 @@ trait UserModelTrait
 
     public function sales_representative()
     {
-        return $this->hasOne(SalesRepresentative::class, 'sales_representative_id');
+        return $this->hasOne(SalesRepresentative::class);
     }
 
 
@@ -55,11 +57,20 @@ trait UserModelTrait
         return $this->hasOne(SupermarketUser::class);
     }
 
+    public function wholesales_admin()
+    {
+        return $this->hasOne(WholesalesAdmin::class);
+    }
+
+    public function supermarket_admin()
+    {
+        return $this->hasOne(SupermarketAdmin::class);
+    }
 
     public function updateLastSeen()
     {
         $this->last_seen = now();
-        $this->update();
+        $this->save();
     }
 
 

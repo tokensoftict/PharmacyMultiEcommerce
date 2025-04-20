@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('stock_id')->constrained()->cascadeOnDelete();
             $table->bigInteger('local_id');
             $table->string('name');
+            $table->string("error")->nullable();
             $table->string('model', 64);
             $table->integer('quantity');
             $table->decimal('price', 15, 5);

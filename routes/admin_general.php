@@ -4,8 +4,8 @@ use App\Http\Middleware\PermitTask;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Volt::route('/', 'pages.index')->name('admin.dashboard');
-Route::middleware(['web', 'auth', 'verified', PermitTask::class])->group(function(){
+Route::middleware([PermitTask::class])->group(function(){
+    Volt::route('/', 'backend.admin.index')->name('admin.dashboard');
     Route::prefix('settings')->group(function(){
         Route::get('/system_settings', ['uses' => 'App\Livewire\Backend\Admin\Settings\SystemSettingsComponent'])->name('backend.admin.settings.system_settings');
         Route::get('/manufacturer', ['uses' => 'App\Livewire\Backend\Admin\Settings\ManufacturerComponentDataTable'])->name('backend.admin.settings.manufacturer');
@@ -31,8 +31,6 @@ Route::middleware(['web', 'auth', 'verified', PermitTask::class])->group(functio
     Route::prefix('stock_manager')->group(function(){
         Route::get('/list_stock', ['uses' => 'App\Livewire\Backend\Admin\Stock\StockManagerDataTableComponent'])->name('backend.admin.stock_manager.list_stock');
         Route::get('/{stock_id}/view', ['uses' => 'App\Livewire\Backend\Admin\Stock\ShowStock'])->name('backend.admin.stock_manager.view');
-        Route::get('/stock_restriction', ['uses' => 'App\Livewire\Backend\Admin\Stock\StockRestrictionDataTable'])->name('backend.admin.stock_manager.stock_restriction');
-        Route::get('/stock_size', ['uses' => 'App\Livewire\Backend\Admin\Stock\StockSizeDatatable'])->name('backend.admin.stock_manager.stock_size');
     });
 
     Route::prefix('customer_manager')->group(function(){
@@ -56,6 +54,7 @@ Route::middleware(['web', 'auth', 'verified', PermitTask::class])->group(functio
 
     Route::prefix('voucher')->group(function(){
         Route::get('/list', ['uses' => 'App\Livewire\Backend\Admin\Voucher\VoucherDatatable'])->name('backend.admin.voucher.list');
+        Route::get('{id}/list', ['uses' => 'App\Livewire\Backend\Admin\Voucher\VoucherCodesAndReport'])->name('backend.admin.voucher.view_report');
     });
 
     Route::prefix('order')->group(function(){
@@ -68,6 +67,10 @@ Route::middleware(['web', 'auth', 'verified', PermitTask::class])->group(functio
 
     Route::prefix('promotion')->group(function(){
         Route::get('/promotion', ['uses' => 'App\Livewire\Backend\Admin\Promotion\PromotionTableComponent'])->name('backend.admin.promotion.list');
+    });
+
+    Route::prefix('administrator')->group(function(){
+        Route::get('/users', ['uses' => 'App\Livewire\Backend\Admin\Administrator\AdministratorManagerDataTable'])->name('backend.admin.user.list');
     });
 
 });

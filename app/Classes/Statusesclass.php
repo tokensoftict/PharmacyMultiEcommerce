@@ -81,11 +81,19 @@ class Statusesclass
             'label'=>'warning'
         ],
         [
+            'name'=>'Submitted',
+            'label'=>'warning'
+        ],
+        [
             'name'=>'Payment Confirmed',
             'label'=>'primary'
         ],
         [
             'name'=>'Validation Error',
+            'label'=>'danger'
+        ],
+        [
+            'name'=>'Processing Error',
             'label'=>'danger'
         ],
     ];

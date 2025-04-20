@@ -57,6 +57,7 @@ class NewAccountRegistration extends Notification
     {
         $verificationUrl = $this->verificationUrl($notifiable);
 
+
         if (static::$toMailCallback) {
             return call_user_func(static::$toMailCallback, $notifiable, $verificationUrl);
         }
@@ -99,6 +100,7 @@ class NewAccountRegistration extends Notification
             [
                 'id' => $notifiable->getKey(),
                 'hash' => sha1($notifiable->getEmailForVerification()),
+                'auth_token' => encrypt(json_encode(["email" => $notifiable->email])),
             ]
         );
     }

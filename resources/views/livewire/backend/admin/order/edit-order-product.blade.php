@@ -3,8 +3,8 @@
 @endsection
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.order.list') }}">Order List</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.list') }}">Order List</a></li>
     <li class="breadcrumb-item active">Edit Order #{{ $this->order->order_id }}</li>
 @endpush
 @script
@@ -13,7 +13,7 @@
 
     function refreshPage() {
         setTimeout(function(){
-            window.location.href = '{{ route('backend.admin.order.view', $this->order->id) }}'
+            window.location.href = '{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $this->order->id) }}'
         }, 1000 )
     }
 
@@ -39,18 +39,24 @@
                                         <th class="sort align-middle text-end ps-4">Rate</th>
                                         <th class="sort align-middle text-center ps-4">Quantity</th>
                                         <th class="sort align-middle text-end ps-4">Total</th>
+                                        <th class="sort align-middle text-end ps-4">Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($this->order->order_products as $key=> $product)
+                                    @foreach($this->products as $key=> $product)
                                         <tr>
                                             <td class="sort white-space-nowrap align-middle fs-10">{{ $loop->iteration }}</td>
-                                            <td class="sort white-space-nowrap align-middle">{{ $product->name }}</td>
-                                            <td class="sort align-middle text-end ps-4">{{ money($product->price) }}</td>
+                                            <td class="sort white-space-nowrap align-middle">{{ $product['name'] }}</td>
+                                            <td class="sort align-middle text-end ps-4">{{ money($product['price']) }}</td>
                                             <td class="sort align-middle text-end ps-4 col-2">
                                                 <input type="number" wire:model="products.{{ $key }}.quantity"  class="form-control text-center form-control-sm">
                                             </td>
-                                            <td class="sort align-middle text-end ps-4">{{ money($product->total) }}</td>
+                                            <td class="sort align-middle text-end ps-4">{{ money($product['total']) }}</td>
+                                            <td><a href="#" wire:click="deleteItem('{{ $product['id'] }}')" class="btn btn-danger">
+                                                    <span wire:loading.remove="deleteItem('{{ $product['id'] }}')" class="fas fa-trash me-2"></span>
+                                                    <span wire:loading wire:target="deleteItem('{{ $product['id'] }}')" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                </a>
+                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
