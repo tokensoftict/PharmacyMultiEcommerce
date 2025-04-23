@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
                 'phone' => '08011111111'
             ]);
 
-            $user = User::where('email', 'admin@store.com')->first();
+            $user = User::where('email', 'info@generaldrugcentre.com')->first();
 
             if($user){
                 $user->assignRole(config('app.SUPER_ADMINISTRATOR'));
