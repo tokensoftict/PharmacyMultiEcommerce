@@ -52,6 +52,8 @@ use Laravel\Scout\Searchable;
  * @property Collection|StockSize[] $stock_sizes
  * @property Collection|SupermarketsStockPrice[] $supermarkets_stock_prices
  * @property Collection|WholessalesStockPrice[] $wholessales_stock_prices
+ * @property Collection|StockMedia[] $stock_medias
+ * @property StockMedia $stock_media
  *
  * @package App\Models
  */
@@ -105,21 +107,25 @@ class Stock extends Model
 		'user_id'
 	];
 
-    protected $with = ['stock_sizes', 'classification', 'productgroup', 'manufacturer', 'promotion_items'];
+    protected $with = ['stock_sizes', 'classification', 'productgroup', 'manufacturer', 'promotion_items', 'stock_media.media'];
 
 
     public function toSearchableArray()
     {
         $array = $this->toArray();
 
+        $array['image'] = $this->stock_media ? $this->stock_media->media->getFullUrl() : asset("logo/no-image.png");
+
         if($this->wholessales_stock_prices) {
             $array['wholesales'] = $this->wholessales_stock_prices->toArray();
+            $array['wholesales']['price'] = money($array['wholesales']['price']);
         } else {
             $array['wholesales'] = false;
         }
 
         if($this->supermarkets_stock_prices) {
             $array['retail'] = $this->supermarkets_stock_prices->toArray();
+            $array['retail']['price'] = money( $array['retail']['price']);
         } else {
             $array['retail'] = false;
         }
@@ -187,4 +193,14 @@ class Stock extends Model
 	{
 		return $this->hasOne(WholessalesStockPrice::class);
 	}
+
+    public function stock_medias()
+    {
+        return $this->hasMany(StockMedia::class);
+    }
+
+    public function stock_media()
+    {
+        return $this->hasOne(StockMedia::class);
+    }
 }

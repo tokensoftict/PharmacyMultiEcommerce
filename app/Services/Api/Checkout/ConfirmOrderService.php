@@ -2,6 +2,7 @@
 
 namespace App\Services\Api\Checkout;
 
+use App\Models\PaymentMethod;
 use App\Models\SupermarketUser;
 use App\Models\WholesalesUser;
 
@@ -90,6 +91,15 @@ class ConfirmOrderService
             unset($coupon['id']); // remove the id because i dont want the mobile app to make this a check box
             $coupon['hasCoupon'] = true;
             $this->paymentAnalysisList[] = $coupon;
+        }
+
+
+        //calculate the PayStack charges
+        if($this->checkoutUser->getCheckoutPaymentMethod()) {
+            $paymentCharges = $this->checkoutUser->calculatePayStackCharges($this->totalToPay);
+            if($paymentCharges['status']) {
+                $this->appendPaymentAnalysis( $paymentCharges);
+            }
         }
 
         return [

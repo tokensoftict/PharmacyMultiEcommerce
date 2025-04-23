@@ -803,17 +803,31 @@ function carbonize($date) : Carbon {
     return (new Carbon($date));
 }
 
+function futureCarbon(int $number) : Carbon {
+    return Carbon::now()->addMinute($number);
+}
 
 function sendNotificationToDevice(PushNotification $notification) : void
 {
     foreach ($notification->push_notification_customers()->where('status_id', status('Pending'))->get() as $customer) {
-        //$customer->status_id = status('Dispatched');
-        //$customer->save();
-        $customer->customer->notify(new DevicePushNotification($notification));
-
-        // $customer->status_id = status('Complete');
+        $customer->status_id = status('Dispatched');
         $customer->save();
+        $customer->customer->notify(new DevicePushNotification($notification, $customer));
     }
+}
+
+function stock_image_folder()
+{
+    $stockImageFolder = Folder::where("slug", "stocks")->first();
+    if(!$stockImageFolder){
+        $stockImageFolder = new Folder();
+        $stockImageFolder->parent_id = 1;
+        $stockImageFolder->slug = "stocks";
+        $stockImageFolder->name = "stocks";
+        $stockImageFolder->save();
+    }
+
+    return $stockImageFolder;
 }
 
 function business_certificate()

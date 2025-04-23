@@ -6,6 +6,7 @@ use App\Http\Resources\Api\Stock\StockInCartResource;
 use App\Http\Resources\Api\Stock\StockInWishlistResource;
 use App\Models\DeliveryMethod;
 use App\Models\OrderTotal;
+use App\Models\PaymentMethod;
 use App\Models\Stock;
 use App\Repositories\DsdRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -173,6 +174,39 @@ trait ApplicationUserCheckoutTrait
             'total' => $totalOfOrderTotal,
             'total_formatted' => money($totalOfOrderTotal)
         ];
+    }
+
+
+    /**
+     * @param float|int $total
+     * @return array|false[]
+     */
+    public final function calculatePayStackCharges(float|int $total) : array
+    {
+        $paymentMethod = PaymentMethod::find($this->getCheckoutPaymentMethod());
+        $paystackCharges =[];
+        if($paymentMethod and $paymentMethod->code === "Paystack") {
+            $paymentMethodRepository = "App\\Repositories\\".ucwords(strtolower($paymentMethod->code))."Repository";
+            $paymentMethodRepository = new $paymentMethodRepository();
+            $charges = $paymentMethodRepository->calculateCharges($total);
+
+            $paystackCharges[] = [
+                "name" =>  $charges['name'],
+                "amount" => $charges['amount'],
+                "amount_formatted" => money($charges['amount']),
+                "disabled" => false,
+                "autoCheck" => true
+            ];
+
+            return [
+                'status' => true,
+                'items' => $paystackCharges,
+                'total' => $charges['amount'],
+                'total_formatted' => money($charges['amount'])
+            ];
+
+        }
+        return ['status' =>false];
     }
 
 

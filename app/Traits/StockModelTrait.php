@@ -27,9 +27,9 @@ trait StockModelTrait
 
     public final function getProductImageAttribute() : string
     {
-        if(!is_null($this->image)) return asset($this->image);
+       if($this->stock_media) return $this->stock_media->media->getFullUrl();
 
-        return asset("logo/placholder.jpg");
+        return asset("logo/no-image.png");
     }
 
 

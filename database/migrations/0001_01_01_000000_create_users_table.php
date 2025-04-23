@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('theme', ['light', 'dark', 'auto']);
             $table->enum('navigation_type', ['vertical', 'horizontal']);
             $table->timestamp('last_seen')->nullable();
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

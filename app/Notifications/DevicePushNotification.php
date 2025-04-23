@@ -4,22 +4,25 @@ namespace App\Notifications;
 
 use App\Models\PushNotification;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
-class DevicePushNotification extends Notification
+class DevicePushNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public PushNotification $pushNotification;
+    public $customerPushNotification = null;
     /**
      * Create a new notification instance.
      */
-    public function __construct(PushNotification $pushNotification)
+    public function __construct(PushNotification $pushNotification, $customerPushNotification)
     {
         $this->pushNotification = $pushNotification;
+        $this->customerPushNotification = $customerPushNotification;
     }
 
     public function via($notifiable)
@@ -88,6 +91,11 @@ class DevicePushNotification extends Notification
 
         $fcm->token($notifiable->device_key);
 
+
+        if($this->customerPushNotification and $this->customerPushNotification->customer) {
+            $this->customerPushNotification->status_id = status('Complete');
+            $this->customerPushNotification->save();
+        }
 
         return $fcm;
     }

@@ -10,9 +10,11 @@ use App\Models\WholesalesUser;
 class CreateOrderTotalService
 {
     private SupermarketUser|WholesalesUser  $checkOutUser;
+    private float|int $total;
     public function __construct()
     {
         $this->checkOutUser = getApplicationModel();
+        $this->total =0;
     }
 
 
@@ -22,6 +24,7 @@ class CreateOrderTotalService
      */
     public final function formatOrderTotal(array $attributes) : array
     {
+        $this->total += $attributes['amount'];
         return [
             'order_total_id' => $attributes['id'] ?? NULL,
             'name' => $attributes['name'],
@@ -76,6 +79,20 @@ class CreateOrderTotalService
                 );
             }
         }
+
+
+        $paymentGateWayCharges = $this->checkOutUser->calculatePayStackCharges($this->total);
+        if($paymentGateWayCharges['status'] === true) {
+            $items = $paymentGateWayCharges['items'] ?? [];
+            foreach ($items as $orderTotal) {
+                if($orderTotal['autoCheck']) {
+                    $orderTotalOrder[] = new OrderTotalOrder(
+                        $this->formatOrderTotal($orderTotal),
+                    );
+                }
+            }
+        }
+
 
         return $orderTotalOrder;
     }

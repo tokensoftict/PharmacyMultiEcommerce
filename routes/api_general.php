@@ -26,7 +26,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
         Route::get("/promo", ["as" => "stock.promo", "uses" => "PromoStockController"]);
         Route::get("/offer", ["as" => "stock.offer", "uses" => "SpecialOfferStockController"]);
         Route::get("/new-arrivals", ["as" => "stock.new-arrivals", "uses" => "NewArrivalsStockController"]);
-        Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.by_manufacturer", "uses" => "StockByManufacturerController"]);
+        Route::get("/{classification}/by_classification", ["as" => "stock.by_classification", "uses" => "StockByProductClassificationController"]);
         Route::get("/{productcategory}/by_productcategory", ["as" => "stock.by_productcategory", "uses" => "StockByProductCategoriesController"]);
         Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.manufacturer", "uses" => "StockByProductManufacturerController"]);
 
@@ -35,6 +35,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::prefix("general")->namespace("General")->group(function(){
         Route::get("/{deliveryMethod}/delivery_method", ["as" => "delivery_method.setDefault", "uses" => "SetDeliveryMethodAsDefaultDeliveryMethodController"]);
         Route::get("/{paymentMethod}/payment_method", ["as" => "payment_method.setDefault", "uses" => "SetPaymentMethodAsDefaultPaymentMethodController"]);
+        Route::get("notifications", ["as" => "notifications", "uses" => "UsersNotificationController"]);
     });
 
     Route::prefix("address")->namespace("Address")->group(function(){
@@ -76,6 +77,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
         Route::get("remove_coupon", ["as" => "checkout.remove_coupon", "uses" => "RemoveCouponCodeController"]);
 
         Route::post("remove_order_total", ["as" => "checkout.remove_order_total", "uses" => "RemoveOrderTotalController"]);
+
+        Route::get("create_transaction_log", ["as" => "checkout.create_transaction_log", "uses" => "PaymentGatewayTransactionLogsController"]);
 
         Route::get("confirm_order", ["as" => "checkout.confirm_order", "uses" => "ConfirmOrderController"]);
         Route::get("confirm_payment", ["as" => "checkout.confirm_payment", "uses" => "ConfirmPaymentController"]);

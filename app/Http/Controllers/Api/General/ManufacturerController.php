@@ -17,10 +17,10 @@ class ManufacturerController extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
-        return $this->sendPaginatedSuccessResponse(
+        return $this->sendSuccessResponse(
             GeneralResource::collection(
-                Manufacturer::query()->select("id", "name")->where("status", 1)->orderBy("name", "ASC")->paginate(config("app.PAGINATE_NUMBER"))
-            )->response()->getData(true)
+                Manufacturer::query()->select("id", "name")->where("status", 1)->orderBy("name", "ASC")->get()
+            )
         );
     }
 }

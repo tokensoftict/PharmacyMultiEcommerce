@@ -45,7 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->domain(config('app.DATA_PUSH_DOMAIN'))
                 ->group(base_path("routes/push.api.php"));
 
-            Route::middleware(['api',DetectApplicationEnvironment::class, ForceJsonResponse::class])
+            Route::middleware([DetectApplicationEnvironment::class, 'api', ForceJsonResponse::class])
                 ->prefix('api/v1')
                 ->domain(config('app.SUPERMARKET_DOMAIN'))
                 ->namespace('App\Http\Controllers\Api')
@@ -53,7 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path("routes/api_general.php"))
                 ->group(base_path("routes/supermarket.api.php"));
 
-            Route::middleware(['api', DetectWholesalesSalesRepresentativesImpersonation::class, DetectApplicationEnvironment::class,ForceJsonResponse::class])
+            Route::middleware(['auth:sanctum', DetectWholesalesSalesRepresentativesImpersonation::class, DetectApplicationEnvironment::class,'api',ForceJsonResponse::class])
                 ->prefix('api/v1')
                 ->domain(config('app.WHOLESALES_DOMAIN'))
                 ->name("wholesales.")

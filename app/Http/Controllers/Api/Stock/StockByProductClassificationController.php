@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Api\Stock;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\Api\Stock\StockListResource;
+use App\Models\Classification;
 use App\Models\Manufacturer;
 use App\Services\Stock\StockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 
-class StockByManufacturerController extends ApiController
+class StockByProductClassificationController extends ApiController
 {
     public StockService $service;
 
@@ -21,14 +22,15 @@ class StockByManufacturerController extends ApiController
     }
 
     /**
+     * @param Classification $classification
      * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke(Manufacturer $manufacturer, Request $request) : JsonResponse
+    public function __invoke(Classification $classification, Request $request) : JsonResponse
     {
         return $this->sendPaginatedSuccessResponse(
             StockListResource::collection(
-                $this->service->getByManufacturer($manufacturer)
+                $this->service->getByClassifications($classification)
             )->response()->getData(true)
         );
     }

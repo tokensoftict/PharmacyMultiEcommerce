@@ -6,82 +6,77 @@ use App\Classes\HomePageApiParser;
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\Api\General\GeneralResource;
 use App\Models\Manufacturer;
+use App\Models\NewStockArrival;
 use Illuminate\Support\Arr;
 
 class WholesalesHomeController extends ApiController
 {
     public function __invoke()
     {
-        $data = [
-            "topBrands" => [5, 7, 20, 4, 6, 8, 3, 7, 5],
-
-            "banners" => [
-                [
-                    "ref" => "productcategories",
-                    "id" => 10,
-                    "link" =>
-                        "https://store.mophethpharmacy.com/wp-content/uploads/2022/10/Cough-Cold-and-flu.png",
-                    "label" => "Cough Code & Flu",
-                ],
-                [
-                    "ref" => "productcategories",
-                    "id" => 10,
-                    "link" =>
-                        "https://store.mophethpharmacy.com/wp-content/uploads/2022/10/First-Aid.png",
-                    "label" => "First Aid",
-                ],
-                [
-                    "ref" => "productcategories",
-                    "id" => 10,
-                    "link" =>
-                        "https://store.mophethpharmacy.com/wp-content/uploads/2022/10/Medicinal-Teas.png",
-                    "label" => "Medicinal Teas",
-                ],
-                [
-                    "ref" => "productcategories",
-                    "id" => 10,
-                    "link" =>
-                        "https://store.mophethpharmacy.com/wp-content/uploads/2022/10/Multi-vitamins.png",
-                    "label" => "Multi Vitamins",
-                ],
-                [
-                    "ref" => "productcategories",
-                    "id" => 10,
-                    "link" =>
-                        "https://store.mophethpharmacy.com/wp-content/uploads/2022/10/Supplement.png",
-                    "label" => "Supplement",
-                ],
-                [
-                    "ref" => "productcategories",
-                    "id" => 10,
-                    "link" =>
-                        "https://healthplusnigeria.com/cdn/shop/collections/pain-management-healthplus.jpg",
-                    "label" => "Pain Management",
-                ],
+        $data = [];
+        $components = [
+            [
+                "component" => "topBrands",
+                "type"       => "topBrands",
             ],
-
-            "productLists" => [
-                [
-                    "type" => "productcategories",
-                    "id" => 5,
-                    "limit" => 15,
-                    "label" => "Official Peace Store",
-                ],
-                [
-                    "type" => "classifications",
-                    "id" => 7,
-                    "limit" => 15,
-                    "label" => "Pain Reliefs",
-                ],
+            [
+                "component" => "ImageSlider",
+                "type"       => "ImageSlider",
+            ],
+            [
+                "component" => "Horizontal_List",
+                "type" => "manufacturers",
+                "id" => 114,
+                "limit" => 15,
+                "label" => "Peace Pharmaceutical Store",
+                "seeAll" => "stock/114/by_manufacturer"
+            ],
+            [
+                "component" => "Horizontal_List",
+                "type" => "classifications",
+                "id" => 12,
+                "limit" => 15,
+                "label" => "Antimalarial",
+                "seeAll" => "stock/12/by_classification"
+            ],
+            [
+                "component" => "FlashDeals",
+                "type"       => "lowestClassifications",
+                "label"     => "Lowest Price - Items Must Go",
+            ],
+            [
+                "component" => "Some",
+                "type"       => "Text",
+            ],
+            [
+                "component" => "Horizontal_List",
+                "type" => "manufacturers",
+                "id" => 161,
+                "limit" => 15,
+                "label" => "Tuyil Pharmaceutical Store",
+                "seeAll" => "stock/114/by_manufacturer"
             ],
         ];
 
-        $manufacturers = Manufacturer::whereIn("id", $data['topBrands'])->get();
-        $manufacturers = GeneralResource::collection($manufacturers);
-        Arr::set($data, "topBrands", $manufacturers);
-        foreach ($data['productLists'] as $key=>$product){
-            $data['productLists'][$key]['products'] = HomePageApiParser::parseProductType($product);
+
+        foreach ($components as $component){
+            $data[] = array_merge($component, [ "data" => HomePageApiParser::parseProductType($component)]);
         }
+
+        //check for new Arrival
+        $checkNewArrivals = [
+            "component" => "Horizontal_List",
+            "type" => "new_arrivals",
+            "id" => "new-arrivals",
+            "limit" => 15,
+            "label" => "New Arrivals 🛍️",
+            "seeAll" => "stock/new-arrivals"
+        ];
+        $NewArrivalData = HomePageApiParser::parseProductType($checkNewArrivals);
+        if($NewArrivalData->count() > 0) {
+            $data[] = array_merge($checkNewArrivals, [ "data" => $NewArrivalData]);
+        }
+
         return $this->sendSuccessResponse($data);
     }
 }

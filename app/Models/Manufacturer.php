@@ -8,6 +8,8 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Manufacturer
@@ -23,8 +25,10 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Manufacturer extends Model
+class Manufacturer extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
 	protected $table = 'manufacturers';
 
 	protected $casts = [
@@ -44,4 +48,12 @@ class Manufacturer extends Model
     {
         return $this->hasMany(Stock::class);
     }
+
+
+    public function getImageAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl() ?: ($this->getRawOriginal('image') ?? asset('logo/no-image.png'));
+    }
+
+
 }

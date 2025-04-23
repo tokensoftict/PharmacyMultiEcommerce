@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SignUpRequest extends FormRequest
 {
@@ -24,9 +25,16 @@ class SignUpRequest extends FormRequest
         return [
             'firstname' => 'required',
             'lastname' => 'required',
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->whereNull('deleted_at'),
+            ],
             'password' => 'required|string|min:6',
-            'phone' => 'unique:users,phone',
+            'phone' => [
+                'nullable',
+                Rule::unique('users', 'phone')->whereNull('deleted_at'),
+            ],
         ];
     }
 }

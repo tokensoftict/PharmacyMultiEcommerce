@@ -3,6 +3,7 @@
 namespace App\Services\Stock;
 
 use App\Classes\ApplicationEnvironment;
+use App\Models\Classification;
 use App\Models\Manufacturer;
 use App\Models\NewStockArrival;
 use App\Models\OrderProduct;
@@ -51,6 +52,19 @@ class StockService
             $productcategory = Productcategory::findOrFail($productcategory);
         }
         return  Stock::where("productcategory_id", $productcategory->id)
+            ->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
+    /**
+     * @param Classification|int $classification
+     * @return LengthAwarePaginator
+     */
+    public final function getByClassifications(Classification|int $classification) : LengthAwarePaginator
+    {
+        if(! $classification instanceof Classification){
+            $classification = Classification::findOrFail($classification);
+        }
+        return  Stock::where("classification_id", $classification->id)
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 

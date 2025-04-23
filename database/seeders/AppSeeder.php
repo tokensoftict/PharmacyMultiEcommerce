@@ -66,7 +66,7 @@ class AppSeeder extends Seeder
             ],
             [
                 'name' => 'SuperMarket',
-                'description' => 'Shop groceries, household essentials, and more.',
+                'description' => 'Shop for groceries, household essentials, medicines, personal care items, and much more—all in one convenient place.',
                 'logo' => NULL,
                 'model_id' => 6,
                 'domain' => config('app.SUPERMARKET_DOMAIN'),

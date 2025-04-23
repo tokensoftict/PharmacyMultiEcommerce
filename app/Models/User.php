@@ -8,6 +8,7 @@ use App\Classes\Password\CanResetPasswordByTokenInterface;
 use App\Traits\MustVerifyPhone;
 use App\Traits\UserModelTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -54,7 +55,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class User extends Authenticatable implements CanResetPasswordByTokenInterface
 {
-    use HasFactory, Notifiable, HasRoles, HasApiTokens, UserModelTrait, CanResetPasswordByMobile, MustVerifyPhone;
+    use HasFactory, Notifiable, HasRoles, HasApiTokens, UserModelTrait, CanResetPasswordByMobile, MustVerifyPhone, SoftDeletes;
 
     protected $table = 'users';
 

@@ -32,7 +32,7 @@ class PaymentMethodListController extends ApiController
 
         $availablePaymentMethodCode = getAvailablePaymentOption($code);
 
-        $paymentMethods = PaymentMethod::whereIn('code', $availablePaymentMethodCode)->where("app_id", ApplicationEnvironment::$id)->get();
+        $paymentMethods = PaymentMethod::whereIn('code', $availablePaymentMethodCode)->where("app_id", ApplicationEnvironment::$id)->where("status", 1)->get();
         return $this->showAll($paymentMethods);
     }
 

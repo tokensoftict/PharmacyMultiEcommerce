@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\Auth\SignUpRequest;
 use App\Http\Resources\Api\Auth\UserLoginResource;
 use App\Models\SupermarketUser;
+use App\Models\User;
 use App\Services\User\AppUserService;
 use App\Services\User\Supermarket\SupermarketCustomerService;
 use App\Services\User\UserAccountService;
@@ -30,9 +31,21 @@ class SignupController extends ApiController
     /**
      * @param SignUpRequest $request
      * @return JsonResponse
+     * @throws \Throwable
      */
     public function __invoke(SignUpRequest $request) : JsonResponse
     {
+        $user = User::withTrashed()->where(function ($query) use($request) {
+            $query->orWhere("email", $request->email)->orWhere("phone", $request->phone);
+        })->first();
+
+        if($user and $user->trashed()){
+            return $this->sendSuccessResponse([
+                'trashed' => $user->trashed(),
+                'user' => new UserLoginResource($user),
+            ]);
+        }
+
         return DB::transaction(function() use ($request){
             $user = $this->userAccountService->createUserAccount($request->only([
                 "email",

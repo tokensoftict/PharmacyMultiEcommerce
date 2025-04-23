@@ -2,7 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Models\PaymentGatewayTransactionLog;
 use App\Models\PaymentMethod;
+use App\Services\Api\Checkout\TransactionLogService;
 
 defined('PAYSTACK_VERIFY_URL') OR define("PAYSTACK_VERIFY_URL","https://api.paystack.co/transaction/verify/");
 
@@ -46,6 +48,10 @@ class PaystackRepository
             if ($result) {
                 if ($result['data']) {
                     if ($result['data']['status'] == 'success') {
+                        $log = PaymentGatewayTransactionLog::where('transaction_reference', $ref)->first();
+                        if($log) {
+                            app(TransactionLogService::class)->makeAsSuccessful($log);
+                        }
                         return array("status" => true, "data" => $result);
                     } else {
                         return array("status" => false, "message" => $result);
