@@ -26,14 +26,14 @@ class UserSeeder extends Seeder
             Avatar::create(config('app.SUPER_ADMINISTRATOR'))->save(public_path('storage/users/1.png'));
 
             DB::table('users')->insert([
-                'firstname' => 'Self',
-                'lastname' => 'System',
-                'email' => 'admin@store.com',
+                'firstname' => 'General',
+                'lastname' => 'Drug',
+                'email' => 'info@generaldrugcentre.com',
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
                 'password' => bcrypt(123456),
                 'image' => 'storage/users/1.png',
-                'phone' => '08130610626'
+                'phone' => '08011111111'
             ]);
 
             $user = User::where('email', 'admin@store.com')->first();
