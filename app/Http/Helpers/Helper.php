@@ -846,13 +846,14 @@ function business_certificate()
 function premises_licence()
 {
     $premises_licence =  Folder::where("slug", "business-premises-license")->first();
-    if($premises_licence) {
+    if(!$premises_licence) {
         $premises_licence = new Folder();
         $premises_licence->parent_id = 1;
         $premises_licence->slug = "business-premises-license";
         $premises_licence->name = "Business Premises License";
         $premises_licence->save();
     }
+    return $premises_licence;
 }
 
 function generateUniqueReferralCode()

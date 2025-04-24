@@ -39,11 +39,11 @@ class WholeSalesCustomerService
 
             if(request()->has("cac_document")) {
                 $cac = business_certificate()->addMediaFromRequest("cac_document")->toMediaCollection('medialibrary');
-                $customer->cac_document = getMediaFullPath($cac);
+                $customer->cac_document = $cac->getFullUrl();
             }
             if(request()->has("premises_licence")) {
                 $premises = premises_licence()->addMediaFromRequest("premises_licence")->toMediaCollection('medialibrary');
-                $customer->premises_licence = getMediaFullPath($premises);
+                $customer->premises_licence = $premises->getFullUrl();
             }
 
             if(Arr::has($data, "referral_code")) {
