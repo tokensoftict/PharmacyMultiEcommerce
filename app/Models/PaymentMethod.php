@@ -65,7 +65,8 @@ class PaymentMethod extends Model
 	}
     public function isDefault()
     {
-        return $this->id  === ApplicationEnvironment::getApplicationRelatedModel()?->payment_method_id ?? 0;
+        if(!isset( ApplicationEnvironment::getApplicationRelatedModel()?->payment_method_id)) return false;
+        return $this->id  === ApplicationEnvironment::getApplicationRelatedModel()?->payment_method_id;
     }
 
     public function getDescriptionAttribute()

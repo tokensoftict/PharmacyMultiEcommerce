@@ -66,6 +66,7 @@ class DeliveryMethod extends Model
 
     public function isDefault()
     {
-        return $this->id  === ApplicationEnvironment::getApplicationRelatedModel()?->delivery_method_id;
+        if(!isset( ApplicationEnvironment::getApplicationRelatedModel()?->delivery_method_id)) return false;
+        return $this->id  === (ApplicationEnvironment::getApplicationRelatedModel()?->delivery_method_id ?? 0);
     }
 }
