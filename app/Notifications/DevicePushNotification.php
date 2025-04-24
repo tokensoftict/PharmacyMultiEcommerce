@@ -46,7 +46,7 @@ class DevicePushNotification extends Notification //implements ShouldQueue
             $stocks = $this->pushNotification->stocks->map(function ($stock) {
                 return $stock['stock_id'];
             })->toArray();
-            $data['data'] = json_encode($stocks);
+           // $data['data'] = json_encode($stocks);
 
         }
 
@@ -62,7 +62,7 @@ class DevicePushNotification extends Notification //implements ShouldQueue
             default => "wholesales"
         };
 
-dd($data);
+
 
         $fcm->data($data);
 
