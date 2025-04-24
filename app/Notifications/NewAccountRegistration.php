@@ -73,7 +73,11 @@ class NewAccountRegistration extends Notification implements ShouldQueue
             return call_user_func(static::$createSmsCallback, $notifiable);
         }
 
-        return "Hello ".$notifiable->firstname." Thank you for Registering with us, Please use 1234 to verify your account";
+        $otp = mt_rand(1000, 9999);
+        $notifiable->verification_pin = $otp;
+        $notifiable->update();
+
+        return "Hello ".$notifiable->firstname." Please use $otp to verify your phone number";
     }
 
     protected function buildMailMessage($url, $notifiable)
