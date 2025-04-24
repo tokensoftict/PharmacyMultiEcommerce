@@ -832,12 +832,27 @@ function stock_image_folder()
 
 function business_certificate()
 {
-    return Folder::where("slug", "business-certificate")->first();
+    $business_certificate =  Folder::where("slug", "business-certificate")->first();
+    if(!$business_certificate) {
+        $business_certificate = new Folder();
+        $business_certificate->parent_id = 1;
+        $business_certificate->slug = "business-certificate";
+        $business_certificate->name = "Business Certificate";
+        $business_certificate->save();
+    }
+    return $business_certificate;
 }
 
 function premises_licence()
 {
-    return Folder::where("slug", "business-premises-license")->first();
+    $premises_licence =  Folder::where("slug", "business-premises-license")->first();
+    if($premises_licence) {
+        $premises_licence = new Folder();
+        $premises_licence->parent_id = 1;
+        $premises_licence->slug = "business-premises-license";
+        $premises_licence->name = "Business Premises License";
+        $premises_licence->save();
+    }
 }
 
 function generateUniqueReferralCode()
