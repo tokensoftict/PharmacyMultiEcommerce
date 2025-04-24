@@ -19,18 +19,20 @@ Route::prefix("general")->namespace("General")->group(function(){
     Route::get("/payment_method", ["as" => "payment_method.list", "uses" => "PaymentMethodListController"]);
     Route::get("/delivery_method", ["as" => "delivery_method.list", "uses" => "DeliveryMethodListController"]);
 });
+
+
+Route::prefix("stock")->namespace("Stock")->group(function(){
+    Route::get("/bestseller", ["as" => "stock.bestseller", "uses" => "BestSellerController"]);
+    Route::get("/promo", ["as" => "stock.promo", "uses" => "PromoStockController"]);
+    Route::get("/offer", ["as" => "stock.offer", "uses" => "SpecialOfferStockController"]);
+    Route::get("/new-arrivals", ["as" => "stock.new-arrivals", "uses" => "NewArrivalsStockController"]);
+    Route::get("/{classification}/by_classification", ["as" => "stock.by_classification", "uses" => "StockByProductClassificationController"]);
+    Route::get("/{productcategory}/by_productcategory", ["as" => "stock.by_productcategory", "uses" => "StockByProductCategoriesController"]);
+    Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.manufacturer", "uses" => "StockByProductManufacturerController"]);
+
+});
+
 Route::middleware(['auth:sanctum'])->group(function(){
-
-    Route::prefix("stock")->namespace("Stock")->group(function(){
-        Route::get("/bestseller", ["as" => "stock.bestseller", "uses" => "BestSellerController"]);
-        Route::get("/promo", ["as" => "stock.promo", "uses" => "PromoStockController"]);
-        Route::get("/offer", ["as" => "stock.offer", "uses" => "SpecialOfferStockController"]);
-        Route::get("/new-arrivals", ["as" => "stock.new-arrivals", "uses" => "NewArrivalsStockController"]);
-        Route::get("/{classification}/by_classification", ["as" => "stock.by_classification", "uses" => "StockByProductClassificationController"]);
-        Route::get("/{productcategory}/by_productcategory", ["as" => "stock.by_productcategory", "uses" => "StockByProductCategoriesController"]);
-        Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.manufacturer", "uses" => "StockByProductManufacturerController"]);
-
-    });
 
     Route::prefix("general")->namespace("General")->group(function(){
         Route::get("/{deliveryMethod}/delivery_method", ["as" => "delivery_method.setDefault", "uses" => "SetDeliveryMethodAsDefaultDeliveryMethodController"]);
