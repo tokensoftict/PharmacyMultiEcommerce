@@ -42,7 +42,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             /**  API ROUTE STATE HERE */
             Route::middleware(['api',DetectApplicationEnvironment::class, ForceJsonResponse::class , DataPushApiMiddleware::class])
-                ->domain(config('app.DATA_PUSH_DOMAIN'))
+                ->domain(config('app.PUSH_DOMAIN'))
                 ->group(base_path("routes/push.api.php"));
 
             Route::middleware([DetectApplicationEnvironment::class, 'api', ForceJsonResponse::class])
@@ -55,16 +55,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware(['auth:sanctum', DetectWholesalesSalesRepresentativesImpersonation::class, DetectApplicationEnvironment::class,'api',ForceJsonResponse::class])
                 ->prefix('api/v1')
-                ->domain(config('app.WHOLESALES_DOMAIN_ROUTE_PREFIX'))
-                ->name("wholesales.")
+                ->domain(config('app.WHOLESALES_DOMAIN'))
+                ->name(config('app.WHOLESALES_DOMAIN_ROUTE_PREFIX'))
                 ->namespace('App\Http\Controllers\Api')
                 ->group(base_path("routes/api_general.php"))
                 ->group(base_path("routes/wholesales.api.php"));
 
             Route::middleware(['api', DetectApplicationEnvironment::class,ForceJsonResponse::class])
                 ->prefix('api/v1')
-                ->domain(config('app.SALES_REPRESENTATIVES_ROUTE_PREFIX'))
-                ->name("sales_representatives.")
+                ->domain(config('app.SALES_REPRESENTATIVES'))
+                ->name(config('app.SALES_REPRESENTATIVES_ROUTE_PREFIX'))
                 ->namespace('App\Http\Controllers\Api')
                 ->group(base_path("routes/sales_rep.php"));
 
