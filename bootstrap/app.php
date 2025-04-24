@@ -26,14 +26,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware(['auth',DetectApplicationEnvironment::class, 'web','verified'])
                 ->domain(config('app.SUPERMARKET_ADMIN'))
-                ->name("supermarket.admin.")
+                ->name(config('app.SUPERMARKET_ADMIN_ROUTE_PREFIX'))
                 ->group(base_path("routes/admin_general.php"))
                 ->group(base_path("routes/supermaket.admin.php"));
 
 
             Route::middleware(['auth',DetectApplicationEnvironment::class, 'web','verified'])
                 ->domain(config('app.WHOLESALES_ADMIN'))
-                ->name("wholesales.admin.")
+                ->name(config('app.WHOLESALES_ADMIN_ROUTE_PREFIX'))
                 ->group(base_path("routes/admin_general.php"))
                 ->group(base_path("routes/wholesales.admin.php"));
 
@@ -49,13 +49,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('api/v1')
                 ->domain(config('app.SUPERMARKET_DOMAIN'))
                 ->namespace('App\Http\Controllers\Api')
-                ->name("supermarket.")
+                ->name(config('app.SUPERMARKET_DOMAIN_ROUTE_PREFIX'))
                 ->group(base_path("routes/api_general.php"))
                 ->group(base_path("routes/supermarket.api.php"));
 
             Route::middleware(['auth:sanctum', DetectWholesalesSalesRepresentativesImpersonation::class, DetectApplicationEnvironment::class,'api',ForceJsonResponse::class])
                 ->prefix('api/v1')
-                ->domain(config('app.WHOLESALES_DOMAIN'))
+                ->domain(config('app.WHOLESALES_DOMAIN_ROUTE_PREFIX'))
                 ->name("wholesales.")
                 ->namespace('App\Http\Controllers\Api')
                 ->group(base_path("routes/api_general.php"))
@@ -63,7 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware(['api', DetectApplicationEnvironment::class,ForceJsonResponse::class])
                 ->prefix('api/v1')
-                ->domain(config('app.SALES_REPRESENTATIVES'))
+                ->domain(config('app.SALES_REPRESENTATIVES_ROUTE_PREFIX'))
                 ->name("sales_representatives.")
                 ->namespace('App\Http\Controllers\Api')
                 ->group(base_path("routes/sales_rep.php"));

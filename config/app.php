@@ -128,6 +128,14 @@ return [
     /** Admin URL */
     'WHOLESALES_ADMIN' => env('WHOLESALES_ADMIN', 'wholesales.admin.generaldrugcentre.com'),
     'SUPERMARKET_ADMIN' => env('SUPERMARKET_ADMIN', 'supermarket.admin.generaldrugcentre.com'),
+
+    'SUPERMARKET_ADMIN_ROUTE_PREFIX' => env('SUPERMARKET_ADMIN_ROUTE_PREFIX', 'supermarket.admin.'),
+    'WHOLESALES_ADMIN_ROUTE_PREFIX' => env('WHOLESALES_ADMIN_ROUTE_PREFIX', 'wholesales.admin.'),
+    'WHOLESALES_DOMAIN_ROUTE_PREFIX' => env('WHOLESALES_DOMAIN_ROUTE_PREFIX', 'wholesales.'),
+    'SUPERMARKET_DOMAIN_ROUTE_PREFIX' => env('SUPERMARKET_DOMAIN_ROUTE_PREFIX', 'supermarket.'),
+    'SALES_REPRESENTATIVES_ROUTE_PREFIX' => env('SALES_REPRESENTATIVES_ROUTE_PREFIX', 'sales_representatives.'),
+
+
     'ADMIN_DOMAIN' => env('ADMIN_DOMAIN', 'admin.generaldrugcentre.com'),
 
     /** Main URL */
