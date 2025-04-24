@@ -41,12 +41,12 @@ class DevicePushNotification extends Notification //implements ShouldQueue
         $fcm->name("{$this->pushNotification->title}");
 
         $data = [];
-        $data ['notificationType'] = $this->pushNotification->action;
+        $data ['notificationType'] = $this->pushNotification->action ?? "DEFAULT";
         if($this->pushNotification->stocks->count() > 0) {
             $stocks = $this->pushNotification->stocks->map(function ($stock) {
                 return $stock['stock_id'];
             })->toArray();
-           // $data['data'] = json_encode($stocks);
+            $data['data'] = json_encode($stocks);
 
         }
 
