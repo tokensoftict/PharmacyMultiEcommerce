@@ -10,7 +10,7 @@ use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
-class DevicePushNotification extends Notification //implements ShouldQueue
+class DevicePushNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
