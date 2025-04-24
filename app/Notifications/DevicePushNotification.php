@@ -46,7 +46,7 @@ class DevicePushNotification extends Notification //implements ShouldQueue
             $stocks = $this->pushNotification->stocks->map(function ($stock) {
                 return $stock['stock_id'];
             })->toArray();
-            $data['data'] = "I am strings";
+            $data['data'] = json_encode($stocks);
 
         }
 
