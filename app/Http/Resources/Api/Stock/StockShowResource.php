@@ -19,7 +19,7 @@ class StockShowResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "description" => $this->description ?? 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet, animi architecto asperiores assumenda aut blanditiis consequatur ducimus, enim eum ipsam quaerat quasi quia ratione saepe tempora ullam veritatis, vero voluptates? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet, animi architecto asperiores assumenda aut blanditiis consequatur ducimus, enim eum ipsam quaerat quasi quia ratione saepe tempora ullam veritatis, vero voluptates? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet, animi architecto asperiores assumenda aut blanditiis consequatur ducimus, enim eum ipsam quaerat quasi quia ratione saepe tempora ullam veritatis, vero voluptates? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet, animi architecto asperiores assumenda aut blanditiis consequatur ducimus, enim eum ipsam quaerat quasi quia ratione saepe tempora ullam veritatis, vero voluptates?',
+            "description" => $this->description ?? '',
             "price" => money($this->{ApplicationEnvironment::$stock_model_string}->price),
             "price_not_formatted" => $this->{ApplicationEnvironment::$stock_model_string}->price,
             "productcategory" => $this->productcategory?->name,
