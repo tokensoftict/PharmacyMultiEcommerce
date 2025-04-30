@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\KafkaAction;
+use App\Enums\KafkaTopics;
 use Illuminate\Console\Command;
 use Junges\Kafka\Facades\Kafka;
 use Junges\Kafka\Message\Message;
@@ -35,6 +36,6 @@ class SendKafkaMessage extends Command
         );
 
         //public order to kafka
-        Kafka::publish()->onTopic('orders')->withMessage($message)->send();
+        Kafka::publish()->onTopic(KafkaTopics::ORDERS)->withMessage($message)->send();
     }
 }

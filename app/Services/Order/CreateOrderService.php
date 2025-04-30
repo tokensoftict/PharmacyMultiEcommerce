@@ -5,6 +5,7 @@ namespace App\Services\Order;
 use App\Classes\ApplicationEnvironment;
 use App\Enums\KafkaAction;
 use App\Enums\KafkaEvent;
+use App\Enums\KafkaTopics;
 use App\Enums\PushNotificationAction;
 use App\Events\Order\OrderStatusUpdatedEvent;
 use App\Mail\Order\CancelledOrder;
@@ -157,7 +158,7 @@ class CreateOrderService
         );
 
         //public order to kafka
-        Kafka::publish()->onTopic('orders')->withMessage($message)->send();
+        Kafka::publish()->onTopic(KafkaTopics::ORDERS)->withMessage($message)->send();
 
         //send mail to customer
         Mail::to($order->customer->user->email)->send(new NewOrderEmail($order));
