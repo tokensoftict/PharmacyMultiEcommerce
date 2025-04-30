@@ -37,7 +37,18 @@ class TestKafkaWithOrder extends Command
             hint: 'The Order Id now..........'
         );
 
-        $order = Order::find($orderId);
+        $order = Order::with([
+            'customer',
+            'address',
+            'address.town',
+            'address.country',
+            'address.state',
+            'status',
+            'order_total_orders',
+            'payment_method',
+            'delivery_method',
+            'order_products'
+        ])->find($orderId);
 
         $message = new Message(
             headers: ['event' => KafkaEvent::ONLINE_PUSH],
