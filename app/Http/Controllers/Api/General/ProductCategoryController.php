@@ -18,14 +18,20 @@ class ProductCategoryController extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
+        $productCategory = Productcategory::query()->with([
+            'stocks' => fn ($query) => $query->limit(3)
+        ])
+            ->has('stocks', '>', 2);
+
+        if($request->has('s')) {
+            $productCategory->where('name', 'like', '%'.$request->get('s').'%');
+        }
+
+        $productCategory->select("id", "name")->where("status", 1);
+
         return $this->sendPaginatedSuccessResponse(
             GeneralResource::collection(
-                Productcategory::query()->with([
-                    'stocks' => fn ($query) => $query->limit(3)
-                ])
-                    ->has('stocks', '>', 2)
-                    ->select("id", "name")->where("status", 1)
-                    ->orderBy("name", "ASC")
+                $productCategory ->orderBy("name", "ASC")
                     ->paginate(config('app.PAGINATE_NUMBER'))
             )->response()->getData(true)
         );

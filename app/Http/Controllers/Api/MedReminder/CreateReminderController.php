@@ -28,7 +28,7 @@ class CreateReminderController extends ApiController
         $medReminder =  $this->medReminderService->create($request->all());
         return $this->sendSuccessResponse([
             'medReminder' => new MedReminderResource($medReminder),
-            'schedules' => MedReminderScheduleResource::collection($medReminder->med_reminder_schedules)
+            'schedules' => MedReminderScheduleResource::collection($medReminder->med_reminder_schedules()->where('scheduled_at', '>', now())->get()),
         ]);
     }
 }

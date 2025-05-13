@@ -39,6 +39,7 @@ new class  extends Component
         $this->validate(['name' => 'required', "amount" => 'required']);
         $template_settings_value = $this->template_settings_value;
         $template_settings_value[] = [
+            'SN' => (count($template_settings_value) ?? 0) + 1,
             'name' => $this->name,
             'amount' => $this->amount
         ];

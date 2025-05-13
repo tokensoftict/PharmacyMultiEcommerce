@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\PsgdcExceptionsHandler;
+use App\Http\Middleware\CustomSuperMarketMiddleware;
 use App\Http\Middleware\DataPushApiMiddleware;
 use App\Http\Middleware\DetectWholesalesSalesRepresentativesImpersonation;
 use App\Http\Middleware\ForceJsonResponse;
@@ -45,7 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->domain(config('app.PUSH_DOMAIN'))
                 ->group(base_path("routes/push.api.php"));
 
-            Route::middleware([DetectApplicationEnvironment::class, 'api', ForceJsonResponse::class])
+            Route::middleware([CustomSuperMarketMiddleware::class, DetectApplicationEnvironment::class, 'api', ForceJsonResponse::class])
                 ->prefix('api/v1')
                 ->domain(config('app.SUPERMARKET_DOMAIN'))
                 ->namespace('App\Http\Controllers\Api')

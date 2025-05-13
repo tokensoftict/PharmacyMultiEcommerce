@@ -25,12 +25,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $use_interval
  * @property int|null $interval
  * @property string|null $every
+ * @property string|null $dosage_form
  * @property Carbon|null $start_date_time
  * @property Carbon $date_create
  * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Stock|null $stock
  * @property User $user
  * @property Collection|MedReminderSchedule[] $med_reminder_schedules
@@ -68,7 +69,12 @@ class MedReminder extends Model
 		'every',
 		'start_date_time',
 		'date_create',
-		'notes'
+		'notes',
+        'dosage_form',
+        "discount_percentage",
+        "discount_generated_date",
+        "discount_expiry_date",
+        "is_discount_generated"
 	];
 
 	public function stock()

@@ -27,7 +27,7 @@ class MedReminderRequest extends FormRequest
             'dosage' => 'required',
             'total_dosage_in_package' => 'required',
             'type' => 'required',
-            'use_interval' => 'required',
+            //'use_interval' => 'required',
             'interval' => 'required_if:use_interval,1',
             'every' => 'required_if:use_interval,1',
             'start_date_time' => 'required',

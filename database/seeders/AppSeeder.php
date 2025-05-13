@@ -45,7 +45,7 @@ class AppSeeder extends Seeder
                 'show' => true,
             ],
             [
-                'name' => '💼 Sales Rep Administrator',
+                'name' => 'Sales representative',
                 'description' => 'Refer customers, grow your network, and earn rewards.',
                 'logo' => NULL,
                 'model_id' => NULL,

@@ -21,7 +21,7 @@ class CalculateDoorStepDeliveryCalculation extends ApiController
 
         $methodOfDelivery = DeliveryMethod::findorfail(7);
 
-        $doorStepDeliveryAmount = (new DsdRepository())->getDsdAnalysis($checkoutUser->cart,  $methodOfDelivery ,$checkoutUser->checkout['deliveryMethod']['extraData']);
+        $doorStepDeliveryAmount = (new DsdRepository())->getDsdAnalysis($checkoutUser->cart,  $methodOfDelivery, []);
 
         return $this->sendSuccessResponse($doorStepDeliveryAmount);
 

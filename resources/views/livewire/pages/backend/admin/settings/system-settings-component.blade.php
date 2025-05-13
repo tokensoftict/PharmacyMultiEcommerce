@@ -62,6 +62,25 @@
                             <textarea name="footer_notes" wire:model="store.footer_notes" class="form-control" placeholder="Footer Receipt Notes"></textarea>
                         </div>
 
+                        <div class="mb-4 mt-4">
+                        <h4 class="mb-3">MED REMINDER DISCOUNT SETTINGS</h4>
+
+                            <div class="mb-3">
+                                <label class="form-label">Minimum Dosage trigger</label>
+                                <input type="text" wire:model="store.dosage_trigger"  class="form-control" name="dosage_trigger" placeholder="">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Discount Percentage</label>
+                                <input type="text" wire:model="store.discount_percentage"  class="form-control" name="discount_percentage" placeholder="">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Discount Validity</label>
+                                <input type="text" wire:model="store.validity"  class="form-control" name="delivery_tariff" placeholder="Discount Valid for how many days">
+                            </div>
+                        </div>
+
                         @if(userCanView('backend.admin.settings.system_settings.update'))
                             <div align="center">
                                 <button type="button" wire:click="update" class="btn btn-lg btn-phoenix-primary btn-block">

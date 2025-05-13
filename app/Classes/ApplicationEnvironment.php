@@ -87,7 +87,8 @@ class ApplicationEnvironment
     public static function getApplicationRelatedModel() : WholesalesUser | SupermarketUser | WholesalesAdmin | SupermarketAdmin | SalesRepresentative| bool
     {
         $user = request()->user();
-        $applicationModel = self::$appRelated;
+        $applicationModel = self::$appRelated ?? false;
+        if(!$applicationModel) return false;
         if($applicationModel == "user") $applicationModel = "supermarket_user";
         return $user?->$applicationModel()?->first() ?? false;
     }

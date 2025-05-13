@@ -23,8 +23,8 @@ class SignUpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'firstname' => 'required',
-            'lastname' => 'required',
+            'firstname' => 'required|regex:/^([^0-9]*)$/',
+            'lastname' => 'required|regex:/^([^0-9]*)$/',
             'email' => [
                 'required',
                 'email',
@@ -35,6 +35,14 @@ class SignUpRequest extends FormRequest
                 'nullable',
                 Rule::unique('users', 'phone')->whereNull('deleted_at'),
             ],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'firstname.regex' => 'Numeric characters are not allowed.',
+            'lastname.regex' => 'Numeric characters are not allowed.',
         ];
     }
 }

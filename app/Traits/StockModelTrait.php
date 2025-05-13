@@ -7,6 +7,7 @@ use App\Models\Address;
 use App\Models\DeliveryTownDistance;
 use App\Models\PromotionItem;
 use App\Models\Stock;
+use App\Models\UserStockPromotion;
 use App\Models\WholesalesUser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -27,7 +28,7 @@ trait StockModelTrait
 
     public final function getProductImageAttribute() : string
     {
-       if($this->stock_media) return $this->stock_media->media->getFullUrl();
+        if($this->stock_media) return $this->stock_media->media->getFullUrl();
 
         return asset("logo/no-image.png");
     }
@@ -38,6 +39,8 @@ trait StockModelTrait
         $product_size = 1;
 
         $applicationUser = getApplicationModel();
+
+        if(!$applicationUser) return false;
 
         if(!$applicationUser instanceof WholesalesUser) return false;
 
@@ -74,16 +77,31 @@ trait StockModelTrait
 
     public function promotion_item()
     {
-        return $this->hasOne(PromotionItem::class)->ofMany(['id' => 'MAX'], function ($query) {
+        $promo =  $this->hasOne(PromotionItem::class)->ofMany(['id' => 'MAX'], function ($query) {
             $query->where("status_id", status("Approved"))
                 ->where("app_id", ApplicationEnvironment::$id)
                 ->whereNull('customer_group_id')
                 ->whereNull('customer_type_id')
                 ->where(function($q) use(&$now){
-                    $q->whereDate('from_date','<=', \Illuminate\Support\Carbon::now());
-                    $q->whereDate('end_date',">=", \Carbon\Carbon::now());
+                    $q->whereDate('from_date','<=', Carbon::now());
+                    $q->whereDate('end_date',">=", Carbon::now());
                 });
         });
+
+        //check if the user has approved customer define discount
+        $checkUserDefinedDiscount = $this->hasOne(UserStockPromotion::class)->ofMany(['id' => 'MAX'], function ($query) {
+            $query->where("status_id", status("Approved"))
+                ->where("app_id", ApplicationEnvironment::$id)
+                ->where('user_id', request()->user()->id)
+                ->where(function($q) use(&$now){
+                    $q->whereDate('from_date','<=',Carbon::now());
+                    $q->whereDate('end_date',">=", Carbon::now());
+                });
+        });
+
+        if($checkUserDefinedDiscount) return $checkUserDefinedDiscount;
+
+        return $promo;
     }
 
     /**
@@ -91,18 +109,30 @@ trait StockModelTrait
      */
     public final function getSpecialAttribute() : int|float|bool
     {
-       $promotion = $this->hasOne(PromotionItem::class)->ofMany(['id' => 'MAX'], function ($query) {
+        $promotion = $this->hasOne(PromotionItem::class)->ofMany(['id' => 'MAX'], function ($query) {
             $query->where("status_id", status("Approved"))
                 ->where("app_id", ApplicationEnvironment::$id)
                 ->whereNull('customer_group_id')
                 ->whereNull('customer_type_id')
-                ->where(function($q) use(&$now){
+                ->where(function($q){
                     $q->whereDate('from_date','<=',Carbon::now());
                     $q->whereDate('end_date',">=",Carbon::now());
                 });
         })->first();
 
-       if(!$promotion) return false;
-       return $promotion->price;
+        if(!$promotion and request()->user()) {
+            $promotion =  $this->hasOne(UserStockPromotion::class)->ofMany(['id' => 'MAX'], function ($query) {
+                $query->where("status_id", status("Approved"))
+                    ->where("app_id", ApplicationEnvironment::$id)
+                    ->where('user_id', request()->user()->id)
+                    ->where(function($q){
+                        $q->whereDate('from_date','<=', Carbon::now());
+                        $q->whereDate('end_date',">=",  Carbon::now());
+                    });
+            })->first();
+        }
+
+        if(!$promotion) return false;
+        return $promotion->price;
     }
 }

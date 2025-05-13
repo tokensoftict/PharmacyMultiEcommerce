@@ -737,7 +737,7 @@ function statuses()
 
 function getApplicationModel()
 {
-    return ApplicationEnvironment::getApplicationRelatedModel();
+    return ApplicationEnvironment::getApplicationRelatedModel() ?? false;
 }
 
 

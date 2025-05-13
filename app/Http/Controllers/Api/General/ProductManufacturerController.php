@@ -18,14 +18,18 @@ class ProductManufacturerController extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
+        $manufacturers = Manufacturer::query()->with([
+            'stocks' => fn ($query) => $query->limit(3)
+        ])
+            ->has('stocks', '>', 2)
+            ->select("id", "name")->where("status", 1);
+        if($request->has('s')) {
+            $manufacturers->where('name', 'like', '%'.$request->get('s').'%');
+        }
+
         return $this->sendPaginatedSuccessResponse(
             GeneralResource::collection(
-                Manufacturer::query()->with([
-                    'stocks' => fn ($query) => $query->limit(3)
-                ])
-                    ->has('stocks', '>', 2)
-                    ->select("id", "name")->where("status", 1)
-                    ->orderBy("name", "ASC")
+                $manufacturers->orderBy("name", "ASC")
                     ->paginate(config('app.PAGINATE_NUMBER'))
             )->response()->getData(true)
         );

@@ -3,7 +3,9 @@
 namespace App\Http\Resources\Api\Auth;
 
 use App\Http\Resources\Api\MedReminder\MedReminderScheduleResource;
+use App\Models\App;
 use App\Models\AppUser;
+use App\Services\Api\MedReminder\MedReminderService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -29,7 +31,8 @@ class UserLoginResource extends JsonResource
             "phone_verified_status" => !is_null($this->phone_verified_at),
             "phone" => $this->phone,
             "image" => asset($this->image),
-            "medSchedules" => MedReminderScheduleResource::collection($this->medReminderSchedule())
+            "medSchedules" => MedReminderScheduleResource::collection($this->medReminderSchedule()),
+            'dosageForms' => MedReminderService::$dosageForm
         ];
 
         $apps = [];
@@ -41,6 +44,9 @@ class UserLoginResource extends JsonResource
 
         foreach ($frontEndApps as $app)
         {
+            if($app->app->id === 4) {
+                if($app->user_type->status == "0" || $app->user_type->invitation_status == "0") continue;
+            }
             $apps[] = [
                 "app_id" => $app->id,
                 "domain" => $app->domain,
@@ -51,10 +57,28 @@ class UserLoginResource extends JsonResource
                 "link" => $app->app->link,
                 "addresses" => $app->addresses,
                 "last_seen" => $app->last_activity_date ? $app->last_activity_date->format("F jS, Y g:i A") :  now()->format("F jS, Y g:i A"),
+                "unregistered" => false,
             ];
         }
 
         $user['apps'] = $apps;
+
+        if(count($user['apps']) === 1) {
+            $wholesales = App::find(5);
+            $user['apps'][] = [
+                "app_id" => $wholesales->id,
+                "domain" => $wholesales->domain,
+                "description" => $wholesales->description,
+                "info" => [],
+                "logo" => $wholesales->logo,
+                "name" => strtolower($wholesales->name),
+                "link" => $wholesales->link,
+                "addresses" => [],
+                "last_seen" => false,
+                "unregistered" => true,
+                "status" => false
+            ];
+        }
 
 
         if(!is_null($this->currentAccessToken())) {

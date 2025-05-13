@@ -32,7 +32,7 @@ trait ApplicationUserCheckoutTrait
         $stockIDs = array_keys($shoppingCart);
         $stocks = Stock::with([$stockPriceModel])->whereIn('id', $stockIDs)->get();
         return  $stocks->sum(function($stock) use($shoppingCart, $stockPriceModel){
-            return $stock->{$stockPriceModel}->price * $shoppingCart[$stock->id]['quantity'];
+            return ($stock->special === false ? $stock->{$stockPriceModel}->price : $stock->special) * $shoppingCart[$stock->id]['quantity'];
         });
     }
 
@@ -46,7 +46,7 @@ trait ApplicationUserCheckoutTrait
         $stocks = Stock::whereKey(array_keys($wishlist))->get();
 
         $stocks = $stocks->map(function($stock) use ($wishlist){
-            $price = $stock->{ApplicationEnvironment::$stock_model_string}->price;
+            $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
             $stock->added_date = $wishlist[$stock->id]['date'];
             $stock->price = $price;
             return $stock;
@@ -61,7 +61,7 @@ trait ApplicationUserCheckoutTrait
         $stocks = Stock::whereKey(array_keys($cart))->get();
         $totalItemsInCarts = 0;
         return $stocks->map(function($stock) use ($cart, &$totalItemsInCarts){
-            $price = $stock->{ApplicationEnvironment::$stock_model_string}->price;
+            $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
             $stock->price = $price;
@@ -80,7 +80,7 @@ trait ApplicationUserCheckoutTrait
         $stocks = Stock::whereKey(array_keys($cart))->get();
         $totalItemsInCarts = 0;
         $stocks = $stocks->map(function($stock) use ($cart, &$totalItemsInCarts){
-            $price = $stock->{ApplicationEnvironment::$stock_model_string}->price;
+            $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
             $stock->price = $price;

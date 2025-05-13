@@ -3,12 +3,16 @@
 namespace App\Services\Api\MedReminder;
 
 use App\Classes\ApplicationEnvironment;
+use App\Classes\Settings;
+use App\Enums\PushNotificationAction;
 use App\Http\Resources\Api\MedReminder\MedReminderResource;
+use App\Jobs\TriggerGenerateMedReminderDiscount;
 use App\Models\MedReminder;
 use App\Models\MedReminderSchedule;
 use App\Models\User;
 use App\Services\Utilities\PushNotificationService;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
@@ -19,6 +23,24 @@ class MedReminderService
     public MedReminder $medReminder;
     public PushNotificationService $pushNotificationService;
     public MedReminderSchedule $medReminderSchedule;
+
+    public static array $dosageForm = [
+        'Tablet' => 'mg',
+        'Syrup' => 'mL',
+        'Cream' => 'mg',
+        'Eye drops' => 'mL',
+        'Ear drops' => 'mL',
+        'Injection' => 'mL',
+        'Capsule' => 'mg',
+        'Ointments' => 'mg',
+        'Gels' => 'mg',
+        'Lotions' => 'mg',
+        'Powders' => 'mg',
+        'Chewable' => 'mg',
+        'Lozenges' => 'mL',
+        'Infusions' => 'mL',
+    ];
+
     public function __construct()
     {
         $this->medReminder =new MedReminder();
@@ -31,41 +53,47 @@ class MedReminderService
      * @return array
      */
     public final function prepareMedReminderData(array $data) : array
-    {
+    {   $every = $data['interval'] ?? NULL;
+        $interval = $data['every'] ?? NULL;
         $data['date_create'] = date('Y-m-d');
         $data['user_id'] = request()->user()->id;
-        if($data['use_interval'] ==  "0"){
-            $data['every'] = NULL;
-            $data['interval'] =NULL;
-        } else {
-            $data['normal_schedules'] = NULL;
-        }
 
+        $data['normal_schedules'] =  json_decode($data['normal_schedules'], true) ?? NULL;
+        $data['interval'] = $interval;
+        $data['every'] = $every;
+
+        $data['dosage_form'] = self::$dosageForm[$data['dosage_form']] ?? NULL;
         return $data;
     }
 
     /**
      * @param array $data
      * @return MedReminder
+     * @throws \Throwable
      */
     public final function create(array $data) : MedReminder
     {
-        $medReminder = $this->medReminder->create($this->prepareMedReminderData($data));
-        $this->createSchedules($medReminder);
-        return $medReminder;
+        return DB::transaction(function () use ($data) {
+            $medReminder = $this->medReminder->create($this->prepareMedReminderData($data));
+            $this->createSchedules($medReminder);
+            return $medReminder;
+        });
     }
 
     /**
      * @param MedReminder $medReminder
      * @param array $data
      * @return MedReminder
+     * @throws \Throwable
      */
     public final function update(MedReminder $medReminder, array $data) : MedReminder
     {
-        $medReminder->update($this->prepareMedReminderData($data));
-        $medReminder->med_reminder_schedules()->delete();
-        $this->createSchedules($medReminder);
-        return $medReminder->fresh();
+       return DB::transaction(function () use ($medReminder, $data) {
+           $medReminder->update($this->prepareMedReminderData($data));
+           $medReminder->med_reminder_schedules()->delete();
+           $this->createSchedules($medReminder);
+           return $medReminder->fresh();
+       });
     }
 
     /**
@@ -84,7 +112,7 @@ class MedReminderService
     public final function createSchedules(MedReminder $medReminder) : MedReminder
     {
         if($medReminder->use_interval == "1") {
-            $schedules = $this->intervalSchedulesGenerator($medReminder);
+            $schedules = $this->normalScheduleGenerator($medReminder);
         } else {
             $schedules = $this->normalScheduleGenerator($medReminder);
         }
@@ -130,7 +158,7 @@ class MedReminderService
      * @param MedReminder $medReminder
      * @return array
      */
-    private function normalScheduleGenerator(MedReminder $medReminder) : array
+    private function normalScheduleGeneratorDEPRECATED(MedReminder $medReminder) : array
     {
         $startDate = date('Y-m-d', strtotime($medReminder->start_date_time));
         $totalDosage = (float)$medReminder->total_dosage_in_package;
@@ -170,6 +198,41 @@ class MedReminderService
         return $schedules;
     }
 
+
+    /**
+     * @param MedReminder $medReminder
+     * @return array
+     */
+    private function normalScheduleGenerator(MedReminder $medReminder) : array
+    {
+        $totalDosage = (float)$medReminder->total_dosage_in_package;
+        $dosage = (float)$medReminder->dosage;
+        $interval = $medReminder->interval.' '.$medReminder->every;
+        $startDate = date('Y-m-d', strtotime($medReminder->start_date_time));
+
+        $schedules = [];
+        $numberOfTimes = (int)ceil($totalDosage/$dosage);
+
+        if(is_string($medReminder->normal_schedules)) {
+            $medReminder->normal_schedules = json_decode($medReminder->normal_schedules, true);
+        }
+
+        $frequency = count($medReminder->normal_schedules);
+
+        $times = 1;
+        $reStartDate = $startDate;
+        while ($times <= ((int)ceil($numberOfTimes/ $frequency))) {
+            foreach ($medReminder->normal_schedules as $schedule) {
+                $schedules[key($schedule)." - Date : ".(new Carbon($reStartDate))->format('F jS, Y')] = date('Y-m-d H:i:s', strtotime($reStartDate." ".$schedule[key($schedule)]));
+            }
+            $times++;
+            $reStartDate = date('Y-m-d', strtotime("+".$interval, strtotime($reStartDate)));
+        }
+        return $schedules;
+    }
+
+
+
     /**
      * @param MedReminder|int $medReminder
      * @return bool
@@ -204,7 +267,7 @@ class MedReminderService
         $this->pushNotificationService
             ->setApplicationEnvironment(ApplicationEnvironment::$id)
             ->createNotification($randomNotification)
-            ->setAction("APPROVE_MED_REMINDER_SCHEDULES")
+            ->setAction(PushNotificationAction::APPROVE_MED_REMINDER_SCHEDULES)
             ->setPayload($data)
             ->setUserCustomer($medReminder->user_id)
             ->approve()
@@ -288,25 +351,37 @@ class MedReminderService
      * @param MedReminderSchedule $medReminderSchedule
      * @param array $data
      * @return MedReminderSchedule
+     * @throws \Throwable
      */
     public final function updateSchedule(MedReminderSchedule $medReminderSchedule, array $data) : MedReminderSchedule
     {
-        if(\Arr::has($data, 'snoozed_at')) {
-            $snoozed_at = date('Y-m-d H:i:s', strtotime($data['snoozed_at']));
-            $medReminderSchedule->snoozed_at = (new Carbon($snoozed_at))->toDateTimeString();
-        }
-
-        if(\Arr::has($data, 'status') and !\Arr::has($data, 'snoozed_at')) {
-            $medReminderSchedule->status = $data['status'];
-
-            if($data['status'] == 'Completed') {
-                $medReminderSchedule->med_reminder->increment('total_dosage_taken', $medReminderSchedule->med_reminder->dosage);
+        return DB::transaction(function () use ($medReminderSchedule, $data) {
+            if(\Arr::has($data, 'snoozed_at')) {
+                $snoozed_at = date('Y-m-d H:i:s', strtotime($data['snoozed_at']));
+                $medReminderSchedule->snoozed_at = (new Carbon($snoozed_at))->toDateTimeString();
             }
 
-        }
+            if(\Arr::has($data, 'status') and !\Arr::has($data, 'snoozed_at')) {
+                $medReminderSchedule->status = $data['status'];
 
-        $medReminderSchedule->save();
-        return $medReminderSchedule->refresh();
+                if($data['status'] == 'Completed') {
+                    $medReminderSchedule->med_reminder->increment('total_dosage_taken', $medReminderSchedule->med_reminder->dosage);
+                    $medReminderSchedule->med_reminder->fresh();
+                    $settings = app(Settings::class);
+                    if(
+                        $medReminderSchedule->med_reminder->type === "CONTINUES" &&
+                        ($medReminderSchedule->med_reminder->total_dosage_in_package - $medReminderSchedule->med_reminder->total_dosage_taken) <= (int)$settings->get("dosage_trigger") &&
+                        !$medReminderSchedule->med_reminder->is_discount_generated
+                    ) {
+                        dispatch(new TriggerGenerateMedReminderDiscount($medReminderSchedule->med_reminder));
+                    }
+                }
+
+            }
+
+            $medReminderSchedule->save();
+            return $medReminderSchedule->refresh();
+        });
     }
 
 }
