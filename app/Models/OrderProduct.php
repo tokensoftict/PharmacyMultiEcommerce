@@ -75,7 +75,7 @@ class OrderProduct extends Model
 
     public function getLocalidAttribute()
     {
-        return $this->getAttribute('local_id') ?? false;
+        return $this->attributes['local_id'] ?? false;
     }
 
 	public function app()
