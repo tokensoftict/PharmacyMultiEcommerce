@@ -29,7 +29,7 @@ class SendPushNotificationToClientsPhone extends Command
         $notifications = PushNotification::query()->where('status', 'APPROVED')->get();
         foreach ($notifications as $notification) {
             sendNotificationToDevice($notification);
-            //$notification->status = 'SENT';
+            $notification->status = 'SENT';
             $notification->save();
         }
     }
