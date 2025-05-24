@@ -2,6 +2,7 @@
 
 namespace App\Services\Kafka;
 
+use App\Enums\KafkaAction;
 use App\Services\Order\CreateOrderService;
 use Junges\Kafka\Message\ConsumedMessage;
 
@@ -13,6 +14,9 @@ class ProcessOrderService
         $body = $message->getBody();;
         $action =  $body['action'];
         $data = $body[0];
+
+        if($action === KafkaAction::PROCESS_ORDER) return;
+
         $createOrderService = new CreateOrderService();
 
         switch ($data['status_code']) {
