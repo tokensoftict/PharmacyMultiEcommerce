@@ -20,6 +20,7 @@ use Illuminate\Notifications\Notifiable;
  * @property bool $status
  * @property int|null $customer_group_id
  * @property int|null $customer_type_id
+ * @property int|null $local_customer_id
  * @property string|null $device_key
  * @property int|null $customer_local_id
  * @property string|null $phone
@@ -30,6 +31,7 @@ use Illuminate\Notifications\Notifiable;
  * @property Carbon|null $last_activity_date
  * @property CustomerGroup|null $customer_group
  * @property CustomerType|null $customer_type
+ * @property LocalCustomer $localCustomer
  * @property User|null $user
  *
  * @package App\Models
@@ -75,7 +77,8 @@ class SupermarketUser extends Model
         'ordertotals',
         'coupon_data',
         'remove_order_total',
-        'last_activity_date'
+        'last_activity_date',
+        'local_customer_id'
 	];
 
     protected $with = ['customer_group', 'customer_type'];
@@ -108,5 +111,10 @@ class SupermarketUser extends Model
     public function voucher()
     {
         return $this->morphMany(VoucherCode::class, 'customer');
+    }
+
+    public function localCustomer()
+    {
+        return $this->belongsTo(LocalCustomer::class, 'local_customer_id');
     }
 }

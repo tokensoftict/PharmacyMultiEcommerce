@@ -37,7 +37,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property CustomerGroup|null $customer_group
  * @property CustomerType|null $customer_type
  * @property User|null $user
- *
+ * @property LocalCustomer $localCustomer
  * @package App\Models
  */
 class WholesalesUser extends Model implements HasMedia
@@ -84,7 +84,8 @@ class WholesalesUser extends Model implements HasMedia
         'coupon_data',
         'remove_order_total',
         'sales_representative_id',
-        'last_activity_date'
+        'last_activity_date',
+        'local_customer_id'
 	];
 
     protected $with = ['customer_group', 'customer_type'];
@@ -124,4 +125,9 @@ class WholesalesUser extends Model implements HasMedia
         return $this->belongsTo(Address::class, 'address_id');
     }
 
+
+    public function localCustomer()
+    {
+        return $this->belongsTo(LocalCustomer::class, 'local_customer_id');
+    }
 }
