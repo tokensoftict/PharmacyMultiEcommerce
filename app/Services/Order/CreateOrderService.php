@@ -18,6 +18,7 @@ use App\Mail\Order\ProcessingError;
 use App\Mail\Order\WaitingForPayment;
 use App\Models\Order;
 use App\Models\Status;
+use App\Models\SupermarketUser;
 use App\Services\Api\Checkout\ConfirmOrderService;
 use App\Services\Utilities\PushNotificationService;
 use Illuminate\Support\Facades\Mail;
@@ -282,8 +283,11 @@ class CreateOrderService
         }
 
         if($order->status_id === status("Payment Confirmed")) return;
-
-        $order = $this->updateOrderStatus($order, status('Payment Confirmed'));
+        if($order->customer instanceof SupermarketUser) {
+            $order = $this->updateOrderStatus($order, status('Complete'));
+        } else {
+            $order = $this->updateOrderStatus($order, status('Payment Confirmed'));
+        }
 
         Mail::to($order->customer->user->email)->send(new ConfirmPayment($order));
 
