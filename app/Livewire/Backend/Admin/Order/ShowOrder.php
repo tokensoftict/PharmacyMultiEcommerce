@@ -3,6 +3,7 @@
 namespace App\Livewire\Backend\Admin\Order;
 
 use App\Models\Order;
+use App\Services\Order\CreateOrderService;
 use Livewire\Component;
 
 class ShowOrder extends Component
@@ -21,6 +22,7 @@ class ShowOrder extends Component
     {
         $this->order->status_id = status('Submitted');
         $this->order->save();
+        (new CreateOrderService())->processOrder($this->order);
         $this->alert(
             "success",
             "Order has been re-packed successfully",
