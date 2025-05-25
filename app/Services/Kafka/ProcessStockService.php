@@ -82,7 +82,7 @@ class ProcessStockService
      */
     public static function updateStock(array $data) : Stock
     {
-        $stockUpdate = Arr::only($data['data'], ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet']);
+        $stockUpdate = Arr::only($data, ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet']);
         $pushStock = Stock::where("local_stock_id", $stockUpdate['local_stock_id'])->first();
         $pushStock->update($stockUpdate);
 
