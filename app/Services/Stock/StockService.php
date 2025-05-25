@@ -115,7 +115,7 @@ class StockService
     public final function getNewArrivalsStock() : LengthAwarePaginator
     {
         return NewStockArrival::with('stock')
-            ->query()->orderBy("id", "DESC")
+            ->orderBy("id", "DESC")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
