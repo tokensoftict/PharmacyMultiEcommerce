@@ -71,8 +71,12 @@ class HomePageApiParser
      */
     public static function newArrivals(int $limit =15) : AnonymousResourceCollection
     {
+        $stockID =  NewStockArrival::query()->orderBy("id", "DESC")
+            ->where('app_id', ApplicationEnvironment::$id)->limit($limit)
+            ->pluck("stock_id")->toArray();
+
         return StockListResource::collection(
-            NewStockArrival::query()->orderBy("id", "DESC")->limit($limit)->where('app_id', ApplicationEnvironment::$id)->get()
+            Stock::whereIn('id', $stockID)->get()
         );
     }
 
