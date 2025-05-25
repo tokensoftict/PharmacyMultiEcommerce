@@ -107,9 +107,15 @@ class HomePageApiParser
         $specialClassifications = Classification::whereIn("name", array_keys($classifications))->get();
         $lowestPriceClassification = [];
         foreach ($specialClassifications as $specialClassification) {
-            $stock = $specialClassification->stocks()->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
-                $query->orderBy("price", "ASC");
-            })->limit(1)->first();
+
+            $stock = $specialClassification->stocks()
+                ->with(ApplicationEnvironment::$stock_model_string)
+                ->get()
+                ->sortBy(function ($stock) {
+                    return optional($stock->{ApplicationEnvironment::$stock_model_string})->price;
+                })
+                ->first();
+
             if ($stock) {
                 $lowestPriceClassification[] =[
                     "id" => $specialClassification->id,
