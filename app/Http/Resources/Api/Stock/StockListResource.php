@@ -18,10 +18,10 @@ class StockListResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "price" => money($this->{ApplicationEnvironment::$stock_model_string}->price),
-            "price_not_formatted" => $this->{ApplicationEnvironment::$stock_model_string}->price,
+            "price" => money($this->{ApplicationEnvironment::$stock_model_string}?->price),
+            "price_not_formatted" => $this->{ApplicationEnvironment::$stock_model_string}?->price,
             "image" => $this->product_image,
-            "quantity" => $this->{ApplicationEnvironment::$stock_model_string}->quantity,
+            "quantity" => $this->{ApplicationEnvironment::$stock_model_string}?->quantity,
             "max" => $this->max,
             "box" => $this->box,
             "sachet" => $this->sachet,
