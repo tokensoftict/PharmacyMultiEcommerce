@@ -58,7 +58,6 @@ class WholesalesHomeController extends ApiController
             ],
         ];
 
-
         foreach ($components as $component){
             $data[] = array_merge($component, [ "data" => HomePageApiParser::parseProductType($component)]);
         }
