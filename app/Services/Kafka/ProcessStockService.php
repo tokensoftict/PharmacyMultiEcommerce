@@ -6,6 +6,7 @@ use App\Enums\KafkaAction;
 use App\Models\Stock;
 use App\Models\SupermarketsStockPrice;
 use App\Models\WholessalesStockPrice;
+use Illuminate\Support\Arr;
 use Junges\Kafka\Message\ConsumedMessage;
 
 class ProcessStockService
@@ -81,11 +82,12 @@ class ProcessStockService
      */
     public static function updateStock(array $data) : Stock
     {
-        $pushStock = Stock::where("local_stock_id", $data['local_stock_id'])->first();
-        $pushStock->update($data);
+        $stockUpdate = Arr::only($data['data'], ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet']);
+        $pushStock = Stock::where("local_stock_id", $stockUpdate['local_stock_id'])->first();
+        $pushStock->update($stockUpdate);
 
-        $wholesales = $stock['stock_prices']['wholesales'] ?? false;
-        $supermarket = $stock['stock_prices']['supermarket'] ?? false;
+        $wholesales = $data['data']['stock_prices']['wholesales'] ?? false;
+        $supermarket = $data['data']['stock_prices']['supermarket'] ?? false;
 
         if($wholesales) {
             $wholesalesModel =  $pushStock->wholessales_stock_prices ?? new WholessalesStockPrice($wholesales);
