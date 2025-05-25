@@ -71,7 +71,9 @@ class HomePageApiParser
      */
     public static function newArrivals(int $limit =15) : AnonymousResourceCollection
     {
-        return StockListResource::collection(NewStockArrival::query()->orderBy("id", "DESC")->limit($limit)->get());
+        return StockListResource::collection(
+            NewStockArrival::query()->orderBy("id", "DESC")->limit($limit)->where('app_id', ApplicationEnvironment::$id)->get()
+        );
     }
 
     /**

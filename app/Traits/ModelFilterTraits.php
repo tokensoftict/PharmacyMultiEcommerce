@@ -96,7 +96,7 @@ trait ModelFilterTraits
                     "status" =>"DRAFT",
                 ]
             );
-            $pushNotification->approved()->send(); // push the push notification to the device
+            $pushNotification->approve()->send(); // push the push notification to the device
 
         }
 
