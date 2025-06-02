@@ -83,23 +83,23 @@ class ProcessStockService
     public static function updateStock(array $data) : Stock
     {
         $stockUpdate = Arr::only($data, ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet']);
-        $pushStock = Stock::where("local_stock_id", $stockUpdate['local_stock_id'])->first();
+        $pushStock = Stock::with(['wholessales_stock_prices', 'supermarkets_stock_prices'])->where("local_stock_id", $stockUpdate['local_stock_id'])->first();
         $pushStock->update($stockUpdate);
 
-        $wholesales = $data['data']['stock_prices']['wholesales'] ?? false;
-        $supermarket = $data['data']['stock_prices']['supermarket'] ?? false;
+        $wholesales = $data['stock_prices']['wholesales'] ?? false;
+        $supermarket = $data['stock_prices']['supermarket'] ?? false;
 
         if($wholesales) {
-            $wholesalesModel =  $pushStock->wholessales_stock_prices ?? new WholessalesStockPrice($wholesales);
-            if(isset($wholesalesModel->quantity)) {
+            $wholesalesModel =  $pushStock?->wholessales_stock_prices()->first() ?? new WholessalesStockPrice($wholesales);
+            if(isset($pushStock?->wholessales_stock_prices)) {
                 $wholesalesModel->update($wholesales);
             } else {
                 $pushStock->wholessales_stock_prices()->save($wholesalesModel);
             }
         }
         if($supermarket) {
-            $supermarketModel =  $pushStock->supermarkets_stock_prices ?? new SupermarketsStockPrice($supermarket);
-            if(isset($supermarketModel->quantity)) {
+            $supermarketModel =  $pushStock?->supermarkets_stock_prices()->first() ?? new SupermarketsStockPrice($supermarket);
+            if(isset($pushStock?->supermarkets_stock_prices)) {
                 $supermarketModel->update($supermarket);
             } else {
                 $pushStock->supermarkets_stock_prices()->save($supermarketModel);
