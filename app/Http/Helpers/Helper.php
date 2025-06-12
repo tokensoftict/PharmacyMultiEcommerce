@@ -892,3 +892,13 @@ function publishToKafka($topic, $action, $message)
         Log::error($e);
     }
 }
+
+
+function normalizePhoneNumber($phone)
+{
+    // Remove spaces, dashes, or other non-numeric characters if needed
+    $phone = preg_replace('/\D+/', '', $phone);
+
+    // Replace +234 or 234 at the beginning with 0
+    return preg_replace('/^(234|\+234)/', '0', $phone);
+}

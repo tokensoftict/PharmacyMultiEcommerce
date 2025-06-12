@@ -28,49 +28,23 @@ new class extends Component {
             [
                 'administrator.unique' => 'This user selected is already an administrator.',
             ]);
-        DB::transaction(function () use($model){
+        $userAccountService = app(\App\Services\User\UserAccountService::class);
+        DB::transaction(function () use ($model, $userAccountService) {
             $user = User::findorfail($this->administrator);
-            $admin = ApplicationEnvironment::$appModel::updateOrCreate([
+            $adminData = [
+                'status' => "0",
                 'user_id' => $this->administrator,
-            ],
-                [
-                    'status' => "0",
-                    'user_id' => $this->administrator,
-                    'invitation_status' => "0",
-                    "invitation_sent_date" => now(),
-                    'added_by' => auth()->id(),
-                    'token' => sha1(md5(generateRandomString(50))),
-                ]);
+                'invitation_status' => "0",
+                "invitation_sent_date" => now(),
+                'added_by' => auth()->id(),
+            ];
 
-            AppUser::updateOrCreate(
-                [
-                    'user_id' => $this->administrator,
-                    'user_type_type' => get_class($model),
-                    'app_id' => match (get_class($model)) {
-                        \App\Models\WholesalesAdmin::class => 2,
-                        \App\Models\SupermarketAdmin::class => 3,
-                        default => 3
-                    },
-                    'domain' => AppLists::getApp($admin)
-                ],
-                [
-                    'user_type_id' => $admin->id,
-                    'user_type_type' => get_class($model),
-                    'app_id' =>  match (get_class($model)) {
-                \App\Models\WholesalesAdmin::class => 2,
-                \App\Models\SupermarketAdmin::class => 3,
-                default => 3
-            },
-                    'domain' => AppLists::getApp($admin),
-                    'user_id' => $this->administrator
-                ]
-            );
-            //trigger invent to send invite email to the user
-            $link = route('administrator.admin.accept-invitation', $admin->token);
-            Mail::to($admin->user->email)->send(new AdministratorInvitationMail($admin, $link));
+            $admin = match (get_class($model)) {
+                \App\Models\SupermarketAdmin::class => $userAccountService->createSuperMarketAdministrator($user, $adminData),
+                default => $userAccountService->createWholesalesAdministrator($user, $adminData)
+            }
+
             Session::flash('status', 'An Invitation Email has been sent to ' . $user->email . " " . $user->name . " will become an administrator when they accept the invite  &#128513;");
-
-            $this->dispatch("closeSalesRepModal", ['status' => true]);
         });
     }
 

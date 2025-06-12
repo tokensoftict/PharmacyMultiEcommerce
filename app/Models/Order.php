@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $order_id
  * @property int $invoice_no
+ * @property int $local_order_id
  * @property string $customer_type
  * @property int $customer_id
  * @property int|null $customer_group_id
@@ -65,6 +66,7 @@ class Order extends Model
 
 	protected $casts = [
 		'invoice_no' => 'int',
+        'local_order_id' => 'int',
 		'customer_id' => 'int',
 		'customer_group_id' => 'int',
 		'order_date' => 'datetime',
@@ -87,6 +89,7 @@ class Order extends Model
 
 	protected $fillable = [
 		'order_id',
+        'local_order_id',
 		'invoice_no',
 		'customer_type',
 		'customer_id',

@@ -3,13 +3,14 @@
 namespace App\Services\Order;
 
 use App\Models\Order;
+use App\Models\OrderTotal;
 use App\Models\OrderTotalOrder;
 use App\Models\SupermarketUser;
 use App\Models\WholesalesUser;
 
 class CreateOrderTotalService
 {
-    private SupermarketUser|WholesalesUser  $checkOutUser;
+    private SupermarketUser|WholesalesUser|bool  $checkOutUser;
     private float|int $total;
     public function __construct()
     {
@@ -24,11 +25,11 @@ class CreateOrderTotalService
      */
     public final function formatOrderTotal(array $attributes) : array
     {
-        $this->total += $attributes['amount'];
+        $this->total += ($attributes['amount'] ?? $attributes['value']);
         return [
-            'order_total_id' => $attributes['id'] ?? NULL,
+            'order_total_id' => $attributes['order_total_id'] ?? ($attributes['id'] ?? NULL),
             'name' => $attributes['name'],
-            'value' => $attributes['amount']
+            'value' => $attributes['amount'] ?? $attributes['value']
         ];
     }
 
@@ -105,6 +106,32 @@ class CreateOrderTotalService
     public final function create(Order|int $order) : Order
     {
         $order->order_total_orders()->saveMany($this->prepareOrderTotal());
+        return $order->fresh();
+    }
+
+    /**
+     * @param Order|int $order
+     * @param array $orderTotals
+     * @return Order
+     */
+    public final function createOrderTotalFromOlderServer(Order|int $order, array $orderTotals) : Order
+    {
+        $totals = [];
+        foreach ($orderTotals as $orderTotal) {
+            unset($orderTotal['id']);
+            if(is_null($orderTotal['order_total_id'])) {
+                $totals[] = new OrderTotalOrder(
+                    $this->formatOrderTotal($orderTotal)
+                );
+            }else {
+                $orderTotal['order_total_id'] = 1;
+                $totals[] = new OrderTotalOrder(
+                    $this->formatOrderTotal($orderTotal)
+                );
+            }
+        }
+
+        $order->order_total_orders()->saveMany($totals);
         return $order->fresh();
     }
 

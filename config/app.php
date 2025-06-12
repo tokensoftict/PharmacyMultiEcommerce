@@ -177,4 +177,6 @@ return [
     'SEND_CHAMP_AUTHORIZATION' => env("SEND_CHAMP_AUTHORIZATION", ""),
     'SEND_CHAMP_TOKEN_LENGTH' => env("SEND_CHAMP_TOKEN_LENGTH", 4),
     'SEND_CHAMP_EXPIRATION_TIME' => env("SEND_CHAMP_EXPIRATION_TIME", 5),
+
+    'PROCESS_OLD_APP_URL' => env("PROCESS_OLD_APP_URL", "https://admin.generaldrugcentre.com/api/data/"),
 ];

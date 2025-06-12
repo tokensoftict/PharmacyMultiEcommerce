@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string|null $name
  * @property int $user_id
+ * @property int $local_address_id
  * @property string $address_1
  * @property string|null $address_2
  * @property int|null $country_id
@@ -45,6 +46,7 @@ class Address extends Model
 		'country_id' => 'int',
 		'state_id' => 'int',
 		'town_id' => 'int',
+        'local_address_id' => 'int',
 		'deleted' => 'bool'
 	];
 
@@ -56,6 +58,7 @@ class Address extends Model
 		'country_id',
 		'state_id',
 		'town_id',
+        'local_address_id',
 		'deleted'
 	];
 

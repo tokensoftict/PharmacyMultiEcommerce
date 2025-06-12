@@ -6,14 +6,16 @@ use App\Classes\AppLists;
 use App\Models\App;
 use App\Models\AppUser;
 use App\Models\SalesRepresentative;
+use App\Models\SupermarketAdmin;
 use App\Models\SupermarketUser;
 use App\Models\User;
+use App\Models\WholesalesAdmin;
 use App\Models\WholesalesUser;
 use Illuminate\Support\Arr;
 
 class AppUserService
 {
-    public final function createAppUser(User $user, WholesalesUser|SupermarketUser|SalesRepresentative|User $attachUser) : AppUser
+    public final function createAppUser(User $user, WholesalesUser|SalesRepresentative|SupermarketUser|WholesalesAdmin|SupermarketAdmin|User $attachUser) : AppUser
     {
         $data = [
             'user_id' => $user->id,

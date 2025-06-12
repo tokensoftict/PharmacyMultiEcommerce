@@ -24,41 +24,18 @@ new class extends Component {
             [
                 'salesRep.unique' => 'This user selected is already a sales representative.',
             ]);
-        DB::transaction(function () {
+        $accountService = app(\App\Services\User\UserAccountService::class);
+        DB::transaction(function () use ($accountService){
             $user = User::findorfail($this->salesRep);
-            $rep = SalesRepresentative::updateOrCreate([
+            $rep = $accountService->createSalesRepAccount($user, [
+                'status' => "0",
                 'user_id' => $this->salesRep,
-            ],
-                [
-                    'status' => "0",
-                    'user_id' => $this->salesRep,
-                    'invitation_status' => "0",
-                    "invitation_sent_date" => now(),
-                    'added_by' => auth()->id(),
-                    'token' => sha1(md5(generateRandomString(50))),
-                    'code'  => generateUniqueReferralCode()
-                ]);
+                'invitation_status' => "0",
+                "invitation_sent_date" => now(),
+                'added_by' => auth()->id(),
+            ]);
 
-            AppUser::updateOrCreate(
-                [
-                    'user_id' =>  $this->salesRep,
-                    'user_type_type' => SalesRepresentative::class,
-                    'app_id' => 4,
-                    'domain' => AppLists::getApp($rep)
-                ],
-                [
-                    'user_type_id' =>  $rep->id,
-                    'user_type_type' => SalesRepresentative::class,
-                    'app_id' => 4,
-                    'domain' => AppLists::getApp($rep),
-                    'user_id' =>  $this->salesRep
-                ]
-            );
-            //trigger invent to send invite email to the user
-            $link = route('sales-representative.sales_rep.accept-invitation', $rep->token);
-            Mail::to($rep->user->email)->send(new SalesRepInvitationMail($rep, $link));
             Session::flash('status', 'An Invitation Email has been sent to ' . $user->email . " " . $user->name . " will become a sales representative when they accept the invite  &#128513;");
-
             $this->dispatch("closeSalesRepModal", ['status' => true]);
         });
     }

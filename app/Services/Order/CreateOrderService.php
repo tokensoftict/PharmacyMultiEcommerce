@@ -39,7 +39,7 @@ class CreateOrderService
             throw new \Exception("Application user error, Please restart the application to complete your checkout");
         }
 
-        $attributes['order_id'] = $attributes['order_id'] ?? generateRandomString(10);
+        $attributes['order_id'] = $attributes['order_id'] ?? generateUniqueid(12);
         $attributes['invoice_no'] = $attributes['invoice_no'] ?? generateUniqueNumber();
         $attributes['order_date'] = $attributes['order_date'] ?? todaysDate();
         $attributes['customer_type'] = $attributes['customer_type'] ?? get_class($checkoutUser);
@@ -57,15 +57,15 @@ class CreateOrderService
         $attributes['delivery_method_id'] = $attributes['delivery_method_id'] ?? $checkoutUser->getCheckoutDeliveryMethod()['deliveryMethod'];
         $attributes['comment'] = $attributes['comment'] ?? " ";
         $attributes['status_id'] = $attributes['status_id'] ?? status("Submitted");
-        $attributes['payment_address_id'] = $checkoutUser->getCheckoutAddress() ?? $checkoutUser->getDefaultAddress();
-        $attributes['shipping_address_id'] = $checkoutUser->getCheckoutAddress() ?? $checkoutUser->getDefaultAddress();
+        $attributes['payment_address_id'] = $attributes['payment_address_id'] ?? ($checkoutUser->getCheckoutAddress() ?? $checkoutUser->getDefaultAddress());
+        $attributes['shipping_address_id'] =  $attributes['shipping_address_id'] ?? ($checkoutUser->getCheckoutAddress() ?? $checkoutUser->getDefaultAddress());
         $attributes['checkout_data'] = $attributes['checkout_data'] ?? $checkoutUser->checkout;
         $attributes['ordertotals'] =  $attributes['ordertotals'] ?? ($checkoutUser->ordertotals ?? NULL);
-        $attributes['app_id'] = ApplicationEnvironment::$id;
+        $attributes['app_id'] =  $attributes['app_id'] ??  ApplicationEnvironment::$id;
         $attributes['sales_representative_id'] = $attributes['sales_representative_id'] ?? ($checkoutUser->sales_representative_id ?? NULL);
-        $attributes['coupon_information'] = $checkoutUser->isCouponCode() ? $checkoutUser->coupon_data : NULL;
-        $attributes['voucher_information'] = $checkoutUser->isVoucherCode() ? $checkoutUser->coupon_data : NULL;
-        $attributes['cart_cache'] = $checkoutUser->cart;
+        $attributes['coupon_information'] = $attributes['coupon_information'] ?? ($checkoutUser->isCouponCode() ? $checkoutUser->coupon_data : NULL);
+        $attributes['voucher_information'] = $attributes['voucher_information'] ?? ( $checkoutUser->isVoucherCode() ? $checkoutUser->coupon_data : NULL);
+        $attributes['cart_cache'] =  $attributes['cart_cache'] ?? $checkoutUser->cart;
         if(!isset($attributes['total'])) {
             $checkOutOrderService = new ConfirmOrderService();
             $total = $checkOutOrderService->confirmOrderReturnTotal();
@@ -74,6 +74,7 @@ class CreateOrderService
             }
             $attributes['total'] = $total;
         }
+
 
         return $attributes;
     }
@@ -86,7 +87,19 @@ class CreateOrderService
     public final function create(array $attributes) : Order
     {
         $attributes = $this->formatOrderAttributes($attributes);
-        return Order::create($attributes);
+        $order = new Order($attributes);
+
+        if(isset($attributes['created_at'])) {
+            $order->timestamps = false;
+            $order->created_at = $attributes['created_at'];
+        }
+        if(isset($attributes['updated_at'])) {
+            $order->timestamps = false;
+            $order->updated_at = $attributes['updated_at'];
+        }
+
+        $order->save();
+        return $order;
     }
 
     /**

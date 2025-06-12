@@ -178,5 +178,13 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface
         return $this->hasMany(AppUser::class);
     }
 
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 
+    public function address()
+    {
+        return $this->hasOne(Address::class);
+    }
 }

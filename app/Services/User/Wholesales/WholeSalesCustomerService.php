@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\WholesalesUser;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class WholeSalesCustomerService
 {
@@ -35,6 +36,11 @@ class WholeSalesCustomerService
             );
 
             $data['user_id'] = $user->id;
+            $data['business_name'] = Str::upper($data['business_name']);
+            $data['phone'] = normalizePhoneNumber($data['phone']);
+            $data['phone'] = str_replace("-", "", $data['phone']);
+            $data['phone'] = str_replace(" ", "", $data['phone']);
+
             $customer  = WholesalesUser::create($data);
 
             if(request()->has("cac_document")) {
@@ -67,11 +73,13 @@ class WholeSalesCustomerService
             $customer = $this->updateCustomer($customer->id, $data);
         }
 
-        if(!is_null($customer->sales_representative_id) and isset($salesRep)) {
-            Mail::to($salesRep->user->email)->send(new NewCustomer($salesRep, $customer));
-        }
+        if(!app()->runningInConsole()) {
+            if (!is_null($customer->sales_representative_id) and isset($salesRep)) {
+                Mail::to($salesRep->user->email)->send(new NewCustomer($salesRep, $customer));
+            }
 
-        Mail::to($customer->user->email)->send(new WholesalesAccountRegistration($customer, $this->userPassword));
+            Mail::to($customer->user->email)->send(new WholesalesAccountRegistration($customer, $this->userPassword));
+        }
 
         return $customer;
     }
@@ -105,7 +113,7 @@ class WholeSalesCustomerService
         $user->save();
         $user->fresh();
 
-        if($user->status) {
+        if($user->status and !app()->runningInConsole()) {
             Mail::to($user->user->email)->send(new SendActivationEmail($user));
         }
 

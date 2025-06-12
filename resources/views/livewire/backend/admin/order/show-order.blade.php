@@ -117,8 +117,8 @@
                                             <h6 class="mb-0">Address</h6>
                                         </div>
                                         <div class="ms-4">
-                                            <p class="text-body-secondary mb-0 fs-9">{{ $this->order->address->name }}</p>
-                                            <p class="text-body-secondary mb-0 fs-9">{{ $this->order->address->address_1 }}<br class="d-none d-sm-block" />{{ $this->order->address->state->name }}, {{ $this->order->address->town->name }}</p>
+                                            <p class="text-body-secondary mb-0 fs-9">{{ $this->order?->address?->name ?? "" }}</p>
+                                            <p class="text-body-secondary mb-0 fs-9">{{ $this->order?->address?->address_1 ?? "" }}<br class="d-none d-sm-block" />{{optional($this->order?->address?->state)->name  }}, {{ optional($this->order?->address?->town)->name}}</p>
                                         </div>
                                     </div>
                                     <div class="col-6 col-sm-12">
@@ -146,16 +146,18 @@
                                             <h6 class="mb-0">Address</h6>
                                         </div>
                                         <div class="ms-4">
-                                            <p class="text-body-secondary mb-0 fs-9">{{ $this->order->address->name }}</p>
-                                            <p class="text-body-secondary mb-0 fs-9">{{ $this->order->address->address_1 }}<br class="d-none d-sm-block" />{{ $this->order->address->state->name }}, {{ $this->order->address->town->name }}</p>
+                                            <p class="text-body-secondary mb-0 fs-9">{{ optional($this->order->address)->name }}</p>
+                                            <p class="text-body-secondary mb-0 fs-9">{{ $this->order->address->address_1 }}<br class="d-none d-sm-block" />{{ optional($this->order->address->state)->name }}, {{ optional($this->order->address->town)->name }}</p>
                                         </div>
                                     </div>
+                                    <!--
                                     <div class="col-6 col-sm-12">
                                         <div class="d-flex align-items-center mb-1"><span class="me-2" data-feather="calendar" style="stroke-width:2.5;"></span>
                                             <h6 class="mb-0">Shipping Date</h6>
                                         </div>
-                                        <p class="mb-0 text-body-secondary fs-9 ms-4">12 Nov, 2021</p>
+                                        <p class="mb-0 text-body-secondary fs-9 ms-4"></p>
                                     </div>
+                                    -->
                                 </div>
                             </div>
                         </div>

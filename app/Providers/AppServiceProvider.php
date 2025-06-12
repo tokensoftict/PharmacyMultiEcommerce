@@ -5,11 +5,12 @@ namespace App\Providers;
 use App\Classes\Settings;
 use App\Http\Middleware\DetectApplicationEnvironment;
 use App\Listeners\PushNotificationFailedListener;
-use App\Listeners\PushNotificationSendListener;
+use App\Models\Old\RetailCustomer;
+use App\Models\Old\User;
 use Illuminate\Notifications\Events\NotificationFailed;
-use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('Super Administrator') ? true : null;
         });
 
+        Relation::morphMap([
+            'App\\User' => User::class,
+            'App\\RetailCustomer' => RetailCustomer::class,
+        ]);
 
         Livewire::addPersistentMiddleware([
             DetectApplicationEnvironment::class

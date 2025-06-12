@@ -16,7 +16,7 @@ class AddressService
      */
     public final function createAddress(User $user,array $data) : Address
     {
-        $data = Arr::only($data, ['name', 'address_1', 'address_2', 'country_id', 'state_id', 'town_id']);
+        $data = Arr::only($data, ['name', 'address_1', 'address_2', 'country_id', 'state_id', 'town_id', 'local_address_id']);
 
         $data['user_id'] = $user->id;
 

@@ -40,7 +40,7 @@ class SupermarketCustomerService
      */
     public final function updateCustomer(int $id, array $data) : SupermarketUser
     {
-        $customer = SupermarketUser::findorfail($id);
+        $customer = SupermarketUser::where("user_id", $id)->firstorfail();
 
         if($customer)
         {
