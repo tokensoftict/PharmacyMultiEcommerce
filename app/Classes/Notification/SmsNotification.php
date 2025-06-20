@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Classes\Notification;
+use App\Exceptions\PsgdcExceptionsHandler;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
@@ -18,31 +19,32 @@ class SmsNotification
         Storage::append("sms.txt", $message);
         if(config('app.BULKSMS_ENGINE') === "SENDCHAMP") {
 
+
             $response = Http::withHeaders([
                 'Accept' => 'application/json,text/plain,*/*',
                 'Authorization' => config('app.SEND_CHAMP_AUTHORIZATION'),
                 'Content-Type' => 'application/json',
             ])
-                ->timeout(30)
+                ->timeout(300)
                 ->post(config("app.BULKSMS_URL"), [
                 'channel' => 'sms',
                 'sender' => config("app.BULKSMS_SENDER"),
                 'token_type' => 'numeric',
-                'token_length' => config("app.SEND_CHAMP_TOKEN_LENGTH"),
-                'expiration_time' => config("app.SEND_CHAMP_EXPIRATION_TIME"),
-                'customer_mobile_number' => $notifiable->phone,
+                'token_length' => (int)config("app.SEND_CHAMP_TOKEN_LENGTH"),
+                'expiration_time' => (int)config("app.SEND_CHAMP_EXPIRATION_TIME"),
+                'customer_mobile_number' => "234".$notifiable->phone,
                 'meta_data' => null,
                 'in_app_token' => false,
             ]);
 
             if ($response->successful()) {
-                $body = json_decode($response->body(), true);
+                $body = $response->json();
                 $token = $body['data']['token'];
 
                 $notifiable->verification_pin = $token;
                 $notifiable->update();
             } else {
-                throw new \Exception("There was an error while sending SMS, please try again later");
+                die(json_encode(['status' => false, 'error' => 'There was an error sending message please try again', 'code' => 500]));
             }
 
         } else {
