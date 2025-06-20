@@ -96,15 +96,18 @@ trait DynamicDataTableRowAction
                 }
             }
 
-            if($button['type'] == "component")
-            {   $this->rowClass = get_class($row);
+            if($button['type'] == "component") {
+                $this->rowClass = get_class($row);
+                $row = $this->rowClass::find($row->id);
+                $row = json_encode($row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                $row = htmlspecialchars($row, ENT_QUOTES, 'UTF-8');
                 if($button['is'] === 'modal') {
-                    $extraButtonAction .= '&nbsp;&nbsp;&nbsp;&nbsp;<a  wire:click.prevent="openCustomModal('.$row.')" href="#'.$button['modal'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="openCustomModal(' .$row. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="openCustomModal(' .$row. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
+                    //$extraButtonAction .= '&nbsp;&nbsp;&nbsp;&nbsp;<a  wire:click.prevent="'.$button['triggered'].'('.$row.')" href="#'.$button['modal'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="'.$button['triggered'].'(' .$row. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="'.$button['triggered'].'(' .$row. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
+                    $extraButtonAction .= '&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="Livewire.getByName(\''.$button['component'].'\')[0].'.$button['triggered'].'('.$row.',\''.$this->rowClass.'\'); return false;" href="#'.$button['modal'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="'.$button['triggered'].'(' .$row. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="'.$button['triggered'].'(' .$row. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
                 }
             }
 
-            if($button['type'] == "method")
-            {
+            if($button['type'] == "method") {
                 $method = $button['method'];
                 $extraButtonAction .= '&nbsp;&nbsp;&nbsp;&nbsp;<a  wire:click.prevent="'.$method.'('.$row.')" href="#'.$button['method'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="'.$method.'(' .$row. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="'.$method.'(' .$row. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
             }
@@ -140,9 +143,6 @@ trait DynamicDataTableRowAction
     }
 
 
-    public function openCustomModal($row)
-    {
-        $this->dispatch('openRestrictionModal', ['type'=>$this->rowClass, 'row'=>$row]);
-    }
+
 
 }

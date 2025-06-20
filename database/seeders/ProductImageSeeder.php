@@ -14907,7 +14907,7 @@ class ProductImageSeeder extends Seeder
                 $image = $imageFolder
                     ->addMediaFromDisk($image, 'contabo')
                     ->preservingOriginal()
-                    ->toMediaCollection();
+                    ->toMediaCollection('medialibrary');
 
                 StockMedia::updateOrCreate([
                     'stock_id' => $stock->id,

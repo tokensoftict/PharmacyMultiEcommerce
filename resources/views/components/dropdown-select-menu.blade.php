@@ -42,6 +42,7 @@
 
         document.addEventListener('livewire:navigated', function (){
             const text_search = document.getElementsByClassName('text_search_{{ $id }}')[0];
+            $('.li_{{ $id }} a').off("click");
             $('.li_{{ $id }} a').on("click", function (){
                 const hiddenValueHolder =  document.getElementById('text_id_{{ $id }}');
                 hiddenValueHolder.value = $(this).attr('data-value');
@@ -92,7 +93,7 @@
                 }
             });
 
-            const options = JSON.parse('{!! json_encode(Arr::only($options, ['id', 'name', 'text'])) !!}');
+            const options = @json($options);
             options.forEach(function (item) {
                 if(@this.get('{{ $attributes['wire:model'] ?? $attributes['wire:model.live'] }}') == item.id){
                     $('#dropdownMenuButton{{ $id }}').html(item.text ?? item.name);
@@ -112,7 +113,9 @@
                     @endphp
                     let seen = false;
                     if(component.$wire.get('{{ ($attributes['wire:model'] ?? $attributes['wire:model.live']) }}') !== undefined && component.$wire.get('{{ ($attributes['wire:model'] ?? $attributes['wire:model.live']) }}')!=="") {
-                        component.$wire.get("data").{{ $key }}.options.forEach(function (item) {
+
+                        const optionsData = component.$wire.get("data").hasOwnProperty('{{ $key }}') ? component.$wire.get("data").{{ $key }}.options : options;
+                        optionsData.forEach(function (item) {
                             if (component.$wire.get('{{ ($attributes['wire:model'] ?? $attributes['wire:model.live']) }}') == item.id) {
                                 $('#dropdownMenuButton{{ $id }}').html(item.text ?? item.name);
                                 seen = true;

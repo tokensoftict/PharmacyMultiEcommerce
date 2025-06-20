@@ -5,7 +5,6 @@
     function openRestrictionModal(e)
     {
         let detail = e.detail[0];
-        let component = window.Livewire.find('{{ $this->getId() }}');
         window.Livewire.find('{{ $this->getId() }}').set('parameters', {group_id : detail.row.id, group_type : detail.type}, true);
         restriction.show();
     }

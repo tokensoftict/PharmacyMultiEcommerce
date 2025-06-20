@@ -29,7 +29,7 @@ class ImportOrderFromOldServer extends Command
     {
         $importOrderService = app(ImportOrderService::class);
         Order::with(['user','address','address.zone','orderStatus','orderTotalOrders','orderProducts','paymentMethod','shippingMethod','shippingAddress','shippingAddress.zone'])
-            ->where('id', '>',7) // dont include test orders they have zero local id
+            ->where('order_date', '>','2023-12-31') // dont include test orders they have zero local id
             ->chunk(10, function ($orders) use ($importOrderService) {
                 foreach ($orders as $order) {
                     $importOrderService->handle($order->toArray());

@@ -88,7 +88,7 @@
     @if(isset($this->toolbarButtons))
         @foreach($this->toolbarButtons as $key => $toolbarButton)
             @if($toolbarButton['type'] === 'component' && userCanView($toolbarButton['permission']))
-                @livewire($toolbarButton['component'], key(str_replace("\\","",$index)))
+                @livewire($toolbarButton['component'], key(str_replace("\\","",$key)))
             @endif
         @endforeach
     @endif

@@ -44,7 +44,7 @@ class StockRestrictionDataTable extends ExportDataTableComponent
         ];
 
         $this->extraRowActionButton = [
-            CustomerType::class =>  [
+            [
                 'label' => 'Upload Stock',
                 'type' => 'component',
                 'route' => "backend.admin.stock_manager.stock_restriction.upload",
@@ -53,6 +53,7 @@ class StockRestrictionDataTable extends ExportDataTableComponent
                 'icon' => 'fa fa-cloud',
                 'component' => StockRestrictionComponent::class,
                 'is' => 'modal',
+                'triggered' => 'openCustomModal',
                 'modal' => 'stock-restriction-component',
                 'parameters' =>[]
             ],
@@ -110,5 +111,10 @@ class StockRestrictionDataTable extends ExportDataTableComponent
         ];
     }
 
+
+    public function openCustomModal($row)
+    {
+        $this->dispatch('openRestrictionModal', ['type'=>$this->rowClass, 'row'=>$row]);
+    }
 
 }

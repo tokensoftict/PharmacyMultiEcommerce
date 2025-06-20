@@ -22,16 +22,38 @@ class TownAndDistanceDataTableComponent extends ExportDataTableComponent
 
     public function __construct()
     {
-        $this->rowAction = ['edit', 'destroy'];
+        $this->rowAction = [
+           // 'destroy'
+        ];
 
         $this->actionPermission = [
-            'edit' => 'backend.admin.settings.town_and_distance.update',
-            'destroy' => 'backend.admin.settings.town_and_distance.destroy',
-            'create'   => 'backend.admin.settings.town_and_distance.create',
+            //'destroy' => 'backend.admin.settings.town_and_distance.destroy',
+            'edit_towns_and_distance' => 'backend.admin.settings.town_and_distance.update',
+            'create_new_towns_and_distance'   => 'backend.admin.settings.town_and_distance.create',
             'upload_towns_distance'=> 'backend.admin.settings.town_and_distance.upload'
         ];
 
-        $this->extraRowAction = [];
+        $this->extraRowAction = [
+            'edit_towns_and_distance'
+        ];
+
+        $this->extraRowActionButton = [
+
+            'backend/component/edittownsanddistance' => [
+                'label' => 'Edit',
+                'type' => 'component',
+                'route' => "backend.admin.settings.town_and_distance.update",
+                'permission' => 'edit_towns_and_distance',
+                'class' => 'btn btn-sm btn-outline-primary',
+                'icon' => 'fa fa-pencil',
+                'component' => 'backend.component.edittownsanddistance',
+                'is' => 'modal',
+                'triggered' => 'openEditModal',
+                'modal' => 'edit-towns-and-distance',
+                'parameters' =>[]
+            ]
+
+        ];
 
         $this->breadcrumbs = [
             [
@@ -60,14 +82,28 @@ class TownAndDistanceDataTableComponent extends ExportDataTableComponent
                   'is' => 'modal',
                   'modal' => 'backend.component.upload-towns-and-distance-component',
                   'parameters' =>[]
-              ]
+              ],
+
+            'backend/component/createtownsanddistance' => [
+                'label' => 'Create Towns & Distance',
+                'type' => 'component',
+                'route' => "backend.admin.settings.town_and_distance.create",
+                'permission' => 'create_new_towns_and_distance',
+                'class' => 'btn btn-sm btn-outline-success',
+                'icon' => 'fa fa-plus',
+                'component' => 'backend.component.createtownsanddistance',
+                'is' => 'modal',
+                'modal' => 'backend.component.createtownsanddistance',
+                'parameters' =>[]
+            ]
+
         ];
 
     }
 
     public function builder(): Builder
     {
-        return DeliveryTownDistance::query()->with(['town', 'town.state', 'town.local_govt']);
+        return DeliveryTownDistance::query()->with(['town', 'town.state', 'town.local_govt'])->orderBy('id', 'desc');
     }
 
 
@@ -176,12 +212,12 @@ class TownAndDistanceDataTableComponent extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Fixed Delivery Cost", "fixed_shipping_amount")
                 ->sortable(),
-            /*
+
             Column::make("Delivery Days", "delivery_days")
                 ->format(function($value, $row, Column $column){
                     return implode(",", $value);
                 })->sortable(),
-            */
+
         ];
     }
 

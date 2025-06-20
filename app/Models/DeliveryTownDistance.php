@@ -16,13 +16,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $town_distance
  * @property int $town_id
  * @property string $type
+ * @property string $delivery_type
  * @property string $frequency
+ * @property string $interval_frequency
  * @property int $no
+ * @property int $interval_no
  * @property float $minimum_shipping_amount
  * @property float $fixed_shipping_amount
  * @property string|null $delivery_days
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $starting_date
  *
  * @property Town $town
  *
@@ -36,9 +40,11 @@ class DeliveryTownDistance extends Model
 		'town_distance' => 'float',
 		'town_id' => 'int',
 		'no' => 'int',
+        'interval_no' => 'int',
 		'minimum_shipping_amount' => 'float',
 		'fixed_shipping_amount' => 'float',
-        'delivery_days' => 'array'
+        'delivery_days' => 'array',
+        'starting_date' => 'date'
 	];
 
 	protected $fillable = [
@@ -49,7 +55,12 @@ class DeliveryTownDistance extends Model
 		'no',
 		'minimum_shipping_amount',
 		'fixed_shipping_amount',
-		'delivery_days'
+		'delivery_days',
+
+        'delivery',
+        'interval_no',
+        'interval_frequency',
+        'starting_date'
 	];
 
 	public function town()
