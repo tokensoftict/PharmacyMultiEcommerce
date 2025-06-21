@@ -45,21 +45,29 @@ class NewAccountNotificationManager
             );
         });
 
-        NewAccountRegistration::toMailUsing(function ($notifiable, $verificationUrl) use ($user){
-            return (new MailMessage)
-                ->subject('Email Verification')
-                ->greeting("Hello $notifiable->firstname $notifiable->lastname")
-                ->line("Click the button below to confirm your email address.")
-                ->action("Verify Email", $verificationUrl)
-                ->line(Lang::get("If you did not request this email, you can safely delete this email."))
-                ->salutation("Thanks & Regards");
-        });
-
         NewAccountRegistration::createSmsUsing(function ($notifiable) use ($user){
             $otp = mt_rand(1000, 9999);
             $user->verification_pin = $otp;
             $user->update();
             return "Hello ".$notifiable->firstname." Please use $otp to verify your phone number";
+        });
+
+        NewAccountRegistration::toMailUsing(function ($notifiable, $verificationUrl) use ($user){
+            $user = $user->fresh();
+            $mail = (new MailMessage)
+                ->subject('Email Verification')
+                ->greeting("Hello $notifiable->firstname $notifiable->lastname")
+                ->line("Click the button below to confirm your email address.");
+
+                if(!is_null($user->verification_pin)){
+                    $mail->line("You can use this OTP to verify your phone number.")->line($user->verification_pin);
+                }
+
+            $mail ->action("Verify Email", $verificationUrl)
+                ->line(Lang::get("If you did not request this email, you can safely delete this email."))
+                ->salutation("Thanks & Regards");
+
+            return $mail;
         });
     }
 }

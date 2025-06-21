@@ -50,13 +50,14 @@ class UserAccountService
 
             $user->updateLastSeen();
 
+            if(!is_null($user->phone)){
+                $verifyFields[] = "phone";
+            }
+
             if(!is_null($user->email)){
                 $verifyFields[] = "email";
             }
 
-            if(!is_null($user->phone)){
-                $verifyFields[] = "phone";
-            }
             if(!app()->runningInConsole()) {
                 NewAccountNotificationManager::notifyAll($user, $verifyFields);
             }

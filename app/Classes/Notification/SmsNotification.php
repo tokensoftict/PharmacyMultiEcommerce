@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Classes\Notification;
-use App\Exceptions\PsgdcExceptionsHandler;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
@@ -48,7 +47,7 @@ class SmsNotification
             }
 
         } else {
-            Http::post(config("app.BULKSMS_URL"), [
+             Http::post(config("app.BULKSMS_URL"), [
                 "email" => config("app.BULKSMS_EMAIL"),
                 "password" => config("app.BULKSMS_PASSWORD"),
                 "recipient" => $notifiable->phone,
