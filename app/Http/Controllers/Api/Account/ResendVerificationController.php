@@ -30,6 +30,8 @@ class ResendVerificationController extends ApiController
 
             $user->notify(new NewAccountRegistration(false, true));
             $message = "Otp has been sent successfully";
+
+            $request->request->add(["email" => $user->email]);
         }
 
         //if resetting email address
