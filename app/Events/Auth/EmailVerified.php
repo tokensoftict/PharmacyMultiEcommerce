@@ -16,6 +16,7 @@ class EmailVerified
     public function __construct(User $user)
     {
         $user->verification_token = NULL;
+        $user->email_verification_pin = NULL;
         $user->update();
         $this->user = $user;
     }

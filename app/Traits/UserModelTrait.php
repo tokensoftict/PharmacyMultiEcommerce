@@ -15,10 +15,41 @@ use Illuminate\Support\Collection;
 trait UserModelTrait
 {
 
-
-    /*
-     * Override default New Account Verification
+    /**
+     * @return void
      */
+    public final function generateEmailVerificationPin() : void
+    {
+        $this->email_verification_pin = rand(100000, 999999);
+        $this->save();
+    }
+
+
+    /**
+     * @return bool
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public final function markEmailAsVerified() : bool
+    {
+        if (in_array('web', request()->route()->gatherMiddleware())) {
+            return $this->forceFill([
+                'email_verified_at' => $this->freshTimestamp(),
+            ])->save();
+        }
+
+        if (in_array('api', request()->route()->gatherMiddleware())) {
+            if ($this->email_verification_pin == request()->get('otp')) {
+                return $this->forceFill([
+                    'email_verified_at' => $this->freshTimestamp(),
+                ])->save();
+
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * @return void

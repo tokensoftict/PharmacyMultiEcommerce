@@ -33,7 +33,7 @@ class NewAccountNotificationManager
     {
         NewAccountRegistration::createUrlUsing(function ($notifiable) use ($user){
             $hash = sha1($notifiable->getEmailForVerification());
-            $user->update(["verification_token" => $hash]);
+            $user->generateEmailVerificationPin();
             return URL::temporarySignedRoute(
                 'verification.verify',
                 Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
@@ -59,8 +59,9 @@ class NewAccountNotificationManager
                 ->greeting("Hello $notifiable->firstname $notifiable->lastname")
                 ->line("Click the button below to confirm your email address.");
 
-                if(!is_null($user->verification_pin)){
-                    $mail->line("You can use this OTP to verify your phone number.")->line($user->verification_pin);
+                if(!is_null($user->email_verification_pin)){
+                    $mail->line("Or use this 6-digit verification code:")
+                        ->line("**{$user->email_verification_pin}**") ;
                 }
 
             $mail ->action("Verify Email", $verificationUrl)

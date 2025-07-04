@@ -7,6 +7,7 @@ use App\Classes\Password\CanResetPasswordByMobile;
 use App\Classes\Password\CanResetPasswordByTokenInterface;
 use App\Traits\MustVerifyPhone;
 use App\Traits\UserModelTrait;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string $password
  * @property string|null $phone
  * @property string|null $verification_pin
+ * @property string|null $email_verification_pin
  * @property string|null $verification_token
  * @property string|null $image
  * @property string $theme
@@ -53,7 +55,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @package App\Models
  */
 
-class User extends Authenticatable implements CanResetPasswordByTokenInterface
+class User extends Authenticatable implements CanResetPasswordByTokenInterface, MustVerifyEmail
 {
     use HasFactory, Notifiable, HasRoles, HasApiTokens, UserModelTrait, CanResetPasswordByMobile, MustVerifyPhone, SoftDeletes;
 
@@ -81,6 +83,7 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface
         'password',
         'phone',
         'verification_pin',
+        'email_verification_pin',
         'verification_token',
         'image',
         'theme',

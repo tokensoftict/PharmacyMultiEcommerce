@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class ResendVerificationController extends ApiController
 {
     /**
-     * @param Request $request
+     * @param ResendVerificationRequest $request
      * @return JsonResponse
      */
     public function __invoke(ResendVerificationRequest $request) : JsonResponse

@@ -26,12 +26,15 @@ class LoginWithVerificationToken
                 $jsonUser = json_decode(decrypt($request->get("auth_token")), true);
                 if (isset($jsonUser['email'])) {
                     $user = User::where("email", $jsonUser['email'])
-                        ->where("verification_token", $request->get(""))->first();
+                        ->where('id', $request->route('id'))
+                        ->where("verification_token", $request->route('hash'))->first();
 
                     if ($user) {
                         auth()->login($user);
                         Session::regenerate();
                         return $next($request);
+                    } else {
+                        return redirect()->route('customer.index');
                     }
                 }
             }
