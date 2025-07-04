@@ -15,9 +15,9 @@ class NewAccountRegistration extends Notification
 {
     use Queueable;
 
-    public string $email;
+    public bool $email;
 
-    public string $phone;
+    public bool $phone;
     public static $createUrlCallback;
 
     public static $createSmsCallback;
@@ -28,7 +28,7 @@ class NewAccountRegistration extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(bool $email, bool $phone)
+    public function __construct(bool $phone, bool $email)
     {
         $this->email = $email;
         $this->phone = $phone;
