@@ -36,6 +36,10 @@ class DeliveryTownDistance extends Model
 {
 	protected $table = 'delivery_town_distances';
 
+    public static array $deliveryTypes = [
+        "0" => "Days of the Week",
+        "1" => "Every Certain Day"
+    ];
 	protected $casts = [
 		'town_distance' => 'float',
 		'town_id' => 'int',
@@ -51,13 +55,14 @@ class DeliveryTownDistance extends Model
 		'town_distance',
 		'town_id',
 		'type',
-		'frequency',
-		'no',
-		'minimum_shipping_amount',
-		'fixed_shipping_amount',
-		'delivery_days',
+        'minimum_shipping_amount',
+        'fixed_shipping_amount',
+        'delivery_type',
 
-        'delivery',
+        'frequency',
+		'no',
+        'delivery_days',
+
         'interval_no',
         'interval_frequency',
         'starting_date'

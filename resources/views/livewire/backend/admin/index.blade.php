@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\DashboardService;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
@@ -10,30 +11,19 @@ new  class extends Component {
   public int $orderAwaitingPayment = 0;
   public int $productOutOfStock = 0;
 
-  public int $totalNumberOfOrdersLastSevenDays = 0;
   public int $totalNewCustomersLastSevenDays = 0;
 
-  public array $sevenDaysFromTodayOfThisMonthDateRange = [];
-  public array $sevenDaysFromTodayOfLastMonthDateRange = [];
 
+  public array $barChartData, $stackedChartData, $customerChartData = [];
 
 
   public function mount()
   {
-    // 7-day range starting from today (this month)
-    $startToday = now()->startOfDay();
-    $endToday = now()->copy()->addDays(6)->endOfDay();
-    $endOfThisMonth = now()->endOfMonth();
-    $this->sevenDaysFromTodayOfThisMonthDateRange = [$startToday->toDateString(), $endToday->lt($endOfThisMonth) ? $endToday->toDateString() : $endOfThisMonth->toDateString()];
-
-    // 7-day range starting from same day last month
-    $sameDayLastMonth = now()->subMonth()->startOfDay();
-    $startLastMonth = Carbon::createFromDate($sameDayLastMonth->year, $sameDayLastMonth->month, now()->day)->startOfDay();
-    $endOfLastMonth = $startLastMonth->copy()->addDays(6)->endOfDay();
-    $lastDayOfLastMonth = $startLastMonth->copy()->endOfMonth();
-    $this->sevenDaysFromTodayOfLastMonthDateRange = [$startLastMonth->toDateString(), $endOfLastMonth->lt($lastDayOfLastMonth) ? $endOfLastMonth->toDateString() : $lastDayOfLastMonth->toDateString()];
-
-
+    $dashboardService = app(DashboardService::class);
+    $this->barChartData = $dashboardService->getMonthlySalesData();
+    $this->stackedChartData = $dashboardService->getLast7DaysStatusBreakdown();
+    $this->customerChartData = $dashboardService->getNewCustomersComparisonWithStats();
+    $this->totalNewCustomersLastSevenDays = $this->customerChartData['totals']['this_month'];
   }
 
 }
@@ -44,14 +34,14 @@ new  class extends Component {
   <script src="{{ asset('vendor/leaflet.markercluster/leaflet.markercluster.js') }}"></script>
   <script src="{{ asset('vendor/leaflet.tilelayer.colorfilter/leaflet-tilelayer-colorfilter.min.js') }}"></script>
   <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
+      const chartData = @json($this->barChartData);
       var chart = echarts.init(document.getElementById('echart-basic-bar-chart-example'));
-      // Chart Options
       var option = {
         tooltip: {},
         xAxis: {
           type: 'category',
-          data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+          data: chartData.labels
         },
         yAxis: {
           type: 'value'
@@ -60,97 +50,70 @@ new  class extends Component {
           {
             name: 'Sales',
             type: 'bar',
-            data: [120, 200, 150, 80, 70, 110],
+            data: chartData.data,
             itemStyle: {
               color: '#3874FF'
             }
           }
         ]
       };
-      // Set the options
       chart.setOption(option);
 
+
+
+      const stackedChartData = @json($this->stackedChartData);
       var stackedChart = echarts.init(document.getElementById('echart-total-orders'));
-      // Example values out of 100
-      var values = [40, 60, 30, 20, 25, 50, 55];
+      // Chart Options
       var stackedOption = {
-        grid: {
-          left: 10,
-          right: 10,
-          bottom: 10,
-          top: 10,
-          containLabel: false
+        tooltip: {},
+        legend: {
+          data: ['', '']
         },
         xAxis: {
           type: 'category',
-          data: ['', '', '', '', '', '', ''],
-          axisLine: { show: false },
-          axisTick: { show: false },
-          axisLabel: { show: false }
+          data: stackedChartData.labels,
+          axisLine: {show: false},
+          axisTick: {show: false},
+          axisLabel: {show: false}
         },
         yAxis: {
           type: 'value',
           max: 100,
-          axisLine: { show: false },
-          axisTick: { show: false },
-          axisLabel: { show: false },
-          splitLine: { show: false }
+          axisLine: {show: false},
+          axisTick: {show: false},
+          axisLabel: {show: false},
+          splitLine: {show: false}
         },
         series: [
           {
-            name: 'Empty',
+            name: 'Completed',
             type: 'bar',
             stack: 'total',
-            data: values.map(v => 100 - v),
+            data: stackedChartData.completed,
             barWidth: '10%',
             itemStyle: {
-              color: '#2563EB'
+              color: '#4CAF50'
             },
-            emphasis: { disabled: false }
+            emphasis: {disabled: false}
           },
           {
-            name: 'Filled',
+            name: 'Pending Payment',
             type: 'bar',
             stack: 'total',
-            data: values,
+            data: stackedChartData.pending,
             barWidth: '10%',
             itemStyle: {
-              color: '#E0E7FF'
+              color: '#FF9800'
             }
           }
         ]
       };
+      // Set the options
       stackedChart.setOption(stackedOption);
 
-
-
+      const customerChartData = @json($customerChartData);
 
       const customerCharts = echarts.init(document.getElementById('echarts-new-customers'));
-
-      // Simulated labels for last 7 days from today
-      const days = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
-
-      // Replace these with your dynamic values
-      const thisMonthData = [5, 10, 8, 6, 12, 15, 20];  // e.g. April 9–15
-      const lastMonthData = [3, 7, 5, 6, 7, 6, 8];       // e.g. March 9–15
-
-
-
-
-
-
-      const i = (o) => {
-        const t = window.dayjs(o[0].axisValue),
-                e = window.dayjs(o[0].axisValue).subtract(1, "month"),
-                a = o.map((o, a) => ({ value: o.value, date: a > 0 ? e : t, color: o.color }));
-        let i = "";
-        return (
-                a.forEach((o, t) => {
-                  i += `<h6 class="fs-9 text-body-tertiary ${t > 0 && "mb-0"}"><span class="fas fa-circle me-2" style="color:${o.color}"></span>\n      ${o.date.format("MMM DD")} : ${o.value}\n    </h6>`;
-                }),
-                        `<div class='ms-1'>\n              ${i}\n            </div>`
-        );
-      };
 
       const customerOption = {
         tooltip: {
@@ -158,24 +121,22 @@ new  class extends Component {
           padding: 10,
           backgroundColor: window.phoenix.utils.getColor("body-highlight-bg"),
           borderColor: window.phoenix.utils.getColor("border-color"),
-          textStyle: { color: window.phoenix.utils.getColor("light-text-emphasis") },
+          textStyle: {color: window.phoenix.utils.getColor("light-text-emphasis")},
           borderWidth: 1,
           transitionDuration: 0,
-          axisPointer: { type: "none" },
+          axisPointer: {type: "none"},
           formatter: i,
         },
         xAxis: [
           {
             type: "category",
-            data: window.phoenix.utils.getDates(new Date("5/1/2022"), new Date("5/7/2022"), 864e5),
-            show: !0,
-            boundaryGap: !1,
-            axisLine: { show: !0, lineStyle: { color: window.phoenix.utils.getColor("secondary-bg") } },
-            axisTick: { show: !1 },
+            data: customerChartData.dates,
+            show: true,
+            boundaryGap: false,
+            axisLine: {show: true, lineStyle: {color: window.phoenix.utils.getColor("secondary-bg")}},
+            axisTick: {show: false},
             axisLabel: {
               formatter: (o) => window.dayjs(o).format("DD MMM"),
-              showMinLabel: !0,
-              showMaxLabel: !1,
               color: window.phoenix.utils.getColor("secondary-color"),
               align: "left",
               interval: 5,
@@ -187,38 +148,48 @@ new  class extends Component {
           {
             type: "category",
             position: "bottom",
-            show: !0,
-            data:  window.phoenix.utils.getDates(new Date("5/1/2022"), new Date("5/7/2022"), 864e5),
+            data: customerChartData.dates,
             axisLabel: {
               formatter: (o) => window.dayjs(o).format("DD MMM"),
               interval: 130,
-              showMaxLabel: !0,
-              showMinLabel: !1,
-              color:  window.phoenix.utils.getColor("secondary-color"),
+              color: window.phoenix.utils.getColor("secondary-color"),
               align: "right",
               fontFamily: "Nunito Sans",
               fontWeight: 600,
               fontSize: 12.8,
             },
-            axisLine: { show: !1 },
-            axisTick: { show: !1 },
-            splitLine: { show: !1 },
-            boundaryGap: !1,
+            axisLine: {show: false},
+            axisTick: {show: false},
+            splitLine: {show: false},
+            boundaryGap: false,
           },
         ],
-        yAxis: { show: !1, type: "value", boundaryGap: !1 },
+        yAxis: {
+          show: false,
+          type: "value",
+          boundaryGap: false
+        },
         series: [
-          { type: "line", data: [150, 100, 300, 200, 250, 180, 250], showSymbol: !1, symbol: "circle", lineStyle: { width: 2, color:  window.phoenix.utils.getColor("secondary-bg") }, emphasis: { lineStyle: { color: window.phoenix.utils.getColor("secondary-bg") } } },
-          { type: "line", data: [200, 150, 250, 100, 500, 400, 600], lineStyle: { width: 2, color: window.phoenix.utils.getColor("primary") }, showSymbol: !1, symbol: "circle" },
+          {
+            type: "line",
+            data: customerChartData.last_month,
+            showSymbol: false,
+            symbol: "circle",
+            lineStyle: {width: 2, color: window.phoenix.utils.getColor("secondary-bg")},
+            emphasis: {lineStyle: {color: window.phoenix.utils.getColor("secondary-bg")}}
+          },
+          {
+            type: "line",
+            data: customerChartData.this_month,
+            lineStyle: {width: 2, color: window.phoenix.utils.getColor("primary")},
+            showSymbol: false,
+            symbol: "circle"
+          },
         ],
-        grid: { left: 0, right: 0, top: 5, bottom: 20 },
+        grid: {left: 0, right: 0, top: 5, bottom: 20},
       };
 
       customerCharts.setOption(customerOption);
-
-
-
-
     });
   </script>
 @endpush
@@ -234,8 +205,12 @@ new  class extends Component {
         <div class="row align-items-center g-4">
           <div class="col-12 col-md-auto">
             <div class="d-flex align-items-center"><span class="fa-stack" style="min-height: 46px;min-width: 46px;">
-                <span class="fa-solid fa-square fa-stack-2x dark__text-opacity-50 text-success-light" data-fa-transform="down-4 rotate--10 left-4"></span>
-                <span class="fa-solid fa-circle fa-stack-2x stack-circle text-stats-circle-success" data-fa-transform="up-4 right-3 grow-2"></span><span class="fa-stack-1x fa-solid fa-star text-success " data-fa-transform="shrink-2 up-8 right-6"></span></span>
+                <span class="fa-solid fa-square fa-stack-2x dark__text-opacity-50 text-success-light"
+                      data-fa-transform="down-4 rotate--10 left-4"></span>
+                <span class="fa-solid fa-circle fa-stack-2x stack-circle text-stats-circle-success"
+                      data-fa-transform="up-4 right-3 grow-2"></span><span
+                        class="fa-stack-1x fa-solid fa-star text-success "
+                        data-fa-transform="shrink-2 up-8 right-6"></span></span>
               <div class="ms-3">
                 <h4 class="mb-0">{{ formatNumber($this->orderAwaitingProcess) }} new orders</h4>
                 <p class="text-body-secondary fs-9 mb-0">Awaiting processing</p>
@@ -243,7 +218,8 @@ new  class extends Component {
             </div>
           </div>
           <div class="col-12 col-md-auto">
-            <div class="d-flex align-items-center"><span class="fa-stack" style="min-height: 46px;min-width: 46px;"><span
+            <div class="d-flex align-items-center"><span class="fa-stack"
+                                                         style="min-height: 46px;min-width: 46px;"><span
                         class="fa-solid fa-square fa-stack-2x dark__text-opacity-50 text-warning-light"
                         data-fa-transform="down-4 rotate--10 left-4"></span><span
                         class="fa-solid fa-circle fa-stack-2x stack-circle text-stats-circle-warning"
@@ -257,7 +233,8 @@ new  class extends Component {
             </div>
           </div>
           <div class="col-12 col-md-auto">
-            <div class="d-flex align-items-center"><span class="fa-stack" style="min-height: 46px;min-width: 46px;"><span
+            <div class="d-flex align-items-center"><span class="fa-stack"
+                                                         style="min-height: 46px;min-width: 46px;"><span
                         class="fa-solid fa-square fa-stack-2x dark__text-opacity-50 text-danger-light"
                         data-fa-transform="down-4 rotate--10 left-4"></span><span
                         class="fa-solid fa-circle fa-stack-2x stack-circle text-stats-circle-danger"
@@ -282,24 +259,24 @@ new  class extends Component {
                   <div>
                     <h5 class="mb-1">Total orders<span
                               class="badge badge-phoenix badge-phoenix-warning rounded-pill fs-9 ms-2"><span
-                                class="badge-label">-6.8%</span></span></h5>
+                                class="badge-label">{{ $this->stackedChartData['percentages']['difference'] }}%</span></span></h5>
                     <h6 class="text-body-tertiary">Last 7 days</h6>
                   </div>
-                  <h4>{{ money($this->totalNumberOfOrdersLastSevenDays) }}</h4>
+                  <h4>{{ money($this->stackedChartData['totals']['amount']) }}</h4>
                 </div>
                 <div class="d-flex justify-content-center">
                   <div class="echart-total-orders" id="echart-total-orders" style="height:150px;width:100%"></div>
                 </div>
                 <div class="mt-2">
                   <div class="d-flex align-items-center mb-2">
-                    <div class="bullet-item bg-primary me-2"></div>
+                    <div class="bullet-item me-2" style="background: #4CAF50;"></div>
                     <h6 class="text-body fw-semibold flex-1 mb-0">Completed</h6>
-                    <h6 class="text-body fw-semibold mb-0">52%</h6>
+                    <h6 class="text-body fw-semibold mb-0">{{ $this->stackedChartData['percentages']['completed'] }}%</h6>
                   </div>
                   <div class="d-flex align-items-center">
-                    <div class="bullet-item bg-primary-subtle me-2"></div>
+                    <div class="bullet-item me-2" style="background: #FF9800"></div>
                     <h6 class="text-body fw-semibold flex-1 mb-0">Pending payment</h6>
-                    <h6 class="text-body fw-semibold mb-0">48%</h6>
+                    <h6 class="text-body fw-semibold mb-0">{{ $this->stackedChartData['percentages']['pending'] }}%</h6>
                   </div>
                 </div>
               </div>
@@ -314,7 +291,7 @@ new  class extends Component {
                   <div>
                     <h5 class="mb-1">New customers<span
                               class="badge badge-phoenix badge-phoenix-warning rounded-pill fs-9 ms-2"> <span
-                                class="badge-label">+26.5%</span></span></h5>
+                                class="badge-label">{{ $this->customerChartData['percentage_difference'] }}</span></span></h5>
                     <h6 class="text-body-tertiary">Last 7 days</h6>
                   </div>
                   <h4>{{ formatNumber($this->totalNewCustomersLastSevenDays) }}</h4>

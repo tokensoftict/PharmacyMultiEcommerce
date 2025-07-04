@@ -83,18 +83,29 @@ new class extends Component {
             'formData.town_id' => 'required',
             'formData.town_distance' => 'required',
             'formData.type' => 'required',
+            'formData.delivery_type' => 'required',
             'formData.minimum_shipping_amount' => 'required',
             'formData.fixed_shipping_amount' => 'required',
 
-            'formData.no' => 'required_if:formData.type,0',
-            'formData.frequency' => 'required_if:formData.type,0',
-            'formData.delivery_days' => 'required_if:formData.type,0|array|min:1',
+            'formData.no' => 'required_if:formData.delivery_type,0',
+            'formData.frequency' => 'required_if:formData.delivery_type,0',
+            'formData.delivery_days' => 'required_if:formData.delivery_type,0',
 
 
-            'formData.starting_date'=> 'required_if:formData.type,1',
-            'formData.interval_no'=> 'required_if:formData.type,1',
-            'formData.interval_frequency'=> 'required_if:formData.type,1'
+            'formData.starting_date'=> 'required_if:formData.delivery_type,1',
+            'formData.interval_no'=> 'required_if:formData.delivery_type,1',
+            'formData.interval_frequency'=> 'required_if:formData.delivery_type,1'
         ]);
+
+        $this->formData['reset_time_days'] = 0;
+
+        if($this->formData['delivery_type'] == "1") {
+            $this->formData['no'] = 0;
+        }
+
+        \App\Models\DeliveryTownDistance::updateOrCreate(['town_id' => $this->formData['town_id']], $this->formData);
+        Session::flash('status', "Town and distance has been created successfully!");
+        $this->dispatch("closeCreateTownsAndDistanceModal", ['status' => true]);
     }
 
 }
@@ -113,14 +124,20 @@ new class extends Component {
         if (e.detail !== null && e.detail[0].hasOwnProperty('status') && e.detail[0].status === true) {
             setTimeout(function () {
                 window.location.reload();
+                createTownsAndDistance.hide();
             }, 1500)
         }
+
+    }
+
+    function cancelCreateModal(e) {
         createTownsAndDistance.hide();
     }
 
     window.addEventListener('closeCreateTownsAndDistance', closeCreateTownsAndDistanceModal);
     window.addEventListener('openCreateTownsAndDistance', openCreateTownsAndDistanceModal);
     window.addEventListener('openCreateTownsAndDistanceModal', openCreateTownsAndDistanceModal);
+    window.addEventListener('cancelCreateModal', cancelCreateModal);
 
     document.addEventListener('livewire:navigated',function(){
         Livewire.hook('morph.updated', ({ el, component }) => {
@@ -147,6 +164,8 @@ new class extends Component {
             }
         })
     });
+
+
 </script>
 @endscript
 
@@ -159,10 +178,20 @@ new class extends Component {
                     <div class="modal-header">
                         <h5 class="modal-title">Create Town And Distance</h5>
                         <button type="button"
-                                onclick="window.dispatchEvent(new CustomEvent('closeCreateTownsAndDistance'))"
+                                onclick="window.dispatchEvent(new CustomEvent('cancelCreateModal'))"
                                 class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body ">
+                    <div class="modal-body">
+                        @if (session()->has('error'))
+                            <div class="col-12">
+                                <div class="alert alert-danger" role="alert">{!!  \session('error') !!}</div>
+                            </div>
+                        @endif
+                        @if (session()->has('status'))
+                            <div class="col-12">
+                                <div class="alert alert-success" role="alert">{!!  \session('status') !!}</div>
+                            </div>
+                        @endif
                         <div class="mb-3">
                             <label for="town_id" class="form-label">Town</label>
                             <x-dropdown-select-menu :options="$this->towns"  wire:model="formData.town_id" id="town_id_select" placeholder="Select Town"/>
@@ -275,7 +304,7 @@ new class extends Component {
                             Create
                         </button>
                         <button type="button" class="btn btn-danger"
-                                onclick="window.dispatchEvent(new CustomEvent('closeCreateTownsAndDistance'))">Cancel
+                                onclick="window.dispatchEvent(new CustomEvent('cancelCreateModal'))">Cancel
                         </button>
                     </div>
                 </div>

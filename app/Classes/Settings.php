@@ -13,7 +13,6 @@ class Settings extends Valuestore
         'store.contact_number' => 'required',
     ];
 
-
     /**
      * @param array $defaultSettings
      * @return void
@@ -32,6 +31,30 @@ class Settings extends Valuestore
         return app(Settings::class);
     }
 
+
+    /**
+     * @return array
+     */
+    public static function InProgress() : array
+    {
+        return [status("Pending"), status("Processing"), status("Packing"), status("Waiting For Payment"), status("Paid")];
+    }
+
+    /**
+     * @return array
+     */
+    public static function Completed() : array
+    {
+        return [status("Dispatched"), status("Completed")];
+    }
+
+    /**
+     * @return array
+     */
+    public static function Cancelled() : array
+    {
+        return [status("Cancelled")];
+    }
 
     /**
      * @param string $key

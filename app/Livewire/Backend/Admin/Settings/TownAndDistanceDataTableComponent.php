@@ -204,20 +204,16 @@ class TownAndDistanceDataTableComponent extends ExportDataTableComponent
                 }),
             Column::make("Distance", "town_distance")
                 ->sortable(),
-            Column::make("No", "no")
-                ->sortable(),
-            Column::make("Frequency", "frequency")
-                ->sortable(),
             Column::make("Minimum Delivery Cost", "minimum_shipping_amount")
                 ->sortable(),
             Column::make("Fixed Delivery Cost", "fixed_shipping_amount")
                 ->sortable(),
 
-            Column::make("Delivery Days", "delivery_days")
+            Column::make("Delivery Type", "delivery_type")
                 ->format(function($value, $row, Column $column){
-                    return implode(",", $value);
-                })->sortable(),
-
+                    return DeliveryTownDistance::$deliveryTypes[$row->delivery_type];
+                })
+                ->sortable(),
         ];
     }
 
