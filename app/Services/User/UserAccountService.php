@@ -49,6 +49,7 @@ class UserAccountService
             $user->update();
 
             $user->updateLastSeen();
+            $verifyFields = [];
 
             if(!is_null($user->phone)){
                 //$verifyFields[] = "phone";
