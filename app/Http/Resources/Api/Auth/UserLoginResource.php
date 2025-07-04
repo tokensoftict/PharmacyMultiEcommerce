@@ -93,6 +93,11 @@ class UserLoginResource extends JsonResource
             ];
         }
 
+        $user['systemSettings'] = [
+            'mustVerify' => config("app.mustVerify"),
+            'verifyField' => config("app.verifyField") === "email" ? "email_verification_status" : "phone_verified_status",
+        ];
+
         return $user;
     }
 }
