@@ -81,14 +81,22 @@ class NewAccountRegistration extends Notification
 
     protected function buildMailMessage($url, $notifiable)
     {
-        return (new MailMessage)
-            ->subject('Welcome to General Drugs Centre!.')
+        $mail = (new MailMessage)
+            ->subject('Email Verification')
             ->greeting("Hello $notifiable->firstname $notifiable->lastname")
-            ->line("Thank you for Registering with us")
-            ->line("Click the button below to confirm your email address.")
-            ->action("Verify Email", $url)
-            ->line(Lang::get("If you didn't create an account with General Drugs Centre, you can safely delete this email."))
+            ->line("Click the button below to confirm your email address.");
+
+        if(!is_null($notifiable->email_verification_pin)){
+            $mail->line("Or use this 6-digit verification code:")
+                ->line("**{$notifiable->email_verification_pin}**") ;
+        }
+
+        $mail ->action("Verify Email", $url)
+            ->line(Lang::get("If you did not request this email, you can safely delete this email."))
             ->salutation("Thanks & Regards");
+
+        return $mail;
+
     }
 
     protected function verificationUrl($notifiable)
@@ -96,7 +104,7 @@ class NewAccountRegistration extends Notification
         if (static::$createUrlCallback) {
             return call_user_func(static::$createUrlCallback, $notifiable);
         }
-
+        $notifiable->generateEmailVerificationPin();
         return URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
