@@ -52,7 +52,7 @@ class UserAccountService
             $verifyFields = [];
 
             if(!is_null($user->phone)){
-                //$verifyFields[] = "phone";
+                $verifyFields[] = false; //"phone";
             }
 
             if(!is_null($user->email)){
