@@ -45,12 +45,14 @@ class NewAccountNotificationManager
             );
         });
 
-        NewAccountRegistration::createSmsUsing(function ($notifiable) use ($user){
-            $otp = mt_rand(1000, 9999);
-            $user->verification_pin = $otp;
-            $user->update();
-            return "Hello ".$notifiable->firstname." Please use $otp to verify your phone number";
-        });
+        if(\config('app.mustVerify') !== 'email') {
+            NewAccountRegistration::createSmsUsing(function ($notifiable) use ($user) {
+                $otp = mt_rand(1000, 9999);
+                $user->verification_pin = $otp;
+                $user->update();
+                return "Hello " . $notifiable->firstname . " Please use $otp to verify your phone number";
+            });
+        }
 
         NewAccountRegistration::toMailUsing(function ($notifiable, $verificationUrl) use ($user){
             $user = $user->fresh();
