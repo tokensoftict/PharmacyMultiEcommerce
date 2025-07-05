@@ -5,6 +5,8 @@ use App\Classes\Settings;
 use App\Models\NewStockArrival;
 use App\Models\Pricechangehistory;
 use App\Models\Stock;
+use App\Models\SupermarketUser;
+use App\Models\WholesalesUser;
 use App\Services\Utilities\PushNotificationService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -82,7 +84,6 @@ trait ModelFilterTraits
             $product = NewStockArrival::query()->orderBy("id", "DESC")->first()?->stock?->name;
             $newlyArrivedStocks = NewStockArrival::query()->select("stock_id")->orderBy('id','DESC')->limit($newArrivalCountTrigger)->pluck('stock_id');
             //create notification tobe pushed
-
             $pushNotification = new PushNotificationService();
             $pushNotification->createNotification(
                 [
@@ -92,14 +93,16 @@ trait ModelFilterTraits
                     "device_ids"=>[],
                     "app_id"=>$this->app_id,
                     "type"=>"topic",
-                    "action"=>"stocks",
+                    "action"=>"NEW_ARRIVAL",
                     "status" =>"DRAFT",
                 ]
             );
-            $pushNotification->approve()->send(); // push the push notification to the device
+            $pushNotification
+                ->setAllAvailableCustomer(($this->app_id == 5 ? WholesalesUser::class : SupermarketUser::class))
+                ->approve()
+                ->send(); // push the push notification to the device
 
         }
-
 
 
     }

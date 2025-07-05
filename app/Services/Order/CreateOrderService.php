@@ -219,7 +219,7 @@ class CreateOrderService
             ])
             ->determineCustomerTypeAndSetCustomer($order->customer)
             ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->order_id])
+            ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
     }
@@ -250,7 +250,7 @@ class CreateOrderService
             ])
             ->determineCustomerTypeAndSetCustomer($order->customer)
             ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->order_id])
+            ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
     }
@@ -280,7 +280,7 @@ class CreateOrderService
             ])
             ->determineCustomerTypeAndSetCustomer($order->customer)
             ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->order_id])
+            ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
     }
@@ -313,7 +313,7 @@ class CreateOrderService
             ])
             ->determineCustomerTypeAndSetCustomer($order->customer)
             ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->order_id])
+            ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
     }
@@ -340,7 +340,7 @@ class CreateOrderService
             ])
             ->determineCustomerTypeAndSetCustomer($order->customer)
             ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->order_id])
+            ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
 
@@ -374,7 +374,7 @@ class CreateOrderService
             ])
             ->determineCustomerTypeAndSetCustomer($order->customer)
             ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->order_id])
+            ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
     }
@@ -415,7 +415,7 @@ class CreateOrderService
             ])
             ->determineCustomerTypeAndSetCustomer($order->customer)
             ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->order_id])
+            ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
     }

@@ -25,7 +25,7 @@ class ResendVerificationController extends ApiController
         if($request->has("phone")){
 
             if($user->hasVerifiedPhone()){
-                return $this->sendSuccessResponse(["message" => "Your Phone Number has already been verified"]);
+                return $this->sendSuccessResponse(["hasVerified" => false, "message" => "Your Phone Number has already been verified"]);
             }
 
             $user->notify(new NewAccountRegistration(true, false));
@@ -39,13 +39,13 @@ class ResendVerificationController extends ApiController
         if($request->has("email")){
 
             if($user->hasVerifiedEmail()){
-                return $this->sendSuccessResponse(["message" => "Your Email Address has already been verified"]);
+                return $this->sendSuccessResponse(["hasVerified" => true, "message" => "Your Email Address has already been verified"]);
             }
 
             $user->notify(new NewAccountRegistration(false, true));
             $message = "We have sent email verification instruction to your mailbox";
         }
 
-        return $this->sendSuccessResponse(['message' => $message]);
+        return $this->sendSuccessResponse(["hasVerified" => false, 'message' => $message]);
     }
 }

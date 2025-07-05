@@ -81,7 +81,7 @@ class CustomerManagerDatatable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return WholesalesUser::query()->with(['customer_group', 'user', 'customer_type']);
+        return WholesalesUser::query()->with(['customer_group', 'user', 'customer_type'])->orderBy('id', 'desc');
     }
 
     public function mount()

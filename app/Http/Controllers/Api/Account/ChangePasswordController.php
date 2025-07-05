@@ -30,13 +30,14 @@ class ChangePasswordController extends ApiController
         $user = $request->user();
 
         $oldPassword = $request->input('old_password');
-        $newPassword = $request->input('new_password');
+        $newPassword = $request->input('password');
 
         $check = Hash::check($oldPassword, $user->password);
 
         if(!$check) return $this->errorResponse("Old password is not correct, please check and try again.", 400);
 
         $user->password = bcrypt($newPassword);
+        $user->save();
 
        return $this->sendSuccessResponse(["message" => "Your Password has been changed successfully."]);
     }

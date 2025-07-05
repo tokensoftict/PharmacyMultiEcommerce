@@ -106,7 +106,7 @@ class PushNotificationDatatable extends ExportDataTableComponent
     {
         return PushNotification::query()
             ->where('app_id', ApplicationEnvironment::$model_id)
-            ->with(['user']);
+            ->with(['user'])->orderBy('id', 'desc');
     }
 
 

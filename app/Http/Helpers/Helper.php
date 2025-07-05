@@ -2,7 +2,6 @@
 
 
 use App\Classes\ApplicationEnvironment;
-use App\Classes\Settings;
 use App\Models\PushNotification;
 use App\Models\SalesRepresentative;
 use App\Notifications\DevicePushNotification;
@@ -15,8 +14,6 @@ use Illuminate\Support\Str;
 use Junges\Kafka\Facades\Kafka;
 use Junges\Kafka\Message\Message;
 use LivewireFilemanager\Filemanager\Models\Folder;
-use NotificationChannels\Fcm\FcmMessage;
-use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 use Spatie\Valuestore\Valuestore;
 
 function _GET($url, $payload = []) : array|bool
