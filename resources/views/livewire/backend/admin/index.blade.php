@@ -125,7 +125,7 @@ new  class extends Component {
           borderWidth: 1,
           transitionDuration: 0,
           axisPointer: {type: "none"},
-          formatter: i,
+
         },
         xAxis: [
           {

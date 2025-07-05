@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use UnexpectedValueException;
 
 class PasswordBroker implements PasswordBrokerContract
@@ -52,13 +53,20 @@ class PasswordBroker implements PasswordBrokerContract
             return static::RESET_THROTTLED;
         }
 
-        $verificationCode = $this->pins->create($user);
+
+        $pin = $this->pins->create($user);
+        $token = $this->tokens->create($user);
+        DB::table('password_reset_tokens')->where(function($query) use ($user){
+            $query
+                ->orWhere('email', $user->email)
+                ->orWhere('phone', $user->phone);
+        })->update(['verification_reset_code' => $pin, 'phone' => $user->phone, 'email' => $user->email]);
 
         if ($callback) {
-            return $callback($user, $verificationCode) ?? static::RESET_LINK_SENT;
+            return $callback($user, $pin) ?? static::RESET_LINK_SENT;
         }
 
-        $user->sendMobilePinForPasswordReset($verificationCode);
+        $user->sendEmailAndMobileNotificationForPasswordReset($pin, $token);
 
         if ($this->events) {
             $this->events->dispatch(new PasswordResetLinkSent($user));
@@ -80,13 +88,20 @@ class PasswordBroker implements PasswordBrokerContract
             return static::RESET_THROTTLED;
         }
 
+        $pin = $this->pins->create($user);
         $token = $this->tokens->create($user);
+        DB::table('password_reset_tokens')->where(function($query) use ($user){
+            $query
+                ->orWhere('email', $user->email)
+                ->orWhere('phone', $user->phone);
+        })->update(['verification_reset_code' => $pin, 'phone' => $user->phone, 'email' => $user->email]);
+
 
         if ($callback) {
             return $callback($user, $token) ?? static::RESET_LINK_SENT;
         }
 
-        $user->sendPasswordResetNotification($token);
+        $user->sendEmailAndMobileNotificationForPasswordReset($pin, $token);
 
         if ($this->events) {
             $this->events->dispatch(new PasswordResetLinkSent($user));
@@ -99,6 +114,11 @@ class PasswordBroker implements PasswordBrokerContract
     public function getUser(array $credentials)
     {
         $credentials = Arr::except($credentials, ['token', "verification_reset_code", "pin"]);
+
+        if(isset($credentials["phone"]) and !is_numeric($credentials['phone'])){
+            $credentials['email'] = $credentials['phone'];
+            unset($credentials['phone']);
+        }
 
         $user = $this->users->retrieveByCredentials($credentials);
 

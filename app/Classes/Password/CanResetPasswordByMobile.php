@@ -21,6 +21,12 @@ trait CanResetPasswordByMobile
      */
     public function sendMobilePinForPasswordReset($pin)
     {
-        $this->notify(new MobilePasswordResetNotification($pin));
+        $this->notify(new MobilePasswordResetNotification($pin, NULL));
+    }
+
+
+    public function sendEmailAndMobileNotificationForPasswordReset(string $pin, string $token)
+    {
+        $this->notify(new MobilePasswordResetNotification($pin, $token));
     }
 }
