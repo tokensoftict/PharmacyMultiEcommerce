@@ -126,39 +126,46 @@ return [
     'SUPER_ADMINISTRATOR' => env('SUPER_ADMINISTRATOR', 'Super Administrator'),
 
     /** Admin URL */
-    'WHOLESALES_ADMIN' => env('WHOLESALES_ADMIN', 'wholesales.admin.generaldrugcentre.com'),
-    'SUPERMARKET_ADMIN' => env('SUPERMARKET_ADMIN', 'supermarket.admin.generaldrugcentre.com'),
+    'WHOLESALES_ADMIN' => env('WHOLESALES_ADMIN', 'wa.psgdc.store'),
+    'WHOLESALES_ADMIN_ROUTE_PREFIX' => env('WHOLESALES_ADMIN_ROUTE_PREFIX', 'wa.'),
 
-    'SUPERMARKET_ADMIN_ROUTE_PREFIX' => env('SUPERMARKET_ADMIN_ROUTE_PREFIX', 'supermarket.admin.'),
-    'WHOLESALES_ADMIN_ROUTE_PREFIX' => env('WHOLESALES_ADMIN_ROUTE_PREFIX', 'wholesales.admin.'),
+    'SUPERMARKET_ADMIN' => env('SUPERMARKET_ADMIN', 'sa.psgdc.store'),
+    'SUPERMARKET_ADMIN_ROUTE_PREFIX' => env('SUPERMARKET_ADMIN_ROUTE_PREFIX', 'sa.'),
+
+    'WHOLESALES_DOMAIN' => env('WHOLESALES_DOMAIN', 'wholesales.psgdc.store'),
     'WHOLESALES_DOMAIN_ROUTE_PREFIX' => env('WHOLESALES_DOMAIN_ROUTE_PREFIX', 'wholesales.'),
+
+    'SUPERMARKET_DOMAIN' => env('SUPERMARKET_DOMAIN', 'supermarket.psgdc.store'),
     'SUPERMARKET_DOMAIN_ROUTE_PREFIX' => env('SUPERMARKET_DOMAIN_ROUTE_PREFIX', 'supermarket.'),
-    'SALES_REPRESENTATIVES_ROUTE_PREFIX' => env('SALES_REPRESENTATIVES_ROUTE_PREFIX', 'sales_representatives.'),
 
 
-    'ADMIN_DOMAIN' => env('ADMIN_DOMAIN', 'admin.generaldrugcentre.com'),
 
     /** Main URL */
-    'MAIN_DOMAIN' => env('MAIN_DOMAIN', 'generaldrugcentre.com'),
-
+    'MAIN_DOMAIN' => env('MAIN_DOMAIN', 'psgdc.store'),
+    'AUTH_DOMAIN' => env('AUTH_DOMAIN', 'auth.psgdc.store'),
+    'ADMIN_DOMAIN' => env('ADMIN_DOMAIN', 'admin.psgdc.store'),
+    "PUSH_DOMAIN" => env("PUSH_DOMAIN", "pa.psgdc.store"),
+    'SALES_REPRESENTATIVES' => env('SALES_REPRESENTATIVES', 'rep.psgdc.store'),
+    'SALES_REPRESENTATIVES_ROUTE_PREFIX' => env('SALES_REPRESENTATIVES_ROUTE_PREFIX', 'sales_representatives.'),
     /** Api URL */
-    'API_DOMAIN' => env('API_DOMAIN', 'api.generaldrugcentre.com'),
+
 
     /** Auth URL */
-    'AUTH_DOMAIN' => env('AUTH_DOMAIN', 'auth.generaldrugcentre.com'),
+
 
     /** Front End URL */
-    'WHOLESALES_DOMAIN' => env('WHOLESALES_DOMAIN', 'wholesales.generaldrugcentre.com'),
-    'SUPERMARKET_DOMAIN' => env('SUPERMARKET_DOMAIN', 'supermarket.generaldrugcentre.com'),
-    "PUSH_DOMAIN" => env("PUSH_DOMAIN", "push.admin.generaldrugcentre.com"),
+
+
+
 
 
     /** Sales Rep End URL */
-    'SALES_REPRESENTATIVES' => env('SALES_REPRESENTATIVES', 'rep.generaldrugcentre.com'),
+
+    'API_DOMAIN' => env('API_DOMAIN', 'api.psgdc.store'),
 
 
     'DEFAULT_COUNTRY_ID' => env('DEFAULT_COUNTRY_ID', 160),
-    'IMAGES_DOMAIN'      => env('IMAGES_DOMAIN', 'cdn.generaldrugcentre.com'),
+    'IMAGES_DOMAIN'      => env('IMAGES_DOMAIN', 'cdn.psgdc.store'),
     'PORT_POSTFIX' => env("PORT_POSTFIX", ""),
     'HTTP_PROTOCOL' => env("HTTP_PROTOCOL", "https://"),
     'CRM_DATA_CACHE_TTL' => env("CRM_DATA_CACHE_TTL", 86400),
