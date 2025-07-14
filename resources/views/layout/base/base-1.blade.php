@@ -25,7 +25,7 @@
 @stack('css')
 
 @livewireStyles
-    <script src="{{ asset('rappasoft/laravel-livewire-tables/core.min.js') }}"  ></script>
-    <script src="{{ asset('rappasoft/laravel-livewire-tables/thirdparty.min.js') }}"  ></script>
+    <script src="{{ asset('rappasoft/laravel-livewire-tables/core.min.js?v=1.33') }}"  ></script>
+    <script src="{{ asset('rappasoft/laravel-livewire-tables/thirdparty.min.js?v=1.33') }}"  ></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <body>
