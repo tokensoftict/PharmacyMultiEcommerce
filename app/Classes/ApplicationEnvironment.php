@@ -39,6 +39,7 @@ class ApplicationEnvironment
         self::$model_id = $application->model_id;
         $subdomain = Str::before(request()->getHost(), '.');
         //$subdomain.=".admin.";
+        $subdomain.=".";
         self::$storePrefix = $subdomain;
         self::$stock_model = match ($application->model_id) {
             6 => SupermarketsStockPrice::class,
