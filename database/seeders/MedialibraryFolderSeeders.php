@@ -20,5 +20,37 @@ class MedialibraryFolderSeeders extends Seeder
            "created_at" => now(),
            "updated_at" => now()
        ]);
+
+        Folder::create([
+            'parent_id' => 1,
+            'name' => "stocks",
+            "slug" => "stocks",
+            "created_at" => now(),
+            "updated_at" => now()
+        ]);
+
+        Folder::create([
+            'parent_id' => 1,
+            'name' => "image slider",
+            "slug" => "image-slider",
+            "created_at" => now(),
+            "updated_at" => now()
+        ]);
+
+        Folder::create([
+            'parent_id' => 1,
+            'name' => "Business Certificate",
+            "slug" => "business-certificate",
+            "created_at" => now(),
+            "updated_at" => now()
+        ]);
+
+        Folder::create([
+            'parent_id' => 1,
+            'name' => "Business Premises License",
+            "slug" => "business-premises-license",
+            "created_at" => now(),
+            "updated_at" => now()
+        ]);
     }
 }
