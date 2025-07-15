@@ -35,7 +35,7 @@ class QRCodeController extends ApiController
             ->color(0, 0, 0)
             ->backgroundColor(255, 255, 255)
             ->margin(1)
-            ->generate(json_encode($information));
+            ->generate(encrypt(json_encode($information)));
 
         if (!file_exists(public_path('qrcodes'))) {
             mkdir(public_path('qrcodes'), 0777, true);
