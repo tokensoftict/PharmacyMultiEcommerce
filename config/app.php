@@ -142,7 +142,7 @@ return [
 
     /** Main URL */
     'MAIN_DOMAIN' => env('MAIN_DOMAIN', 'psgdc.store'),
-    'AUTH_DOMAIN' => env('AUTH_DOMAIN', 'auth.psgdc.store'),
+    'AUTH_DOMAIN' => env('AUTH_DOMAIN', "auth.psgdc.store"),
     'ADMIN_DOMAIN' => env('ADMIN_DOMAIN', 'admin.psgdc.store'),
     "PUSH_DOMAIN" => env("PUSH_DOMAIN", "pa.psgdc.store"),
     'SALES_REPRESENTATIVES' => env('SALES_REPRESENTATIVES', 'rep.psgdc.store'),

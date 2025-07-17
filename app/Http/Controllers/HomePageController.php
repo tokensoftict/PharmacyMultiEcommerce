@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class HomePageController extends ApiController
 {
 
+    public function index()
+    {
+        return view('home');
+    }
+
     /**
      * @return JsonResponse
      */
