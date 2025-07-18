@@ -9,14 +9,14 @@ class FeedbackController extends Controller
 {
     public function store(Request $request)
     {
-        /*
+
         $allowedDomains = ['https://feedback.generaldrugcentre.com/', 'http://localhost:8080/'];
         $origin = $request->headers->get('origin');
 
         if (!in_array($origin, $allowedDomains)) {
             return response()->json(['message' => 'Unauthorized origin'], 403);
         }
-        */
+
 
         $validated = $request->validate([
             'fullName' => 'required|string|max:255',
