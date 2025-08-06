@@ -38,8 +38,11 @@ class ApplicationEnvironment
         self::$id = $application->id;
         self::$model_id = $application->model_id;
         $subdomain = Str::before(request()->getHost(), '.');
-        //$subdomain.=".admin.";
-        $subdomain.=".";
+        if(Str::contains(request()->getHost(), 'staging')) {
+            $subdomain.=".admin.";
+        } else {
+            $subdomain.=".";
+        }
         self::$storePrefix = $subdomain;
         self::$stock_model = match ($application->model_id) {
             6 => SupermarketsStockPrice::class,
