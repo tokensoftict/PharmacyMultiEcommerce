@@ -9,7 +9,7 @@ class FeedbackController extends Controller
 {
     public function store(Request $request)
     {
-        /*
+
         $allowedDomains = ['https://feedback.generaldrugcentre.com/', 'http://localhost:8080/'];
         $origin = $request->headers->get('origin');
 
