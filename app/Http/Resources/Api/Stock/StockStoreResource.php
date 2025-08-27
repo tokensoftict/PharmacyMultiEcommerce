@@ -24,6 +24,7 @@ class StockStoreResource extends JsonResource
             "special_offer" => $this->special_offer,
             "price"=> $this->price,
             "expiry_date"=> $this?->expiry_date?->format("F jS, Y") ?? false,
+            "custom_price" => $this->stockquantityprices->map->only(['price', 'min_qty', 'max_qty'])->toArray()
         ];
     }
 }

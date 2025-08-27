@@ -40,7 +40,8 @@ class StockShowResource extends JsonResource
             "special_not_formatted" =>  $this->special,
             "doorstep" => $this->doorstep ? money($this->doorstep) : false,
             "doorstep_not_formatted" => $this->doorstep,
-            "store"=> new StockStoreResource( $this->{ApplicationEnvironment::$stock_model_string})
+            "store"=> new StockStoreResource( $this->{ApplicationEnvironment::$stock_model_string}),
+            "custom_price" => $this->stockquantityprices->map->only(['price', 'min_qty', 'max_qty'])->toArray()
         ];
     }
 }
