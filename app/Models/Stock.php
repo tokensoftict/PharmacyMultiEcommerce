@@ -203,4 +203,9 @@ class Stock extends Model
     {
         return $this->hasOne(StockMedia::class);
     }
+
+    public function stockquantityprices()
+    {
+        return $this->hasMany(ProductCustomPrice::class);
+    }
 }

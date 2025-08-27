@@ -3,6 +3,7 @@
 namespace App\Services\Kafka;
 
 use App\Enums\KafkaAction;
+use App\Models\ProductCustomPrice;
 use App\Models\Stock;
 use App\Models\SupermarketsStockPrice;
 use App\Models\WholessalesStockPrice;
@@ -51,8 +52,18 @@ class ProcessStockService
                     $pushStock->wholessales_stock_prices()->save($wholesales);
                 }
                 if($supermarket) {
+                    $customPrices = $supermarket['custom_price'];
+                    unset($data['custom_price']);
                     $supermarket = new SupermarketsStockPrice($supermarket);
                     $pushStock->supermarkets_stock_prices()->save($supermarket);
+                    if(count($customPrices) > 0) {
+                        $pushStock->stockquantityprices()->delete();
+                        $custom_price = [];
+                        foreach ($customPrices as $customPrice) {
+                            $custom_price[] = new ProductCustomPrice($customPrice);
+                        }
+                        $pushStock->stockquantityprices()->saveMany($custom_price);
+                    }
                 }
 
             }
@@ -67,8 +78,18 @@ class ProcessStockService
                 $pushStock->wholessales_stock_prices()->save($wholesales);
             }
             if($supermarket) {
+                $customPrices = $supermarket['custom_price'];
+                unset($data['custom_price']);
                 $supermarket = new SupermarketsStockPrice($supermarket);
                 $pushStock->supermarkets_stock_prices()->save($supermarket);
+                if(count($customPrices) > 0) {
+                    $pushStock->stockquantityprices()->delete();
+                    $custom_price = [];
+                    foreach ($customPrices as $customPrice) {
+                        $custom_price[] = new ProductCustomPrice($customPrice);
+                    }
+                    $pushStock->stockquantityprices()->saveMany($custom_price);
+                }
             }
 
             return $pushStock;
