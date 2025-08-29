@@ -119,14 +119,14 @@ class Stock extends Model
 
         $array['image'] = $this->stock_media ? $this->stock_media->media->getFullUrl() : asset("logo/no-image.png");
 
-        if($this->wholessales_stock_prices) {
+        if(isset($this->wholessales_stock_prices->id)) {
             $array['wholesales'] = $this->wholessales_stock_prices->toArray();
             $array['wholesales']['price'] = money($array['wholesales']['price']);
         } else {
             $array['wholesales'] = false;
         }
 
-        if($this->supermarkets_stock_prices) {
+        if(isset($this->supermarkets_stock_prices)) {
             $array['retail'] = $this->supermarkets_stock_prices->toArray();
             $array['retail']['price'] = money( $array['retail']['price']);
         } else {
