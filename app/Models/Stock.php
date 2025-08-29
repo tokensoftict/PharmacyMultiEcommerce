@@ -120,6 +120,7 @@ class Stock extends Model
         if($this->wholessales_stock_prices) {
             $array['wholesales'] = $this->wholessales_stock_prices->toArray();
             $array['wholesales']['price'] = money($array['wholesales']['price']);
+            $array['wholesales_status'] = $this->wholessales_stock_prices->status;
         } else {
             $array['wholesales'] = false;
         }
@@ -127,6 +128,7 @@ class Stock extends Model
         if($this->supermarkets_stock_prices) {
             $array['retail'] = $this->supermarkets_stock_prices->toArray();
             $array['retail']['price'] = money( $array['retail']['price']);
+            $array['retail_status'] = $this->supermarkets_stock_prices->status;
         } else {
             $array['retail'] = false;
         }
