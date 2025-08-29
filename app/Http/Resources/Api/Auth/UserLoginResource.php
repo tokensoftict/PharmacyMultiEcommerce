@@ -69,7 +69,9 @@ class UserLoginResource extends JsonResource
                 "app_id" => $wholesales->id,
                 "domain" => $wholesales->domain,
                 "description" => $wholesales->description,
-                "info" => [],
+                "info" => [
+                    'status' => false
+                ],
                 "logo" => $wholesales->logo,
                 "name" => strtolower($wholesales->name),
                 "link" => $wholesales->link,
