@@ -57,7 +57,8 @@ class UserLoginResource extends JsonResource
                 "link" => $app->app->link,
                 "addresses" => $app->addresses,
                 "last_seen" => $app->last_activity_date ? $app->last_activity_date->format("F jS, Y g:i A") :  now()->format("F jS, Y g:i A"),
-                "unregistered" => true,
+                "unregistered" => false,
+                "status" => $app->status,
             ];
         }
 

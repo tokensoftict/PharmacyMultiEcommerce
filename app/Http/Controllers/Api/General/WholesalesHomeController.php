@@ -42,7 +42,7 @@ class WholesalesHomeController extends ApiController
             [
                 "component" => "FlashDeals",
                 "type"       => "lowestClassifications",
-                "label"     => "Lowest Price - Items Must Go",
+                "label"     => "Lowest Price You can Trust",
             ],
             [
                 "component" => "Some",
