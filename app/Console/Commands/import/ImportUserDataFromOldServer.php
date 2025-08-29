@@ -47,12 +47,12 @@ class ImportUserDataFromOldServer extends Command
         $supermarketCustomerService = app(SupermarketCustomerService::class);
 
         $users = User::query()->with(['addresses', 'addresses.town', 'addresses.zone']);
-        $users->chunk(2, function ($users) use($userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService){
+        $users->chunk(500, function ($users) use($userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService){
             $this->insertWholesaleUser($users, $userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService);
         });
 
         $retailUsers = RetailCustomer::query()->with(['addresses', 'addresses.town', 'addresses.zone']);
-        $retailUsers->chunk(2, function ($users) use($userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService){
+        $retailUsers->chunk(500, function ($users) use($userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService){
             $this->insertSuperMarketUser($users, $userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService);
         });
 
