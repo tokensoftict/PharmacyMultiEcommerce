@@ -53,6 +53,7 @@ use Laravel\Scout\Searchable;
  * @property Collection|SupermarketsStockPrice[] $supermarkets_stock_prices
  * @property Collection|WholessalesStockPrice[] $wholessales_stock_prices
  * @property Collection|StockMedia[] $stock_medias
+ * @property Collection|ProductCustomPrice[] $stockquantityprices
  * @property StockMedia $stock_media
  *
  * @package App\Models
@@ -107,7 +108,7 @@ class Stock extends Model
 		'user_id'
 	];
 
-    protected $with = ['stock_sizes', 'classification', 'productgroup', 'manufacturer', 'promotion_items', 'stock_media.media'];
+    protected $with = ['stockquantityprices','stock_sizes', 'classification', 'productgroup', 'manufacturer', 'promotion_items', 'stock_media.media'];
 
 
     public function toSearchableArray()
