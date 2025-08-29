@@ -29,15 +29,18 @@
         <div class="col-auto">
             <div class="row g-3">
                 <div class="d-flex">
-                    <a href="#" class="btn btn-link pe-3 ps-0 text-body"><span class="fas fa-print me-2"></span>Print</a>
-                    <button onclick="Livewire.getByName('backend.admin.order.show-order')[0].rePackOrder(); return false" wire:target="rePackOrder" wire:loading.attr="disabled" class="btn btn-link px-3 text-body">
+                    <!--<a href="#" class="btn btn-link pe-3 ps-0 text-body"><span class="fas fa-print me-2"></span>Print</a> -->
+                    <button onclick="if(confirm('Are you sure you want to re-pack this order?')) { Livewire.getByName('backend.admin.order.show-order')[0].rePackOrder(); } return false;"
+                            wire:target="rePackOrder"
+                            wire:loading.attr="disabled"
+                            class="btn btn-link px-3 text-body">
                         <span wire:loading.remove="rePackOrder" class="fas fa-undo me-2"></span>
                         <span wire:loading wire:target="rePackOrder" class="spinner-border spinner-border-sm me-2" role="status"></span>
                         Re-pack
                     </button>
                     <div class="dropdown"><button class="btn text-body dropdown-toggle dropdown-caret-none ps-3 pe-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">More action<span class="fas fa-chevron-down ms-2"></span></button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.update', $this->order->id) }}">Edit Order</a></li>
+                           <!-- <li><a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.update', $this->order->id) }}">Edit Order</a></li> -->
                             <li><a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.update_product', $this->order->id) }}">Edit Order Products</a></li>
                         </ul>
                     </div>

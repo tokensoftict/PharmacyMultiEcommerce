@@ -130,4 +130,9 @@ class WholesalesUser extends Model implements HasMedia
     {
         return $this->belongsTo(LocalCustomer::class, 'local_customer_id');
     }
+
+    public function sales_representative()
+    {
+        return $this->belongsTo(SalesRepresentative::class, 'sales_representative_id');
+    }
 }

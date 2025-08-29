@@ -50,7 +50,10 @@ class EditOrderProduct extends Component
                 });
 
                 $orderTotal = $this->order->order_total_orders()->where('order_id', $this->order->id)
-                    ->where('name', 'Sub Total')->first();
+                    ->where(function($query){
+                        $query->orWhere('name', 'Sub Total')
+                            ->orWhere('name', 'Subtotal');
+                    })->first();
                 $orderTotal->value = $subTotal;
                 $orderTotal->save();
 
@@ -81,6 +84,12 @@ class EditOrderProduct extends Component
             }
 
             return $status;
+        } else {
+            $this->alert(
+                "error",
+                "No Item submitted, please try refresh the page",
+            );
+            return false;
         }
     }
 

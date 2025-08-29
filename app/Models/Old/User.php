@@ -65,6 +65,12 @@ class User extends Authenticatable
         return $this->attributes['firstname']." ".$this->attributes['lastname'];
     }
 
+
+    public function customers()
+    {
+        return $this->hasMany(SalesRepCustomerMapper::class, 'user_id');
+
+    }
 }
 
 

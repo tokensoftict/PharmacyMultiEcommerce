@@ -24,6 +24,11 @@ class UserAccountService
      */
     public final function createUserAccount(array $data) : User
     {
+
+        $data['firstname'] = ucwords(strtolower($data['firstname']));
+        $data['lastname'] = ucwords(strtolower($data['lastname']));
+        $data['email'] = ucwords(strtolower($data['email']));
+
         $user = User::where("email", $data['email'])->first();
 
         if(!$user) $user = User::where("phone", $data['phone'])->first();
@@ -121,7 +126,8 @@ class UserAccountService
             'added_by',
             'token',
             'code',
-            'invitation_approval_date'
+            'invitation_approval_date',
+            'old_server_id'
         ]);
 
         $data['code'] = generateUniqueReferralCode();

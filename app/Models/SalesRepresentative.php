@@ -23,6 +23,7 @@ use Illuminate\Notifications\Notifiable;
  * @property Carbon|null $invitation_sent_date
  * @property Carbon|null $invitation_approval_date
  * @property int|null $added_by
+ * @property int|null $old_server_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -43,7 +44,8 @@ class SalesRepresentative extends Model
 		'invitation_approval_date' => 'datetime',
 		'added_by' => 'int',
         'token' => 'string',
-        'code' => 'string'
+        'code' => 'string',
+        'old_server_id' => 'int',
 	];
 
 	protected $fillable = [
@@ -55,7 +57,8 @@ class SalesRepresentative extends Model
 		'added_by',
         'token',
         'code',
-        'last_activity_date'
+        'last_activity_date',
+        'old_server_id'
 	];
 
 	public function user()

@@ -4,7 +4,9 @@ namespace App\Console\Commands\import;
 
 use App\Models\Old\Address;
 use App\Models\Old\RetailCustomer;
+use App\Models\Old\SalesRepCustomerMapper;
 use App\Models\Old\User;
+use App\Models\SalesRepresentative;
 use App\Models\State;
 use App\Models\Town;
 use App\Services\User\AddressService;
@@ -54,7 +56,7 @@ class ImportUserDataFromOldServer extends Command
             $this->insertSuperMarketUser($users, $userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService);
         });
 
-
+        $this->mapSalesRepresentativeWithCustomer();
 
     }
     private function insertWholesaleUser($users, $userAccountService, $wholesalesCustomerService, $appUserService, $addressService, $supermarketCustomerService) {
@@ -103,6 +105,7 @@ class ImportUserDataFromOldServer extends Command
                         'invitation_approval_date'=> now(),
                         'added_by' => \App\Models\User::selfSystem()->id,
                         'token' => NULL,
+                        'old_server_id' => $user->id
                     ];
                     app(UserAccountService::class)->createSalesRepAccount($userAccount,$salesRepData , false);
                 }
@@ -184,5 +187,23 @@ class ImportUserDataFromOldServer extends Command
         }
 
         return $data;
+    }
+
+    private function mapSalesRepresentativeWithCustomer() : void
+    {
+        $salesRepresentatives = SalesRepresentative::all();
+        foreach ($salesRepresentatives as $salesRepresentative) {
+            $myCustomers = SalesRepCustomerMapper::with(['customer'])->where('user_id', $salesRepresentative->old_server_id)->get();
+            foreach ($myCustomers as $customer) {
+                $newCustomer = \App\Models\User::query()->with('wholesales_user')->where('email', $customer->customer->email)->first();
+                if(!$newCustomer) {
+                    dump($customer->customer->email." not found");
+                    continue;
+                }
+
+                $newCustomer->wholesales_user->sales_representative_id = $salesRepresentative->id;
+                $newCustomer->wholesales_user->save();
+            }
+        }
     }
 }

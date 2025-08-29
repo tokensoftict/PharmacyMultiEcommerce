@@ -20,10 +20,12 @@ use App\Models\Order;
 use App\Models\Status;
 use App\Models\SupermarketUser;
 use App\Services\Api\Checkout\ConfirmOrderService;
+use App\Services\ImportOrderService;
 use App\Services\Utilities\PushNotificationService;
 use Illuminate\Support\Facades\Mail;
 use Junges\Kafka\Facades\Kafka;
 use Junges\Kafka\Message\Message;
+use function Symfony\Component\Translation\t;
 
 class CreateOrderService
 {
@@ -151,6 +153,30 @@ class CreateOrderService
         return $order;
     }
 
+
+    /**
+     * @param Order|int $order
+     * @return bool
+     * @throws \Exception
+     */
+    public final function reprocessOrderOnKafka(Order|int &$order) : bool
+    {
+        if(!$order instanceof Order) {
+            $order = Order::findorfail($order);
+        }
+
+        $message = new Message(
+            headers: ['event' => KafkaEvent::ONLINE_PUSH],
+            body: ['order' => $order->toArray(), "action" => KAFKAAction::PROCESS_ORDER],
+            key: config('app.KAFKA_HEADER_KEY')
+        );
+
+        //public order to kafka
+        return Kafka::publish()->onTopic(KafkaTopics::ORDERS)->withMessage($message)->send();
+
+    }
+
+
     /**
      * @param Order|int $order
      * @return void
@@ -165,14 +191,7 @@ class CreateOrderService
 
         $order = $this->updateOrderStatus($order, status("Processing"));
 
-        $message = new Message(
-            headers: ['event' => KafkaEvent::ONLINE_PUSH],
-            body: ['order' => $order->toArray(), "action" => KAFKAAction::PROCESS_ORDER],
-            key: config('app.KAFKA_HEADER_KEY')
-        );
-
-        //public order to kafka
-        Kafka::publish()->onTopic(KafkaTopics::ORDERS)->withMessage($message)->send();
+        $this->reprocessOrderOnKafka($order);
 
         //send mail to customer
         Mail::to($order->customer->user->email)->send(new NewOrderEmail($order));
@@ -328,8 +347,11 @@ class CreateOrderService
             $order = Order::findorfail($order);
         }
 
+
         Mail::to($order->customer->user->email)->send(new OrderItemChanged($order));
         $order = $this->updateOrderStatus($order, status('Processing'));
+
+        $this->reprocessOrderOnKafka($order);
 
         $notificationService  = new PushNotificationService();
         $notificationService
@@ -418,5 +440,28 @@ class CreateOrderService
             ->setPayload(['orderId' => $order->id])
             ->approve()
             ->send();
+    }
+
+
+    /**
+     * @param int $order_id
+     * @return bool
+     * @throws \Throwable
+     */
+    public final function checkIfOrderExistAndImport(int $order_id) : bool
+    {
+        $order = Order::query()->where('local_order_id', $order_id)->first();
+        if($order) return true;
+
+        $local_order = \App\Models\Old\Order::with(['user','address','address.zone','orderStatus','orderTotalOrders','orderProducts','paymentMethod','shippingMethod','shippingAddress','shippingAddress.zone'])
+            ->find($order_id);
+
+        if($local_order) {
+            $importOrderService = app(ImportOrderService::class);
+            $importOrderService->handle($local_order->toArray());
+            return true;
+        }
+
+        return false;
     }
 }

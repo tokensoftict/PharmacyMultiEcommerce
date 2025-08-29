@@ -3,6 +3,7 @@
 namespace App\Services\Kafka;
 
 use App\Enums\KafkaAction;
+use App\Models\Old\Order;
 use App\Services\Order\CreateOrderService;
 use Junges\Kafka\Message\ConsumedMessage;
 
@@ -11,13 +12,19 @@ class ProcessOrderService
 
     public static function handle(ConsumedMessage $message) : void
     {
-        $body = $message->getBody();;
+        $body = $message->getBody();
+
+        if(isset($body['order'])) return;
+
         $action =  $body['action'];
         $data = $body[0];
 
         if($action === KafkaAction::PROCESS_ORDER) return;
 
         $createOrderService = new CreateOrderService();
+
+        $status = $createOrderService->checkIfOrderExistAndImport($data['orderId']);
+        if($status === false) return;
 
         switch ($data['status_code']) {
             case "Validation Error":

@@ -6,6 +6,7 @@ use App\Classes\ApplicationEnvironment;
 use App\Models\Address;
 use App\Models\App;
 use App\Models\Order;
+use App\Models\SalesRepresentative;
 use App\Models\State;
 use App\Models\SupermarketUser;
 use App\Models\Town;
@@ -162,6 +163,11 @@ class ImportOrderService
         auth('sanctum')->setUser($customer->user);
         ApplicationEnvironment::createApplicationEnvironment(App::findorfail(self::$appId[self::$customerType[$contents['store']]]));
 
+        $sales_rep = NULL;
+        if(!is_null($contents['sales_rep_id'])) {
+            $sales_rep = SalesRepresentative::query()->where('old_server_id', $contents['sales_rep_id'])->first();
+        }
+
         $orderData = [
             'local_order_id' => $contents['id'],
             'order_id' => generateUniqueid(12),
@@ -190,7 +196,7 @@ class ImportOrderService
             'prove_of_payment' => NULL,
             'order_validation_error' => NULL,
             'app_id' => self::$appId[self::$customerType[$contents['store']]],
-            'sales_representative_id' => NULL,
+            'sales_representative_id' => $sales_rep ? $sales_rep?->id : NULL,
             'coupon_information' => NULL,
             'voucher_information' => NULL,
             'cart_cache' => NULL,

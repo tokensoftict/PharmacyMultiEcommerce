@@ -49,7 +49,7 @@
                                             <td class="sort white-space-nowrap align-middle">{{ $product['name'] }}</td>
                                             <td class="sort align-middle text-end ps-4">{{ money($product['price']) }}</td>
                                             <td class="sort align-middle text-end ps-4 col-2">
-                                                <input type="number" wire:model="products.{{ $key }}.quantity"  class="form-control text-center form-control-sm">
+                                                <input type="number" wire:model.live="products.{{ $key }}.quantity"  class="form-control text-center form-control-sm">
                                             </td>
                                             <td class="sort align-middle text-end ps-4">{{ money($product['total']) }}</td>
                                             <td><a href="#" wire:click="deleteItem('{{ $product['id'] }}')" class="btn btn-danger">

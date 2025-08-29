@@ -37,10 +37,19 @@ class ApplicationEnvironment
         self::$type = $application->type;
         self::$id = $application->id;
         self::$model_id = $application->model_id;
-        $subdomain = Str::before(request()->getHost(), '.');
-        if(Str::contains(request()->getHost(), 'staging')) {
+        $subdomain = Str::before(request()->getHost(), '.'); //wholesales-admin-staging.admin.dashboard
+        if(Str::contains(request()->getHost(), 'staging') ) {
             $subdomain.=".admin.";
-        } else {
+        } else if(Str::contains(request()->getHost(), 'test')) {
+            if(Str::contains(request()->getHost(), 'wholesales')) {
+                $subdomain = "wholesales.admin.";
+            } else if(Str::contains(request()->getHost(), 'supermarket')) {
+                $subdomain = "supermarket.";
+            } else {
+                $subdomain.=".";
+            }
+        }
+        else {
             $subdomain.=".";
         }
         self::$storePrefix = $subdomain;

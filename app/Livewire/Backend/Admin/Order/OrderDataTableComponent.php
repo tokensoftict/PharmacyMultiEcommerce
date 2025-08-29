@@ -78,7 +78,7 @@ class OrderDataTableComponent extends ExportDataTableComponent
                 $this->filter['stopDate'],
             ]);
         } else {
-            $order->where('orders.order_date', todaysDate());
+           // $order->where('orders.order_date', todaysDate());
         }
 
         $order->orderBy("orders.id", "DESC");
