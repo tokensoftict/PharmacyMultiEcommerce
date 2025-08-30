@@ -118,7 +118,6 @@ class Stock extends Model
         $array = $this->toArray();
 
         $array['image'] = $this->stock_media ? $this->stock_media->media->getFullUrl() : asset("logo/no-image.png");
-        $array['testing'] = "Tester";
 
         if(isset($this->wholessales_stock_prices->id)) {
             $array['wholesales'] = $this->wholessales_stock_prices->toArray();
