@@ -39,12 +39,10 @@ class OrdersController extends ApiController
             ->where('customer_id', $checkoutUser->id)
             ->whereIn("status_id", $this->orderTypes[$request->get('orderType')])
             ->orderBy("id", "desc")
-            ->get();
+            ->paginate(config('app.PAGINATE_NUMBER'));
 
+        return $this->sendPaginatedSuccessResponse(OrderListResource::collection($orders)->response()->getData(true));
 
-        return $this->sendSuccessResponse(
-            OrderListResource::collection($orders)
-        );
     }
 
 }
