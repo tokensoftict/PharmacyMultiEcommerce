@@ -18,6 +18,26 @@ use Laravolt\Avatar\Facade as Avatar;
 class UserAccountService
 {
 
+
+    /**
+     * @param User $user
+     * @return void
+     */
+    private  function generateInitialPicture(User &$user) :void
+    {
+        if(file_exists(public_path("storage/users/$user->id.png"))) {
+            unlink(public_path("storage/users/$user->id.png"));
+        }
+
+        if (!file_exists(public_path('storage/users'))) {
+            mkdir(public_path('storage/users'), 0777, true);
+        }
+
+        Avatar::create($user->name)->save(public_path("storage/users/$user->id.png"));
+        $user->image = "storage/users/$user->id.png";
+    }
+
+
     /**
      * @param array $data
      * @return User
@@ -45,12 +65,8 @@ class UserAccountService
 
             $user = User::create($data);
 
-            if (!file_exists(public_path('storage/users'))) {
-                mkdir(public_path('storage/users'), 0777, true);
-            }
+            $this->generateInitialPicture($user);
 
-            Avatar::create($user->name)->save(public_path("storage/users/$user->id.png"));
-            $user->image = "storage/users/$user->id.png";
             $user->update();
 
             $user->updateLastSeen();
@@ -81,14 +97,14 @@ class UserAccountService
     /**
      * @param int $id
      * @param array $data
-     * @return User|bool
+     * @return User
      */
     public final function updateUserAccount(int $id, array $data) : User
     {
         $user = User::findorfail($id);
 
         if($user){
-
+            $this->generateInitialPicture($user);
             $user->update($data);
         }
 

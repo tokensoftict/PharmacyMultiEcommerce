@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Account;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Api\Auth\DeleteMyAccountRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
