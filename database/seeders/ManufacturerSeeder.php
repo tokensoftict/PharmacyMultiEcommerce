@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Manufacturer;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class ManufacturerSeeder extends Seeder
 {
@@ -15,10 +16,11 @@ class ManufacturerSeeder extends Seeder
         $manufacturers = json_decode(file_get_contents(storage_path('app/manufacturer.json')), true);
         foreach ($manufacturers as $manu) {
             $manufacturer = Manufacturer::where('name', $manu['name'])->first();
+            if (!Storage::disk('contabo')->exists("manufacturer/".$manu['image'])) continue;
             if($manufacturer) {
-                $manufacturer->addMediaFromDisk("manufacturer/".$manu['image'], "local")
+                $manufacturer->addMediaFromDisk("manufacturer/".$manu['image'], "contabo")
                     ->preservingOriginal()
-                    ->toMediaCollection();
+                    ->toMediaCollection('medialibrary');
             }
         }
     }

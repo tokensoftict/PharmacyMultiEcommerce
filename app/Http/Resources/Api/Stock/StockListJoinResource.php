@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Api\Stock;
 
-use App\Classes\ApplicationEnvironment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
