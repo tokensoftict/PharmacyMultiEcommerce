@@ -68,6 +68,9 @@ class StockService
         if(! $classification instanceof Classification){
             $classification = Classification::findOrFail($classification);
         }
+        Stock::where("classification_id", $classification->id)
+            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
+            ->orderByRaw("CAST(".ApplicationEnvironment::$stock_model_string.".price AS DECIMAL(8,2)) ASC")->dd();
         return  Stock::where("classification_id", $classification->id)
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
             ->orderByRaw("CAST(".ApplicationEnvironment::$stock_model_string.".price AS DECIMAL(8,2)) ASC")
