@@ -33,7 +33,7 @@ class StockListResource extends JsonResource
             "expiry_date" => $this?->{ApplicationEnvironment::$stock_model_string}?->expiry_date?->format("F jS, Y"),
             "custom_price" => $this?->stockquantityprices?->map(function ($item) {
                 return $item->only(['price', 'min_qty', 'max_qty']) + [
-                        'price_formatted' => money($item->price),
+                        'price_formatted' => number_format($item->price),
                     ];
             })->toArray()
         ];

@@ -43,7 +43,7 @@ class StockShowResource extends JsonResource
             "store"=> new StockStoreResource( $this->{ApplicationEnvironment::$stock_model_string}),
             "custom_price" => $this?->stockquantityprices?->map(function ($item) {
                 return $item->only(['price', 'min_qty', 'max_qty']) + [
-                        'price_formatted' => money($item->price),
+                        'price_formatted' => number_format($item->price),
                     ];
             })->toArray()
         ];
