@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Api\Stock;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Resources\Api\Stock\StockListResource;
-use App\Models\Manufacturer;
+use App\Http\Resources\Api\Stock\StockListJoinResource;
 use App\Models\Productcategory;
 use App\Services\Stock\StockService;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +28,7 @@ class StockByProductCategoriesController extends ApiController
     public function __invoke(Productcategory $productcategory, Request $request) : JsonResponse
     {
         return $this->sendPaginatedSuccessResponse(
-            StockListResource::collection(
+            StockListJoinResource::collection(
                 $this->service->getByProductCategories($productcategory)
             )->response()->getData(true)
         );
