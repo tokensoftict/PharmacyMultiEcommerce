@@ -16,7 +16,7 @@ class StockListJoinResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->stock_id,
+            "id" => $this->id,
             "name" => $this->name,
             "price" => money($this->price),
             "price_not_formatted" => $this->price,
