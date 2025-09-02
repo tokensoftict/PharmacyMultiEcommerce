@@ -130,7 +130,7 @@ class Stock extends Model
         if(isset($this->supermarkets_stock_prices->id)) {
             $array['retail'] = $this->supermarkets_stock_prices->toArray();
             $array['retail']['price'] = money( $array['retail']['price']);
-            $array['retail_status'] = $this->wholesales_status;
+            $array['retail_status'] = $this->retail_status;
         } else {
             $array['retail'] = false;
         }
