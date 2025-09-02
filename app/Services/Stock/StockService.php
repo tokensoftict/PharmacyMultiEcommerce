@@ -39,8 +39,6 @@ class StockService
             $manufacturer = Manufacturer::findOrFail($manufacturer);
         }
        return  Stock::where("manufacturer_id", $manufacturer->id)
-           ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
-           ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
@@ -54,8 +52,6 @@ class StockService
             $productcategory = Productcategory::findOrFail($productcategory);
         }
         return  Stock::where("productcategory_id", $productcategory->id)
-            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
-            ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
@@ -68,12 +64,7 @@ class StockService
         if(! $classification instanceof Classification){
             $classification = Classification::findOrFail($classification);
         }
-        Stock::where("classification_id", $classification->id)
-            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
-            ->orderByRaw("CAST(".ApplicationEnvironment::$stock_model_string.".price AS DECIMAL(8,2)) ASC")->dd();
         return  Stock::where("classification_id", $classification->id)
-            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
-            ->orderByRaw("CAST(".ApplicationEnvironment::$stock_model_string.".price AS DECIMAL(8,2)) ASC")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
@@ -83,10 +74,7 @@ class StockService
      */
     public final function getFeaturedStock() : LengthAwarePaginator
     {
-        return Stock::query()
-            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
-            ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
-            ->paginate(config("app.PAGINATE_NUMBER"));
+        return Stock::query()->paginate(config("app.PAGINATE_NUMBER"));
     }
 
 
@@ -95,10 +83,7 @@ class StockService
      */
     public final function getSpecialOffers() : LengthAwarePaginator
     {
-        return Stock::query()
-            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
-            ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
-            ->paginate(config("app.PAGINATE_NUMBER"));
+        return Stock::query()->paginate(config("app.PAGINATE_NUMBER"));
     }
 
 
