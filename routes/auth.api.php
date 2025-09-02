@@ -14,7 +14,7 @@ Route::prefix("account")->namespace("Account")->group(function(){
     Route::get("/my-qrcode", ["as" => "account.my-qrcode", "uses" => "QRCodeController"]);
     Route::get("/logout", ["as" => "account.logout", "uses" => "LogoutController"])->middleware(['auth:sanctum']);
     Route::get("/me", ["as" => "account.me", "uses" => "MeController"])->middleware(['auth:sanctum']);
-    Route::post("/update", ["as" => "account.update", "uses" => "UpdateAccountController"]);
+    Route::post("/update", ["as" => "account.update", "uses" => "UpdateAccountController"])->middleware(['auth:sanctum']);
     Route::get("delete-my-account", ["as" => "account.delete-my-account", "uses" => "DeleteMyAccountController"]);
     Route::get("restore-my-account", ["as" => "account.restore-my-account", "uses" => "RestoreMyAccountController"]);
     Route::get("frontend-apps", ["as" => "account.frontend-apps", "uses" => "FrontEndAppsController"]);
