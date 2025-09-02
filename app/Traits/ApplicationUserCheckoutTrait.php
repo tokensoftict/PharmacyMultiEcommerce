@@ -71,6 +71,20 @@ trait ApplicationUserCheckoutTrait
         });
     }
 
+    public final function resolvePriceByQuantity(int $quantity, float $defaultSellingPrice, array $customPrices): float
+    {
+        foreach ($customPrices as $priceRule) {
+            $min = (int) $priceRule['min_qty'];
+            $max = (int) $priceRule['max_qty'];
+
+            if ($quantity >= $min && $quantity < $max) {
+                return (float) $priceRule['price'];
+            }
+        }
+
+        return $defaultSellingPrice;
+    }
+
     /**
      * @return array
      */
@@ -83,7 +97,11 @@ trait ApplicationUserCheckoutTrait
             $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
-            $stock->price = $price;
+            if($stock->custom_price->count() > 0) {
+                $stock->price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $stock->price,$stock->custom_price->toArray());
+            } else {
+                $stock->price = $price;
+            }
             $stock->total = ($cart[$stock->id]['quantity'] * $price);
             $totalItemsInCarts+= ($cart[$stock->id]['quantity'] * $price);
             return $stock;
