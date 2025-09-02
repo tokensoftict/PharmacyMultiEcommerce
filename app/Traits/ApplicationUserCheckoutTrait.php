@@ -98,7 +98,7 @@ trait ApplicationUserCheckoutTrait
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
             if($stock->stockquantityprices->count() > 0 and ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices") {
-                $stock->price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $stock->price,$stock->stockquantityprices->toArray());
+                $stock->price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $stock->stockquantityprices->toArray());
             } else {
                 $stock->price = $price;
             }
