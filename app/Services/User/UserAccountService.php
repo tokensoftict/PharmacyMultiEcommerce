@@ -26,7 +26,7 @@ class UserAccountService
     private  function generateInitialPicture(User &$user) :void
     {
         if(file_exists(public_path("storage/users/$user->id.png"))) {
-            unlink(public_path("storage/users/$user->id.png"));
+            @unlink(public_path("storage/users/$user->id.png"));
         }
 
         if (!file_exists(public_path('storage/users'))) {
