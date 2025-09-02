@@ -25,7 +25,7 @@ class UpdateAccountController extends ApiController
     public function __invoke(UpdateAccountRequest $request) : JsonResponse
     {
         $user = $request->user();
-        $this->userAccountService->updateUserAccount($user->id, $request->validated());
+        $user = $this->userAccountService->updateUserAccount($user->id, $request->validated());
 
         return $this->showOne(
             new UserLoginResource($user)
