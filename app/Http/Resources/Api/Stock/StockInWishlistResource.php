@@ -40,7 +40,11 @@ class StockInWishlistResource extends JsonResource
             "doorstep" => $this->doorstep ? money($this->doorstep) : false,
             "doorstep_not_formatted" => $this->doorstep,
             "expiry_date" => $this?->expiry_date?->format("F jS, Y"),
-            "custom_price" => $this?->stockquantityprices?->map?->only(['price', 'min_qty', 'max_qty'])->toArray() ?? []
+            "custom_price" => $this?->stockquantityprices?->map(function ($item) {
+                return $item->only(['price', 'min_qty', 'max_qty']) + [
+                        'price_formatted' => money($item->price),
+                    ];
+            })->toArray()
         ];
     }
 }
