@@ -95,13 +95,12 @@ trait ApplicationUserCheckoutTrait
         $totalItemsInCarts = 0;
         $stocks = $stocks->map(function($stock) use ($cart, &$totalItemsInCarts){
             $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
+            if($stock->stockquantityprices->count() > 0 and ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices") {
+                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $stock->stockquantityprices->toArray());
+            }
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
-            if($stock->stockquantityprices->count() > 0 and ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices") {
-                $stock->price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $stock->stockquantityprices->toArray());
-            } else {
-                $stock->price = $price;
-            }
+            $stock->price = $price;
             $stock->total = ($cart[$stock->id]['quantity'] * $price);
             $totalItemsInCarts+= ($cart[$stock->id]['quantity'] * $price);
             return $stock;
