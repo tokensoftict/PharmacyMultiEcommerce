@@ -38,7 +38,7 @@ class StockService
         if(! $manufacturer instanceof Manufacturer){
             $manufacturer = Manufacturer::findOrFail($manufacturer);
         }
-       return  Stock::query()->withoutGlobalScope('filter_stocks')->where("manufacturer_id", $manufacturer->id)
+       return  Stock::query()->select("stocks.*", ApplicationEnvironment::$stock_model_string.".price")->withoutGlobalScope('filter_stocks')->where("manufacturer_id", $manufacturer->id)
            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
            ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
             ->paginate(config("app.PAGINATE_NUMBER"));
@@ -53,7 +53,7 @@ class StockService
         if(! $productcategory instanceof Productcategory){
             $productcategory = Productcategory::findOrFail($productcategory);
         }
-        return  Stock::query()->withoutGlobalScope('filter_stocks')->where("productcategory_id", $productcategory->id)
+        return  Stock::query()->select("stocks.*", ApplicationEnvironment::$stock_model_string.".price")->withoutGlobalScope('filter_stocks')->where("productcategory_id", $productcategory->id)
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
             ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
             ->paginate(config("app.PAGINATE_NUMBER"));
@@ -68,7 +68,7 @@ class StockService
         if(! $classification instanceof Classification){
             $classification = Classification::findOrFail($classification);
         }
-        return  Stock::query()->withoutGlobalScope('filter_stocks')->where("classification_id", $classification->id)
+        return  Stock::query()->select("stocks.*", ApplicationEnvironment::$stock_model_string.".price")->withoutGlobalScope('filter_stocks')->where("classification_id", $classification->id)
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
             ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
             ->paginate(config("app.PAGINATE_NUMBER"));
