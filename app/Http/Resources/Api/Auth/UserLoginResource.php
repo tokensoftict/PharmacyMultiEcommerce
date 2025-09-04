@@ -32,7 +32,8 @@ class UserLoginResource extends JsonResource
             "phone" => $this->phone,
             "image" => asset($this->image),
             "medSchedules" => MedReminderScheduleResource::collection($this->medReminderSchedule()),
-            'dosageForms' => MedReminderService::$dosageForm
+            'dosageForms' => MedReminderService::$dosageForm,
+            "medReminderDuration" => MedReminderService::$repeatDuration
         ];
 
         $apps = [];

@@ -41,6 +41,13 @@ class MedReminderService
         'Infusions' => 'mL',
     ];
 
+
+    public static array $repeatDuration = [
+        'Daily' => "1 day",
+        'Every Two Days' => "2 days",
+        'Weekly' => "1 week",
+    ];
+
     public function __construct()
     {
         $this->medReminder =new MedReminder();
