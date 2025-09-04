@@ -38,7 +38,9 @@ class ImportOrderFromOldServer extends Command
         }
 
         $lastOrder = $orders->last();
-        Cache::forget('last_order_id');
-        Cache::set('last_order_id', $lastOrder->id);
+        if($lastOrder){
+            Cache::forget('last_order_id');
+            Cache::set('last_order_id', $lastOrder->id);
+        }
     }
 }
