@@ -29,7 +29,7 @@ class MedReminderRequest extends FormRequest
             'type' => 'required',
             //'use_interval' => 'required',
             'interval' => 'required_if:use_interval,1',
-            'every' => 'required_if:use_interval,1',
+            //'every' => 'required_if:use_interval,1',
             'start_date_time' => 'required',
             'normal_schedules' => 'required_if:use_interval,0',
         ];
