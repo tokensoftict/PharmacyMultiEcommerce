@@ -52,7 +52,6 @@ class MedReminderService
             'name' => 'Every Two Days'
         ],
         [
-            '' => "",
             'id' => '1 week',
             'name' => 'Weekly'
         ]
