@@ -43,9 +43,19 @@ class MedReminderService
 
 
     public static array $repeatDuration = [
-        'Daily' => "1 day",
-        'Every Two Days' => "2 days",
-        'Weekly' => "1 week",
+        [
+            'id' => '1 day',
+            'name' => 'Daily'
+        ],
+        [
+            'id' => '2 days',
+            'name' => 'Every Two Days'
+        ],
+        [
+            '' => "",
+            'id' => '1 week',
+            'name' => 'Weekly'
+        ]
     ];
 
     public function __construct()
