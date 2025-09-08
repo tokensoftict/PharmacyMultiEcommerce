@@ -31,7 +31,7 @@ class ImportOrderFromOldServer extends Command
         $importOrderService = app(ImportOrderService::class);
         $lastOrder = Cache::get('last_order_id', 26279);
         $orders = Order::with(['user','address','address.zone','orderStatus','orderTotalOrders','orderProducts','paymentMethod','shippingMethod','shippingAddress','shippingAddress.zone'])
-            ->where('id', '>',$lastOrder)->limit(10)->get();
+            ->where('id', '>',$lastOrder)->limit(50)->get();
 
         foreach ($orders as $order) {
             $importOrderService->handle($order->toArray());
