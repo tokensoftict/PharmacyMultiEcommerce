@@ -141,7 +141,7 @@ return [
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
              \App\Models\Stock::class => [
-                 'filterableAttributes'=> ['wholesales', 'wholesales_status', 'retail_status', 'is_wholesales', 'retail', 'admin_status', 'description', 'name', 'wholesales_status', 'retail_status'],
+                 'filterableAttributes'=> ['wholesales', 'wholesales_status', 'retail_status', 'is_wholesales', 'retail', 'admin_status', 'description', 'name', 'wholesales_status'],
              ],
         ],
     ],

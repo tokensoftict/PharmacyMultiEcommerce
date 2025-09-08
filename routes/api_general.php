@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Route;
 Route::prefix("stock")->namespace("Stock")->group(function(){
     Route::get("{stock}/show", ["as" => "stock.show", "uses" => "StockController"]);
 });
+
+Route::prefix("pop-ups")->group(function(){
+    Route::get("list", ["as" => "pop-ups.list", "uses" => "CustomerSpecialPromotionController"]);
+});
+
 Route::prefix("general")->namespace("General")->group(function(){
     Route::get("/manufacturers", ["as" => "manufacturer.list", "uses" => "ManufacturerController"]);
     Route::get("/product_categories", ["as" => "product_categories.list", "uses" => "ProductCategoryController"]);
