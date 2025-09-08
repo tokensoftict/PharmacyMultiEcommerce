@@ -6,7 +6,7 @@ Route::prefix("stock")->namespace("Stock")->group(function(){
     Route::get("{stock}/show", ["as" => "stock.show", "uses" => "StockController"]);
 });
 
-Route::prefix("pop-ups")->group(function(){
+Route::prefix("pop-ups")->namespace("Popup")->group(function(){
     Route::get("list", ["as" => "pop-ups.list", "uses" => "CustomerSpecialPromotionController"]);
 });
 
