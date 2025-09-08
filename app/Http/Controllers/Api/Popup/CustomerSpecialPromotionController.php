@@ -37,11 +37,13 @@ class CustomerSpecialPromotionController extends ApiController
                 ->get();
             foreach ($productPromotions as $productPromotion) {
                 $data[] = [
-                    "id" => generateRandom(4),
+                    "id" => count($data) + 1,
                     "type" => "discount",
                     "title" => "⏰ Flash Deal Alert!",
                     "message" => "For a limited time only, we’re giving you 2% off your order. Grab your favorites now before this special offer disappears!",
                     "cta" => "Shop Now",
+                    "application" => "supermarket",
+                    "promotion" => $productPromotion,
                     "link" => ""
                 ];
             }
