@@ -45,6 +45,7 @@ class CustomerSpecialPromotionController extends ApiController
                     "image" => $productPromotion->stock->product_image,
                     "application" => "supermarket",
                     "promotion" => $productPromotion,
+                    "show" => false,
                     "link" => ""
                 ];
             }
