@@ -42,6 +42,7 @@ class CustomerSpecialPromotionController extends ApiController
                     "title" => "⏰ Flash Deal Alert!",
                     "message" => "For a limited time only, we’re giving you 2% off your order. Grab your favorites now before this special offer disappears!",
                     "cta" => "Shop Now",
+                    "image" => $productPromotion->stock->product_image,
                     "application" => "supermarket",
                     "promotion" => $productPromotion,
                     "link" => ""
