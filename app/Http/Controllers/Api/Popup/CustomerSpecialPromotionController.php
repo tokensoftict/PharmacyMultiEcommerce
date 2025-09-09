@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Popup;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Resources\Api\Stock\StockShowResource;
 use App\Models\SupermarketUser;
 use App\Models\UserStockPromotion;
 use Illuminate\Http\JsonResponse;
@@ -71,6 +72,7 @@ class CustomerSpecialPromotionController extends ApiController
                     "image" => $productPromotion->stock->product_image,
                     "application" => "supermarket",
                     "promotion" => $productPromotion,
+                    "stock" => new StockShowResource($productPromotion->stock),
                     "show" => false,
                     "link" => ""
                 ];

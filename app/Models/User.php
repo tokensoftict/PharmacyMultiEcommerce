@@ -71,7 +71,8 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
     protected $hidden = [
         'password',
         'verification_token',
-        'remember_token'
+        'remember_token',
+        'auth_code'
     ];
 
     protected $fillable = [
@@ -89,7 +90,8 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         'theme',
         'navigation_type',
         'last_seen',
-        'remember_token'
+        'remember_token',
+        'auth_code'
     ];
 
     protected $appends =  ['cus_exist'];

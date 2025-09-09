@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix("account")->namespace("Account")->group(function(){
     Route::post("/login", ["as" => "account.login", "uses" => "LoginController"]);
+    Route::post("/login_without_password", ["as" => "account.login", "uses" => "RequestForAuthCodeController"]);
+    Route::post("/complete_login", ["as" => "account.login", "uses" => "CompleteLoginWithOutPasswordController"]);
     Route::post("/signup", ['as' => 'account.signup', 'uses' => "SignupController"]);
     Route::post("/forgot-password", ['as' => 'account.forgot-password', 'uses' => "ForgotPasswordController"]);
     Route::post("/reset-password", ['as' => 'account.reset-password', 'uses' => "ResetPasswordController"]);
