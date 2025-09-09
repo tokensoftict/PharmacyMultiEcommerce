@@ -42,11 +42,6 @@ class CompleteLoginWithOutPasswordController extends ApiController
             ]);
         }
 
-
-        auth()->attempt($credentials);
-
-        $user = $request->user();
-
         $user->updateLastSeen();
 
         $user->tokens()->delete();
