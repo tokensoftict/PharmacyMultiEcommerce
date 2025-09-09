@@ -934,7 +934,7 @@ function sendSMS($phone, &$user, string $message)
         }
 
     } else {
-        Http::post(config("app.BULKSMS_URL"), [
+        return Http::post(config("app.BULKSMS_URL"), [
             "email" => config("app.BULKSMS_EMAIL"),
             "password" => config("app.BULKSMS_PASSWORD"),
             "recipient" => $phone,
