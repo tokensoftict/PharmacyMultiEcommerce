@@ -32,10 +32,14 @@ class CompleteLoginWithOutPasswordController extends ApiController
 
         $user = User::withTrashed()->where($column, $request->email)->first();
 
+        if(is_null($user->phone_verified_at) and $column == 'phone') {
+            $user->phone_verified_at = now();
+        }
+
         $user->auth_code = NULL;
         $user->save();
 
-        if($user->trashed()){
+        if($user->trashed()) {
             return $this->sendSuccessResponse([
                 'trashed' => $user->trashed(),
                 'user' => new UserLoginResource($user),
