@@ -147,7 +147,7 @@
                                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                                     <p style="margin: 0;">You requested to login without a password.</p>
                                     <p style="margin: 0;">Here’s your secure code: </p>
-                                    <h3>🔑 12345</h3>
+                                    <h3>🔑 {{ $otp }}</h3>
                                     <p style="margin: 0;">⚠️ This code and link will expire in 10 minutes.  </p>
                                     <p style="margin: 0;"> If you didn’t request this, please ignore this email. </p>
                                 </td>
