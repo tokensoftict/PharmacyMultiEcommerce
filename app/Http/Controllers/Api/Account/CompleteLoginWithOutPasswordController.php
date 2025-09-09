@@ -24,7 +24,7 @@ class CompleteLoginWithOutPasswordController extends ApiController
 
         $credentials = [$column => $request->email, 'auth_code' => $request->otp];
 
-        if (! Auth::attempt($credentials)) {
+        if (!User::query()->where($credentials)->exists()) {
             throw ValidationException::withMessages([
                 'email' => 'The code you entered is incorrect. Please double-check and try again',
             ]);
