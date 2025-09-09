@@ -58,6 +58,7 @@ class CustomerSpecialPromotionController extends ApiController
             $productPromotions = UserStockPromotion::query()
                 ->where("user_id", $user->user_id)
                 ->where('status_id', status('Approved'))
+                ->where('end_date', ">=", now())
                 ->get();
             $message = $promoTest[array_rand($promoTest)];
             foreach ($productPromotions as $productPromotion) {
