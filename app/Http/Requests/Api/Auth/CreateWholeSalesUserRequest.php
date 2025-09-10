@@ -23,8 +23,8 @@ class CreateWholeSalesUserRequest extends FormRequest
     {
         return [
             'business_name' => 'required|unique:wholesales_users,business_name',
-            'cac_document'  => 'required|mimes:jpg,jpeg,png,pdf',
-            'premises_licence' => 'required|mimes:jpg,jpeg,png,pdf',
+            'cac_document'  => 'sometimes|mimes:jpg,jpeg,png,pdf',
+            'premises_licence' => 'sometimes|mimes:jpg,jpeg,png,pdf',
             'phone' => 'required',
             'business_email_address' => 'required',
             'address_1' => 'required',
