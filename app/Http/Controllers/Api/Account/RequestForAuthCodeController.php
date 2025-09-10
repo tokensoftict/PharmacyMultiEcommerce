@@ -27,7 +27,7 @@ class RequestForAuthCodeController extends ApiController
 
         if(!$user){
             throw ValidationException::withMessages([
-                'email' => "These $what do not match our records.",
+                'email' => "The $what entered does not match our records.",
             ]);
         }
 
@@ -41,7 +41,7 @@ class RequestForAuthCodeController extends ApiController
 
         if(!$status) {
             throw ValidationException::withMessages([
-                'email' => "There was error send code to your $what, please try again.",
+                'email' => "There was error sending OTP to $what, please try again.",
             ]);
         }
 
