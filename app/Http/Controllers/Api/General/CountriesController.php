@@ -17,7 +17,7 @@ class CountriesController extends ApiController
     public function __invoke(Request $request) : JsonResponse
     {
         return $this->sendSuccessResponse(
-            Country::query()->select("id", "name")->orderBy("name", "ASC")->get()
+            Country::query()->where('name', '<>', 'Others')->select("id", "name")->orderBy("name", "ASC")->get()
         );
     }
 }

@@ -25,8 +25,15 @@ class TownController extends ApiController
      */
     public function __invoke(State $state, Request $request) : JsonResponse
     {
+        $towns = Town::query()->where('name', '<>', 'Others')->select("id", "name")->where("state_id", $state->id)->orderBy("name", "ASC")->get();
+        $towns->add([
+            'id' => 152,
+            'name' => 'Others',
+            'state_id' => 4122,
+            'local_govt_id' => 738,
+        ]);
         return $this->sendSuccessResponse(
-            Town::query()->select("id", "name")->where("state_id", $state->id)->orderBy("name", "ASC")->get()
+            $towns
         );
     }
 }

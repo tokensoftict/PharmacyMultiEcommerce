@@ -4137,7 +4137,8 @@ class StateTableSeeder extends Seeder
             array('name' => "Masvingo",'country_id' => 246),
             array('name' => "Matabeleland North",'country_id' => 246),
             array('name' => "Matabeleland South",'country_id' => 246),
-            array('name' => "Midlands",'country_id' => 246)
+            array('name' => "Midlands",'country_id' => 246),
+            array('name' => "Others",'country_id' => 160),
         );
         DB::table('states')->insert($states);
         Schema::enableForeignKeyConstraints();

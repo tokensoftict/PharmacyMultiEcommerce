@@ -24,7 +24,7 @@ class StatesController extends ApiController
     public function __invoke(Country $country, Request $request) : JsonResponse
     {
         return $this->sendSuccessResponse(
-            State::query()->select("id", "name")->where("country_id", $country->id)->orderBy("name", "ASC")->get()
+            State::query()->where('name', '<>', 'Others')->select("id", "name")->where("country_id", $country->id)->orderBy("name", "ASC")->get()
         );
     }
 }
