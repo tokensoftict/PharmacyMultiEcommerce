@@ -74,7 +74,12 @@ class CustomerSpecialPromotionController extends ApiController
                     "promotion" => $productPromotion,
                     "stock" => new StockShowResource($productPromotion->stock),
                     "show" => false,
-                    "link" => ""
+                    "link" => [
+                        "page" => "detailProduct",
+                        "extraData" => [
+                            "productId" => $productPromotion->stock_id,
+                        ]
+                    ]
                 ];
             }
         }
