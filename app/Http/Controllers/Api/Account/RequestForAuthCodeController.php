@@ -22,6 +22,7 @@ class RequestForAuthCodeController extends ApiController
         $column = is_numeric($request->email) ? "phone" : "email";
         $what = is_numeric($request->email) ? "Phone number" : "Email address";
 
+
         $user = User::query()->where($column, $request->email)->first();
         $status = false;
 
