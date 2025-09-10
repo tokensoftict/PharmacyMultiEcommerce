@@ -186,5 +186,5 @@ return [
     'SEND_CHAMP_EXPIRATION_TIME' => env("SEND_CHAMP_EXPIRATION_TIME", 5),
 
     'PROCESS_OLD_APP_URL' => env("PROCESS_OLD_APP_URL", "https://admin.generaldrugcentre.com/api/data/"),
-    'mustVerify' => env("MUST_VERIFY", 'email'),
+    'mustVerify' => env("MUST_VERIFY", 'phone'),
 ];
