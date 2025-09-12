@@ -25,20 +25,20 @@ class MedReminderService
     public MedReminderSchedule $medReminderSchedule;
 
     public static array $dosageForm = [
-        'Tablet' => 'mg',
-        'Syrup' => 'mL',
-        'Cream' => 'mg',
-        'Eye drops' => 'mL',
-        'Ear drops' => 'mL',
-        'Injection' => 'mL',
-        'Capsule' => 'mg',
-        'Ointments' => 'mg',
-        'Gels' => 'mg',
-        'Lotions' => 'mg',
-        'Powders' => 'mg',
-        'Chewable' => 'mg',
-        'Lozenges' => 'mL',
-        'Infusions' => 'mL',
+        'Tablet' => 'Tablet(s)',
+        'Capsule' => 'Capsule(s)',
+        'Syrup' => 'mls',
+        'Cream' => 'Grams',
+        'Eye Drops' => 'Drops',
+        'Ear Drops' => 'Drops',
+        'Injection' => 'mls',
+        'Ointments' => 'mls',
+        'Gels' => 'grams',
+        'Lotion' => 'grams',
+        'Powders' => 'grams',
+        'Chewable' => 'Tablet(s)',
+        'Lozenges'=> 'Tablet(s)',
+        'Infusions' => 'Bag(s)'
     ];
 
 
@@ -104,12 +104,12 @@ class MedReminderService
      */
     public final function update(MedReminder $medReminder, array $data) : MedReminder
     {
-       return DB::transaction(function () use ($medReminder, $data) {
-           $medReminder->update($this->prepareMedReminderData($data));
-           $medReminder->med_reminder_schedules()->delete();
-           $this->createSchedules($medReminder);
-           return $medReminder->fresh();
-       });
+        return DB::transaction(function () use ($medReminder, $data) {
+            $medReminder->update($this->prepareMedReminderData($data));
+            $medReminder->med_reminder_schedules()->delete();
+            $this->createSchedules($medReminder);
+            return $medReminder->fresh();
+        });
     }
 
     /**
@@ -317,7 +317,7 @@ class MedReminderService
      */
     public final function getMedRemindersLocalNotification(User $user) : Collection
     {
-       return  MedReminderSchedule::query()
+        return  MedReminderSchedule::query()
             ->whereHas('med_reminder', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })->where(function ($query) {
@@ -343,8 +343,8 @@ class MedReminderService
 
         if(request()->has('filter') && request()->get('filter') == 'today-history') {
             $medReminderSchedules->where(function ($query) {
-               $query->orWhereBetween('scheduled_at', [now()->startOfDay()->toDateTimeString(), now()->endOfDay()->toDateTimeString()])
-               ->orWhereBetween('snoozed_at', [now()->startOfDay()->toDateTimeString(), now()->endOfDay()->toDateTimeString()]);
+                $query->orWhereBetween('scheduled_at', [now()->startOfDay()->toDateTimeString(), now()->endOfDay()->toDateTimeString()])
+                    ->orWhereBetween('snoozed_at', [now()->startOfDay()->toDateTimeString(), now()->endOfDay()->toDateTimeString()]);
             });
         }
 
