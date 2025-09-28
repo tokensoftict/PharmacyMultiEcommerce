@@ -74,11 +74,14 @@ class OrderDataTableComponent extends ExportDataTableComponent
 
         if(count($this->filter) > 0){
             $order->whereBetween('orders.created_at', [
-                $this->filter['startDate'],
-                $this->filter['stopDate'],
+                carbonize($this->filter['startDate'])->startOfDay()->toDateTimeString(),
+                carbonize($this->filter['stopDate'])->endOfDay()->toDateTimeString(),
             ]);
         } else {
-            $order->where('orders.order_date', todaysDate());
+            $order->whereBetween('orders.created_at', [
+                now()->startOfDay()->toDateTimeString(),
+                now()->endOfDay()->toDateTimeString(),
+            ]);
         }
 
         $order->orderBy("orders.id", "DESC");
