@@ -98,7 +98,7 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
 
     public function getCusExistAttribute()
     {
-        $local = LocalCustomer::where('phone', $this->phone)->first();
+        $local = LocalCustomer::where('phone_number', $this->phone)->first();
         if($local) {
             return $local->local_id;
         }
