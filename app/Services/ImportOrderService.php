@@ -204,11 +204,15 @@ class ImportOrderService
             'updated_at' => carbonize($contents['updated_at'])
         ];
         return DB::transaction(function () use ($orderData, $contents){
+            $exists = Order::where('invoice_no', $contents['invoice_no'])->exists();
             Order::where('invoice_no', $contents['invoice_no'])->delete();
 
             $order = $this->createOrderService->create($orderData);
             $order = $this->createOrderProductService->createOrderProductFromOldServer($order, $contents['order_products']);
             $this->createOrderTotalService->createOrderTotalFromOlderServer($order, $contents['order_total_orders']);
+            if(!$exists) {
+                $this->createOrderService->processOrder($order);
+            }
             return true;
         });
 
