@@ -193,8 +193,10 @@ class CreateOrderService
 
         $this->reprocessOrderOnKafka($order);
 
-        //send mail to customer
-        Mail::to($order->customer->user->email)->send(new NewOrderEmail($order));
+        if($order->wasRecentlyCreated) {
+            //send mail to customer
+            Mail::to($order->customer->user->email)->send(new NewOrderEmail($order));
+        }
 
         //notify the customer on his/her phone
         $notificationService  = new PushNotificationService();
