@@ -87,7 +87,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <h3 class="me-1">Account Details</h3>
-                                <button class="btn btn-link p-0"><span class="fas fa-pen fs-8 ms-3 text-body-quaternary"></span></button>
+                                <button class="btn btn-link p-0" data-toggle="modal" data-target="#updateCustomer"><span class="fas fa-pen fs-8 ms-3 text-body-quaternary"></span></button>
                             </div>
 
                             <div class="d-flex justify-content-between">
@@ -105,6 +105,32 @@
 
                         </div>
                     </div>
+                </div>
+
+                <div id="updateCustomer" class="modal fade" role="dialog">
+                    <form method="post" wire:submit.prevent="updateCustomer">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Update Phone Number</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input class="form-control" type="text" wire:model="customerData.phone" name="phone_number" placeholder="Phone Number">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" wire:target="updateCustomer" wire:loading.attr="disabled" class="btn btn-primary">
+                                    Update Phone Number
+                                    <span wire:loading wire:target="updateCustomer" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
                 </div>
 
                 @if($this->wholesalesUser instanceof \App\Models\WholesalesUser)

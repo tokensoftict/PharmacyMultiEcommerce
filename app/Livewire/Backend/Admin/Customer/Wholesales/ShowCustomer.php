@@ -15,6 +15,8 @@ class ShowCustomer extends Component
     public WholesalesUser|SupermarketUser $wholesalesUser;
     public int $account;
 
+    public array $customerData = [];
+
     public function mount()
     {
         if(ApplicationEnvironment::$stock_model == WholessalesStockPrice::class)
@@ -23,6 +25,10 @@ class ShowCustomer extends Component
         } else {
             $this->wholesalesUser = SupermarketUser::find($this->account);
         }
+
+        $this->customerData = [
+            'phone' => $this->wholesalesUser->user->phone,
+        ];
     }
 
     public function render()
@@ -38,5 +44,13 @@ class ShowCustomer extends Component
             $this->wholesalesUser = $service->activateBusiness($this->wholesalesUser);
             $this->alert("success", "Business has been activated and approved successfully");
         }
+    }
+
+    public function updateCustomer()
+    {
+        $this->wholesalesUser->user->phone = $this->customerData['phone'];
+        $this->wholesalesUser->user->save();
+        $this->dispatch("refreshPage", []);
+        $this->alert("success", "Phone Number has been updated successfully");
     }
 }
