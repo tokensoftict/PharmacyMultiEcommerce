@@ -87,7 +87,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <h3 class="me-1">Account Details</h3>
-                                <button class="btn btn-link p-0" data-toggle="modal" data-target="#updateCustomer"><span class="fas fa-pen fs-8 ms-3 text-body-quaternary"></span></button>
+                                <button type="button" class="btn btn-link p-0" data-toggle="modal" data-target="#updateCustomer"><span class="fas fa-pen fs-8 ms-3 text-body-quaternary"></span></button>
                             </div>
 
                             <div class="d-flex justify-content-between">
