@@ -95,13 +95,14 @@ class EditOrderProduct extends Component
 
 
     public function deleteItem($index) {
+        $this->removedStock[] = $index;
         $this->products = $this->order->order_products->filter(function ($item) use ($index) {
             if($index != $item->id and !in_array($item->id, $this->removedStock)) {
                 return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price, "error" => $item->error];
             }
             return false;
         })->toArray();
-        $this->removedStock[] = $index;
+
     }
 
 }
