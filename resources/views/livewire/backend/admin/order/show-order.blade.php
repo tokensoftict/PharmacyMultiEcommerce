@@ -38,6 +38,16 @@
                         <span wire:loading wire:target="rePackOrder" class="spinner-border spinner-border-sm me-2" role="status"></span>
                         Re-pack
                     </button>
+                    @if(!is_null($this->order->local_order_id))
+                        <button onclick="if(confirm('Are you sure you want to re-load this order?')) { Livewire.getByName('backend.admin.order.show-order')[0].reLoadOrder(); } return false;"
+                                wire:target="reLoadOrder"
+                                wire:loading.attr="disabled"
+                                class="btn btn-link px-3 text-body">
+                            <span wire:loading.remove="reLoadOrder" class="fas fa-undo me-2"></span>
+                            <span wire:loading wire:target="reLoadOrder" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            Re-load Order
+                        </button>
+                    @endif
                     <div class="dropdown"><button class="btn text-body dropdown-toggle dropdown-caret-none ps-3 pe-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">More action<span class="fas fa-chevron-down ms-2"></span></button>
                         <ul class="dropdown-menu dropdown-menu-end">
                            <!-- <li><a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.update', $this->order->id) }}">Edit Order</a></li> -->

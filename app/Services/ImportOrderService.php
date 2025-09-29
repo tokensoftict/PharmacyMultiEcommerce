@@ -215,7 +215,7 @@ class ImportOrderService
             }
 
             if($forceProcess) {
-                $this->createOrderService->reprocessOrderOnKafka($order);
+                $this->createOrderService->processOrder($order);
             }
 
             return true;

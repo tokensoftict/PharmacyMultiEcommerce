@@ -196,21 +196,21 @@ class CreateOrderService
         if($order->wasRecentlyCreated) {
             //send mail to customer
             Mail::to($order->customer->user->email)->send(new NewOrderEmail($order));
-        }
 
-        //notify the customer on his/her phone
-        $notificationService  = new PushNotificationService();
-        $notificationService
-            ->setApplicationEnvironment($order->app)
-            ->createNotification([
-                "title" => "🎊 Woohoo! Your Order is on Its Way to Processing",
-                "body" => "Your order #$order->order_id  has been successfully submitted! ✅💌 We’ll keep you posted and send you an email when your order status updates.",
-            ])
-            ->determineCustomerTypeAndSetCustomer($order->customer)
-            ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->id])
-            ->approve()
-            ->send();
+            //notify the customer on his/her phone
+            $notificationService  = new PushNotificationService();
+            $notificationService
+                ->setApplicationEnvironment($order->app)
+                ->createNotification([
+                    "title" => "🎊 Woohoo! Your Order is on Its Way to Processing",
+                    "body" => "Your order #$order->order_id  has been successfully submitted! ✅💌 We’ll keep you posted and send you an email when your order status updates.",
+                ])
+                ->determineCustomerTypeAndSetCustomer($order->customer)
+                ->setAction(PushNotificationAction::VIEW_ORDER)
+                ->setPayload(['orderId' => $order->id])
+                ->approve()
+                ->send();
+        }
 
     }
 
