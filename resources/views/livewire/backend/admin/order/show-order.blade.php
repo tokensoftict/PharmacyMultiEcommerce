@@ -70,7 +70,12 @@
                                     @foreach($this->order->order_products as $product)
                                         <tr>
                                             <td class="sort white-space-nowrap align-middle fs-10">{{ $loop->iteration }}</td>
-                                            <td class="sort white-space-nowrap align-middle">{{ $product->name }}</td>
+                                            <td class="sort white-space-nowrap align-middle">
+                                                {{ $product->name }}
+                                                @if(!is_null($product->error))
+                                                    <span class="d-block text-danger">{!! $product->error !!}</span>
+                                                 @endif
+                                            </td>
                                             <td class="sort align-middle text-end ps-4">{{ money($product->price) }}</td>
                                             <td class="sort align-middle text-end ps-4">{{ $product->quantity }}</td>
                                             <td class="sort align-middle text-end ps-4">{{ money($product->total) }}</td>
