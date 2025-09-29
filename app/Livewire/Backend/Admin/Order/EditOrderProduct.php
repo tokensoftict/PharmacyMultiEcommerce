@@ -97,7 +97,7 @@ class EditOrderProduct extends Component
     public function deleteItem($index) {
         $this->products = $this->order->order_products->filter(function ($item) use ($index) {
             if($index != $item->id) {
-                return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price];
+                return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price, "error" => $item->error];
             }
             return false;
         })->toArray();
