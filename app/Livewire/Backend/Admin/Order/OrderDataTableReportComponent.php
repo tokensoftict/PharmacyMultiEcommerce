@@ -20,8 +20,8 @@ class OrderDataTableReportComponent extends OrderDataTableComponent
     public function __construct()
     {
         $request = request()->all();
-        if(count($request) == 0) {
-            $this->filter = ['startDate' => date('Y-m-01'), 'stopDate' => date('Y-m-t')];
+        if(!isset($request['startDate']) and !isset($request['stopDate']) == 0) {
+            $this->filter = ['startDate' => date('Y-m-d'), 'stopDate' => date('Y-m-d')];
         } else {
             $this->filter = $request;
         }
