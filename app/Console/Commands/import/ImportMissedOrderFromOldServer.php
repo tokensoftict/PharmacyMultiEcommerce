@@ -32,11 +32,11 @@ class ImportMissedOrderFromOldServer extends Command
 
         $invoiceNumber  = text(
             label : "Invoice Number or Order ID",
-            default: NULL,
+            default: "",
             required: true
         );
 
-        if(is_null($invoiceNumber)) {
+        if($invoiceNumber === "") {
             return Command::SUCCESS;
         }
 
