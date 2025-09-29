@@ -18,7 +18,7 @@ class EditOrderProduct extends Component
     public function mount()
     {
         $this->products = $this->order->order_products->map(function ($item) {
-            return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price];
+            return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price, "error" => $item->error];
         })->toArray();
     }
 
