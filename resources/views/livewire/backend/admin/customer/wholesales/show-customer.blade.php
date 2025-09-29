@@ -22,6 +22,7 @@
 
     const updateCustomer = bootstrap.Modal.getOrCreateInstance(document.getElementById("updateCustomer"));
 
+
     function ShowUpdateCustomer() {
         updateCustomer.show();
     }
@@ -34,6 +35,7 @@
     }
 
     window.addEventListener('hideUpdateCustomerModal', HideUpdateCustomer);
+    window.addEventListener('showUpdateCustomerModal', ShowUpdateCustomer);
 </script>
 @endscript
 @php
@@ -101,7 +103,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <h3 class="me-1">Account Details</h3>
-                                <button type="button" class="btn btn-link p-0" onclick="return ShowUpdateCustomer()"><span class="fas fa-pen fs-8 ms-3 text-body-quaternary"></span></button>
+                                <button type="button" class="btn btn-link p-0" onclick="window.dispatchEvent(new Event('showUpdateCustomerModal'))"><span class="fas fa-pen fs-8 ms-3 text-body-quaternary"></span></button>
                             </div>
 
                             <div class="d-flex justify-content-between">
