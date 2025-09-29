@@ -45,7 +45,7 @@ class ImportMissedOrderFromOldServer extends Command
                 $query->orWhere('id', $invoiceNumber)->orWhere('invoice_no', $invoiceNumber);
             })->first();
         if($order) {
-            $importOrderService->handle($order->toArray());
+            $importOrderService->handle($order->toArray(), true);
         }
     }
 }

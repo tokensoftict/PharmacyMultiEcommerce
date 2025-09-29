@@ -142,7 +142,7 @@ class ImportOrderService
      * @return bool
      * @throws \Throwable
      */
-    public function handle(array $contents) : bool
+    public function handle(array $contents, bool $forceProcess = false) : bool
     {
         $customer = self::getUser(self::$customerType[$contents['store']], $contents['user']['email']);
 
@@ -203,7 +203,7 @@ class ImportOrderService
             'created_at' => carbonize($contents['created_at']),
             'updated_at' => carbonize($contents['updated_at'])
         ];
-        return DB::transaction(function () use ($orderData, $contents){
+        return DB::transaction(function () use ($orderData, $contents, $forceProcess){
             $exists = Order::where('invoice_no', $contents['invoice_no'])->exists();
             Order::where('invoice_no', $contents['invoice_no'])->delete();
 
@@ -213,6 +213,11 @@ class ImportOrderService
             if(!$exists) {
                 $this->createOrderService->processOrder($order);
             }
+
+            if($forceProcess) {
+                $this->createOrderService->reprocessOrderOnKafka($order);
+            }
+
             return true;
         });
 
