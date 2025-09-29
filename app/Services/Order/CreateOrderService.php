@@ -415,7 +415,7 @@ class CreateOrderService
             $order = Order::findorfail($order);
         }
 
-        if($order->status_id === status("Processing Error")) return;
+
         $order = $this->updateOrderStatus($order, status('Processing Error'));
 
 
@@ -427,21 +427,23 @@ class CreateOrderService
             }
 
         }
+        if($order->status_id !== status("Processing Error")) {
+            Mail::to($order->customer->user->email)->send(new ProcessingError($order));
 
-        Mail::to($order->customer->user->email)->send(new ProcessingError($order));
+            $notificationService  = new PushNotificationService();
+            $notificationService
+                ->setApplicationEnvironment($order->app)
+                ->createNotification([
+                    "title" => "🚨 Order Processing Issue 🚨",
+                    "body" => "We hit a small snag while processing your order #$order->order_id. Our team is working on it and will update you soon!",
+                ])
+                ->determineCustomerTypeAndSetCustomer($order->customer)
+                ->setAction(PushNotificationAction::VIEW_ORDER)
+                ->setPayload(['orderId' => $order->id])
+                ->approve()
+                ->send();
+        }
 
-        $notificationService  = new PushNotificationService();
-        $notificationService
-            ->setApplicationEnvironment($order->app)
-            ->createNotification([
-                "title" => "🚨 Order Processing Issue 🚨",
-                "body" => "We hit a small snag while processing your order #$order->order_id. Our team is working on it and will update you soon!",
-            ])
-            ->determineCustomerTypeAndSetCustomer($order->customer)
-            ->setAction(PushNotificationAction::VIEW_ORDER)
-            ->setPayload(['orderId' => $order->id])
-            ->approve()
-            ->send();
     }
 
 
