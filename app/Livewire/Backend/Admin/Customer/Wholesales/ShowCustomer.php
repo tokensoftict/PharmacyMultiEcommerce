@@ -50,7 +50,7 @@ class ShowCustomer extends Component
     {
         $this->wholesalesUser->user->phone = $this->customerData['phone'];
         $this->wholesalesUser->user->save();
-        $this->dispatch("refreshPage", []);
+        $this->dispatch("hideUpdateCustomerModal", []);
         $this->alert("success", "Phone Number has been updated successfully");
     }
 }
