@@ -12,6 +12,7 @@ use App\Models\SupermarketUser;
 use App\Models\Town;
 use App\Models\User;
 use App\Models\WholesalesUser;
+use App\Services\Api\Checkout\ConfirmOrderService;
 use App\Services\Order\CreateOrderProductService;
 use App\Services\Order\CreateOrderService;
 use App\Services\Order\CreateOrderTotalService;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\DB;
 
 class ImportOrderService
 {
+
+    private ConfirmOrderService $confirmOrderService;
     private CreateOrderService $createOrderService;
     private CreateOrderProductService  $createOrderProductService;
     private CreateOrderTotalService $createOrderTotalService;
@@ -32,12 +35,14 @@ class ImportOrderService
 
 
     /**
+     * @param ConfirmOrderService $confirmOrderService
      * @param CreateOrderService $createOrderService
      * @param CreateOrderTotalService $createOrderTotalService
      * @param CreateOrderProductService $createOrderProductService
      */
-    public function __construct(CreateOrderService $createOrderService, CreateOrderTotalService $createOrderTotalService, CreateOrderProductService  $createOrderProductService)
+    public function __construct(ConfirmOrderService $confirmOrderService, CreateOrderService $createOrderService, CreateOrderTotalService $createOrderTotalService, CreateOrderProductService  $createOrderProductService)
     {
+        $this->confirmOrderService = $confirmOrderService;
         $this->createOrderService = $createOrderService;
         $this->createOrderProductService = $createOrderProductService;
         $this->createOrderTotalService = $createOrderTotalService;
