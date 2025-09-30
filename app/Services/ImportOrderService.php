@@ -22,8 +22,6 @@ use Illuminate\Support\Facades\DB;
 
 class ImportOrderService
 {
-
-    private ConfirmOrderService $confirmOrderService;
     private CreateOrderService $createOrderService;
     private CreateOrderProductService  $createOrderProductService;
     private CreateOrderTotalService $createOrderTotalService;
@@ -42,7 +40,6 @@ class ImportOrderService
      */
     public function __construct(ConfirmOrderService $confirmOrderService, CreateOrderService $createOrderService, CreateOrderTotalService $createOrderTotalService, CreateOrderProductService  $createOrderProductService)
     {
-        $this->confirmOrderService = $confirmOrderService;
         $this->createOrderService = $createOrderService;
         $this->createOrderProductService = $createOrderProductService;
         $this->createOrderTotalService = $createOrderTotalService;
