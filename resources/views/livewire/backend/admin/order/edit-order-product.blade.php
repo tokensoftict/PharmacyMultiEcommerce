@@ -55,10 +55,10 @@
                                                 @endif
                                             </td>
                                             <td class="sort align-middle text-end ps-4">{{ money($product['total']) }}</td>
-                                            <td><a href="#" wire:click="deleteItem('{{ $product['id'] }}')" class="btn btn-danger">
+                                            <td><button type="button" wire:click="deleteItem('{{ $product['id'] }}')" class="btn btn-danger">
                                                     <span wire:loading.remove="deleteItem('{{ $product['id'] }}')" class="fas fa-trash me-2"></span>
                                                     <span wire:loading wire:target="deleteItem('{{ $product['id'] }}')" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                                </a>
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
