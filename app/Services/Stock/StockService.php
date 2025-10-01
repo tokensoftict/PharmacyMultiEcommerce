@@ -129,6 +129,7 @@ class StockService
 
         return NewStockArrival::whereIn('id', $latestArrivals)
             ->with('stock')
+            ->where('app_id',ApplicationEnvironment::$id)
             ->orderBy('id', 'DESC')
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
