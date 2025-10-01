@@ -90,7 +90,7 @@ class Address extends Model
 
     public function getFullAddressAttribute()
     {
-        return $this->address_1.", ".$this->address_2.", ".$this->town->name.", ".$this->state->name.", ".$this->country->name;
+        return $this->address_1.", ".$this->address_2.", ".optional($this->town)->name.", ".optional($this->state)->name.", ".optional($this->country)->name;
     }
 
     public function isDefault()
