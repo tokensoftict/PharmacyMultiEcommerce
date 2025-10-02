@@ -93,16 +93,16 @@ class CustomerManagerDatatable extends DataTableComponent
     public static function  mountColumn() : array
     {
         return [
-            Column::make("First Name", "user.firstname")->sortable(),
-            Column::make("Last Name", "user.lastname")->sortable(),
-            Column::make("Email", "user.email")->sortable(),
+            Column::make("First Name", "user.firstname")->searchable()->sortable(),
+            Column::make("Last Name", "user.lastname")->searchable()->sortable(),
+            Column::make("Email", "user.email")->searchable()->sortable(),
             Column::make("Type", "customer_type.name")
                 ->format(fn($value, $row, Column $column) => $value)
                 ->sortable(),
             Column::make("Group", "customer_group.name")
                 ->format(fn($value, $row, Column $column) => $value)
                 ->sortable(),
-            Column::make("Phone Number", "phone")->sortable(),
+            Column::make("Phone Number", "phone")->searchable()->sortable(),
             Column::make("Exist On Local", "customer_local_id")
                 ->format(function($value, $row, Column $column){
                     return match ($value){
