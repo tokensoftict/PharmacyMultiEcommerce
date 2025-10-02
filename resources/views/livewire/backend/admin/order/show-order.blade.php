@@ -48,6 +48,7 @@
                             Re-load Order
                         </button>
                     @endif
+                    @if($this->order->status_id === status('Processing Error'))
                     <button onclick="if(confirm('Are you sure you want to cancel this order, This can not be reversed?')) { Livewire.getByName('backend.admin.order.show-order')[0].cancelOrder(); } return false;"
                             wire:target="cancelOrder"
                             wire:loading.attr="disabled"
@@ -56,6 +57,7 @@
                         <span wire:loading wire:target="cancelOrder" class="spinner-border spinner-border-sm me-2" role="status"></span>
                         Cancel order
                     </button>
+                    @endif
                     <div class="dropdown"><button class="btn text-body dropdown-toggle dropdown-caret-none ps-3 pe-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">More action<span class="fas fa-chevron-down ms-2"></span></button>
                         <ul class="dropdown-menu dropdown-menu-end">
                            <!-- <li><a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.update', $this->order->id) }}">Edit Order</a></li> -->
