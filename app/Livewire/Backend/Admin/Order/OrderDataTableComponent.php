@@ -121,9 +121,6 @@ class OrderDataTableComponent extends ExportDataTableComponent
         {
             $orderColumn = array_merge($orderColumn, [
                 Column::make("Business Name", "customer.business_name")
-                    ->format(function($value, $row, Column $column){
-                        return $row->customer->business_name;
-                    })
                     ->searchable()
                     ->sortable(),
                 Column::make("Telephone", "telephone")
