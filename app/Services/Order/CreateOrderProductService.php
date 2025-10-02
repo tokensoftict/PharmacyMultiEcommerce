@@ -5,6 +5,7 @@ namespace App\Services\Order;
 use App\Classes\ApplicationEnvironment;
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\SalesRepresentative;
 use App\Models\Stock;
 use App\Models\SupermarketAdmin;
 use App\Models\SupermarketUser;
@@ -15,7 +16,7 @@ use Ramsey\Collection\Collection;
 
 class CreateOrderProductService
 {
-    private SupermarketUser|WholesalesUser|SupermarketAdmin|WholesalesAdmin|bool|null  $checkOutUser = null;
+    private WholesalesUser | SupermarketUser | WholesalesAdmin | SupermarketAdmin | SalesRepresentative| bool  $checkOutUser;
     public function __construct()
     {
         $this->checkOutUser = getApplicationModel();
