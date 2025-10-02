@@ -37,7 +37,7 @@ class Settings extends Valuestore
      */
     public static function InProgress() : array
     {
-        return [status("Pending"), status("Processing"), status("Packing"), status("Waiting For Payment"), status("Paid")];
+        return [status('Processing Error'), status("Pending"), status("Processing"), status("Packing"), status("Waiting For Payment"), status("Paid")];
     }
 
     /**
