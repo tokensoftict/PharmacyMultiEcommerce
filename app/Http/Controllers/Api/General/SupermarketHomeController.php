@@ -44,10 +44,6 @@ class SupermarketHomeController extends ApiController
                 "label"     => "Lowest Price You can Trust",
             ],
             [
-                "component" => "Some",
-                "type"       => "Text",
-            ],
-            [
                 "component" => "Horizontal_List",
                 "type" => "manufacturers",
                 "id" => 161,
@@ -73,7 +69,10 @@ class SupermarketHomeController extends ApiController
         ];
         $NewArrivalData = HomePageApiParser::parseProductType($checkNewArrivals);
         if($NewArrivalData->count() > 0) {
-            $data[] = array_merge($checkNewArrivals, [ "data" => $NewArrivalData]);
+            $arrivalData = array_merge($checkNewArrivals, [ "data" => $NewArrivalData]);
+            $oneData = $data[2];
+            $data[2] = $arrivalData;
+            $data[] = $oneData;
         }
 
         return $this->sendSuccessResponse($data);
