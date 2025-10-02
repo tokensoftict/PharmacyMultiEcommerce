@@ -49,12 +49,14 @@ class ProcessStockService
 
                 if($wholesales) {
                     $wholesales = new WholessalesStockPrice($wholesales);
+                    $pushStock->wholessales_stock_prices()->delete();
                     $pushStock->wholessales_stock_prices()->save($wholesales);
                 }
                 if($supermarket) {
                     $customPrices = $supermarket['custom_price'];
                     unset($data['custom_price']);
                     $supermarket = new SupermarketsStockPrice($supermarket);
+                    $pushStock->supermarkets_stock_prices()->delete();
                     $pushStock->supermarkets_stock_prices()->save($supermarket);
                     if(count($customPrices) > 0) {
                         $pushStock->stockquantityprices()->delete();
