@@ -48,6 +48,8 @@ class PushNotificationFailedListener
             $event->notifiable->notificationTokens()
                 ->where('push_token', $target->value())
                 ->delete();
+
+
         }
     }
 }

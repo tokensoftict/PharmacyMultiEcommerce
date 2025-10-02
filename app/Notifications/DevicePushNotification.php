@@ -62,7 +62,7 @@ class DevicePushNotification extends Notification implements ShouldQueue
             default => "wholesales"
         };
 
-
+        $data['notification_id'] = $this->pushNotification->id;
 
         $fcm->data($data);
 
