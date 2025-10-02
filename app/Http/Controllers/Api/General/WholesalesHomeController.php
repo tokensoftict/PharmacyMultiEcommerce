@@ -28,7 +28,7 @@ class WholesalesHomeController extends ApiController
                 "type" => "manufacturers",
                 "id" => 114,
                 "limit" => 15,
-                "label" => "Peace Pharmaceutical Store",
+                "label" => "PEACE PHARMACEUTICAL STORE",
                 "seeAll" => "stock/114/by_manufacturer"
             ],
             [
@@ -36,24 +36,20 @@ class WholesalesHomeController extends ApiController
                 "type" => "classifications",
                 "id" => 12,
                 "limit" => 15,
-                "label" => "Antimalarial",
+                "label" => "ANTIMALARIAL",
                 "seeAll" => "stock/12/by_classification"
             ],
             [
                 "component" => "FlashDeals",
                 "type"       => "lowestClassifications",
-                "label"     => "Lowest Price You can Trust",
-            ],
-            [
-                "component" => "Some",
-                "type"       => "Text",
+                "label"     => "LOWEST PRICE YOU CAN TRUST",
             ],
             [
                 "component" => "Horizontal_List",
                 "type" => "manufacturers",
                 "id" => 161,
                 "limit" => 15,
-                "label" => "Tuyil Pharmaceutical Store",
+                "label" => "TUYIL PHARMACEUTICAL STORE",
                 "seeAll" => "stock/161/by_manufacturer"
             ],
         ];

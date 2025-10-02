@@ -27,7 +27,7 @@ class SupermarketHomeController extends ApiController
                 "type" => "manufacturers",
                 "id" => 114,
                 "limit" => 15,
-                "label" => "Peace Pharmaceutical Store",
+                "label" => "PEACE PHARMACEUTICAL STORE",
                 "seeAll" => "stock/114/by_manufacturer"
             ],
             [
@@ -41,14 +41,14 @@ class SupermarketHomeController extends ApiController
             [
                 "component" => "FlashDeals",
                 "type"       => "lowestClassifications",
-                "label"     => "Lowest Price You can Trust",
+                "label"     => "LOWEST PRICE YOU CAN TRUST",
             ],
             [
                 "component" => "Horizontal_List",
                 "type" => "manufacturers",
                 "id" => 161,
                 "limit" => 15,
-                "label" => "Tuyil Pharmaceutical Store",
+                "label" => "TUYIL PHARMACEUTICAL STORE",
                 "seeAll" => "stock/161/by_manufacturer"
             ],
         ];
