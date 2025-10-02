@@ -17,6 +17,7 @@ class EditOrderProduct extends Component
 
     public function mount()
     {
+        $this->removedStock = [];
         $this->products = $this->order->order_products->map(function ($item) {
             return ['id' => $item->id, "name" => $item->name, "total" => $item->total, 'quantity' => $item->quantity, 'price' => $item->price, "error" => $item->error];
         })->toArray();
@@ -33,7 +34,7 @@ class EditOrderProduct extends Component
             $status =  \DB::transaction(function () {
 
                 if(count($this->removedStock) > 0) {
-                    OrderProduct::where("id", $this->removedStock)->delete();
+                    OrderProduct::whereIn("id", $this->removedStock)->delete();
                 }
 
                 foreach ($this->products as $product) {
