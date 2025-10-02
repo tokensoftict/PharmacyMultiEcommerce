@@ -6,14 +6,16 @@ use App\Classes\ApplicationEnvironment;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Stock;
+use App\Models\SupermarketAdmin;
 use App\Models\SupermarketUser;
+use App\Models\WholesalesAdmin;
 use App\Models\WholesalesUser;
 use Illuminate\Support\Arr;
 use Ramsey\Collection\Collection;
 
 class CreateOrderProductService
 {
-    private SupermarketUser|WholesalesUser|bool|null  $checkOutUser = null;
+    private SupermarketUser|WholesalesUser|SupermarketAdmin|WholesalesAdmin|bool|null  $checkOutUser = null;
     public function __construct()
     {
         $this->checkOutUser = getApplicationModel();

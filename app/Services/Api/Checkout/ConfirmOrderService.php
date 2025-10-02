@@ -3,12 +3,14 @@
 namespace App\Services\Api\Checkout;
 
 use App\Models\PaymentMethod;
+use App\Models\SupermarketAdmin;
 use App\Models\SupermarketUser;
+use App\Models\WholesalesAdmin;
 use App\Models\WholesalesUser;
 
 class ConfirmOrderService
 {
-    public WholesalesUser|SupermarketUser|bool|null $checkoutUser = null;
+    private SupermarketUser|WholesalesUser|SupermarketAdmin|WholesalesAdmin|bool|null  $checkOutUser = null;
     public float $totalToPay = 0;
     public array $paymentAnalysisList = [];
 

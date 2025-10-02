@@ -5,12 +5,14 @@ namespace App\Services\Order;
 use App\Models\Order;
 use App\Models\OrderTotal;
 use App\Models\OrderTotalOrder;
+use App\Models\SupermarketAdmin;
 use App\Models\SupermarketUser;
+use App\Models\WholesalesAdmin;
 use App\Models\WholesalesUser;
 
 class CreateOrderTotalService
 {
-    private SupermarketUser|WholesalesUser|bool|null  $checkOutUser = null;
+    private SupermarketUser|WholesalesUser|SupermarketAdmin|WholesalesAdmin|bool|null  $checkOutUser = null;
     private float|int $total;
     public function __construct()
     {
