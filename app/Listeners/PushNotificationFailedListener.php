@@ -21,6 +21,6 @@ class PushNotificationFailedListener
     public function handle(NotificationFailed $event): void
     {
         $report = Arr::get($event->data, 'report');
-        dump($report);
+        dump($report['message']['data']);
     }
 }
