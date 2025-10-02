@@ -28,14 +28,14 @@ class OrderListResource extends JsonResource
     }
 
 
-    private function getOrderImage(): string
+    private function getOrderImage(): ?string
     {
        $products = $this->order_products->filter(function (OrderProduct $orderProduct)  {
            return $orderProduct->stock->image !== NULL;
         });
 
        if($products->count() === 0) {;
-           return $this->order_products->first()?->stock->product_image;
+           return optional($this->order_products->first()?->stock)->product_image ?? NULL;
        } else {
           $products = $products->shuffle();
           return $products->first()?->stock->product_image;

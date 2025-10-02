@@ -69,7 +69,7 @@ class HomePageApiParser
      * @param int $limit
      * @return AnonymousResourceCollection
      */
-    public static function newArrivals(int $limit =15) : AnonymousResourceCollection
+    public static function newArrivals(int $limit =25) : AnonymousResourceCollection
     {
         $stockID =  NewStockArrival::query()->orderBy("id", "DESC")
             ->where('app_id', ApplicationEnvironment::$id)->limit($limit)

@@ -190,6 +190,15 @@ class DsdRepository
 
         $door_step_down_distance = DeliveryTownDistance::where('town_id',$address->town_id)->first();
 
+        if(!$door_step_down_distance){
+            return [
+                'status' => false,
+                'name'=>$methodOfDelivery->name,
+                'amount'=>0,
+                'error' => ['Your Town is not supported for Door step Delivery!']
+            ];
+        }
+
         $analysis = [];
         $doorStepDeliveryAmount = Stock::whereIn("id", array_keys($shoppingCart))->get()->sum(function($stock) use ($shoppingCart, &$analysis){
             $analysis[] = [
@@ -201,7 +210,7 @@ class DsdRepository
             return $stock->doorstep * $shoppingCart[$stock->id]['quantity'];
         });
 
-        if($doorStepDeliveryAmount <= $door_step_down_distance->minimum_shipping_amount)
+        if($doorStepDeliveryAmount <= ($door_step_down_distance->minimum_shipping_amount ?? 0))
         {
             $doorStepDeliveryAmount = $door_step_down_distance->fixed_shipping_amount;
         }
