@@ -54,7 +54,7 @@ class WholesalesHomeController extends ApiController
                 "id" => 161,
                 "limit" => 15,
                 "label" => "Tuyil Pharmaceutical Store",
-                "seeAll" => "stock/114/by_manufacturer"
+                "seeAll" => "stock/161/by_manufacturer"
             ],
         ];
 
