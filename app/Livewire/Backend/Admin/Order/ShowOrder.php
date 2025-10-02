@@ -49,4 +49,14 @@ class ShowOrder extends Component
             $importOrderService->handle($order->toArray(), true);
         });
     }
+
+
+    public function cancelOrder()
+    {
+        DB::transaction(function () {
+            $this->order->status_id = status('Cancelled');
+            $this->order->save();
+            (new CreateOrderService())->cancelOrder($this->order);
+        });
+    }
 }
