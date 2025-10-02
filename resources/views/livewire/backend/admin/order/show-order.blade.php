@@ -48,7 +48,7 @@
                             Re-load Order
                         </button>
                     @endif
-                    <button onclick="if(confirm('Are you sure you want to cancel this order, This can not be reversed?')) { Livewire.getByName('backend.admin.order.show-order')[0].reLoadOrder(); } return false;"
+                    <button onclick="if(confirm('Are you sure you want to cancel this order, This can not be reversed?')) { Livewire.getByName('backend.admin.order.show-order')[0].cancelOrder(); } return false;"
                             wire:target="cancelOrder"
                             wire:loading.attr="disabled"
                             class="btn btn-link px-3 text-body">
