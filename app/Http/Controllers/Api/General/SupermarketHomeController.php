@@ -35,7 +35,7 @@ class SupermarketHomeController extends ApiController
                 "type" => "classifications",
                 "id" => 12,
                 "limit" => 15,
-                "label" => "Antimalarial",
+                "label" => "ANTIMALARIAL",
                 "seeAll" => "stock/12/by_classification"
             ],
             [
