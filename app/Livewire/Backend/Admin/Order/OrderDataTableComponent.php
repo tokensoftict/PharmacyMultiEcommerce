@@ -120,7 +120,7 @@ class OrderDataTableComponent extends ExportDataTableComponent
         if(ApplicationEnvironment::$stock_model == WholessalesStockPrice::class)
         {
             $orderColumn = array_merge($orderColumn, [
-                Column::make("Business Name", "customer_type")
+                Column::make("Business Name", "customer.business_name")
                     ->format(function($value, $row, Column $column){
                         return $row->customer->business_name;
                     })
