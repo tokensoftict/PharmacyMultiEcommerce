@@ -10,7 +10,7 @@ use App\Models\WholesalesUser;
 
 class CreateOrderTotalService
 {
-    private SupermarketUser|WholesalesUser|bool  $checkOutUser;
+    private SupermarketUser|WholesalesUser|bool|null  $checkOutUser = null;
     private float|int $total;
     public function __construct()
     {

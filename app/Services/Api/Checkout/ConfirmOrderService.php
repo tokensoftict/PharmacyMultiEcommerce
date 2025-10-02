@@ -8,7 +8,7 @@ use App\Models\WholesalesUser;
 
 class ConfirmOrderService
 {
-    public WholesalesUser|SupermarketUser|bool|null $checkoutUser;
+    public WholesalesUser|SupermarketUser|bool|null $checkoutUser = null;
     public float $totalToPay = 0;
     public array $paymentAnalysisList = [];
 

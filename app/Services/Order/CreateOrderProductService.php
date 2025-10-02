@@ -13,7 +13,7 @@ use Ramsey\Collection\Collection;
 
 class CreateOrderProductService
 {
-    private SupermarketUser|WholesalesUser|bool  $checkOutUser;
+    private SupermarketUser|WholesalesUser|bool|null  $checkOutUser = null;
     public function __construct()
     {
         $this->checkOutUser = getApplicationModel();
