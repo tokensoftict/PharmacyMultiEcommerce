@@ -39,7 +39,7 @@ class StockInCartResource extends JsonResource
             "special_not_formatted" =>  $this->special,
             "doorstep" => $this->doorstep ? money($this->doorstep) : false,
             "doorstep_not_formatted" => $this->doorstep,
-            "expiry_date" => $this?->expiry_date?->format("F jS, Y"),
+            "expiry_date" => $this?->expiry_date?->format("d M Y"),
             "custom_price" => $this?->stockquantityprices?->map(function ($item) {
                 return $item->only(['price', 'min_qty', 'max_qty']) + [
                         'price_formatted' => number_format($item->price),

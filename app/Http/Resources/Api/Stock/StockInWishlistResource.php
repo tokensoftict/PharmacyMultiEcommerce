@@ -25,7 +25,7 @@ class StockInWishlistResource extends JsonResource
             "total" => money($this->total),
             "total_not_formatted" => $this->total,
             "quantity" => $this->{ApplicationEnvironment::$stock_model_string}->quantity,
-            "added_date" => (new Carbon($this->added_date))->format('F jS, Y'),
+            "added_date" => (new Carbon($this->added_date))->format('d M Y'),
             "productcategory" => $this->productcategory?->name,
             "manufacturer" => $this->manufacturer?->name,
             "classification" => $this->classification?->name,

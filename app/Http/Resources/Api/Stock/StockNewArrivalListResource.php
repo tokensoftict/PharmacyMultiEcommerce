@@ -30,7 +30,7 @@ class StockNewArrivalListResource extends JsonResource
             "special_not_formatted" =>  $this->stock->special,
             "doorstep" => $this->stock->doorstep ? money($this->stock->doorstep) : false,
             "doorstep_not_formatted" => $this->stock->doorstep,
-            "expiry_date" => $this->stock?->{ApplicationEnvironment::$stock_model_string}?->expiry_date?->format("F jS, Y"),
+            "expiry_date" => $this->stock?->{ApplicationEnvironment::$stock_model_string}?->expiry_date?->format("d M Y"),
             "custom_price" => $this?->stockquantityprices?->map(function ($item) {
                 return $item->only(['price', 'min_qty', 'max_qty']) + [
                         'price_formatted' => number_format($item->price),
