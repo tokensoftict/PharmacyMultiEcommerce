@@ -62,10 +62,10 @@ class SupermarketHomeController extends ApiController
             [
                 "component" => "Horizontal_List",
                 "type" => "classifications",
-                "id" => 143,
+                "id" => 106,
                 "limit" => 15,
-                "label" => "TOILETRIES",
-                "seeAll" => "stock/143/by_classification"
+                "label" => "LOTION",
+                "seeAll" => "stock/106/by_classification"
             ],
             [
                 "component" => "Horizontal_List",
