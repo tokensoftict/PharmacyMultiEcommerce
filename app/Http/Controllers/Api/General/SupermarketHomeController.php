@@ -24,11 +24,11 @@ class SupermarketHomeController extends ApiController
             ],
             [
                 "component" => "Horizontal_List",
-                "type" => "manufacturers",
-                "id" => 114,
+                "type" => "classifications",
+                "id" => 38,
                 "limit" => 15,
-                "label" => "PEACE PHARMACEUTICAL STORE",
-                "seeAll" => "stock/114/by_manufacturer"
+                "label" => "DEODORANT",
+                "seeAll" => "stock/38/by_manufacturer"
             ],
             [
                 "component" => "Horizontal_List",
@@ -39,9 +39,33 @@ class SupermarketHomeController extends ApiController
                 "seeAll" => "stock/12/by_classification"
             ],
             [
+                "component" => "Horizontal_List",
+                "type" => "classifications",
+                "id" => 27,
+                "limit" => 15,
+                "label" => "HERBAL SUPPLEMENT",
+                "seeAll" => "stock/27/by_classification"
+            ],
+            [
                 "component" => "FlashDeals",
                 "type"       => "lowestClassifications",
                 "label"     => "LOWEST PRICE YOU CAN TRUST",
+            ],
+            [
+                "component" => "Horizontal_List",
+                "type" => "classifications",
+                "id" => 31,
+                "limit" => 15,
+                "label" => "BABY SUPPLEMENT",
+                "seeAll" => "stock/31/by_classification"
+            ],
+            [
+                "component" => "Horizontal_List",
+                "type" => "classifications",
+                "id" => 143,
+                "limit" => 15,
+                "label" => "TOILETRIES",
+                "seeAll" => "stock/143/by_classification"
             ],
             [
                 "component" => "Horizontal_List",
