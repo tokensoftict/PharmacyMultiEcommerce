@@ -20,7 +20,10 @@ class ImportTownDistance implements ToCollection,WithHeadingRow
         {
             if(empty($row['id'])) continue;
             if(!$town = Town::where('name', $row['town'])->first()) continue;
-            if(empty($row['town_distance']) || empty($row['minimum_delivery_cost']) || empty($row['fixed_delivery_cost']) || empty($row['frequency'])) continue;
+            if(empty($row['town_distance']) || empty($row['minimum_delivery_cost']) || empty($row['fixed_delivery_cost']) || empty($row['frequency'])) {
+                DeliveryTownDistance::find($row['id'])->delete();
+                continue;
+            }
             $distance = [
                 'town_distance' => empty($row['town_distance']) ? 0 : $row['town_distance'],
                 'town_id' => $town->id,
