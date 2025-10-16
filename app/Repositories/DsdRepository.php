@@ -113,27 +113,30 @@ class DsdRepository
      */
     public function getNextDelivery(DeliveryTownDistance $door_step_down_distance) : string
     {
-        if(!isset($door_step_down_distance->delivery_days)) return false;
+        if($door_step_down_distance->delivery_type == "0"){
+            return date('Y-m-d', $door_step_down_distance->starting_date);
+        } else {
+            if (!isset($door_step_down_distance->delivery_days)) return false;
 
-        $days = $door_step_down_distance->delivery_days;
-        if(!is_array($days)) $days = [$days];
+            $days = $door_step_down_distance->delivery_days;
+            if (!is_array($days)) $days = [$days];
 
-        $add = $door_step_down_distance->no." ".$door_step_down_distance->frequency;
+            $add = $door_step_down_distance->no . " " . $door_step_down_distance->frequency;
 
-        $next48hours = strtotime($add);
+            $next48hours = strtotime($add);
 
-        $next_delivery_days = [];
+            $next_delivery_days = [];
 
-        foreach ($days as $day)
-        {
-            $next_delivery_days[] = strtotime("next $day",$next48hours);
+            foreach ($days as $day) {
+                $next_delivery_days[] = strtotime("next $day", $next48hours);
+            }
+
+            $next_date = min($next_delivery_days);
+
+            if (!$next_date) return false;
+
+            return date('Y-m-d', $next_date);
         }
-
-        $next_date = min($next_delivery_days);
-
-        if(!$next_date) return false;
-
-        return date('Y-m-d',$next_date);
 
     }
 
