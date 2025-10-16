@@ -114,7 +114,7 @@ class DsdRepository
     public function getNextDelivery(DeliveryTownDistance $door_step_down_distance) : string
     {
         if($door_step_down_distance->delivery_type == "1"){
-            return date('Y-m-d', $door_step_down_distance->starting_date);
+            return date('Y-m-d', strtotime($door_step_down_distance->starting_date));
         } else {
             if (!isset($door_step_down_distance->delivery_days)) return false;
 
