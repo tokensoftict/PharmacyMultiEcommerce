@@ -460,9 +460,15 @@ class CreateOrderService
         $local_order = \App\Models\Old\Order::with(['user','address','address.zone','orderStatus','orderTotalOrders','orderProducts','paymentMethod','shippingMethod','shippingAddress','shippingAddress.zone'])
             ->find($order_id);
 
+        $orderArray = $local_order->toArray();
+
+        $alreadyCompleted = [3, 4, 5, 6, 8];
+
+        if(in_array($orderArray['order_status_id'], $alreadyCompleted)) return false;
+
         if($local_order) {
             $importOrderService = app(ImportOrderService::class);
-            $importOrderService->handle($local_order->toArray());
+            $importOrderService->handle($orderArray);
             return true;
         }
 
