@@ -28,7 +28,7 @@ class SupermarketHomeController extends ApiController
                 "id" => 38,
                 "limit" => 15,
                 "label" => "DEODORANT",
-                "seeAll" => "stock/38/by_manufacturer"
+                "seeAll" => "stock/38/by_classification"
             ],
             [
                 "component" => "Horizontal_List",
