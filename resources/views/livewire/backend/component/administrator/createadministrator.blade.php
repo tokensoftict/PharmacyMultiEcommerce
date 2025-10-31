@@ -42,7 +42,7 @@ new class extends Component {
             $admin = match (get_class($model)) {
                 \App\Models\SupermarketAdmin::class => $userAccountService->createSuperMarketAdministrator($user, $adminData),
                 default => $userAccountService->createWholesalesAdministrator($user, $adminData)
-            }
+            };
 
             Session::flash('status', 'An Invitation Email has been sent to ' . $user->email . " " . $user->name . " will become an administrator when they accept the invite  &#128513;");
         });
