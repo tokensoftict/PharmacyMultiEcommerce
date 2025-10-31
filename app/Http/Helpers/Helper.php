@@ -510,7 +510,7 @@ function permissions($app_id, $refresh = false)
     return Cache::remember('permission-list-'.$app_id, 86400, function () use($app_id){
         return \App\Models\Permission::query()->whereHas('apps', function ($query) use ($app_id){
             $query->where('app_id', $app_id);
-        });
+        })->get();
     });
 }
 
