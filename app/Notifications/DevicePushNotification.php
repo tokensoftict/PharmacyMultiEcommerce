@@ -35,7 +35,7 @@ class DevicePushNotification extends Notification implements ShouldQueue
         $fcm = (new FcmMessage(notification: new FcmNotification(
             title: $this->pushNotification->title,
             body: $this->pushNotification->body,
-            image: NULL
+            image: "https://wholesale.generaldrugcentre.com/assets/images/logo.png"
         )));
 
         $fcm->name("{$this->pushNotification->title}");
@@ -62,7 +62,7 @@ class DevicePushNotification extends Notification implements ShouldQueue
             default => "wholesales"
         };
 
-        $data['notification_id'] = $this->pushNotification->id;
+        $data['notification_id'] = strval($this->pushNotification->id);
 
         $fcm->data($data);
 
