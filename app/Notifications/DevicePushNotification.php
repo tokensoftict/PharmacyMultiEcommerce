@@ -51,7 +51,11 @@ class DevicePushNotification extends Notification //implements ShouldQueue
         }
 
         if(!is_null($this->pushNotification->payload)) {
-            $data ['extra'] = json_encode($this->pushNotification->payload);
+            if(is_string($this->pushNotification->payload)) {
+                $data ['extra'] = $this->pushNotification->payload;
+            } else {
+                $data ['extra'] = json_encode($this->pushNotification->payload);
+            }
         }
 
         //setEnvironment
