@@ -67,7 +67,7 @@ class DevicePushNotification extends Notification //implements ShouldQueue
         };
 
         $data['notification_id'] = strval($this->pushNotification->id);
-dd($data);
+
         $fcm->data($data);
 
 
