@@ -7,6 +7,7 @@ use App\Models\WholesalesUser;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Support\Arr;
 use NotificationChannels\Fcm\FcmChannel;
+use Illuminate\Support\Facades\Storage;
 
 class PushNotificationFailedListener
 {
@@ -45,11 +46,15 @@ class PushNotificationFailedListener
                 $wholesale->save();
             }
 
-            $event->notifiable->notificationTokens()
-                ->where('push_token', $target->value())
-                ->delete();
+            Storage::append('logs/invalid_tokens.txt', $target->value());
 
+            if($wholesale) {
+                Storage::append('logs/wholesales.txt', $wholesale->id);
+            }
 
+            if($supermarket) {
+                Storage::append('logs/supermarket.txt', $supermarket->id);
+            }
         }
     }
 }
