@@ -74,7 +74,7 @@ class HomePageApiParser
     public static function getSpecialOffers(int $id, int $limit =15) : AnonymousResourceCollection
     {
         return StockListResource::collection(
-            Stock::query()->whereHas(ApplicationEnvironment::$stock_model, function ($query) {
+            Stock::query()->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
                 $query->where('special_offer', 1);
             })->limit($limit)->get()
         );
