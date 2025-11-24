@@ -57,6 +57,7 @@ class ExportPromotionTemplate implements FromCollection, WithHeadings
             ->leftjoin("manufacturers", "stocks.manufacturer_id", "manufacturers.id")
             ->leftjoin("productcategories", "stocks.productcategory_id", "productcategories.id")
             ->leftjoin("classifications", "stocks.classification_id", "classifications.id")
+            ->where("stocks.admin_status", "1")
             ->get();
 
     }
