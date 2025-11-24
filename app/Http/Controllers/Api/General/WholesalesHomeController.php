@@ -83,7 +83,7 @@ class WholesalesHomeController extends ApiController
             "type" => "specialOffers",
             "id" => "special-offers",
             "limit" => 15,
-            "label" => "🔥 Special Offers 🎉💥",
+            "label" => "🔥Special Offers 🎉💥",
             "seeAll" => "stock/special-offers"
         ];
 
