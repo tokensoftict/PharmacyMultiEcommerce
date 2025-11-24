@@ -42,7 +42,7 @@ class ExportPromotionTemplate implements FromCollection, WithHeadings
                 ->where("promotion_items.app_id", ApplicationEnvironment::$model_id)
                 ->get();
         }
-        $me  = Stock::query()
+        return Stock::query()
             ->select("stocks.id",
                 "stocks.name",
                 "manufacturers.name as manufacturer",
@@ -57,9 +57,8 @@ class ExportPromotionTemplate implements FromCollection, WithHeadings
             ->leftjoin("manufacturers", "stocks.manufacturer_id", "manufacturers.id")
             ->leftjoin("productcategories", "stocks.productcategory_id", "productcategories.id")
             ->leftjoin("classifications", "stocks.classification_id", "classifications.id")
-            ->first();
+            ->get();
 
-        dd($me);
     }
 
     public function headings(): array
