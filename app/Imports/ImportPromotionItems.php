@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Promotion;
 use App\Models\PromotionItem;
+use App\Models\Stock;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -26,9 +27,11 @@ class ImportPromotionItems implements ToCollection,WithHeadingRow
         foreach ($collection as $row){
             $row = $row->toArray();
             if(empty($row['promo_price']) || $row['promo_price'] == "") continue;
+            $stock = Stock::query()->where('local_stock_id', $row['id'])->first();
+            if(!$stock) continue;
             $this->promotionItems[] = new PromotionItem([
                 'promotion_id' => $this->promotion->id,
-                'stock_id' => $row['id'],
+                'stock_id' => $stock->id,
                 'user_id' => $this->promotion->user_id,
                 'status_id' => $this->promotion->status_id,
                 'customer_group_id' => $this->promotion->customer_group_id,
