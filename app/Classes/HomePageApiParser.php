@@ -27,6 +27,7 @@ class HomePageApiParser
             "topBrands" => self::topBrands(),
             "lowestClassifications" => self::lowestClassifications(),
             "ImageSlider" => self::ImageSlider(),
+            "specialOffers" => self::getSpecialOffers($product['limit']),
             default => []
         };
     }
@@ -64,6 +65,20 @@ class HomePageApiParser
         return StockListResource::collection(Stock::where('productcategory_id', $id)->limit($limit)->get());
     }
 
+
+    /**
+     * @param int $id
+     * @param int $limit
+     * @return AnonymousResourceCollection
+     */
+    public static function getSpecialOffers(int $id, int $limit =15) : AnonymousResourceCollection
+    {
+        return StockListResource::collection(
+            Stock::query()->whereHas(ApplicationEnvironment::$stock_model, function ($query) {
+                $query->where('special_offer', 1);
+            })->limit($limit)->get()
+        );
+    }
 
     /**
      * @param int $limit

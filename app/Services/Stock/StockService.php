@@ -96,6 +96,7 @@ class StockService
     {
         return Stock::query()
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
+            ->where(ApplicationEnvironment::$stock_model_string.".special_offer","1")
             ->orderBy(ApplicationEnvironment::$stock_model_string.".price", "asc")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }

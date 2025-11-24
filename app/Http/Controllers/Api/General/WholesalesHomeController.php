@@ -31,6 +31,7 @@ class WholesalesHomeController extends ApiController
                 "label" => "PEACE PHARMACEUTICAL STORE",
                 "seeAll" => "stock/114/by_manufacturer"
             ],
+         /*
             [
                 "component" => "Horizontal_List",
                 "type" => "classifications",
@@ -39,6 +40,7 @@ class WholesalesHomeController extends ApiController
                 "label" => "ANTIMALARIAL",
                 "seeAll" => "stock/12/by_classification"
             ],
+           */
             [
                 "component" => "FlashDeals",
                 "type"       => "lowestClassifications",
@@ -72,6 +74,25 @@ class WholesalesHomeController extends ApiController
             $arrivalData = array_merge($checkNewArrivals, [ "data" => $NewArrivalData]);
             $oneData = $data[2];
             $data[2] = $arrivalData;
+            $data[] = $oneData;
+        }
+
+
+        $specialOffers = [
+            "component" => "Horizontal_List",
+            "type" => "specialOffers",
+            "id" => "special-offers",
+            "limit" => 15,
+            "label" => "🔥 Special Offers 🎉💥",
+            "seeAll" => "stock/special-offers"
+        ];
+
+
+        $offers = HomePageApiParser::parseProductType($specialOffers);
+        if($offers->count() > 0) {
+            $offerData = array_merge($offers, [ "data" => $offers]);
+            $oneData = $data[3];
+            $data[3] = $offerData;
             $data[] = $oneData;
         }
 
