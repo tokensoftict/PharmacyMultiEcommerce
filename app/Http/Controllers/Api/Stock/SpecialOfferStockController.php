@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Stock;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Resources\Api\Stock\StockListJoinResource;
 use App\Http\Resources\Api\Stock\StockListResource;
 use App\Http\Resources\Api\Stock\StockNewArrivalListResource;
 use App\Services\Stock\StockService;
@@ -28,7 +27,7 @@ class SpecialOfferStockController extends ApiController
     public function __invoke(Request $request) : JsonResponse
     {
         return $this->sendPaginatedSuccessResponse(
-            StockListJoinResource::collection(
+            StockNewArrivalListResource::collection(
                 $this->service->getSpecialOffers()
             )->response()->getData(true)
         );

@@ -94,11 +94,11 @@ class StockService
      */
     public final function getSpecialOffers() : LengthAwarePaginator
     {
-        return Stock::query()
-            ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id")
-            ->where(ApplicationEnvironment::$stock_model_string.".special_offer","1")
-            ->orderBy("stocks.name")
-            ->paginate(config("app.PAGINATE_NUMBER"));
+       return ApplicationEnvironment::$stock_model::query()->with('stock')
+           ->where('special_offer', 1)
+           ->orderBy("price")
+           ->paginate(config("app.PAGINATE_NUMBER"));
+
     }
 
 
