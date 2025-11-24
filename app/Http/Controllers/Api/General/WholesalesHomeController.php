@@ -90,7 +90,7 @@ class WholesalesHomeController extends ApiController
 
         $offers = HomePageApiParser::parseProductType($specialOffers);
         if($offers->count() > 0) {
-            $offerData = array_merge($offers, [ "data" => $offers]);
+            $offerData = array_merge($specialOffers, [ "data" => $offers]);
             $oneData = $data[3];
             $data[3] = $offerData;
             $data[] = $oneData;
