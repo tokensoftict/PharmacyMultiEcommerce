@@ -49,12 +49,13 @@ class ExportPromotionTemplate implements FromCollection, WithHeadings
                 "classifications.name as classification",
                 "stocks.box",
                 ApplicationEnvironment::$stock_model_string.".price",
-                ApplicationEnvironment::$stock_model_string.".quantity"
+                ApplicationEnvironment::$stock_model_string.".quantity",
+                "0 as promotion_price",
             )
             ->join(ApplicationEnvironment::$stock_model_string, 'stocks.id', '=', ApplicationEnvironment::$stock_model_string.'.stock_id' )
-            ->leftjoin("manufacturers", "stocks.manufacturer_id", "manufacturers.id")
-            ->leftjoin("productcategories", "stocks.productcategory_id", "productcategories.id")
-            ->leftjoin("classifications", "stocks.classification_id", "classifications.id")
+            ->leftJoin("manufacturers", "stocks.manufacturer_id", "=", "manufacturers.id")
+            ->leftJoin("productcategories", "stocks.productcategory_id", "=", "productcategories.id")
+            ->leftJoin("classifications", "stocks.classification_id", "=", "classifications.id")
             ->get();
 
     }
