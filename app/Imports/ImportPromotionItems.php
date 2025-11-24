@@ -27,6 +27,7 @@ class ImportPromotionItems implements ToCollection,WithHeadingRow
         foreach ($collection as $row){
             $row = $row->toArray();
             if(empty($row['promo_price']) || $row['promo_price'] == "") continue;
+            if(empty($row['id']) || $row['id'] == "") continue;
             $stock = Stock::query()->where('local_stock_id', $row['id'])->first();
             if(!$stock) continue;
             $this->promotionItems[] = new PromotionItem([
