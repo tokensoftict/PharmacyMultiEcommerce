@@ -58,14 +58,7 @@ class ProcessStockService
                     $supermarket = new SupermarketsStockPrice($supermarket);
                     $pushStock->supermarkets_stock_prices()->delete();
                     $pushStock->supermarkets_stock_prices()->save($supermarket);
-                    if(count($customPrices) > 0) {
-                        $pushStock->stockquantityprices()->delete();
-                        $custom_price = [];
-                        foreach ($customPrices as $customPrice) {
-                            $custom_price[] = new ProductCustomPrice($customPrice);
-                        }
-                        $pushStock->stockquantityprices()->saveMany($custom_price);
-                    }
+                    self::saveCustomPrices($customPrices, $pushStock);
                 }
 
             }
@@ -81,17 +74,10 @@ class ProcessStockService
             }
             if($supermarket) {
                 $customPrices = $supermarket['custom_price'];
-                unset($data['custom_price']);
+                unset($supermarket['custom_price']);
                 $supermarket = new SupermarketsStockPrice($supermarket);
                 $pushStock->supermarkets_stock_prices()->save($supermarket);
-                if(count($customPrices) > 0) {
-                    $pushStock->stockquantityprices()->delete();
-                    $custom_price = [];
-                    foreach ($customPrices as $customPrice) {
-                        $custom_price[] = new ProductCustomPrice($customPrice);
-                    }
-                    $pushStock->stockquantityprices()->saveMany($custom_price);
-                }
+                self::saveCustomPrices($customPrices, $pushStock);
             }
 
             return $pushStock;
@@ -125,13 +111,35 @@ class ProcessStockService
         }
         if($supermarket) {
             $supermarketModel =  $pushStock?->supermarkets_stock_prices()->first() ?? new SupermarketsStockPrice($supermarket);
+            $customPrices = $supermarket['custom_price'];
+            unset($supermarket['custom_price']);
             if(isset($pushStock?->supermarkets_stock_prices)) {
                 $supermarketModel->update($supermarket);
             } else {
                 $pushStock->supermarkets_stock_prices()->save($supermarketModel);
             }
+
+            self::saveCustomPrices($customPrices, $pushStock);
         }
 
         return $pushStock;
+    }
+
+
+    /**
+     * @param array $customPrices
+     * @param Stock $pushStock
+     * @return void
+     */
+    public static function saveCustomPrices(array $customPrices, Stock $pushStock) : void
+    {
+        if(count($customPrices) > 0) {
+            $pushStock->stockquantityprices()->delete();
+            $custom_price = [];
+            foreach ($customPrices as $customPrice) {
+                $custom_price[] = new ProductCustomPrice($customPrice);
+            }
+            $pushStock->stockquantityprices()->saveMany($custom_price);
+        }
     }
 }
