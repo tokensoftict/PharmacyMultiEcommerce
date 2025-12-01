@@ -93,7 +93,11 @@ class ProcessStockService
     public static function updateStock(array $data) : Stock
     {
         $stockUpdate = Arr::only($data, ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet']);
-        Storage::append("stockLog", json_encode($stockUpdate));
+        if(!isset($stockUpdate['local_stock_id'])) {
+            Storage::append("stockLog", json_encode($stockUpdate));
+            Storage::append("stockLog", json_encode($data));
+        }
+
         $pushStock = Stock::with(['wholessales_stock_prices', 'supermarkets_stock_prices'])->where("local_stock_id", $stockUpdate['local_stock_id'])->first();
         if(!$pushStock) {
             return self::createStock($data);
