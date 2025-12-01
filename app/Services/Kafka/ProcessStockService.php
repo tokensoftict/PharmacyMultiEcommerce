@@ -93,7 +93,7 @@ class ProcessStockService
      */
     public static function updateMultipleOrSingleStock(array $stockData) : void
     {
-        if(isset($stockData[1])) { // check if there are multiple item in the data
+        if(isset($stockData[0])) { // check if there are multiple item in the data
             foreach ($stockData as $data){
                 self::updateStock($data);
             }
