@@ -24,7 +24,7 @@ class ProcessStockService
                 self::createStock($data);
                 break;
             case KafkaAction::UPDATE_STOCK:
-                self::updateStock($data);
+                self::updateMultipleOrSingleStock($data);
                 break;
             default:
 
@@ -86,6 +86,21 @@ class ProcessStockService
         return true;
     }
 
+
+    /**
+     * @param array $stockData
+     * @return void
+     */
+    public static function updateMultipleOrSingleStock(array $stockData) : void
+    {
+        if(isset($stockData[1])) { // check if there are multiple item in the data
+            foreach ($stockData as $data){
+                self::updateStock($data);
+            }
+        } else {
+            self::updateStock($stockData);
+        }
+    }
     /**
      * @param array $data
      * @return Stock
