@@ -8,6 +8,7 @@ use App\Models\Stock;
 use App\Models\SupermarketsStockPrice;
 use App\Models\WholessalesStockPrice;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Junges\Kafka\Message\ConsumedMessage;
 
 class ProcessStockService
@@ -92,6 +93,7 @@ class ProcessStockService
     public static function updateStock(array $data) : Stock
     {
         $stockUpdate = Arr::only($data, ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet']);
+        Storage::append("stockLog", json_encode($stockUpdate));
         $pushStock = Stock::with(['wholessales_stock_prices', 'supermarkets_stock_prices'])->where("local_stock_id", $stockUpdate['local_stock_id'])->first();
         if(!$pushStock) {
             return self::createStock($data);
