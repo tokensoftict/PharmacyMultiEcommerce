@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('product_custom_prices', function (Blueprint $table) {
-            $table->decimal('wholesale_price')->after('price');
+            $table->string('department', 20)->after('price')->default('retail');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('product_custom_prices', function (Blueprint $table) {
-            $table->dropColumn('wholesale_price');
+            $table->dropColumn('department');
         });
     }
 };
