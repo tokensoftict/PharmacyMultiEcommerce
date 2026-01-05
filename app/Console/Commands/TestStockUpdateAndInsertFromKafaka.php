@@ -28,7 +28,7 @@ class TestStockUpdateAndInsertFromKafaka extends Command
      */
     public function handle()
     {
-        $kafkaMessage = Storage::json('stock_update.json');
+        $kafkaMessage = Storage::json('update_stock_json.json');
         $message = new ConsumedMessage(
             topicName: $kafkaMessage[0]['KAFKA_TOPICS'],
             partition: 0,

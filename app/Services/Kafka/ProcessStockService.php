@@ -43,7 +43,9 @@ class ProcessStockService
             foreach ($data as $stock){
                 $wholesales = $stock['stock_prices']['wholesales'] ?? false;
                 $supermarket = $stock['stock_prices']['supermarket'] ?? false;
+                $custom_price = $stock['custom_price'];
                 unset($data['stock_prices']);
+                unset($stock['custom_price']);
                 $pushStock = Stock::updateOrCreate([
                     "local_stock_id" => $stock['local_stock_id']
                 ], $stock);
@@ -54,13 +56,13 @@ class ProcessStockService
                     $pushStock->wholessales_stock_prices()->save($wholesales);
                 }
                 if($supermarket) {
-                    $customPrices = $supermarket['custom_price'];
                     unset($data['custom_price']);
                     $supermarket = new SupermarketsStockPrice($supermarket);
                     $pushStock->supermarkets_stock_prices()->delete();
                     $pushStock->supermarkets_stock_prices()->save($supermarket);
-                    self::saveCustomPrices($customPrices, $pushStock);
                 }
+
+                self::saveCustomPrices($custom_price, $pushStock);
 
             }
         } else {
@@ -68,19 +70,20 @@ class ProcessStockService
 
             $wholesales = $stock['stock_prices']['wholesales'] ?? false;
             $supermarket = $stock['stock_prices']['supermarket'] ?? false;
+            $custom_price = $stock['custom_price'];
+            unset($stock['custom_price']);
 
             if($wholesales) {
                 $wholesales = new WholessalesStockPrice($wholesales);
                 $pushStock->wholessales_stock_prices()->save($wholesales);
             }
             if($supermarket) {
-                $customPrices = $supermarket['custom_price'];
                 unset($supermarket['custom_price']);
                 $supermarket = new SupermarketsStockPrice($supermarket);
                 $pushStock->supermarkets_stock_prices()->save($supermarket);
-                self::saveCustomPrices($customPrices, $pushStock);
             }
 
+            self::saveCustomPrices($custom_price, $pushStock);
             return $pushStock;
         }
         return true;
@@ -132,16 +135,16 @@ class ProcessStockService
         }
         if($supermarket) {
             $supermarketModel =  $pushStock?->supermarkets_stock_prices()->first() ?? new SupermarketsStockPrice($supermarket);
-            $customPrices = $supermarket['custom_price'];
             unset($supermarket['custom_price']);
             if(isset($pushStock?->supermarkets_stock_prices)) {
                 $supermarketModel->update($supermarket);
             } else {
                 $pushStock->supermarkets_stock_prices()->save($supermarketModel);
             }
-
-            self::saveCustomPrices($customPrices, $pushStock);
         }
+
+        $custom_price = $data['custom_price'];
+        self::saveCustomPrices($custom_price, $pushStock);
 
         return $pushStock;
     }
