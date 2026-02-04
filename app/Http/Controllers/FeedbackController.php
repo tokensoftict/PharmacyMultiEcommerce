@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\FeedbackSubmitted;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class FeedbackController extends Controller
 {
@@ -37,6 +39,9 @@ class FeedbackController extends Controller
             'feedback_type' => $validated['feedbackType'],
             'feedback' => $validated['feedback'],
         ]);
+
+        Mail::to('info@generaldrugcentre.com')->queue(new FeedbackSubmitted($feedback));
+
 
         return response()->json([
             'message' => 'Feedback submitted successfully.',
