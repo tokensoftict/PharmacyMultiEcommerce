@@ -904,17 +904,13 @@ function normalizePhoneNumber($phone)
 
 function sendSMS($phone, &$user, string $message)
 {
-    $response =  Http::post(config("app.BULKSMS_URL"), [
+    Http::post(config("app.BULKSMS_URL"), [
         "email" => config("app.BULKSMS_EMAIL"),
         "password" => config("app.BULKSMS_PASSWORD"),
         "recipient" => $phone,
         "message" => $message,
         "senderid" => config("app.BULKSMS_SENDER"),
     ]);
-
-    if($response->successful()) {
-        return ['status' => true];
-    }
 
     return ['status' => true];
 }

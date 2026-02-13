@@ -68,9 +68,6 @@ class RequestForAuthCodeController extends ApiController
         $message = "Your login code is $otp. It will expire in 10 minutes. Ignore if you didn’t request this.";
         $response = sendSMS($user->phone, $user, $message);
         $response = is_array($response) ? $response : json_decode($response, true);
-        if($response['status'] != "error"){
-            return true;
-        }
-        return false;
+        return true;
     }
 }

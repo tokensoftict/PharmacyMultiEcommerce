@@ -15,7 +15,6 @@ class SmsNotification
     public function send($notifiable, Notification $notification)
     {
         $message = $notification->toSms($notifiable);
-        Storage::append("sms.txt", $message);
         sendSMS($notifiable->phone, $notifiable, $message);
         return  true;
     }
