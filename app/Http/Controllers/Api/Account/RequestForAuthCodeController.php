@@ -8,7 +8,6 @@ use App\Mail\Customer\AuthCodeEmail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class RequestForAuthCodeController extends ApiController
@@ -68,7 +67,6 @@ class RequestForAuthCodeController extends ApiController
         $user->auth_code = $otp;
         $message = "Your login code is $otp. It will expire in 10 minutes. Ignore if you didn’t request this.";
         $response = sendSMS($user->phone, $user, $message);
-        Storage::append("sms.txt", $response);
         $response = is_array($response) ? $response : json_decode($response, true);
         if($response['status'] != "error"){
             return true;
