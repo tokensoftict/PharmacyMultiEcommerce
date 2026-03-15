@@ -47,20 +47,9 @@ class AddItemToCartController extends ApiController
         // Handle Dependent Products
         $stock = \App\Models\Stock::find($stockId);
         if ($stock) {
-            // Check if we should process dependents: 
-            // 1. Explicitly accepted in this request
-            // 2. OR already exists in cart as a dependent of this parent
-            $shouldProcessDependents = $acceptDependent;
+            // Dependents are now mandatory - always process them if they exist
+            $shouldProcessDependents = true;
             
-            if (!$shouldProcessDependents) {
-                foreach ($cart as $id => $cartItem) {
-                    if (isset($cartItem['is_dependent']) && isset($cartItem['parent_stock_id']) && $cartItem['parent_stock_id'] == $stockId) {
-                        $shouldProcessDependents = true;
-                        break;
-                    }
-                }
-            }
-
             if ($shouldProcessDependents) {
                 foreach ($stock->dependent_products as $dependent) {
                     $parentRatio = $dependent->parent ?: 1;

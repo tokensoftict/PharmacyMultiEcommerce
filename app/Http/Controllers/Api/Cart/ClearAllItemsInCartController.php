@@ -17,9 +17,10 @@ class ClearAllItemsInCartController extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
-        $user = $request->user();
-        $applicationModel = ApplicationEnvironment::$appRelated;
-        $application = $user->$applicationModel()->first();
+        $application = getApplicationModel();
+        if (!$application) {
+            return $this->sendErrorResponse("Application user error, Please restart the application to complete your checkout", 422);
+        }
 
         $application->cart = [];
         $application->update();
