@@ -44,7 +44,7 @@ class StockShowResource extends JsonResource
             "doorstep_not_formatted" => $this->doorstep,
             "store"=> new StockStoreResource( $this->{ApplicationEnvironment::$stock_model_string}),
             "custom_price" => $this->filterCustomPrices($this->resource),
-            "stock_options" => $this->filterStockOptions($this->resource),
+            "stock_option_values" => $this->filterStockOptions($this->resource),
             "dependent_products" => $this->getDependentProducts($this->resource),
         ];
     }

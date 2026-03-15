@@ -46,7 +46,7 @@ class StockInCartResource extends JsonResource
             "is_dependent" => (bool) ($this->is_dependent ?? false),
             "parent_stock_id" => $this->parent_stock_id ?? null,
             "custom_price" => $this->filterCustomPrices($this->resource),
-            "stock_options" => $this->filterStockOptions($this->resource),
+            "stock_option_values" => $this->filterStockOptions($this->resource),
             "selected_options" => $this->selected_options ?? [],
             "dependent_products" => $this->getDependentProducts($this->resource),
         ];

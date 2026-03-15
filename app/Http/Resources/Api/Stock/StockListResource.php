@@ -34,7 +34,7 @@ class StockListResource extends JsonResource
             "doorstep_not_formatted" => $this->doorstep,
             "expiry_date" => $this?->{ApplicationEnvironment::$stock_model_string}?->expiry_date?->format("d M Y"),
             "custom_price" => $this->filterCustomPrices($this->resource),
-            "stock_options" => $this->filterStockOptions($this->resource),
+            "stock_option_values" => $this->filterStockOptions($this->resource),
             "dependent_products" => $this->getDependentProducts($this->resource),
         ];
     }

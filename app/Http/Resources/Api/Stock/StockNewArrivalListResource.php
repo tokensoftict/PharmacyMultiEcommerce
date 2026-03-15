@@ -35,7 +35,7 @@ class StockNewArrivalListResource extends JsonResource
             "doorstep_not_formatted" => $this->stock->doorstep,
             "expiry_date" => $this->stock?->{ApplicationEnvironment::$stock_model_string}?->expiry_date?->format("d M Y"),
             "custom_price" => $this->filterCustomPrices($this->stock),
-            "stock_options" => $this->filterStockOptions($this->stock),
+            "stock_option_values" => $this->filterStockOptions($this->stock),
         ];
     }
 }

@@ -44,7 +44,7 @@ class StockInWishlistResource extends JsonResource
             "doorstep_not_formatted" => $this->doorstep,
             "expiry_date" => $this?->expiry_date?->format("F jS, Y"),
             "custom_price" => $this->filterCustomPrices($this->resource),
-            "stock_options" => $this->filterStockOptions($this->resource),
+            "stock_option_values" => $this->filterStockOptions($this->resource),
         ];
     }
 }
