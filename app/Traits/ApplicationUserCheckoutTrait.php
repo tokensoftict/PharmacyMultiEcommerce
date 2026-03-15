@@ -159,6 +159,7 @@ trait ApplicationUserCheckoutTrait
                 $price += $this->resolveOptionPrice($stock, $options, $department);
             }
 
+            $stock->selected_options = $options;
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
             $stock->is_dependent = $cart[$stock->id]['is_dependent'] ?? false;

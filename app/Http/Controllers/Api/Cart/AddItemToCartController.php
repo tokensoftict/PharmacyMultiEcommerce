@@ -32,6 +32,9 @@ class AddItemToCartController extends ApiController
         $quantity = $request->get("quantity");
         $acceptDependent = $request->get("accept_dependent", false);
         $options = $request->get("options", []);
+        if (is_string($options)) {
+            $options = json_decode($options, true) ?? [];
+        }
 
         $item = [
             "id" => $stockId,
