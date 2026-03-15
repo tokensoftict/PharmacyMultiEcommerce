@@ -24,6 +24,7 @@ class AddItemRequest extends FormRequest
         return [
             "stock_id" => "required|exists:stocks,id",
             "quantity" => "required|numeric",
+            "accept_dependent" => "nullable|boolean",
         ];
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Http\Resources\Api\Stock;
 
 use App\Classes\ApplicationEnvironment;
+use App\Traits\StockResourceHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StockInCartResource extends JsonResource
 {
+    use StockResourceHelper;
+
     /**
      * Transform the resource into an array.
      *
@@ -40,11 +43,9 @@ class StockInCartResource extends JsonResource
             "doorstep" => $this->doorstep ? money($this->doorstep) : false,
             "doorstep_not_formatted" => $this->doorstep,
             "expiry_date" => $this?->expiry_date?->format("d M Y"),
-            "custom_price" => $this?->stockquantityprices?->map(function ($item) {
-                return $item->only(['price', 'min_qty', 'max_qty']) + [
-                        'price_formatted' => number_format($item->price),
-                    ];
-            })->toArray()
+            "custom_price" => $this->filterCustomPrices($this->resource),
+            "stock_options" => $this->filterStockOptions($this->resource),
+            "dependent_products" => $this->getDependentProducts($this->resource),
         ];
     }
 }

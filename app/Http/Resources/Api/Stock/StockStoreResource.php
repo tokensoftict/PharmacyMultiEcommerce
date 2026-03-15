@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources\Api\Stock;
 
+use App\Traits\StockResourceHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StockStoreResource extends JsonResource
 {
+    use StockResourceHelper;
+
     /**
      * Transform the resource into an array.
      *
@@ -24,11 +27,8 @@ class StockStoreResource extends JsonResource
             "special_offer" => $this->special_offer,
             "price"=> $this->price,
             "expiry_date"=> $this?->expiry_date?->format("F jS, Y") ?? false,
-            "custom_price" => $this?->stockquantityprices?->map(function ($item) {
-                return $item->only(['price', 'min_qty', 'max_qty']) + [
-                        'price_formatted' => number_format($item->price),
-                    ];
-            })->toArray()
+            "custom_price" => $this->filterCustomPrices($this->resource),
+            "stock_options" => $this->filterStockOptions($this->resource),
         ];
     }
 }

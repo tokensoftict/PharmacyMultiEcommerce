@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $wholesale_price
  * @property int $min_qty
  * @property int $max_qty
+ * @property string $department
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -43,7 +44,8 @@ class ProductCustomPrice extends Model
 		'price',
         'wholesale_price',
 		'min_qty',
-		'max_qty'
+		'max_qty',
+        'department'
 	];
 
 	public function stock()

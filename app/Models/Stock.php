@@ -54,6 +54,8 @@ use Laravel\Scout\Searchable;
  * @property Collection|WholessalesStockPrice[] $wholessales_stock_prices
  * @property Collection|StockMedia[] $stock_medias
  * @property Collection|ProductCustomPrice[] $stockquantityprices
+ * @property Collection|DependentProduct[] $dependent_products
+ * @property Collection|StockOptionValue[] $stock_option_values
  * @property StockMedia $stock_media
  *
  * @package App\Models
@@ -212,5 +214,15 @@ class Stock extends Model
     public function stockquantityprices()
     {
         return $this->hasMany(ProductCustomPrice::class);
+    }
+
+    public function dependent_products()
+    {
+        return $this->hasMany(DependentProduct::class);
+    }
+
+    public function stock_option_values()
+    {
+        return $this->hasMany(StockOptionValue::class);
     }
 }
