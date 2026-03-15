@@ -59,8 +59,8 @@ class AddItemToCartController extends ApiController
                 foreach ($stock->dependent_products as $dependent) {
                     $parentRatio = $dependent->parent ?: 1;
                     $childRatio = $dependent->child ?: 1;
-                    // Updated logic: For every (parent + child) units, add (child) dependent items
-                    $dependentQty = floor($quantity / ($parentRatio + $childRatio)) * $childRatio;
+                    // Updated logic: For every (parent) units, add (child) dependent items
+                    $dependentQty = floor($quantity / $parentRatio) * $childRatio;
                     
                     // We need the internal ID of the dependent stock
                     $dependentStock = $dependent->dependent_stock;
