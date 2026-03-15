@@ -107,6 +107,8 @@ trait ApplicationUserCheckoutTrait
             }
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
+            $stock->is_dependent = $cart[$stock->id]['is_dependent'] ?? false;
+            $stock->parent_stock_id = $cart[$stock->id]['parent_stock_id'] ?? null;
             $stock->price = $price;
             $stock->total = ($cart[$stock->id]['quantity'] * $price);
             $totalItemsInCarts+= ($cart[$stock->id]['quantity'] * $price);

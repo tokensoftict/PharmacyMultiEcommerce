@@ -29,6 +29,12 @@ class RemoveItemFromCartController extends ApiController
         if(is_null($cart)) return $this->sendSuccessMessageResponse("Item has been removed successfully");
 
         $stockId = $stock->id;
+
+        // Check if item is dependent
+        if (isset($cart[$stockId]['is_dependent']) && $cart[$stockId]['is_dependent']) {
+            return $this->sendErrorResponse("This item is linked to a parent product and cannot be removed directly. Please remove the parent product instead.", 422);
+        }
+
         Arr::forget($cart, $stockId);
 
         // Remove linked dependent products

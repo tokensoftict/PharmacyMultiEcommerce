@@ -43,6 +43,8 @@ class StockInCartResource extends JsonResource
             "doorstep" => $this->doorstep ? money($this->doorstep) : false,
             "doorstep_not_formatted" => $this->doorstep,
             "expiry_date" => $this?->expiry_date?->format("d M Y"),
+            "is_dependent" => (bool) ($this->is_dependent ?? false),
+            "parent_stock_id" => $this->parent_stock_id ?? null,
             "custom_price" => $this->filterCustomPrices($this->resource),
             "stock_options" => $this->filterStockOptions($this->resource),
             "dependent_products" => $this->getDependentProducts($this->resource),
