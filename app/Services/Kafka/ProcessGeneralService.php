@@ -11,14 +11,16 @@ use App\Models\Productcategory;
 use App\Models\Productgroup;
 use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Junges\Kafka\Message\ConsumedMessage;
 
 class ProcessGeneralService
 {
-    public static function handle(ConsumedMessage $message) : void
+    public static function handle(ConsumedMessage $message): void
     {
-        $body = $message->getBody();;
-        $action =  $body['action'];
+        $body = $message->getBody();
+        ;
+        $action = $body['action'];
         $data = $body[0]['data'];
 
         switch ($action) {
@@ -66,12 +68,12 @@ class ProcessGeneralService
     }
 
 
-    public static function createBrand(array $data) : void
+    public static function createBrand(array $data): void
     {
 
     }
 
-    public static function updateBrand(array $data) : void
+    public static function updateBrand(array $data): void
     {
 
     }
@@ -80,11 +82,15 @@ class ProcessGeneralService
      * @param array $data
      * @return Productcategory|bool
      */
-    public static function createCategory(array $data) : Productcategory | bool
+    public static function createCategory(array $data): Productcategory|bool
     {
-        if(isset($data[1])) {
-            return DB::table("productcategories")->insert($data);
-        } else {
+        if (isset($data[1])) {
+            Schema::disableForeignKeyConstraints();
+            $result = DB::table("productcategories")->insert($data);
+            Schema::enableForeignKeyConstraints();
+            return $result;
+        }
+        else {
             return Productcategory::create($data);
         }
 
@@ -94,7 +100,7 @@ class ProcessGeneralService
      * @param array $data
      * @return Productcategory
      */
-    public static function updateCategory(array $data) : Productcategory
+    public static function updateCategory(array $data): Productcategory
     {
         return Productcategory::where("id", $data['id'])->update($data);
     }
@@ -103,11 +109,15 @@ class ProcessGeneralService
      * @param array $data
      * @return Classification|bool
      */
-    public static function createClassification(array $data) : Classification | bool
+    public static function createClassification(array $data): Classification|bool
     {
-        if(isset($data[1])) {
-            return DB::table("classifications")->insert($data);
-        } else {
+        if (isset($data[1])) {
+            Schema::disableForeignKeyConstraints();
+            $result = DB::table("classifications")->insert($data);
+            Schema::enableForeignKeyConstraints();
+            return $result;
+        }
+        else {
             return Classification::create($data);
         }
 
@@ -117,20 +127,24 @@ class ProcessGeneralService
      * @param array $data
      * @return Classification|bool
      */
-    public static function updateClassification(array $data) : Classification | bool
+    public static function updateClassification(array $data): Classification|bool
     {
-        return Classification::where("id", $data['id'])->update($data);
+        Schema::disableForeignKeyConstraints();
+        $result = Classification::where("id", $data['id'])->update($data);
+        Schema::enableForeignKeyConstraints();
+        return $result;
     }
 
     /**
      * @param array $data
      * @return LocalCustomer|bool
      */
-    public static function createCustomer(array $data) : LocalCustomer | bool
+    public static function createCustomer(array $data): LocalCustomer|bool
     {
-        if(isset($data[1])) {
+        if (isset($data[1])) {
             return DB::table("local_customers")->insert($data);
-        } else {
+        }
+        else {
             return LocalCustomer::create($data);
         }
     }
@@ -139,10 +153,10 @@ class ProcessGeneralService
      * @param array $data
      * @return LocalCustomer|bool
      */
-    public static function updateCustomer(array $data) : LocalCustomer | bool
+    public static function updateCustomer(array $data): LocalCustomer|bool
     {
-        $localCustomer =  LocalCustomer::where('local_id', $data['local_id'])->first();
-        if(!$localCustomer) {
+        $localCustomer = LocalCustomer::where('local_id', $data['local_id'])->first();
+        if (!$localCustomer) {
             return self::createCustomer($data);
         }
         return $localCustomer->update($data);
@@ -152,11 +166,15 @@ class ProcessGeneralService
      * @param array $data
      * @return Manufacturer|bool
      */
-    public static function createManufacturer(array $data) : Manufacturer|bool
+    public static function createManufacturer(array $data): Manufacturer|bool
     {
-        if(isset($data[1])) {
-            return DB::table("manufacturers")->insert($data);
-        } else {
+        if (isset($data[1])) {
+            Schema::disableForeignKeyConstraints();
+            $result = DB::table("manufacturers")->insert($data);
+            Schema::enableForeignKeyConstraints();
+            return $result;
+        }
+        else {
             return Manufacturer::create($data);
         }
 
@@ -166,7 +184,7 @@ class ProcessGeneralService
      * @param array $data
      * @return Manufacturer
      */
-    public static function updateManufacturer(array $data) : Manufacturer
+    public static function updateManufacturer(array $data): Manufacturer
     {
         return Manufacturer::where("id", $data['id'])->update($data);
     }
@@ -177,17 +195,17 @@ class ProcessGeneralService
      * @param string $store
      * @return bool
      */
-    public static function newArrival(array $data, string $store) : bool
+    public static function newArrival(array $data, string $store): bool
     {
         $localStockIDs = array_keys($data);
         $localStock = $data;
         $stocks = Stock::whereIn("local_stock_id", $localStockIDs)->get();
-        $newArrivalStocks = $stocks->map(function($stock) use ($store, $localStock){
+        $newArrivalStocks = $stocks->map(function ($stock) use ($store, $localStock) {
             return [
-                "stock_id" => $stock->id,
-                "app_id" => $store,
-                "quantity" =>$localStock[$stock->local_stock_id]['qty'],
-                "arrival_date" => date("Y-m-d")
+            "stock_id" => $stock->id,
+            "app_id" => $store,
+            "quantity" => $localStock[$stock->local_stock_id]['qty'],
+            "arrival_date" => date("Y-m-d")
             ];
         })->toArray();
 
@@ -203,11 +221,15 @@ class ProcessGeneralService
      * @param array $data
      * @return Productgroup|bool
      */
-    public static function createStockGroup(array $data) : Productgroup | bool
+    public static function createStockGroup(array $data): Productgroup|bool
     {
-        if(isset($data[1])) {
-            return DB::table("productgroups")->insert($data);
-        } else {
+        if (isset($data[1])) {
+            Schema::disableForeignKeyConstraints();
+            $result = DB::table("productgroups")->insert($data);
+            Schema::enableForeignKeyConstraints();
+            return $result;
+        }
+        else {
             return Productgroup::create($data);
         }
     }
@@ -217,7 +239,7 @@ class ProcessGeneralService
      * @param array $data
      * @return Productgroup
      */
-    public static function updateStockGroup(array $data) : Productgroup
+    public static function updateStockGroup(array $data): Productgroup
     {
         return Productgroup::where("id", $data['id'])->update($data);
     }

@@ -18,9 +18,11 @@ class AddItemToCartController extends ApiController
      */
     public function __invoke(AddItemRequest $request) : JsonResponse
     {
-        $user = $request->user();
-        $applicationModel = ApplicationEnvironment::$appRelated;
-        $application = $user->$applicationModel()->first();
+        $application = getApplicationModel();
+        if (!$application) {
+            return $this->sendErrorResponse("Application user error, Please restart the application to complete your checkout", 422);
+        }
+
         $cart = $application->cart ?? null;
         if(is_null($cart)){
             $cart = [];
@@ -36,7 +38,11 @@ class AddItemToCartController extends ApiController
             "date" => now()->format("Y-m-d")
         ];
 
-        $cart[$stockId] = $item;
+        if ($quantity > 0) {
+            $cart[$stockId] = $item;
+        } else {
+            unset($cart[$stockId]);
+        }
 
         // Handle Dependent Products
         $stock = \App\Models\Stock::find($stockId);
@@ -61,17 +67,20 @@ class AddItemToCartController extends ApiController
                     $childRatio = $dependent->child ?: 1;
                     $dependentQty = floor($quantity / $parentRatio) * $childRatio;
                     
-                    if ($dependentQty > 0) {
-                        $cart[$dependent->dependent_local_stock_id] = [
-                            "id" => $dependent->dependent_local_stock_id,
+                    // We need the internal ID of the dependent stock
+                    $dependentStock = $dependent->dependent_stock;
+                    
+                    if ($dependentQty > 0 && $dependentStock) {
+                        $cart[$dependentStock->id] = [
+                            "id" => $dependentStock->id,
                             "quantity" => $dependentQty,
                             "date" => now()->format("Y-m-d"),
                             "is_dependent" => true,
                             "parent_stock_id" => $stockId
                         ];
-                    } else {
+                    } else if ($dependentStock) {
                         // Remove if ratio no longer met
-                        unset($cart[$dependent->dependent_local_stock_id]);
+                        unset($cart[$dependentStock->id]);
                     }
                 }
             }

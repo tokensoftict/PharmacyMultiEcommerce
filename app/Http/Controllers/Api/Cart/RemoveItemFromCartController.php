@@ -20,9 +20,10 @@ class RemoveItemFromCartController extends ApiController
      */
     public function __invoke(Stock $stock, Request $request) : JsonResponse
     {
-        $user = $request->user();
-        $applicationModel = ApplicationEnvironment::$appRelated;
-        $application = $user->$applicationModel()->first();
+        $application = getApplicationModel();
+        if (!$application) {
+            return $this->sendErrorResponse("Application user error, Please restart the application to complete your checkout", 422);
+        }
         $cart = $application->cart;
 
         if(is_null($cart)) return $this->sendSuccessMessageResponse("Item has been removed successfully");
