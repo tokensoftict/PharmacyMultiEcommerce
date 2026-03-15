@@ -31,10 +31,13 @@ trait ApplicationUserCheckoutTrait
 
         $stockIDs = array_keys($shoppingCart);
         $stocks = Stock::with([$stockPriceModel])->whereIn('id', $stockIDs)->get();
-        return  $stocks->sum(function($stock) use($shoppingCart, $stockPriceModel){
+        $department = ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices" ? 'retail' : 'wholesales';
+
+        return  $stocks->sum(function($stock) use($shoppingCart, $stockPriceModel, $department){
             $price = ($stock->special === false ? $stock->{$stockPriceModel}->price : $stock->special);
-            if($stock->stockquantityprices->count() > 0 and ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices") {
-                $price = $this->resolvePriceByQuantity($shoppingCart[$stock->id]['quantity'], $price, $stock->stockquantityprices->toArray());
+            $customPrices = $stock->stockquantityprices->where('department', $department);
+            if($customPrices->count() > 0) {
+                $price = $this->resolvePriceByQuantity($shoppingCart[$stock->id]['quantity'], $price, $customPrices->toArray());
             }
             return $price * $shoppingCart[$stock->id]['quantity'];
         });
@@ -64,10 +67,13 @@ trait ApplicationUserCheckoutTrait
         $cart = $this->cart ?? [];
         $stocks = Stock::whereKey(array_keys($cart))->get();
         $totalItemsInCarts = 0;
-        return $stocks->map(function($stock) use ($cart, &$totalItemsInCarts){
+        $department = ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices" ? 'retail' : 'wholesales';
+
+        return $stocks->map(function($stock) use ($cart, &$totalItemsInCarts, $department){
             $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
-            if($stock->stockquantityprices->count() > 0 and ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices") {
-                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $stock->stockquantityprices->toArray());
+            $customPrices = $stock->stockquantityprices->where('department', $department);
+            if($customPrices->count() > 0) {
+                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray());
             }
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
@@ -100,10 +106,13 @@ trait ApplicationUserCheckoutTrait
         $cart = $this->cart ?? [];
         $stocks = Stock::whereKey(array_keys($cart))->get();
         $totalItemsInCarts = 0;
-        $stocks = $stocks->map(function($stock) use ($cart, &$totalItemsInCarts){
+        $department = ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices" ? 'retail' : 'wholesales';
+
+        $stocks = $stocks->map(function($stock) use ($cart, &$totalItemsInCarts, $department){
             $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
-            if($stock->stockquantityprices->count() > 0 and ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices") {
-                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $stock->stockquantityprices->toArray());
+            $customPrices = $stock->stockquantityprices->where('department', $department);
+            if($customPrices->count() > 0) {
+                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray());
             }
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
