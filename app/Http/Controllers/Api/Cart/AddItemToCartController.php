@@ -52,8 +52,8 @@ class AddItemToCartController extends ApiController
         // Handle Dependent Products
         $stock = \App\Models\Stock::find($stockId);
         if ($stock) {
-            // Dependents are now mandatory - always process them if they exist
-            $shouldProcessDependents = true;
+            // Dependents are only for wholesales environment
+            $shouldProcessDependents = (ApplicationEnvironment::$stock_model_string === 'wholessales_stock_prices');
             
             if ($shouldProcessDependents) {
                 foreach ($stock->dependent_products as $dependent) {

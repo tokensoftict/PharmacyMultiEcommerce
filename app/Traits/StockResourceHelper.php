@@ -92,6 +92,10 @@ trait StockResourceHelper
      */
     protected function getDependentProducts($stock): array
     {
+        if ($this->getDepartment() !== 'wholesales') {
+            return [];
+        }
+
         return ($stock->dependent_products ?? collect())
             ->map(function ($item) {
                 $dependentStock = $item->dependent_stock;
