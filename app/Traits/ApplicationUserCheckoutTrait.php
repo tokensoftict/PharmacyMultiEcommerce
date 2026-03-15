@@ -39,6 +39,13 @@ trait ApplicationUserCheckoutTrait
             if($customPrices->count() > 0) {
                 $price = $this->resolvePriceByQuantity($shoppingCart[$stock->id]['quantity'], $price, $customPrices->toArray());
             }
+
+            // Options Price Adjustment
+            $options = $shoppingCart[$stock->id]['options'] ?? [];
+            if (count($options) > 0) {
+                $price += $this->resolveOptionPrice($stock, $options, $department);
+            }
+
             return $price * $shoppingCart[$stock->id]['quantity'];
         });
     }
@@ -75,6 +82,13 @@ trait ApplicationUserCheckoutTrait
             if($customPrices->count() > 0) {
                 $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray());
             }
+
+            // Options Price Adjustment
+            $options = $cart[$stock->id]['options'] ?? [];
+            if (count($options) > 0) {
+                $price += $this->resolveOptionPrice($stock, $options, $department);
+            }
+
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
             $stock->price = $price;
@@ -98,6 +112,30 @@ trait ApplicationUserCheckoutTrait
         return $defaultSellingPrice;
     }
 
+    public final function resolveOptionPrice($stock, array $selectedOptionIds, string $department): float
+    {
+        $adjustment = 0;
+        $priceField = ($department === 'retail') ? 'retail_price' : 'wholesales_price';
+        $prefixField = ($department === 'retail') ? 'retail_price_prefix' : 'wholesales_price_prefix';
+
+        foreach ($stock->stock_option_values as $optionValue) {
+            foreach ($optionValue->options as $option) {
+                if (in_array($option['id'], $selectedOptionIds)) {
+                    $price = (float) ($option[$priceField] ?? 0);
+                    $prefix = $option[$prefixField] ?? '+';
+                    
+                    if ($prefix === '+') {
+                        $adjustment += $price;
+                    } else if ($prefix === '-') {
+                        $adjustment -= $price;
+                    }
+                }
+            }
+        }
+
+        return $adjustment;
+    }
+
     /**
      * @return array
      */
@@ -114,6 +152,13 @@ trait ApplicationUserCheckoutTrait
             if($customPrices->count() > 0) {
                 $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray());
             }
+
+            // Options Price Adjustment
+            $options = $cart[$stock->id]['options'] ?? [];
+            if (count($options) > 0) {
+                $price += $this->resolveOptionPrice($stock, $options, $department);
+            }
+
             $stock->cart_quantity = $cart[$stock->id]['quantity'];
             $stock->added_date = $cart[$stock->id]['date'];
             $stock->is_dependent = $cart[$stock->id]['is_dependent'] ?? false;

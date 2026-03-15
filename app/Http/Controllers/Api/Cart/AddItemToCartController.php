@@ -31,10 +31,12 @@ class AddItemToCartController extends ApiController
         $stockId = $request->get("stock_id");
         $quantity = $request->get("quantity");
         $acceptDependent = $request->get("accept_dependent", false);
+        $options = $request->get("options", []);
 
         $item = [
             "id" => $stockId,
             "quantity" => $quantity,
+            "options" => $options,
             "date" => now()->format("Y-m-d")
         ];
 
