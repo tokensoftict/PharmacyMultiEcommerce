@@ -86,6 +86,7 @@ class ProcessGeneralService
     {
         if (isset($data[1])) {
             Schema::disableForeignKeyConstraints();
+            DB::table("productcategories")->truncate();
             $result = DB::table("productcategories")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
@@ -113,6 +114,7 @@ class ProcessGeneralService
     {
         if (isset($data[1])) {
             Schema::disableForeignKeyConstraints();
+            DB::table("classifications")->truncate();
             $result = DB::table("classifications")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
@@ -130,6 +132,7 @@ class ProcessGeneralService
     public static function updateClassification(array $data): Classification|bool
     {
         Schema::disableForeignKeyConstraints();
+        DB::table("classifications")->truncate();
         $result = Classification::where("id", $data['id'])->update($data);
         Schema::enableForeignKeyConstraints();
         return $result;
@@ -170,6 +173,7 @@ class ProcessGeneralService
     {
         if (isset($data[1])) {
             Schema::disableForeignKeyConstraints();
+            DB::table("manufacturers")->truncate();
             $result = DB::table("manufacturers")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
@@ -225,6 +229,7 @@ class ProcessGeneralService
     {
         if (isset($data[1])) {
             Schema::disableForeignKeyConstraints();
+            DB::table("productgroups")->truncate();
             $result = DB::table("productgroups")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
