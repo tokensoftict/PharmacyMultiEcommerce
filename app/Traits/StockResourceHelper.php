@@ -125,4 +125,35 @@ trait StockResourceHelper
             })
             ->toArray();
     }
+
+    /**
+     * Resolve selected option IDs into detailed objects.
+     *
+     * @param mixed $stock
+     * @param array $selectedIds
+     * @return array
+     */
+    protected function resolveSelectedOptions($stock, array $selectedIds): array
+    {
+        $department = $this->getDepartment();
+        $priceField = ($department === 'retail') ? 'retail_price' : 'wholesales_price';
+        $prefixField = ($department === 'retail') ? 'retail_price_prefix' : 'wholesales_price_prefix';
+
+        $resolved = [];
+        foreach (($stock->stock_option_values ?? collect()) as $optionValue) {
+            foreach ($optionValue->options as $opt) {
+                if (in_array($opt['id'] ?? null, $selectedIds)) {
+                    $resolved[] = [
+                        'id' => $opt['id'],
+                        'name' => $opt['name'] ?? '',
+                        'price' => (float)($opt[$priceField] ?? 0),
+                        'price_prefix' => $opt[$prefixField] ?? '+',
+                        'group_name' => $optionValue->option_name,
+                    ];
+                }
+            }
+        }
+
+        return $resolved;
+    }
 }
