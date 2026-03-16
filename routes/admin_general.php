@@ -73,4 +73,6 @@ Route::middleware([PermitTask::class])->group(function(){
         Route::get('/users', ['uses' => 'App\Livewire\Backend\Admin\Administrator\AdministratorManagerDataTable'])->name('backend.admin.user.list');
     });
 
+    Route::get('/home_page_manager', ['uses' => 'App\Livewire\Backend\Admin\HomePage\HomePageManager'])->name('backend.admin.home_page_manager');
+
 });

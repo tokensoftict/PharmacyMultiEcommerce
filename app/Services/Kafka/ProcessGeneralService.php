@@ -3,6 +3,7 @@
 namespace App\Services\Kafka;
 
 use App\Enums\KafkaAction;
+use App\Enums\PushNotificationAction;
 use App\Models\Classification;
 use App\Models\LocalCustomer;
 use App\Models\Manufacturer;
@@ -12,6 +13,7 @@ use App\Models\Productcategory;
 use App\Models\Productgroup;
 use App\Models\Stock;
 use App\Models\User;
+use App\Services\Utilities\PushNotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -289,11 +291,21 @@ class ProcessGeneralService
     {
         $user = User::where('phone', $data['phone_number'])->first();
         if ($user) {
+            $oldPoints = $user->loyalty_points;
+            $oldGroupId = $user->member_group_id;
             $user->update([
                 'local_id' => $data['local_id'],
                 'loyalty_points' => $data['loyalty_points'],
                 'member_group_id' => $data['member_group_id']
             ]);
+
+            if ($data['loyalty_points'] > $oldPoints) {
+                self::sendLoyaltyNotification($user, $data['loyalty_points']);
+            }
+
+            if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
+                self::sendMemberGroupNotification($user, $data['member_group_id']);
+            }
             return true;
         }
         return false;
@@ -305,12 +317,20 @@ class ProcessGeneralService
     {
         $user = User::where('local_id', $data['local_id'])->first();
         if ($user) {
+            $oldPoints = $user->loyalty_points;
+            $oldGroupId = $user->member_group_id;
             $user->update([
                 'loyalty_points' => $data['loyalty_points'],
                 'member_group_id' => $data['member_group_id']
             ]);
 
-            //trigger push notification for the customer
+            if ($data['loyalty_points'] > $oldPoints) {
+                self::sendLoyaltyNotification($user, $data['loyalty_points']);
+            }
+
+            if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
+                self::sendMemberGroupNotification($user, $data['member_group_id']);
+            }
 
             return true;
         }
@@ -335,6 +355,71 @@ class ProcessGeneralService
     public static function updateMemberGroup(array $data): MemberGroup|bool
     {
         return MemberGroup::where("id", $data['id'])->update($data);
+    }
+
+    /**
+     * @param User $user
+     * @param float $newPoints
+     * @return void
+     */
+    private static function sendLoyaltyNotification(User $user, float $newPoints): void
+    {
+        $notifications = [
+            ["title" => "Points Alert! 🎊", "body" => "You've just earned more loyalty points! Your total is now $newPoints. Keep it up!"],
+            ["title" => "Score Update! 📈", "body" => "Your loyalty points just went up! You now have $newPoints points to spend."],
+            ["title" => "You've Got Points! ✨", "body" => "Congratulations! Your loyalty points have increased to $newPoints. Check them out in the app."],
+            ["title" => "Loyalty Level Up! 🚀", "body" => "You're earning points fast! Your balance is now $newPoints. Thanks for shopping with us!"],
+            ["title" => "Points Earned! 🏆", "body" => "Nicely done! Your loyalty point balance just hit $newPoints. See what rewards await you!"]
+        ];
+
+        $randomNotification = $notifications[array_rand($notifications)];
+
+        $notificationService = new PushNotificationService();
+        $notificationService
+            ->setApplicationEnvironment(6) // Supermarket
+            ->setUserCustomer($user)
+            ->createNotification([
+            "title" => $randomNotification['title'],
+            "body" => $randomNotification['body'],
+        ])
+            ->setAction(PushNotificationAction::NONE)
+            ->approve()
+            ->send();
+    }
+
+    /**
+     * @param User $user
+     * @param int $newGroupId
+     * @return void
+     */
+    private static function sendMemberGroupNotification(User $user, int $newGroupId): void
+    {
+        $group = MemberGroup::find($newGroupId);
+        if (!$group) return;
+
+        $label = $group->label;
+
+        $notifications = [
+            ["title" => "Status Upgrade! 🎊", "body" => "You've been promoted to $label! Enjoy your new exclusive perks and rewards."],
+            ["title" => "New Tier Unlocked! 💎", "body" => "Congratulations! You are now a $label member. Check the app to see what's new."],
+            ["title" => "Welcome to $label! 🌟", "body" => "Your continued patronage has earned you a spot in our $label group. Well done!"],
+            ["title" => "You've Leveled Up! 🚀", "body" => "Thanks for being an amazing customer! You've been upgraded to $label status."],
+            ["title" => "Exclusive Access! 🏆", "body" => "Your account has been upgraded to $label. Big things are coming your way!"]
+        ];
+
+        $randomNotification = $notifications[array_rand($notifications)];
+
+        $notificationService = new PushNotificationService();
+        $notificationService
+            ->setApplicationEnvironment(6) // Supermarket
+            ->setUserCustomer($user)
+            ->createNotification([
+                "title" => $randomNotification['title'],
+                "body" => $randomNotification['body'],
+            ])
+            ->setAction(PushNotificationAction::NONE)
+            ->approve()
+            ->send();
     }
 
 }

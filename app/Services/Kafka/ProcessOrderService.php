@@ -24,6 +24,12 @@ class ProcessOrderService
         if ($action === KafkaAction::PROCESS_ORDER)
             return;
 
+        if ($action === KafkaAction::SYNC_LOCAL_ORDER) {
+            $createOrderService = new CreateOrderService();
+            $createOrderService->syncLocalOrder($data);
+            return;
+        }
+
         $createOrderService = new CreateOrderService();
 
         $status = $createOrderService->checkIfOrderExistAndImport($data['orderId']);
