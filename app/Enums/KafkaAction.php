@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enumKafkaAction
+enum KafkaAction
 {
     const PROCESS_ORDER = "PROCESS_ORDER";
     const PACKED_ORDER = "PACKED_ORDER";
