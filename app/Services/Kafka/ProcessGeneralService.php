@@ -292,6 +292,7 @@ class ProcessGeneralService
             $user->update([
                 'local_id' => $data['local_id'],
                 'loyalty_points' => $data['loyalty_points'],
+                'member_group_id' => $data['member_group_id']
             ]);
             return true;
         }
@@ -306,6 +307,7 @@ class ProcessGeneralService
         if ($user) {
             $user->update([
                 'loyalty_points' => $data['loyalty_points'],
+                'member_group_id' => $data['member_group_id']
             ]);
 
             //trigger push notification for the customer
