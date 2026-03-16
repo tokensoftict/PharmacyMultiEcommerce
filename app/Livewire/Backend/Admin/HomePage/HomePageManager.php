@@ -51,7 +51,7 @@ class HomePageManager extends Component
         'selectedApp' => 'required|integer',
         'component_name' => 'required|string',
         'type' => 'nullable|string',
-        'component_id' => 'nullable|mixed', // Can be string or array
+        'component_id' => 'nullable', // Can be string or array
         'label' => 'nullable|string',
         'limit' => 'required|integer',
         'see_all_link' => 'nullable|string',
@@ -75,7 +75,8 @@ class HomePageManager extends Component
 
     public function updatedType($value)
     {
-        $this->component_id = '';
+        $isMultiple = in_array($this->component_name, ['topBrands', 'FlashDeals', 'ImageSlider']);
+        $this->component_id = $isMultiple ? [] : '';
         $this->itemsForSelect = [];
 
         if ($value === 'classifications' || $value === 'lowestClassifications') {
@@ -84,14 +85,18 @@ class HomePageManager extends Component
             $this->itemsForSelect = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
         } elseif ($value === 'productcategories') {
             $this->itemsForSelect = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
-        } elseif ($value === 'ImageSlider') {
-            $this->itemsForSelect = Slider::where('status', true)->orderBy('title', 'asc')->get(['id', 'title as name'])->toArray();
         } elseif ($value === 'mixed') {
-            $classifications = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'classification:'.$item->id, 'name' => 'Class: '.$item->name]);
-            $manufacturers = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'manufacturer:'.$item->id, 'name' => 'Mfr: '.$item->name]);
-            $categories = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'productcategory:'.$item->id, 'name' => 'Cat: '.$item->name]);
-            $this->itemsForSelect = $classifications->concat($manufacturers)->concat($categories)->toArray();
+            $this->itemsForSelect = $this->fetchMixedItems();
         }
+    }
+
+    private function fetchMixedItems()
+    {
+        $classifications = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'classification:'.$item->id, 'name' => 'Class: '.$item->name]);
+        $manufacturers = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'manufacturer:'.$item->id, 'name' => 'Mfr: '.$item->name]);
+        $categories = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'productcategory:'.$item->id, 'name' => 'Cat: '.$item->name]);
+        
+        return $classifications->concat($manufacturers)->concat($categories)->toArray();
     }
 
     public function render()
@@ -170,7 +175,7 @@ class HomePageManager extends Component
         $isMultiple = in_array($this->component_name, ['topBrands', 'FlashDeals', 'ImageSlider']);
         
         $this->component_id = $isMultiple 
-            ? explode(',', $component->component_id) 
+            ? ($component->component_id ? explode(',', $component->component_id) : [])
             : $component->component_id;
 
         $this->label = $component->label;
@@ -191,10 +196,7 @@ class HomePageManager extends Component
         } elseif ($this->type === 'ImageSlider') {
             $this->itemsForSelect = Slider::where('status', true)->orderBy('title', 'asc')->get(['id', 'title as name'])->toArray();
         } elseif ($this->type === 'mixed') {
-            $classifications = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'classification:'.$item->id, 'name' => 'Class: '.$item->name]);
-            $manufacturers = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'manufacturer:'.$item->id, 'name' => 'Mfr: '.$item->name]);
-            $categories = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'productcategory:'.$item->id, 'name' => 'Cat: '.$item->name]);
-            $this->itemsForSelect = $classifications->concat($manufacturers)->concat($categories)->toArray();
+            $this->itemsForSelect = $this->fetchMixedItems();
         }
 
         $this->openModal();
