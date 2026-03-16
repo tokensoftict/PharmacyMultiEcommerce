@@ -33,20 +33,21 @@ class UserLoginResource extends JsonResource
             "image" => asset($this->image),
             "medSchedules" => MedReminderScheduleResource::collection($this->medReminderSchedule()),
             'dosageForms' => MedReminderService::$dosageForm,
-            "medReminderDuration" => MedReminderService::$repeatDuration
+            "medReminderDuration" => MedReminderService::$repeatDuration,
+            "loyaltyPoints" => $this->loyalty_points,
         ];
 
         $apps = [];
 
         $frontEndApps = AppUser::where("user_id", $this->id)
-            ->whereHas("app", function ($query){
-                $query->where("type", "Frontend");
-            })->orderBy('app_id', 'desc')->get();
+            ->whereHas("app", function ($query) {
+            $query->where("type", "Frontend");
+        })->orderBy('app_id', 'desc')->get();
 
-        foreach ($frontEndApps as $app)
-        {
-            if($app->app->id === 4) {
-                if($app->user_type->status == "0" || $app->user_type->invitation_status == "0") continue;
+        foreach ($frontEndApps as $app) {
+            if ($app->app->id === 4) {
+                if ($app->user_type->status == "0" || $app->user_type->invitation_status == "0")
+                    continue;
             }
             $apps[] = [
                 "app_id" => $app->id,
@@ -57,14 +58,14 @@ class UserLoginResource extends JsonResource
                 "name" => strtolower($app->app->name),
                 "link" => $app->app->link,
                 "addresses" => $app->addresses,
-                "last_seen" => $app->last_activity_date ? $app->last_activity_date->format("F jS, Y g:i A") :  now()->format("F jS, Y g:i A"),
+                "last_seen" => $app->last_activity_date ? $app->last_activity_date->format("F jS, Y g:i A") : now()->format("F jS, Y g:i A"),
                 "unregistered" => false,
             ];
         }
 
         $user['apps'] = $apps;
 
-        if(count($user['apps']) === 1) {
+        if (count($user['apps']) === 1) {
             $wholesales = App::find(5);
             $user['apps'][] = [
                 "app_id" => $wholesales->id,
@@ -84,12 +85,13 @@ class UserLoginResource extends JsonResource
         }
 
 
-        if(!is_null($this->currentAccessToken())) {
+        if (!is_null($this->currentAccessToken())) {
             $user['token'] = [
                 'token_type' => 'bearer',
-                'access_token' => Str::replace("Bearer ","", $request->headers->get("authorization"))
+                'access_token' => Str::replace("Bearer ", "", $request->headers->get("authorization"))
             ];
-        }else{
+        }
+        else {
             $user['token'] = [
                 'token_type' => 'bearer',
                 'access_token' => $this->createToken(config("app.name"))->plainTextToken
