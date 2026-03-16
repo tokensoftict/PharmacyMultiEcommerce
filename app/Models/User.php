@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Collection;
  * Class User
  *
  * @property int $id
+ * @property int $local_id
+ * @property float $loyalty_points
  * @property string $firstname
  * @property string $lastname
  * @property string $email
@@ -91,35 +93,37 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         'navigation_type',
         'last_seen',
         'remember_token',
-        'auth_code'
+        'auth_code',
+        'local_id',
+        'loyalty_points'
     ];
 
-    protected $appends =  ['cus_exist'];
+    protected $appends = ['cus_exist'];
 
     public function getCusExistAttribute()
     {
         $local = LocalCustomer::where('phone_number', $this->phone)->first();
-        if($local) {
+        if ($local) {
             return $local->local_id;
         }
-        return  "";
+        return "";
     }
 
     public final function getNameAttribute()
     {
-        return ucwords($this->firstname)." ".ucwords($this->lastname);
+        return ucwords($this->firstname) . " " . ucwords($this->lastname);
     }
 
     public function apps()
     {
-        return $this->belongsToMany(App::class, 'app_users')
+        return $this->belongsToMany(App::class , 'app_users')
             ->withPivot('id', 'domain', 'user_type_type', 'user_type_id')
             ->withTimestamps();
     }
 
     public function coupons()
     {
-        return $this->hasMany(Coupon::class, 'created_by');
+        return $this->hasMany(Coupon::class , 'created_by');
     }
 
     public function promotion_items()
@@ -159,12 +163,12 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
 
     public function voucher_codes()
     {
-        return $this->hasMany(VoucherCode::class, 'created_by');
+        return $this->hasMany(VoucherCode::class , 'created_by');
     }
 
     public function vouchers()
     {
-        return $this->hasMany(Voucher::class, 'created_by');
+        return $this->hasMany(Voucher::class , 'created_by');
     }
 
     public function wholesales_users()

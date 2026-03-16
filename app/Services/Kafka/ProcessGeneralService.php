@@ -10,6 +10,7 @@ use App\Models\NewStockArrival;
 use App\Models\Productcategory;
 use App\Models\Productgroup;
 use App\Models\Stock;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Junges\Kafka\Message\ConsumedMessage;
@@ -62,6 +63,9 @@ class ProcessGeneralService
                 break;
             case KafkaAction::UPDATE_STOCK_GROUP:
                 self::updateStockGroup($data);
+                break;
+            case KafkaAction::EARNED_LOYALTY:
+                self::updateUserLoyalty($data);
                 break;
         }
 
@@ -145,10 +149,16 @@ class ProcessGeneralService
     public static function createCustomer(array $data): LocalCustomer|bool
     {
         if (isset($data[1])) {
-            return DB::table("local_customers")->insert($data);
+            $result = DB::table("local_customers")->insert($data);
+            foreach ($data as $customer) {
+                self::updateUserLocalId($customer);
+            }
+            return $result;
         }
         else {
-            return LocalCustomer::create($data);
+            $customer = LocalCustomer::create($data);
+            self::updateUserLocalId($data);
+            return $customer;
         }
     }
 
@@ -158,11 +168,29 @@ class ProcessGeneralService
      */
     public static function updateCustomer(array $data): LocalCustomer|bool
     {
-        $localCustomer = LocalCustomer::where('local_id', $data['local_id'])->first();
-        if (!$localCustomer) {
-            return self::createCustomer($data);
+        if (isset($data[1])) {
+            foreach ($data as $customer) {
+                $localCustomer = LocalCustomer::where('local_id', $customer['local_id'])->first();
+                if (!$localCustomer) {
+                    self::updateUserLocalId($customer);
+                    return self::createCustomer($customer);
+                }
+                self::updateUserLocalId($customer);
+                $localCustomer->update($customer);
+            }
+            return true;
         }
-        return $localCustomer->update($data);
+        else {
+            $localCustomer = LocalCustomer::where('local_id', $data['local_id'])->first();
+            if (!$localCustomer) {
+                self::updateUserLocalId($data);
+                return self::createCustomer($data);
+            }
+
+            self::updateUserLocalId($data);
+            return $localCustomer->update($data);
+        }
+
     }
 
     /**
@@ -247,6 +275,36 @@ class ProcessGeneralService
     public static function updateStockGroup(array $data): Productgroup|bool
     {
         return Productgroup::where("id", $data['id'])->update($data);
+    }
+
+
+    public static function updateUserLocalId($data): bool
+    {
+        $user = User::where('phone', $data['phone'])->first();
+        if ($user) {
+            $user->update([
+                'local_id' => $data['local_id'],
+            ]);
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public static function updateUserLoyalty($data): bool
+    {
+        $user = User::where('local_id', $data['local_id'])->first();
+        if ($user) {
+            $user->update([
+                'loyalty_points' => $data['loyalty_points'],
+            ]);
+
+            //trigger push notification for the customer
+
+            return true;
+        }
+        return false;
     }
 
 }

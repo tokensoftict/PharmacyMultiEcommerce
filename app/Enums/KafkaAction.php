@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum KafkaAction
+enumKafkaAction
 {
     const PROCESS_ORDER = "PROCESS_ORDER";
     const PACKED_ORDER = "PACKED_ORDER";
@@ -17,6 +17,7 @@ enum KafkaAction
 
     const CREATE_CUSTOMER = "CREATE_CUSTOMER";
     const UPDATE_CUSTOMER = "UPDATE_CUSTOMER";
+    const EARNED_LOYALTY = "EARNED_LOYALTY";
 
     const CREATE_MANUFACTURER = "CREATE_MANUFACTURER";
     const UPDATE_MANUFACTURER = "UPDATE_MANUFACTURER";
