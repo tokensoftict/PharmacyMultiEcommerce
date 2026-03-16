@@ -4,6 +4,7 @@ namespace App\Livewire\Backend\Admin\Voucher;
 
 use App\Classes\ApplicationEnvironment;
 use App\Models\Voucher;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class VoucherCodesAndReport extends Component
@@ -29,8 +30,14 @@ class VoucherCodesAndReport extends Component
      */
     public function approveVoucher()
     {
-        $this->voucher->status_id = status('Approved');
-        $this->voucher->save();
+        DB::transaction(function () {
+            $this->voucher->status_id = status('Approved');
+            foreach ($this->voucher->voucherCodes()->get() as $code) {
+                $code->status_id = status('Approved');
+                $code->save();
+            }
+            $this->voucher->save();
+        });
         $this->alert('success', "Voucher has been approved successfully");
 
     }
@@ -41,8 +48,14 @@ class VoucherCodesAndReport extends Component
      */
     public function cancelVoucher()
     {
-        $this->voucher->status_id = status('Cancelled');
-        $this->voucher->save();
+        DB::transaction(function () {
+            $this->voucher->status_id = status('Cancelled');
+            foreach ($this->voucher->voucherCodes()->get() as $code) {
+                $code->status_id = status('Cancelled');
+                $code->save();
+            }
+            $this->voucher->save();
+        });
         $this->alert('success', "Voucher has been cancelled successfully");
     }
 
@@ -54,7 +67,7 @@ class VoucherCodesAndReport extends Component
     {
         $this->voucher->delete();
         $this->alert('success', "Voucher has been cancelled successfully");
-        return $this->redirect(route(ApplicationEnvironment::$storePrefix.'backend.admin.voucher.list'), true);
+        return $this->redirect(route(ApplicationEnvironment::$storePrefix . 'backend.admin.voucher.list'), true);
     }
 
 }
