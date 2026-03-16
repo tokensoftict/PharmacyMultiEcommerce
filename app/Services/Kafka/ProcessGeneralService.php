@@ -281,10 +281,11 @@ class ProcessGeneralService
 
     public static function updateUserLocalId($data): bool
     {
-        $user = User::where('phone', $data['phone'])->first();
+        $user = User::where('phone', $data['phone_number'])->first();
         if ($user) {
             $user->update([
                 'local_id' => $data['local_id'],
+                'loyalty_points' => $data['loyalty_points'],
             ]);
             return true;
         }
