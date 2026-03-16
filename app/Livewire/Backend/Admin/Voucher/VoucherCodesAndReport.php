@@ -32,7 +32,7 @@ class VoucherCodesAndReport extends Component
     {
         DB::transaction(function () {
             $this->voucher->status_id = status('Approved');
-            foreach ($this->voucher->voucherCodes()->get() as $code) {
+            foreach ($this->voucher->voucher_codes()->get() as $code) {
                 $code->status_id = status('Approved');
                 $code->save();
             }
@@ -50,7 +50,7 @@ class VoucherCodesAndReport extends Component
     {
         DB::transaction(function () {
             $this->voucher->status_id = status('Cancelled');
-            foreach ($this->voucher->voucherCodes()->get() as $code) {
+            foreach ($this->voucher->voucher_codes()->get() as $code) {
                 $code->status_id = status('Cancelled');
                 $code->save();
             }
