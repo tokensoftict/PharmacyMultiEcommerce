@@ -3,7 +3,10 @@
 namespace App\Livewire\Backend\Admin\HomePage;
 
 use App\Models\App;
+use App\Models\Classification;
 use App\Models\HomePageComponent;
+use App\Models\Manufacturer;
+use App\Models\Productcategory;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
@@ -17,10 +20,32 @@ class HomePageManager extends Component
     public $editingId = null;
     public $isModalOpen = false;
 
+    public $itemsForSelect = [];
+    public $availableTypes = [];
+
+    protected $componentTypeMapping = [
+        'Horizontal_List' => [
+            'classifications' => 'Classifications',
+            'manufacturers' => 'Manufacturers',
+            'productcategories' => 'Product Categories',
+            'new_arrivals' => 'New Arrivals',
+            'specialOffers' => 'Special Offers',
+        ],
+        'ImageSlider' => [
+            'ImageSlider' => 'Image Slider',
+        ],
+        'topBrands' => [
+            'topBrands' => 'Top Brands',
+        ],
+        'FlashDeals' => [
+            'lowestClassifications' => 'Lowest Classifications',
+        ],
+    ];
+
     protected $rules = [
         'selectedApp' => 'required|integer',
         'component_name' => 'required|string',
-        'type' => 'required|string',
+        'type' => 'nullable|string',
         'component_id' => 'nullable|string',
         'label' => 'nullable|string',
         'limit' => 'required|integer',
@@ -28,6 +53,34 @@ class HomePageManager extends Component
         'sort_order' => 'required|integer',
         'status' => 'required|boolean',
     ];
+
+    public function updatedComponentName($value)
+    {
+        $this->availableTypes = $this->componentTypeMapping[$value] ?? [];
+        $this->type = '';
+        $this->component_id = '';
+        $this->itemsForSelect = [];
+
+        // If only one automatic type, set it
+        if (count($this->availableTypes) === 1) {
+            $this->type = array_key_first($this->availableTypes);
+            $this->updatedType($this->type);
+        }
+    }
+
+    public function updatedType($value)
+    {
+        $this->component_id = '';
+        $this->itemsForSelect = [];
+
+        if ($value === 'classifications') {
+            $this->itemsForSelect = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        } elseif ($value === 'manufacturers') {
+            $this->itemsForSelect = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        } elseif ($value === 'productcategories') {
+            $this->itemsForSelect = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        }
+    }
 
     public function render()
     {
@@ -65,6 +118,8 @@ class HomePageManager extends Component
         $this->sort_order = 0;
         $this->status = true;
         $this->editingId = null;
+        $this->itemsForSelect = [];
+        $this->availableTypes = [];
     }
 
     public function store()
@@ -103,6 +158,17 @@ class HomePageManager extends Component
         $this->see_all_link = $component->see_all_link;
         $this->sort_order = $component->sort_order;
         $this->status = $component->status;
+
+        $this->availableTypes = $this->componentTypeMapping[$this->component_name] ?? [];
+
+        // Populate itemsForSelect if needed
+        if ($this->type === 'classifications') {
+            $this->itemsForSelect = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        } elseif ($this->type === 'manufacturers') {
+            $this->itemsForSelect = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        } elseif ($this->type === 'productcategories') {
+            $this->itemsForSelect = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        }
 
         $this->openModal();
     }

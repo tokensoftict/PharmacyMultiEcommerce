@@ -65,7 +65,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Component Name</label>
-                                <select wire:model="component_name" class="form-select">
+                                <select wire:model.live="component_name" class="form-select">
                                     <option value="">Select Component</option>
                                     <option value="Horizontal_List">Horizontal_List</option>
                                     <option value="ImageSlider">ImageSlider</option>
@@ -74,27 +74,41 @@
                                 </select>
                                 @error('component_name') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
+
+                            @if(count($availableTypes) > 0)
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Type</label>
+                                    <select wire:model.live="type" class="form-select">
+                                        <option value="">Select Type</option>
+                                        @foreach($availableTypes as $val => $text)
+                                            <option value="{{ $val }}">{{ $text }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('type') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            @endif
+
+                            @if(in_array($type, ['classifications', 'manufacturers', 'productcategories']))
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Select {{ ucfirst(str_replace('s', '', $type === 'productcategories' ? 'category' : $type)) }}</label>
+                                    <select wire:model="component_id" class="form-select">
+                                        <option value="">Choose...</option>
+                                        @foreach($itemsForSelect as $dataItem)
+                                            <option value="{{ $dataItem['id'] }}">{{ $dataItem['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            @else
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Component ID (Optional)</label>
+                                    <input type="text" wire:model="component_id" class="form-control" placeholder="e.g. ID for custom logic">
+                                    @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            @endif
+
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Type</label>
-                                <select wire:model="type" class="form-select">
-                                    <option value="">Select Type</option>
-                                    <option value="classifications">classifications</option>
-                                    <option value="manufacturers">manufacturers</option>
-                                    <option value="new_arrivals">new_arrivals</option>
-                                    <option value="topBrands">topBrands</option>
-                                    <option value="lowestClassifications">lowestClassifications</option>
-                                    <option value="ImageSlider">ImageSlider</option>
-                                    <option value="specialOffers">specialOffers</option>
-                                </select>
-                                @error('type') <span class="text-danger small">{{ $message }}</span> @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Component ID (Classification/Manufacturer ID)</label>
-                                <input type="text" wire:model="component_id" class="form-control">
-                                @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Label</label>
+                                <label class="form-label">Label (Title shown on app)</label>
                                 <input type="text" wire:model="label" class="form-control">
                                 @error('label') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
