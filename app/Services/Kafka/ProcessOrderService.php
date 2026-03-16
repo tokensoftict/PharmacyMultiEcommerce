@@ -5,35 +5,39 @@ namespace App\Services\Kafka;
 use App\Enums\KafkaAction;
 use App\Models\Old\Order;
 use App\Services\Order\CreateOrderService;
+use Illuminate\Support\Facades\Log;
 use Junges\Kafka\Message\ConsumedMessage;
 
 class ProcessOrderService
 {
 
-    public static function handle(ConsumedMessage $message) : void
+    public static function handle(ConsumedMessage $message): void
     {
         $body = $message->getBody();
 
-        if(isset($body['order'])) return;
+        if (isset($body['order']))
+            return;
 
-        $action =  $body['action'];
+        $action = $body['action'];
         $data = $body[0];
-
-        if($action === KafkaAction::PROCESS_ORDER) return;
+        Log::info($action);
+        if ($action === KafkaAction::PROCESS_ORDER)
+            return;
 
         $createOrderService = new CreateOrderService();
 
         $status = $createOrderService->checkIfOrderExistAndImport($data['orderId']);
-        if($status === false) return;
+        if ($status === false)
+            return;
 
         switch ($data['status_code']) {
             case "Validation Error":
                 $createOrderService->processOrderError($data['orderId'], $data['error']);
                 break;
-            case "Packing" :
+            case "Packing":
                 $createOrderService->packOrder($data['orderId']);
                 break;
-            case "Cancelled" :
+            case "Cancelled":
                 $createOrderService->cancelOrder($data['orderId']);
                 break;
             case "Waiting For Payment":

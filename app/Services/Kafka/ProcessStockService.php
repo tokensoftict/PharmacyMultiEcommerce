@@ -17,7 +17,6 @@ class ProcessStockService
     public static function handle(ConsumedMessage $message): void
     {
         $body = $message->getBody();
-        ;
         $action = $body['action'];
         $data = $body[0]['data'];
         Log::info($action);

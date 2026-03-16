@@ -23,7 +23,7 @@ class ProcessGeneralService
         $body = $message->getBody();
         $action = $body[0]['KAFKA_ACTION'];
         $data = $body[0]['data'];
-
+        Log::info($action);
         switch ($action) {
             case KafkaAction::CREATE_BRAND:
                 self::createBrand($data);
