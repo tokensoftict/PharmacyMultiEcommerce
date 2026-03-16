@@ -40,7 +40,7 @@ class HomePageManager extends Component
         return view('livewire.backend.admin.home-page.home-page-manager', [
             'components' => $components,
             'apps' => $apps
-        ])->layout('layouts.app');
+        ])->layout('layout.app');
     }
 
     public function openModal()
