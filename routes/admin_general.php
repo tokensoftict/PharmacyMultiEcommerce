@@ -26,7 +26,7 @@ Route::middleware([PermitTask::class])->group(function () {
             Route::get('/product_banner', ['uses' => 'App\Livewire\Backend\Admin\Settings\ProductBannerComponentDataTable'])->name('backend.admin.settings.product_banner');
             Route::get('/image_gallery', ['uses' => 'App\Livewire\Backend\Admin\Settings\ImageGalleryComponentDataTable'])->name('backend.admin.settings.image_gallery');
             Route::get('/town_and_distance', ['uses' => 'App\Livewire\Backend\Admin\Settings\TownAndDistanceDataTableComponent'])->name('backend.admin.settings.town_and_distance');
-            Route::get('/home_page_manager', ['uses' => 'App\Livewire\Backend\Admin\HomePage\HomePageManager'])->name('backend.admin.home_page_manager');
+            Route::get('/home_page_manager', ['uses' => 'App\Livewire\Backend\Admin\HomePage\HomePageManager'])->name('backend.admin.settings.home_page_manager');
         }
         );
 
