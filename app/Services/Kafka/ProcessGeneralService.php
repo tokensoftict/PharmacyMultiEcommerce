@@ -22,7 +22,6 @@ class ProcessGeneralService
     {
         $body = $message->getBody();
         $action = $body[0]['KAFKA_ACTION'];
-        Log::info($action);
         $data = $body[0]['data'];
 
         switch ($action) {
