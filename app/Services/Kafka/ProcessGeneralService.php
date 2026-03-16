@@ -21,8 +21,8 @@ class ProcessGeneralService
     public static function handle(ConsumedMessage $message): void
     {
         $body = $message->getBody();
-        Log::info($body);
-        $action = $body['action'];
+        $action = $body[0]['KAFKA_ACTION'];
+        Log::info($action);
         $data = $body[0]['data'];
 
         switch ($action) {
