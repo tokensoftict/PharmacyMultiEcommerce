@@ -35,6 +35,7 @@ class StockListJoinResource extends JsonResource
             "expiry_date" => $this?->expiry_date?->format("d M Y"),
             "custom_price" => $this->filterCustomPrices($this->resource),
             "stock_option_values" => $this->filterStockOptions($this->resource),
+            "is_wishlisted" => $this->isWishlisted($this->id),
         ];
     }
 }

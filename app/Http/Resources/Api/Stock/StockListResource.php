@@ -36,6 +36,7 @@ class StockListResource extends JsonResource
             "custom_price" => $this->filterCustomPrices($this->resource),
             "stock_option_values" => $this->filterStockOptions($this->resource),
             "dependent_products" => $this->getDependentProducts($this->resource),
+            "is_wishlisted" => $this->isWishlisted($this->id),
         ];
     }
 }

@@ -156,4 +156,27 @@ trait StockResourceHelper
 
         return $resolved;
     }
+
+    /**
+     * Check if the product is in the current user's wishlist.
+     *
+     * @param int $stockId
+     * @return bool
+     */
+    protected function isWishlisted($stockId): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+
+        $applicationModel = ApplicationEnvironment::$appRelated;
+        $application = $user->$applicationModel;
+
+        if (!$application || !$application->wishlist) {
+            return false;
+        }
+
+        return isset($application->wishlist[$stockId]);
+    }
 }

@@ -188,7 +188,7 @@ class ProcessGeneralService
      * @param array $data
      * @return Manufacturer
      */
-    public static function updateManufacturer(array $data): Manufacturer
+    public static function updateManufacturer(array $data): Manufacturer|bool
     {
         return Manufacturer::where("id", $data['id'])->update($data);
     }
@@ -244,7 +244,7 @@ class ProcessGeneralService
      * @param array $data
      * @return Productgroup
      */
-    public static function updateStockGroup(array $data): Productgroup
+    public static function updateStockGroup(array $data): Productgroup|bool
     {
         return Productgroup::where("id", $data['id'])->update($data);
     }

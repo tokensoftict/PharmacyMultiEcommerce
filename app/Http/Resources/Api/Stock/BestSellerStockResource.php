@@ -34,7 +34,10 @@ class BestSellerStockResource extends JsonResource
             "doorstep_not_formatted" => $this->stock->doorstep,
             "expiry_date" => $this->stock?->{ApplicationEnvironment::$stock_model_string}?->expiry_date?->format("d M Y"),
             "custom_price" => $this->filterCustomPrices($this->stock),
+            "selected_options" => $this->resolveSelectedOptions($this->resource, $this->selected_options ?? []),
+            "dependent_products" => $this->getDependentProducts($this->resource),
             "stock_option_values" => $this->filterStockOptions($this->stock),
+            "is_wishlisted" => $this->isWishlisted($this->stock->id),
         ];
     }
 }
