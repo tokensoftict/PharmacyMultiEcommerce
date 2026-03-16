@@ -88,10 +88,16 @@
                                 </div>
                             @endif
 
-                            @if(in_array($type, ['classifications', 'manufacturers', 'productcategories']))
+                            @if(in_array($type, ['classifications', 'manufacturers', 'productcategories', 'ImageSlider', 'lowestClassifications']))
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Select {{ ucfirst(str_replace('s', '', $type === 'productcategories' ? 'category' : $type)) }}</label>
-                                    <select wire:model="component_id" class="form-select">
+                                    @php
+                                        $isMultiple = in_array($component_name, ['topBrands', 'FlashDeals']);
+                                        $singularType = $type === 'productcategories' ? 'category' : str_replace('s', '', $type);
+                                        if ($type === 'ImageSlider') $singularType = 'Slider';
+                                        if ($type === 'lowestClassifications') $singularType = 'Classification';
+                                    @endphp
+                                    <label class="form-label">Select {{ ucfirst($singularType) }} {{ $isMultiple ? '(Multiple)' : '' }}</label>
+                                    <select wire:model="component_id" class="form-select" {{ $isMultiple ? 'multiple' : '' }}>
                                         <option value="">Choose...</option>
                                         @foreach($itemsForSelect as $dataItem)
                                             <option value="{{ $dataItem['id'] }}">{{ $dataItem['name'] }}</option>
@@ -99,7 +105,7 @@
                                     </select>
                                     @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
-                            @else
+@else
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Component ID (Optional)</label>
                                     <input type="text" wire:model="component_id" class="form-control" placeholder="e.g. ID for custom logic">

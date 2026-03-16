@@ -7,6 +7,7 @@ use App\Models\Classification;
 use App\Models\HomePageComponent;
 use App\Models\Manufacturer;
 use App\Models\Productcategory;
+use App\Models\Slider;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
@@ -35,9 +36,12 @@ class HomePageManager extends Component
             'ImageSlider' => 'Image Slider',
         ],
         'topBrands' => [
-            'topBrands' => 'Top Brands',
+            'manufacturers' => 'Manufacturers',
         ],
         'FlashDeals' => [
+            'classifications' => 'Classifications',
+            'manufacturers' => 'Manufacturers',
+            'productcategories' => 'Product Categories',
             'lowestClassifications' => 'Lowest Classifications',
         ],
     ];
@@ -46,7 +50,7 @@ class HomePageManager extends Component
         'selectedApp' => 'required|integer',
         'component_name' => 'required|string',
         'type' => 'nullable|string',
-        'component_id' => 'nullable|string',
+        'component_id' => 'nullable|mixed', // Can be string or array
         'label' => 'nullable|string',
         'limit' => 'required|integer',
         'see_all_link' => 'nullable|string',
@@ -73,12 +77,14 @@ class HomePageManager extends Component
         $this->component_id = '';
         $this->itemsForSelect = [];
 
-        if ($value === 'classifications') {
+        if ($value === 'classifications' || $value === 'lowestClassifications') {
             $this->itemsForSelect = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
         } elseif ($value === 'manufacturers') {
             $this->itemsForSelect = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
         } elseif ($value === 'productcategories') {
             $this->itemsForSelect = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        } elseif ($value === 'ImageSlider') {
+            $this->itemsForSelect = Slider::where('status', true)->orderBy('title', 'asc')->get(['id', 'title as name'])->toArray();
         }
     }
 
@@ -126,11 +132,13 @@ class HomePageManager extends Component
     {
         $this->validate();
 
+        $comp_id = is_array($this->component_id) ? implode(',', $this->component_id) : $this->component_id;
+
         HomePageComponent::updateOrCreate(['id' => $this->editingId], [
             'app_id' => $this->selectedApp,
             'component_name' => $this->component_name,
             'type' => $this->type,
-            'component_id' => $this->component_id,
+            'component_id' => $comp_id,
             'label' => $this->label,
             'limit' => $this->limit,
             'see_all_link' => $this->see_all_link,
@@ -152,7 +160,13 @@ class HomePageManager extends Component
         $this->selectedApp = $component->app_id;
         $this->component_name = $component->component_name;
         $this->type = $component->type;
-        $this->component_id = $component->component_id;
+        
+        $isMultiple = in_array($this->component_name, ['topBrands', 'FlashDeals']);
+        
+        $this->component_id = $isMultiple 
+            ? explode(',', $component->component_id) 
+            : $component->component_id;
+
         $this->label = $component->label;
         $this->limit = $component->limit;
         $this->see_all_link = $component->see_all_link;
@@ -162,12 +176,14 @@ class HomePageManager extends Component
         $this->availableTypes = $this->componentTypeMapping[$this->component_name] ?? [];
 
         // Populate itemsForSelect if needed
-        if ($this->type === 'classifications') {
+        if ($this->type === 'classifications' || $this->type === 'lowestClassifications') {
             $this->itemsForSelect = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
         } elseif ($this->type === 'manufacturers') {
             $this->itemsForSelect = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
         } elseif ($this->type === 'productcategories') {
             $this->itemsForSelect = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
+        } elseif ($this->type === 'ImageSlider') {
+            $this->itemsForSelect = Slider::where('status', true)->orderBy('title', 'asc')->get(['id', 'title as name'])->toArray();
         }
 
         $this->openModal();
