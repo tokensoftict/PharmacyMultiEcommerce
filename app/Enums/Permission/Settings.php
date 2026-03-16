@@ -2,7 +2,7 @@
 
 namespace App\Enums\Permission;
 
-enum Settings
+enumSettings
 {
     const CONFIG = [
         'name' => 'Settings',
@@ -12,7 +12,7 @@ enum Settings
         'visibility' => '1',
         'order' => '1',
         'icon' => 'icon',
-        'app_id' => [2,3]
+        'app_id' => [2, 3]
     ];
 
     const PERMISSION = [
@@ -777,12 +777,16 @@ enum Settings
             "label" => "Delivery Method Settings",
             "visibility" => "0",
             "guard_name" => "web",
+        ],
+        [
+            "name" => "backend.admin.settings.home_page_manager",
+            "module_id" => "1",
+            "label" => "Home Page Manager",
+            "visibility" => "1",
+            "guard_name" => "web",
         ]
 
     ];
-
-
-
 
 
 }
