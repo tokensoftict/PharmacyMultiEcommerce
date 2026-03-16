@@ -6,6 +6,7 @@ use App\Enums\KafkaAction;
 use App\Models\Classification;
 use App\Models\LocalCustomer;
 use App\Models\Manufacturer;
+use App\Models\MemberGroup;
 use App\Models\NewStockArrival;
 use App\Models\Productcategory;
 use App\Models\Productgroup;
@@ -66,6 +67,12 @@ class ProcessGeneralService
                 break;
             case KafkaAction::EARNED_LOYALTY:
                 self::updateUserLoyalty($data);
+                break;
+            case KafkaAction::CREATE_MEMBER_GROUP:
+                self::createMemberGroup($data);
+                break;
+            case KafkaAction::UPDATE_MEMBER_GROUP:
+                self::updateMemberGroup($data);
                 break;
         }
 
@@ -306,6 +313,26 @@ class ProcessGeneralService
             return true;
         }
         return false;
+    }
+
+
+    public static function createMemberGroup(array $data): MemberGroup|bool
+    {
+        if (isset($data[1])) {
+            Schema::disableForeignKeyConstraints();
+            DB::table("member_groups")->truncate();
+            $result = DB::table("member_groups")->insert($data);
+            Schema::enableForeignKeyConstraints();
+            return $result;
+        }
+        else {
+            return MemberGroup::create($data);
+        }
+    }
+
+    public static function updateMemberGroup(array $data): MemberGroup|bool
+    {
+        return MemberGroup::where("id", $data['id'])->update($data);
     }
 
 }
