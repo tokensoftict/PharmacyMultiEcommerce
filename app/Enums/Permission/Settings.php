@@ -2,7 +2,7 @@
 
 namespace App\Enums\Permission;
 
-enumSettings
+enum Settings
 {
     const CONFIG = [
         'name' => 'Settings',
