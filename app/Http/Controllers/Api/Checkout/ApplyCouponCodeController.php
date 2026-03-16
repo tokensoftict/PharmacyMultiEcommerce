@@ -74,24 +74,24 @@ class ApplyCouponCodeController extends ApiController
 
 
         //now check if coupon is in a valid date range
+        $now = now()->startOfDay();
+        $valid_from = \Carbon\Carbon::parse($discount->valid_from)->startOfDay();
+        $valid_to = \Carbon\Carbon::parse($discount->valid_to)->startOfDay();
 
-        $valid_from = $discount->valid_from;
-
-        $valid_to = $discount->valid_to;
-
-        if(!(date('Y-m-d') >= $valid_from )) {
+        if ($now->lt($valid_from)) {
             return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if(!(date('Y-m-d') <= $valid_to )){
+        if ($now->gt($valid_to)) {
             return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
 
-        //check if the coupon is for specifc customer
+        //check if the coupon is for specific customer
+        $targetedUserId = ($discountType === "Voucher") ? $discount->customer_id : $discount->users_id;
 
-        if($discount->customer_type_id != NULL && $discount->user_id != NULL) {
-            if($checkoutUser->id != $discount->user_id){
+        if($discount->customer_type_id != NULL && $targetedUserId != NULL) {
+            if($checkoutUser->id != $targetedUserId){
                 return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
         }
@@ -132,8 +132,8 @@ class ApplyCouponCodeController extends ApiController
 
         } else {
             $value = $discount->type_value;
-            if(($cartTotal - $value) == 0 || ($cartTotal - $value) < 0){
-                return $this->sendErrorResponse("You have reached the maximum usage allowed for this coupon", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+            if ($value > $cartTotal) {
+                $value = $cartTotal;
             }
             $value = -$value;
         }
