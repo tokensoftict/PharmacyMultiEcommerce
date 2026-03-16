@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Collection;
  *
  * @property int $id
  * @property int $local_id
+ * @property int|null $member_group_id
  * @property float $loyalty_points
  * @property string $firstname
  * @property string $lastname
@@ -95,7 +96,8 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         'remember_token',
         'auth_code',
         'local_id',
-        'loyalty_points'
+        'loyalty_points',
+        'member_group_id'
     ];
 
     protected $appends = ['cus_exist'];
@@ -199,5 +201,10 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
     public function address()
     {
         return $this->hasOne(Address::class);
+    }
+
+    public function memberGroup()
+    {
+        return $this->belongsTo(MemberGroup::class, 'member_group_id');
     }
 }
