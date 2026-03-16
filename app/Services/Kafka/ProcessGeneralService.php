@@ -12,6 +12,7 @@ use App\Models\Productgroup;
 use App\Models\Stock;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Junges\Kafka\Message\ConsumedMessage;
 
@@ -20,7 +21,7 @@ class ProcessGeneralService
     public static function handle(ConsumedMessage $message): void
     {
         $body = $message->getBody();
-        ;
+        Log::info($body);
         $action = $body['action'];
         $data = $body[0]['data'];
 
