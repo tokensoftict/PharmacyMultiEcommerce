@@ -88,13 +88,14 @@
                                 </div>
                             @endif
 
-                            @if(in_array($type, ['classifications', 'manufacturers', 'productcategories', 'ImageSlider', 'lowestClassifications']))
+                            @if(in_array($type, ['classifications', 'manufacturers', 'productcategories', 'ImageSlider', 'lowestClassifications', 'mixed']))
                                 <div class="col-md-6 mb-3">
                                     @php
-                                        $isMultiple = in_array($component_name, ['topBrands', 'FlashDeals']);
+                                        $isMultiple = in_array($component_name, ['topBrands', 'FlashDeals', 'ImageSlider']);
                                         $singularType = $type === 'productcategories' ? 'category' : str_replace('s', '', $type);
                                         if ($type === 'ImageSlider') $singularType = 'Slider';
                                         if ($type === 'lowestClassifications') $singularType = 'Classification';
+                                        if ($type === 'mixed') $singularType = 'Items';
                                     @endphp
                                     <label class="form-label">Select {{ ucfirst($singularType) }} {{ $isMultiple ? '(Multiple)' : '' }}</label>
                                     <select wire:model="component_id" class="form-select" {{ $isMultiple ? 'multiple' : '' }}>

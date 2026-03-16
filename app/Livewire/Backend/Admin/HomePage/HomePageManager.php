@@ -43,6 +43,7 @@ class HomePageManager extends Component
             'manufacturers' => 'Manufacturers',
             'productcategories' => 'Product Categories',
             'lowestClassifications' => 'Lowest Classifications',
+            'mixed' => 'Mixed (Class/Mfr/Cat)',
         ],
     ];
 
@@ -85,6 +86,11 @@ class HomePageManager extends Component
             $this->itemsForSelect = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
         } elseif ($value === 'ImageSlider') {
             $this->itemsForSelect = Slider::where('status', true)->orderBy('title', 'asc')->get(['id', 'title as name'])->toArray();
+        } elseif ($value === 'mixed') {
+            $classifications = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'classification:'.$item->id, 'name' => 'Class: '.$item->name]);
+            $manufacturers = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'manufacturer:'.$item->id, 'name' => 'Mfr: '.$item->name]);
+            $categories = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'productcategory:'.$item->id, 'name' => 'Cat: '.$item->name]);
+            $this->itemsForSelect = $classifications->concat($manufacturers)->concat($categories)->toArray();
         }
     }
 
@@ -161,7 +167,7 @@ class HomePageManager extends Component
         $this->component_name = $component->component_name;
         $this->type = $component->type;
         
-        $isMultiple = in_array($this->component_name, ['topBrands', 'FlashDeals']);
+        $isMultiple = in_array($this->component_name, ['topBrands', 'FlashDeals', 'ImageSlider']);
         
         $this->component_id = $isMultiple 
             ? explode(',', $component->component_id) 
@@ -184,6 +190,11 @@ class HomePageManager extends Component
             $this->itemsForSelect = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->toArray();
         } elseif ($this->type === 'ImageSlider') {
             $this->itemsForSelect = Slider::where('status', true)->orderBy('title', 'asc')->get(['id', 'title as name'])->toArray();
+        } elseif ($this->type === 'mixed') {
+            $classifications = Classification::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'classification:'.$item->id, 'name' => 'Class: '.$item->name]);
+            $manufacturers = Manufacturer::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'manufacturer:'.$item->id, 'name' => 'Mfr: '.$item->name]);
+            $categories = Productcategory::where('status', true)->orderBy('name', 'asc')->get(['id', 'name'])->map(fn($item) => ['id' => 'productcategory:'.$item->id, 'name' => 'Cat: '.$item->name]);
+            $this->itemsForSelect = $classifications->concat($manufacturers)->concat($categories)->toArray();
         }
 
         $this->openModal();
