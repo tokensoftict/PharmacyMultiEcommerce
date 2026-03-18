@@ -14,7 +14,7 @@ class ProcessOrderService
     public static function handle(ConsumedMessage $message): void
     {
         $body = $message->getBody();
-
+        Log::info($body);
         if (isset($body['order']))
             return;
 

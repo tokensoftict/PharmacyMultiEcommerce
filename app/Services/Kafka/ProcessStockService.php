@@ -19,7 +19,6 @@ class ProcessStockService
         $body = $message->getBody();
         $action = $body['action'];
         $data = $body[0]['data'];
-        Log::info($action);
         switch ($action) {
             case KafkaAction::CREATE_STOCK:
                 self::createStock($data);
