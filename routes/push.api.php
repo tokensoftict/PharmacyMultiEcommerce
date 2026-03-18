@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+Route::get("/view_order", function(){
+    return response()->json(\App\Models\Order::findorfail(request()->order_id));
+});
+
 Route::get("/", ['uses' => 'App\Http\Controllers\HomePageController@pushIndex']);
 Route::post('manufacturers', ['as' => 'push.manufacturer' ,'uses' => 'App\Http\Controllers\Push\ManufacturerPushController']);
 Route::post('classifications', ['as' => 'push.classification', 'uses' => 'App\Http\Controllers\Push\ClassificationPushController']);

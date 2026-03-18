@@ -9,9 +9,6 @@ use LivewireFilemanager\Filemanager\Http\Controllers\Files\FileController;
 
 
 Route::domain(config('app.MAIN_DOMAIN'))->middleware(['web'])->group(function (){
-    Route::get("/view_order", function(){
-        return response()->json(\App\Models\Order::findorfail(request()->order_id));
-    });
     Volt::route('/', 'pages.frontend.customer.index')->name('customer.index');
     //Route::get('/', [\App\Http\Controllers\HomePageController::class, 'index'])->name('customer.index');
     Route::get('file-manager', 'App\Http\Controllers\Utilities\FileManagerController@index')->name('file-manager.index');
