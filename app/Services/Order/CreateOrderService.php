@@ -464,6 +464,8 @@ class CreateOrderService
         $local_order = \App\Models\Old\Order::with(['user','address','address.zone','orderStatus','orderTotalOrders','orderProducts','paymentMethod','shippingMethod','shippingAddress','shippingAddress.zone'])
             ->find($order_id);
 
+        if(!$local_order) return true;
+
         $orderArray = $local_order->toArray();
 
         $alreadyCompleted = [3, 4, 5, 6, 8];
