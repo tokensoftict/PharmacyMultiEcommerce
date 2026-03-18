@@ -34,7 +34,7 @@ class ImportOrderFromOldServer extends Command
             ->where('id', '>',$lastOrder)->limit(50)->get();
 
         foreach ($orders as $order) {
-            $importOrderService->handle($order->toArray());
+            //$importOrderService->handle($order->toArray());
         }
 
         $lastOrder = $orders->last();
