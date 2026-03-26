@@ -41,6 +41,7 @@ trait ApplicationUserCheckoutTrait
                 $price = $this->resolvePriceByQuantity($shoppingCart[$stock->id]['quantity'], $price, $department, $customPrices->toArray(), $stock);
             }
 
+
             // Options Price Adjustment
             $options = $shoppingCart[$stock->id]['options'] ?? [];
             if (count($options) > 0) {
