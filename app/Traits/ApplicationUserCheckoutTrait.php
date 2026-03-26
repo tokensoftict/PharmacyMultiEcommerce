@@ -38,7 +38,7 @@ trait ApplicationUserCheckoutTrait
             $price = ($stock->special === false ? $stock->{ $stockPriceModel}->price : $stock->special);
             $customPrices = $stock->stockquantityprices->where('department', $department);
             if ($customPrices->count() > 0) {
-                $price = $this->resolvePriceByQuantity($shoppingCart[$stock->id]['quantity'], $price, $customPrices->toArray());
+                $price = $this->resolvePriceByQuantity($shoppingCart[$stock->id]['quantity'], $price, $department, $customPrices->toArray(), $stock);
             }
 
             // Options Price Adjustment
