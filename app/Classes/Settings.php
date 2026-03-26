@@ -45,7 +45,7 @@ class Settings extends Valuestore
      */
     public static function Completed(): array
     {
-        return [status("Dispatched"), status("Completed")];
+        return [status("Dispatched"), status("Complete")];
     }
 
     /**
