@@ -176,7 +176,7 @@
                                 </div>
                                 <h5 class="text-body-secondary">Address</h5>
                                 <p class="text-body-secondary">{{ $this->wholesalesUser?->address->name ?? "" }}<br />
-                                    {{ $this->wholesalesUser?->address->address_1 }}<br />{{ $this->wholesalesUser?->address?->state->name ?? "" }}, {{ $this->wholesalesUser->address?->town->name ?? ""}}
+                                    {{ $this->wholesalesUser?->address->address_1 ?? "" }}<br />{{ $this->wholesalesUser?->address?->state->name ?? "" }}, {{ $this->wholesalesUser->address?->town->name ?? ""}}
                                 </p>
                                 <div class="mb-3">
                                     <h5 class="text-body-secondary">Email</h5><a href="mailto:{{ $this->wholesalesUser->user->email }}">{{  $this->wholesalesUser->user->email }}</a>
