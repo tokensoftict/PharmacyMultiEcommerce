@@ -17,13 +17,14 @@ trait ApplicationUserCheckoutTrait
     /**
      * @return int
      */
-    public final function calculateShoppingCartTotal() : int
+    public final function calculateShoppingCartTotal(): int
     {
-        if(is_null($this->cart)) return 0;
+        if (is_null($this->cart))
+            return 0;
 
         $shoppingCart = $this->cart;
 
-        if(count($shoppingCart) == 0) {
+        if (count($shoppingCart) == 0) {
             return 0;
         }
 
@@ -33,10 +34,10 @@ trait ApplicationUserCheckoutTrait
         $stocks = Stock::with([$stockPriceModel])->whereIn('id', $stockIDs)->get();
         $department = ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices" ? 'retail' : 'wholesales';
 
-        return  $stocks->sum(function($stock) use($shoppingCart, $stockPriceModel, $department){
-            $price = ($stock->special === false ? $stock->{$stockPriceModel}->price : $stock->special);
+        return $stocks->sum(function ($stock) use ($shoppingCart, $stockPriceModel, $department) {
+            $price = ($stock->special === false ? $stock->{ $stockPriceModel}->price : $stock->special);
             $customPrices = $stock->stockquantityprices->where('department', $department);
-            if($customPrices->count() > 0) {
+            if ($customPrices->count() > 0) {
                 $price = $this->resolvePriceByQuantity($shoppingCart[$stock->id]['quantity'], $price, $customPrices->toArray());
             }
 
@@ -54,13 +55,13 @@ trait ApplicationUserCheckoutTrait
     /**
      * @return array
      */
-    public final function getWishlistItems() : AnonymousResourceCollection
+    public final function getWishlistItems(): AnonymousResourceCollection
     {
         $wishlist = $this->wishlist ?? [];
         $stocks = Stock::whereKey(array_keys($wishlist))->get();
 
-        $stocks = $stocks->map(function($stock) use ($wishlist){
-            $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
+        $stocks = $stocks->map(function ($stock) use ($wishlist) {
+            $price = ($stock->special === false ? $stock->{ ApplicationEnvironment::$stock_model_string}->price : $stock->special);
             $stock->added_date = $wishlist[$stock->id]['date'];
             $stock->price = $price;
             return $stock;
@@ -69,18 +70,18 @@ trait ApplicationUserCheckoutTrait
         return StockInWishlistResource::collection($stocks);
     }
 
-    public final function getCart() : Collection
+    public final function getCart(): Collection
     {
         $cart = $this->cart ?? [];
         $stocks = Stock::whereKey(array_keys($cart))->get();
         $totalItemsInCarts = 0;
         $department = ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices" ? 'retail' : 'wholesales';
 
-        return $stocks->map(function($stock) use ($cart, &$totalItemsInCarts, $department){
-            $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
+        return $stocks->map(function ($stock) use ($cart, &$totalItemsInCarts, $department) {
+            $price = ($stock->special === false ? $stock->{ ApplicationEnvironment::$stock_model_string}->price : $stock->special);
             $customPrices = $stock->stockquantityprices->where('department', $department);
-            if($customPrices->count() > 0) {
-                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray());
+            if ($customPrices->count() > 0) {
+                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray(), $department, $stock);
             }
 
             // Options Price Adjustment
@@ -93,20 +94,30 @@ trait ApplicationUserCheckoutTrait
             $stock->added_date = $cart[$stock->id]['date'];
             $stock->price = $price;
             $stock->total = ($cart[$stock->id]['quantity'] * $price);
-            $totalItemsInCarts+= ($cart[$stock->id]['quantity'] * $price);
+            $totalItemsInCarts += ($cart[$stock->id]['quantity'] * $price);
             return $stock;
         });
     }
 
-    public final function resolvePriceByQuantity(int $quantity, float $defaultSellingPrice, array $customPrices): float
+    public final function resolvePriceByQuantity(int $quantity, float $defaultSellingPrice, array $customPrices, string $department, Stock $stock): float
     {
         foreach ($customPrices as $priceRule) {
-            $min = (int) $priceRule['min_qty'];
-            $max = (int) $priceRule['max_qty'];
+            $min = (int)$priceRule['min_qty'];
+            $max = (int)$priceRule['max_qty'];
 
-            if ($quantity >= $min && $quantity < $max) {
-                return (float) $priceRule['price'];
+            if ($department == "wholesales") {
+                if (($quantity / $stock->carton) >= $min && ($quantity / $stock->carton) < $max) {
+                    return (float)$priceRule['price'];
+                }
             }
+            else {
+
+                if ($quantity >= $min && $quantity < $max) {
+                    return (float)$priceRule['price'];
+                }
+            }
+
+
         }
 
         return $defaultSellingPrice;
@@ -121,12 +132,13 @@ trait ApplicationUserCheckoutTrait
         foreach ($stock->stock_option_values as $optionValue) {
             foreach ($optionValue->options as $option) {
                 if (in_array($option['id'], $selectedOptionIds)) {
-                    $price = (float) ($option[$priceField] ?? 0);
+                    $price = (float)($option[$priceField] ?? 0);
                     $prefix = $option[$prefixField] ?? '+';
-                    
+
                     if ($prefix === '+') {
                         $adjustment += $price;
-                    } else if ($prefix === '-') {
+                    }
+                    else if ($prefix === '-') {
                         $adjustment -= $price;
                     }
                 }
@@ -139,18 +151,18 @@ trait ApplicationUserCheckoutTrait
     /**
      * @return array
      */
-    public final function getShoppingCartItems() : array
+    public final function getShoppingCartItems(): array
     {
         $cart = $this->cart ?? [];
         $stocks = Stock::whereKey(array_keys($cart))->get();
         $totalItemsInCarts = 0;
         $department = ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices" ? 'retail' : 'wholesales';
 
-        $stocks = $stocks->map(function($stock) use ($cart, &$totalItemsInCarts, $department){
-            $price = ($stock->special === false ? $stock->{ApplicationEnvironment::$stock_model_string}->price : $stock->special);
+        $stocks = $stocks->map(function ($stock) use ($cart, &$totalItemsInCarts, $department) {
+            $price = ($stock->special === false ? $stock->{ ApplicationEnvironment::$stock_model_string}->price : $stock->special);
             $customPrices = $stock->stockquantityprices->where('department', $department);
-            if($customPrices->count() > 0) {
-                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray());
+            if ($customPrices->count() > 0) {
+                $price = $this->resolvePriceByQuantity($cart[$stock->id]['quantity'], $price, $customPrices->toArray(), $department, $stock);
             }
 
             // Options Price Adjustment
@@ -166,14 +178,14 @@ trait ApplicationUserCheckoutTrait
             $stock->parent_stock_id = $cart[$stock->id]['parent_stock_id'] ?? null;
             $stock->price = $price;
             $stock->total = ($cart[$stock->id]['quantity'] * $price);
-            $totalItemsInCarts+= ($cart[$stock->id]['quantity'] * $price);
+            $totalItemsInCarts += ($cart[$stock->id]['quantity'] * $price);
             return $stock;
         });
 
 
         $meta = [
             "noItems" => $stocks->count(),
-            "totalItemsInCarts" =>$totalItemsInCarts,
+            "totalItemsInCarts" => $totalItemsInCarts,
             'totalItemsInCarts_formatted' => money($totalItemsInCarts)
         ];
 
@@ -181,12 +193,12 @@ trait ApplicationUserCheckoutTrait
             DeliveryMethod::find(7), []
         );
 
-        if($calculateDoorStepDelivery['status'] === true) {
+        if ($calculateDoorStepDelivery['status'] === true) {
             $meta['doorStepDelivery'] = $calculateDoorStepDelivery;
         }
 
         return [
-            "items" =>StockInCartResource::collection($stocks),
+            "items" => StockInCartResource::collection($stocks),
             "meta" => $meta
         ];
     }
@@ -196,11 +208,11 @@ trait ApplicationUserCheckoutTrait
      * @param int|NULL $shoppingCartSubTotal
      * @return array
      */
-    public final function getUserCheckoutSubTotal(int $shoppingCartSubTotal = NULL) : array
+    public final function getUserCheckoutSubTotal(int $shoppingCartSubTotal = NULL): array
     {
-        $subTotal =$shoppingCartSubTotal ?? $this->calculateShoppingCartTotal();
+        $subTotal = $shoppingCartSubTotal ?? $this->calculateShoppingCartTotal();
         $items[] = [
-            "name" =>  "Sub Total",
+            "name" => "Sub Total",
             "amount" => $subTotal,
             "amount_formatted" => money($subTotal),
             "disabled" => true,
@@ -217,28 +229,29 @@ trait ApplicationUserCheckoutTrait
     /**
      * @return array
      */
-    public final function getUserCheckOutOrderTotal(int $shoppingCartSubTotal = NULL) : array
+    public final function getUserCheckOutOrderTotal(int $shoppingCartSubTotal = NULL): array
     {
         $removeOrderTotal = $this->remove_order_total ?? [];
         $subTotal = $shoppingCartSubTotal ?? $this->calculateShoppingCartTotal();
         $orderTotalList = [];
 
         $totalOfOrderTotal = OrderTotal::where('status', "1")->get();
-        $totalOfOrderTotal = $totalOfOrderTotal->sum(function($orderTotal) use($subTotal, $removeOrderTotal, &$orderTotalList) {
-            if($orderTotal->order_total_type == "Percentage") {
+        $totalOfOrderTotal = $totalOfOrderTotal->sum(function ($orderTotal) use ($subTotal, $removeOrderTotal, &$orderTotalList) {
+            if ($orderTotal->order_total_type == "Percentage") {
                 $amount = (((float)$orderTotal->value / 100) * $subTotal);
                 $orderTotalList[] = [
-                    "name" => $orderTotal->title. "[".$orderTotal->value."%]",
+                    "name" => $orderTotal->title . "[" . $orderTotal->value . "%]",
                     "amount" => $amount,
-                    "amount_formatted" =>  money($amount),
+                    "amount_formatted" => money($amount),
                     "id" => $orderTotal->id,
                     "autoCheck" => !in_array($orderTotal->id, $removeOrderTotal),
                     "disabled" => false
                 ];
-            } else {
+            }
+            else {
                 $amount = (int)$orderTotal->value;
                 $orderTotalList[] = [
-                    "name" => $orderTotal->title. "[".money($amount)."]",
+                    "name" => $orderTotal->title . "[" . money($amount) . "]",
                     "amount" => $amount,
                     "amount_formatted" => money($amount),
                     "id" => $orderTotal->id,
@@ -262,17 +275,17 @@ trait ApplicationUserCheckoutTrait
      * @param float|int $total
      * @return array|false[]
      */
-    public final function calculatePayStackCharges(float|int $total) : array
+    public final function calculatePayStackCharges(float|int $total): array
     {
         $paymentMethod = PaymentMethod::find($this->getCheckoutPaymentMethod());
-        $paystackCharges =[];
-        if($paymentMethod and $paymentMethod->code === "Paystack") {
-            $paymentMethodRepository = "App\\Repositories\\".ucwords(strtolower($paymentMethod->code))."Repository";
+        $paystackCharges = [];
+        if ($paymentMethod and $paymentMethod->code === "Paystack") {
+            $paymentMethodRepository = "App\\Repositories\\" . ucwords(strtolower($paymentMethod->code)) . "Repository";
             $paymentMethodRepository = new $paymentMethodRepository();
             $charges = $paymentMethodRepository->calculateCharges($total);
 
             $paystackCharges[] = [
-                "name" =>  $charges['name'],
+                "name" => $charges['name'],
                 "amount" => $charges['amount'],
                 "amount_formatted" => money($charges['amount']),
                 "disabled" => false,
@@ -287,17 +300,17 @@ trait ApplicationUserCheckoutTrait
             ];
 
         }
-        return ['status' =>false];
+        return ['status' => false];
     }
 
 
     /**
      * @return array
      */
-    public final function getUserCheckDeliveryTotal() : array
+    public final function getUserCheckDeliveryTotal(): array
     {
         $deliveryMethod = $this->checkout['deliveryMethod']['deliveryMethod'];
-        if(!$deliveryMethod) {
+        if (!$deliveryMethod) {
             return [
                 'status' => false,
                 'message' => "Unable able to determine your delivery Method"
@@ -312,17 +325,18 @@ trait ApplicationUserCheckoutTrait
         $methodOfDelivery = DeliveryMethod::findorfail($deliveryMethod);
         //call the associated delivery repository to calculate delivery cost
         $code = $methodOfDelivery->code;
-        $deliveryRepository = "App\\Repositories\\".ucwords(strtolower($code))."Repository";
+        $deliveryRepository = "App\\Repositories\\" . ucwords(strtolower($code)) . "Repository";
         $deliveryRepository = new $deliveryRepository();
-        $deliveryTotal = $deliveryRepository->calculateDeliveryTotal($shoppingCart, $methodOfDelivery ,$this->checkout['deliveryMethod']['extraData']);
+        $deliveryTotal = $deliveryRepository->calculateDeliveryTotal($shoppingCart, $methodOfDelivery, $this->checkout['deliveryMethod']['extraData']);
 
-        if($deliveryTotal['status'] === false) return [
-            'status' =>false,
-            'message' => $deliveryTotal['error']
-        ];
+        if ($deliveryTotal['status'] === false)
+            return [
+                'status' => false,
+                'message' => $deliveryTotal['error']
+            ];
 
         $deliveryItems[] = [
-            "name" =>  $deliveryTotal['name']." - ".money($deliveryTotal['amount']),
+            "name" => $deliveryTotal['name'] . " - " . money($deliveryTotal['amount']),
             "amount" => $deliveryTotal['amount'],
             "amount_formatted" => money($deliveryTotal['amount']),
             "disabled" => true,

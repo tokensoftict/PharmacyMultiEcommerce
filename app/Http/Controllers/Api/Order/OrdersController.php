@@ -21,10 +21,10 @@ class OrdersController extends ApiController
 
     public array $orderTypes = [];
 
-    public function __invoke(Request $request) : JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $checkoutUser = getApplicationModel();
-        if(!$checkoutUser) {
+        if (!$checkoutUser) {
             return $this->sendErrorResponse("Application user error, Please restart the application to complete your checkout", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 

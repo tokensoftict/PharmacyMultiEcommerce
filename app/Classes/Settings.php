@@ -17,7 +17,7 @@ class Settings extends Valuestore
      * @param array $defaultSettings
      * @return void
      */
-    public static function initSettings(array $defaultSettings) : void
+    public static function initSettings(array $defaultSettings): void
     {
         app(Settings::class)->put($defaultSettings);
     }
@@ -26,7 +26,7 @@ class Settings extends Valuestore
     /**
      * @return Valuestore
      */
-    public static function getSetting() : Valuestore
+    public static function getSetting(): Valuestore
     {
         return app(Settings::class);
     }
@@ -35,15 +35,15 @@ class Settings extends Valuestore
     /**
      * @return array
      */
-    public static function InProgress() : array
+    public static function InProgress(): array
     {
-        return [status('Processing Error'), status("Pending"), status("Processing"), status("Packing"), status("Waiting For Payment"), status("Paid")];
+        return [status('Processing Error'), status("Pending"), status("Processing"), status("Packing"), status("Waiting For Payment"), status("Paid"), status("Payment Confirmed")];
     }
 
     /**
      * @return array
      */
-    public static function Completed() : array
+    public static function Completed(): array
     {
         return [status("Dispatched"), status("Completed")];
     }
@@ -51,7 +51,7 @@ class Settings extends Valuestore
     /**
      * @return array
      */
-    public static function Cancelled() : array
+    public static function Cancelled(): array
     {
         return [status("Cancelled")];
     }
@@ -60,11 +60,11 @@ class Settings extends Valuestore
      * @param string $key
      * @return string|int|null
      */
-    public final function uiSettings(string $key) : string|int|null
+    public final function uiSettings(string $key): string|int|null
     {
-        if(auth()->check()){
-            if(isset(auth()->user()->{$key}) and !is_null((auth()->user()->{$key}))){
-                return auth()->user()->{$key};
+        if (auth()->check()) {
+            if (isset(auth()->user()->{ $key}) and !is_null((auth()->user()->{ $key}))) {
+                return auth()->user()->{ $key};
             }
         }
 
