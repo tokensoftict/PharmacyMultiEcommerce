@@ -26,6 +26,9 @@ class ProcessStockService
             case KafkaAction::UPDATE_STOCK:
                 self::updateMultipleOrSingleStock($data);
                 break;
+            case KafkaAction::UPLOAD_IMAGE:
+                self::uploadImage($body[0]);
+                break;
             default:
 
         }
@@ -170,6 +173,45 @@ class ProcessStockService
                 'option_id' => $optionValue['option_id'],
                 'options' => $optionValue['options'],
             ]);
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public static function uploadImage(array $data): void
+    {
+        $localStockId = $data['local_stock_id'];
+        $imagePath = $data['image_path'];
+
+        $stock = Stock::where('local_stock_id', $localStockId)->first();
+
+        if ($stock) {
+            try {
+                $imageFolder = stock_image_folder();
+                
+                // Add media from Contabo disk
+                $media = $imageFolder
+                    ->addMediaFromDisk($imagePath, 'contabo')
+                    ->preservingOriginal()
+                    ->toMediaCollection('medialibrary');
+
+                // Link media to Stock
+                \App\Models\StockMedia::updateOrCreate([
+                    'stock_id' => $stock->id,
+                    'media_id' => $media->id,
+                ],[
+                    'stock_id' => $stock->id,
+                    'media_id' => $media->id,
+                ]);
+
+                Log::info("Image synchronized for stock locally: {$stock->id} (local: {$localStockId})");
+            } catch (\Exception $e) {
+                Log::error("Error synchronizing image for stock {$localStockId}: " . $e->getMessage());
+            }
+        } else {
+            Log::warning("Stock not found for image synchronization: {$localStockId}");
         }
     }
 }

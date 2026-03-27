@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $name
  * @property string|null $seo
+ * @property string|null $major_classification
  * @property bool $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -32,12 +33,13 @@ class Classification extends Model
 	protected $fillable = [
 		'name',
 		'seo',
-		'status'
+		'status',
+		'major_classification'
 	];
 
-    public function stocks()
-    {
-        return $this->hasMany(Stock::class);
-    }
+	public function stocks()
+	{
+		return $this->hasMany(Stock::class);
+	}
 
 }
