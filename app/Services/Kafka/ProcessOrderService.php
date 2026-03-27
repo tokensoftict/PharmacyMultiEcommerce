@@ -19,7 +19,6 @@ class ProcessOrderService
 
         $action = $body['action'];
         $data = $body[0];
-        Log::info($action);
         if ($action === KafkaAction::PROCESS_ORDER)
             return;
 
