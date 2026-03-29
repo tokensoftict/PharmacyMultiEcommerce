@@ -207,14 +207,14 @@ class ProcessStockService
                     'media_id' => $media->id,
                 ]);
 
-                Log::info("Image synchronized for stock locally: {$stock->id} (local: {$localStockId})");
+                Log::info("Image synchronized for stock locally media ID: $media->id");
             }
             catch (\Exception $e) {
-                Log::error("Error synchronizing image for stock {$localStockId}: " . $e->getMessage());
+            //Log::error("Error synchronizing image for stock {$localStockId}: " . $e->getMessage());
             }
         }
         else {
-            Log::warning("Stock not found for image synchronization: {$localStockId}");
+        //Log::warning("Stock not found for image synchronization: {$localStockId}");
         }
     }
 }
