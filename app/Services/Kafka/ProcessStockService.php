@@ -192,6 +192,12 @@ class ProcessStockService
             try {
                 $imageFolder = stock_image_folder();
 
+                $existingMedia = $stock?->stock_media?->media;
+                if (isset($existingMedia)) {
+                   $stock?->stock_medias()->delete();
+                   $existingMedia->delete();
+                }
+
                 // Add media from Contabo disk
                 $media = $imageFolder
                     ->addMediaFromDisk($imagePath, 'contabo')
