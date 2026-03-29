@@ -28,7 +28,7 @@ class ProcessStockService
                 self::updateMultipleOrSingleStock($data);
                 break;
             case KafkaAction::UPLOAD_IMAGE:
-                self::uploadImage($body[0]);
+                self::uploadImage($data);
                 break;
             default:
 
