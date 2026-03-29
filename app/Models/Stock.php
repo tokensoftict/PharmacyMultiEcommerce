@@ -225,4 +225,9 @@ class Stock extends Model
     {
         return $this->hasMany(StockOptionValue::class);
     }
+
+    public function stockbarcodes()
+    {
+        return $this->hasMany(Stockbarcode::class);
+    }
 }

@@ -124,6 +124,11 @@ class ProcessStockService
             self::saveStockOptionValues($data['stock_option_values'], $pushStock);
         }
 
+        // Handle Barcodes
+        if (isset($data['stock_barcodes'])) {
+            self::saveStockBarcodes($data['stock_barcodes'], $pushStock);
+        }
+
         return $pushStock;
     }
 
@@ -172,6 +177,21 @@ class ProcessStockService
                 'option_type' => $optionValue['option'] ?? 'select',
                 'option_id' => $optionValue['option_id'],
                 'options' => $optionValue['options'],
+            ]);
+        }
+    }
+
+    /**
+     * @param array $barcodes
+     * @param Stock $pushStock
+     * @return void
+     */
+    public static function saveStockBarcodes(array $barcodes, Stock $pushStock): void
+    {
+        $pushStock->stockbarcodes()->delete();
+        foreach ($barcodes as $barcode) {
+            $pushStock->stockbarcodes()->create([
+                'barcode' => $barcode,
             ]);
         }
     }
