@@ -19,7 +19,6 @@ class ProcessStockService
         $body = $message->getBody();
         $action = $body['action'];
         $data = $body[0]['data'];
-        Log::info($data);
         switch ($action) {
             case KafkaAction::CREATE_STOCK:
                 self::createStock($data);
@@ -187,7 +186,6 @@ class ProcessStockService
         $imagePath = $data['image_path'];
 
         $stock = Stock::where('local_stock_id', $localStockId)->first();
-        Log::info($data);
         if ($stock) {
             try {
                 $imageFolder = stock_image_folder();
@@ -213,7 +211,7 @@ class ProcessStockService
                     'media_id' => $media->id,
                 ]);
 
-                Log::info("Image synchronized for stock locally media ID: $media->id");
+                //Log::info("Image synchronized for stock locally media ID: $media->id");
             }
             catch (\Exception $e) {
             //Log::error("Error synchronizing image for stock {$localStockId}: " . $e->getMessage());
