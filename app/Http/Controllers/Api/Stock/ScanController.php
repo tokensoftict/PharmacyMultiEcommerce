@@ -26,7 +26,7 @@ class ScanController extends ApiController
         }
 
         $stock = $barcode->stock;
-dd($stock);
+        dd($barcode);
         return $this->showOne(
             new StockShowResource($stock)
         );
