@@ -26,7 +26,12 @@ class ScanController extends ApiController
         }
 
         $stock = $barcode->stock;
-        dd($barcode);
+
+
+        if (!$stock) {
+            return $this->sendErrorResponse('Product not found for this barcode', 404);
+        }
+
         return $this->showOne(
             new StockShowResource($stock)
         );
