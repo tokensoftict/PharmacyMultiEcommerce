@@ -21,58 +21,59 @@ class ExportPromotionTemplate implements FromCollection, WithHeadings
 
     public function collection()
     {
-        if($this->id != NULL){
+//        if($this->id != NULL){
+//
+//            return PromotionItem::query()->select(
+//                "stocks.id",
+//                "stocks.name",
+//                "manufacturers.name as manufacturer",
+//                "productcategories.name as productcategory",
+//                "classifications.name as classification",
+//                "stocks.box",
+//                ApplicationEnvironment::$stock_model_string.".price",
+//                ApplicationEnvironment::$stock_model_string.".quantity",
+//                "promotion_items.price as promotion_price",
+//            )->join('stocks', "stocks.id", "=", "promotion_items.stock_id")
+//                ->join(ApplicationEnvironment::$stock_model_string, 'stocks.id', '=', ApplicationEnvironment::$stock_model_string.'.stock_id' )
+//                ->leftjoin("manufacturers", "stocks.manufacturer_id", "manufacturers.id")
+//                ->leftjoin("productcategories", "stocks.productcategory_id", "productcategories.id")
+//                ->leftjoin("classifications", "stocks.classification_id", "classifications.id")
+//                ->where("promotion_items.promotion_id", $this->id)
+//                ->where("promotion_items.app_id", ApplicationEnvironment::$model_id)
+//                ->get();
+//        }
+//        return Stock::query()
+//            ->select("stocks.id",
+//                "stocks.name",
+//                "manufacturers.name as manufacturer",
+//                "productcategories.name as productcategory",
+//                "classifications.name as classification",
+//                "stocks.box",
+//                ApplicationEnvironment::$stock_model_string.".price",
+//                ApplicationEnvironment::$stock_model_string.".quantity",
+//                DB::raw("0 as promotion_price"),
+//            )
+//            ->join(ApplicationEnvironment::$stock_model_string, 'stocks.id', '=', ApplicationEnvironment::$stock_model_string.'.stock_id' )
+//            ->leftjoin("manufacturers", "stocks.manufacturer_id", "manufacturers.id")
+//            ->leftjoin("productcategories", "stocks.productcategory_id", "productcategories.id")
+//            ->leftjoin("classifications", "stocks.classification_id", "classifications.id")
+//            ->where("stocks.admin_status", "1")
+//            ->get();
 
-            return PromotionItem::query()->select(
-                "stocks.id",
-                "stocks.name",
-                "manufacturers.name as manufacturer",
-                "productcategories.name as productcategory",
-                "classifications.name as classification",
-                "stocks.box",
-                ApplicationEnvironment::$stock_model_string.".price",
-                ApplicationEnvironment::$stock_model_string.".quantity",
-                "promotion_items.price as promotion_price",
-            )->join('stocks', "stocks.id", "=", "promotion_items.stock_id")
-                ->join(ApplicationEnvironment::$stock_model_string, 'stocks.id', '=', ApplicationEnvironment::$stock_model_string.'.stock_id' )
-                ->leftjoin("manufacturers", "stocks.manufacturer_id", "manufacturers.id")
-                ->leftjoin("productcategories", "stocks.productcategory_id", "productcategories.id")
-                ->leftjoin("classifications", "stocks.classification_id", "classifications.id")
-                ->where("promotion_items.promotion_id", $this->id)
-                ->where("promotion_items.app_id", ApplicationEnvironment::$model_id)
-                ->get();
-        }
-        return Stock::query()
-            ->select("stocks.id",
-                "stocks.name",
-                "manufacturers.name as manufacturer",
-                "productcategories.name as productcategory",
-                "classifications.name as classification",
-                "stocks.box",
-                ApplicationEnvironment::$stock_model_string.".price",
-                ApplicationEnvironment::$stock_model_string.".quantity",
-                DB::raw("0 as promotion_price"),
-            )
-            ->join(ApplicationEnvironment::$stock_model_string, 'stocks.id', '=', ApplicationEnvironment::$stock_model_string.'.stock_id' )
-            ->leftjoin("manufacturers", "stocks.manufacturer_id", "manufacturers.id")
-            ->leftjoin("productcategories", "stocks.productcategory_id", "productcategories.id")
-            ->leftjoin("classifications", "stocks.classification_id", "classifications.id")
-            ->where("stocks.admin_status", "1")
-            ->get();
-
+        return collect([]);
     }
 
     public function headings(): array
     {
         return [
             'ID',
-            'Name',
-            'Manufacturer',
-            'Product Category',
-            'Classification',
-            'Box',
-            'Price',
-            'Quantity',
+//            'Name',
+//            'Manufacturer',
+//            'Product Category',
+//            'Classification',
+//            'Box',
+//            'Price',
+//            'Quantity',
             'Promo Price'
         ];
     }
