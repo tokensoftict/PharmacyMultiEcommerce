@@ -167,6 +167,11 @@ class PromotionTableComponent extends ExportDataTableComponent
     {
         if(isset($this->formData['file'])) {
             $promotion->promotion_items()->delete();
+            $promotion->promotion_items()->get()->each(function($item){
+                $item->stock->{ApplicationEnvironment::$stock_model_string}->special_offer = 0;
+                $item->stock->{ApplicationEnvironment::$stock_model_string}->save();
+            });
+
             $promotion->promotion_items()->saveMany(
                 $this->importPromotionItems($promotion)
             );
@@ -211,7 +216,14 @@ class PromotionTableComponent extends ExportDataTableComponent
     public final function onDestroy(Promotion $promotion)
     {
         $this->promotion = NULL;
+
+        $promotion->promotion_items()->get()->each(function($item){
+           $item->stock->{ApplicationEnvironment::$stock_model_string}->special_offer = 0;
+            $item->stock->{ApplicationEnvironment::$stock_model_string}->save();
+        });
+
         $promotion->promotion_items()->delete();
+
     }
 
 

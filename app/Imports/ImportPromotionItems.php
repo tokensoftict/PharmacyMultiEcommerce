@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Classes\ApplicationEnvironment;
 use App\Models\Promotion;
 use App\Models\PromotionItem;
 use App\Models\Stock;
@@ -43,6 +44,9 @@ class ImportPromotionItems implements ToCollection,WithHeadingRow
                 'created' => $this->promotion->created,
                 'price' => $row['promo_price']
             ]);
+
+            $stock->{ApplicationEnvironment::$stock_model_string}->special_offer = 1;
+            $stock->{ApplicationEnvironment::$stock_model_string}->save();
         }
     }
 
