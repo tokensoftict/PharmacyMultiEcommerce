@@ -110,16 +110,16 @@ id="{{ $id }}"
     
     <button 
         type="button"
-        class="btn btn-phoenix-secondary form-control dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
+        class="custom-select-button btn btn-phoenix-secondary form-control w-100 text-start d-flex justify-content-between align-items-center"
         @click="toggle"
         :aria-expanded="open"
     >
-        <span x-text="label" class="text-truncate me-2"></span>
-        <div class="d-flex align-items-center">
+        <span x-text="label" class="text-truncate flex-grow-1 me-2"></span>
+        <div class="d-flex align-items-center ms-auto">
             <template x-if="selected">
-                <span @click.stop="clear" class="fa-solid fa-xmark fs-10 me-2 text-400 hover-text-danger" style="cursor: pointer;"></span>
+                <span @click.stop="clear" class="fa-solid fa-xmark fs-9 me-2 text-400 hover-text-danger transition-base" style="cursor: pointer; padding: 2px;"></span>
             </template>
-            <span class="fas fa-chevron-down fs-10 text-300"></span>
+            <span class="fas fa-chevron-down fs-10 text-400"></span>
         </div>
     </button>
 
@@ -175,5 +175,11 @@ id="{{ $id }}"
     .dropdown-item.active {
         background-color: var(--phoenix-primary-bg-subtle);
         color: var(--phoenix-primary-text-emphasis);
+    }
+    .custom-select-button::after {
+        display: none !important;
+    }
+    .transition-base {
+        transition: all 0.2s ease-in-out;
     }
 </style>
