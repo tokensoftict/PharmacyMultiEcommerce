@@ -11,6 +11,7 @@ use App\Models\PushNotification;
 use App\Models\User;
 use App\Models\WholesalesUser;
 use App\Models\CouponStock;
+use App\Exports\CouponStockTemplateExport;
 use App\Traits\DynamicDataTableExport;
 use App\Traits\DynamicDataTableFormModal;
 use App\Traits\SimpleDatatableComponentTrait;
@@ -117,7 +118,13 @@ class CouponDatatable extends ExportDataTableComponent
                 'options' => CustomerType::select('id','name')->where('status', 1)->get()->toArray()
             ],
             'status_id' => ['type' => 'hidden', 'value' => status('Pending'), 'showValue'=> false],
-            'stock_excel' => ['label' => 'Specific Stock (Excel)', 'type' => 'file', 'showValue'=> false],
+            'stock_excel' => [
+                'label' => 'Specific Stock (Excel)',
+                'type' => 'file',
+                'showValue'=> false,
+                'template' => 'downloadTemplate',
+                'templateLabel' => 'Download Template'
+            ],
             'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select', 'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()],
             'created_by' => ['label' => 'Created By', 'showValue'=> true ,'type'=>'hidden' ,'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
             'app_id' => ['label' => 'Environment', 'showValue'=> false ,'type'=>'hidden' ,'value' =>ApplicationEnvironment::$model_id]
@@ -151,6 +158,11 @@ class CouponDatatable extends ExportDataTableComponent
         return $row->status_id == status('Pending');
     }
 
+    public function downloadTemplate()
+    {
+        return Excel::download(new CouponStockTemplateExport, 'coupon_stock_template.xlsx');
+    }
+
     public function approve($id)
     {
         $coupon = Coupon::find($id);
@@ -173,7 +185,7 @@ class CouponDatatable extends ExportDataTableComponent
     {
         if (isset($this->formData['stock_excel']) && $this->formData['stock_excel']) {
             $path = $this->formData['stock_excel']->getRealPath();
-            $data = Excel::toArray(null, $path);
+            $data = Excel::toArray(new class {}, $path);
 
             if (count($data) > 0 && count($data[0]) > 0) {
                 // Clear existing stocks if updating
