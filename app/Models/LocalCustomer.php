@@ -76,7 +76,8 @@ class LocalCustomer extends Model
         'lastname',
         'email',
         'address',
-        'phone_number'
+        'phone_number',
+        'retail_loyalty_points'
     ];
 
 }

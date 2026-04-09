@@ -97,6 +97,7 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         'auth_code',
         'local_id',
         'loyalty_points',
+        'retail_loyalty_points',
         'member_group_id'
     ];
 

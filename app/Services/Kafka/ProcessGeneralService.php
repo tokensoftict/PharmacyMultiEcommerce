@@ -291,15 +291,18 @@ class ProcessGeneralService
         $user = User::where('phone', $data['phone_number'])->first();
         if ($user) {
             $oldPoints = $user->loyalty_points;
+            $oldRetailPoints = $user->retail_loyalty_points;
             $oldGroupId = $user->member_group_id;
             $user->update([
                 'local_id' => $data['local_id'],
                 'loyalty_points' => $data['loyalty_points'],
+                'retail_loyalty_points' => $data['retail_loyalty_points'] ?? 0,
                 'member_group_id' => $data['member_group_id']
             ]);
 
-            if ($data['loyalty_points'] > $oldPoints) {
-                self::sendLoyaltyNotification($user, $data['loyalty_points']);
+            if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
+                $totalPoints = $data['loyalty_points'] + ($data['retail_loyalty_points'] ?? 0);
+                self::sendLoyaltyNotification($user, $totalPoints);
             }
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
@@ -317,14 +320,17 @@ class ProcessGeneralService
         $user = User::where('local_id', $data['local_id'])->first();
         if ($user) {
             $oldPoints = $user->loyalty_points;
+            $oldRetailPoints = $user->retail_loyalty_points;
             $oldGroupId = $user->member_group_id;
             $user->update([
                 'loyalty_points' => $data['loyalty_points'],
+                'retail_loyalty_points' => $data['retail_loyalty_points'] ?? 0,
                 'member_group_id' => $data['member_group_id']
             ]);
 
-            if ($data['loyalty_points'] > $oldPoints) {
-                self::sendLoyaltyNotification($user, $data['loyalty_points']);
+            if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
+                $totalPoints = $data['loyalty_points'] + ($data['retail_loyalty_points'] ?? 0);
+                self::sendLoyaltyNotification($user, $totalPoints);
             }
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
