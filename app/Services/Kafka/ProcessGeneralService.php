@@ -14,6 +14,7 @@ use App\Models\Productgroup;
 use App\Models\Stock;
 use App\Models\User;
 use App\Services\Utilities\PushNotificationService;
+use Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -161,7 +162,7 @@ class ProcessGeneralService
             }
             return $result;
         } else {
-            $customer = LocalCustomer::create($data);
+            $customer = LocalCustomer::create(Arr::except($data, ['']));
             self::updateUserLocalId($data);
             return $customer;
         }

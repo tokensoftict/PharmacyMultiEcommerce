@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,9 +14,6 @@ return new class extends Migration
             $table->decimal('retail_loyalty_points', 15, 2)->default(0)->after('loyalty_points');
         });
 
-        Schema::table('local_customers', function (Blueprint $table) {
-            $table->decimal('retail_loyalty_points', 15, 2)->default(0)->after('email');
-        });
     }
 
     /**
@@ -26,10 +22,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('retail_loyalty_points');
-        });
-
-        Schema::table('local_customers', function (Blueprint $table) {
             $table->dropColumn('retail_loyalty_points');
         });
     }
