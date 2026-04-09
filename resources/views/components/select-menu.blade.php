@@ -7,7 +7,8 @@
     'ajax' => null,
     'editModel' => null,
     'editColumn' => 'name',
-    'class' => ''
+    'class' => '',
+    'live' => false
 ])
 
 @php
@@ -17,6 +18,9 @@
     $initialLabel = $placeholder;
     $initialValue = $attributes->wire('model')->value() ?? $value;
     
+    // Detect if we should use .live based on the prop or wire:model modifier
+    $isLive = $live || ($attributes->wire('model') && $attributes->wire('model')->hasModifier('live'));
+
     // Generate a hash of options to force re-render when they change
     $optionsHash = md5(json_encode($options));
 
@@ -44,7 +48,7 @@
     open: false,
     search: '',
     options: @js((array)$options),
-    selected: @entangle($attributes->wire('model')).live,
+    selected: @entangle($attributes->wire('model')){{ $isLive ? '.live' : '' }},
     label: @js($initialLabel),
     placeholder: @js($placeholder),
     isAjax: @js(!empty($ajax)),
