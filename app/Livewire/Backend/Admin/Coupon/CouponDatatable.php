@@ -49,7 +49,7 @@ class CouponDatatable extends ExportDataTableComponent
         $this->actionPermission = [
             'edit' => 'backend.admin.coupon.update',
             'destroy' => 'backend.admin.coupon.destroy',
-            'create'   => 'backend.admin.coupon.create',
+            'create' => 'backend.admin.coupon.create',
         ];
 
 
@@ -72,13 +72,13 @@ class CouponDatatable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix . 'admin.dashboard'),
                 'name' => "Dashboard",
-                'active' =>false
+                'active' => false
             ],
             [
                 'name' => "Coupon Manager",
-                'active' =>true
+                'active' => true
             ]
         ];
 
@@ -92,42 +92,52 @@ class CouponDatatable extends ExportDataTableComponent
         $this->modalName = "Coupon";
 
         $this->data = [
-            'name' => ['label' => 'Coupon Name', 'type'=>'text'],
-            'code' => ['label' => 'Coupon Code', 'type'=>'hidden', 'showValue'=> true, 'display' => $this->couponCode,  'value' =>  $this->couponCode],
-            'valid_from' => ['label' => 'Valid From', 'type' =>'datepicker'],
-            'valid_to' => ['label' => 'Valid From', 'type' =>'datepicker'],
-            'noofuse' => ['label' => 'Number of Usage', 'type' =>'number'],
-            'type' => ['label' => 'Coupon Type', 'type' =>'select', 'options' => [
-                [
-                    'id' => 'Fixed',
-                    'text' => 'Fixed'
-                ],
-                [
-                    'id' => 'Percentage',
-                    'text' => 'Percentage'
+            'name' => ['label' => 'Coupon Name', 'type' => 'text'],
+            'code' => ['label' => 'Coupon Code', 'type' => 'hidden', 'showValue' => true, 'display' => $this->couponCode, 'value' => $this->couponCode],
+            'valid_from' => ['label' => 'Valid From', 'type' => 'datepicker'],
+            'valid_to' => ['label' => 'Valid From', 'type' => 'datepicker'],
+            'noofuse' => ['label' => 'Number of Usage', 'type' => 'number'],
+            'type' => [
+                'label' => 'Coupon Type',
+                'type' => 'select',
+                'options' => [
+                    [
+                        'id' => 'Fixed',
+                        'text' => 'Fixed'
+                    ],
+                    [
+                        'id' => 'Percentage',
+                        'text' => 'Percentage'
+                    ]
                 ]
-            ]],
-            'domain' =>['label' => 'Store', 'type' => 'select', 'options' => [
-                [
-                    'id' => AppLists::getApp((new WholesalesUser())),
-                    'text' => 'Wholesales Store'
-                ],
-            ]],
-            'type_value' =>['label' => 'Coupon Value', 'type' =>'number'],
-            'customer_type_id' => ['label' => 'Customer Type', 'type' => 'select',
-                'options' => CustomerType::select('id','name')->where('status', 1)->get()->toArray()
             ],
-            'status_id' => ['type' => 'hidden', 'value' => status('Pending'), 'showValue'=> false],
+            'domain' => [
+                'label' => 'Store',
+                'type' => 'select',
+                'options' => [
+                    [
+                        'id' => AppLists::getApp((new WholesalesUser())),
+                        'text' => 'Wholesales Store'
+                    ],
+                ]
+            ],
+            'type_value' => ['label' => 'Coupon Value', 'type' => 'number'],
+            'customer_type_id' => [
+                'label' => 'Customer Type',
+                'type' => 'select',
+                'options' => CustomerType::select('id', 'name')->where('status', 1)->get()->toArray()
+            ],
+            'status_id' => ['type' => 'hidden', 'value' => status('Pending'), 'showValue' => false],
             'stock_excel' => [
                 'label' => 'Specific Stock (Excel)',
                 'type' => 'file',
-                'showValue'=> false,
+                'showValue' => false,
                 'template' => 'downloadTemplate',
                 'templateLabel' => 'Download Template'
             ],
             'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select', 'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()],
-            'created_by' => ['label' => 'Created By', 'showValue'=> true ,'type'=>'hidden' ,'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
-            'app_id' => ['label' => 'Environment', 'showValue'=> false ,'type'=>'hidden' ,'value' =>ApplicationEnvironment::$model_id]
+            'created_by' => ['label' => 'Created By', 'showValue' => true, 'type' => 'hidden', 'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
+            'app_id' => ['label' => 'Environment', 'showValue' => false, 'type' => 'hidden', 'value' => ApplicationEnvironment::$model_id]
         ];
 
         $this->newValidateRules = [
@@ -166,7 +176,7 @@ class CouponDatatable extends ExportDataTableComponent
     public function approve($id)
     {
         $coupon = Coupon::find($id);
-        $coupon->status_id = status('Active');
+        $coupon->status_id = status('Approved');
         $coupon->save();
         $this->refreshTable();
     }
@@ -193,7 +203,8 @@ class CouponDatatable extends ExportDataTableComponent
 
                 foreach ($data[0] as $index => $row) {
                     // Skip header if it looks like one
-                    if ($index === 0 && !is_numeric($row[0])) continue;
+                    if ($index === 0 && !is_numeric($row[0]))
+                        continue;
 
                     $localStockId = $row[0];
                     if ($localStockId) {
@@ -209,10 +220,10 @@ class CouponDatatable extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return Coupon::query()->with(['status', 'user', 'customer_group', 'customer_type'])->where('app_id',ApplicationEnvironment::$model_id);
+        return Coupon::query()->with(['status', 'user', 'customer_group', 'customer_type'])->where('app_id', ApplicationEnvironment::$model_id);
     }
 
-    public static function  mountColumn() : array
+    public static function mountColumn(): array
     {
         return [
             Column::make("Name", "name")
@@ -220,12 +231,12 @@ class CouponDatatable extends ExportDataTableComponent
             Column::make("Code", "code")
                 ->sortable(),
             Column::make("Valid from", "valid_from")
-                ->format(function($value, $row, Column $column){
+                ->format(function ($value, $row, Column $column) {
                     return $value->format("Y-m-d");
                 })
                 ->sortable(),
             Column::make("Valid to", "valid_to")
-                ->format(function($value, $row, Column $column){
+                ->format(function ($value, $row, Column $column) {
                     return $value->format("Y-m-d");
                 })
                 ->sortable(),
@@ -234,7 +245,7 @@ class CouponDatatable extends ExportDataTableComponent
             Column::make("Type value", "type_value")
                 ->sortable(),
             Column::make("Status", "status_id")
-                ->format(function($value, $row, Column $column){
+                ->format(function ($value, $row, Column $column) {
                     return showStatus($value);
                 })->html()
                 ->sortable(),
