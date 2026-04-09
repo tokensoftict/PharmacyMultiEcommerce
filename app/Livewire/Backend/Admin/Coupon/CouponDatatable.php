@@ -10,10 +10,13 @@ use App\Models\CustomerType;
 use App\Models\PushNotification;
 use App\Models\User;
 use App\Models\WholesalesUser;
+use App\Models\CouponStock;
 use App\Traits\DynamicDataTableExport;
 use App\Traits\DynamicDataTableFormModal;
 use App\Traits\SimpleDatatableComponentTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\WithFileUploads;
+use Maatwebsite\Excel\Facades\Excel;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\Coupon;
@@ -21,7 +24,18 @@ use App\Models\Coupon;
 class CouponDatatable extends ExportDataTableComponent
 {
 
-    use SimpleDatatableComponentTrait, DynamicDataTableExport, DynamicDataTableFormModal;
+    use SimpleDatatableComponentTrait, DynamicDataTableExport, DynamicDataTableFormModal, WithFileUploads {
+        DynamicDataTableExport::bulkActions insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableExport::export_all insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableExport::export_selected insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableExport::getExportColumns insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableExport::getExportFields insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableExport::prepareExport insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableExport::renderValue insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableFormModal::destroy insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableFormModal::edit insteadof SimpleDatatableComponentTrait;
+        DynamicDataTableFormModal::toggle insteadof SimpleDatatableComponentTrait;
+    }
 
     protected $model = Coupon::class;
 
@@ -39,6 +53,18 @@ class CouponDatatable extends ExportDataTableComponent
 
 
         $this->extraRowAction = [];
+
+        $this->extraRowActionButton = [
+            [
+                'label' => 'Approve',
+                'icon' => 'fa fa-check',
+                'class' => 'btn btn-sm btn-phoenix-success',
+                'type' => 'method',
+                'method' => 'approve',
+                'permission' => 'backend.admin.coupon.approve',
+                'visible' => 'isPending'
+            ]
+        ];
 
         $this->pageHeaderTitle = "Coupon Manager";
 
@@ -91,6 +117,7 @@ class CouponDatatable extends ExportDataTableComponent
                 'options' => CustomerType::select('id','name')->where('status', 1)->get()->toArray()
             ],
             'status_id' => ['type' => 'hidden', 'value' => status('Pending'), 'showValue'=> false],
+            'stock_excel' => ['label' => 'Specific Stock (Excel)', 'type' => 'file', 'showValue'=> false],
             'customer_group_id' => ['label' => 'Customer Group', 'type' => 'select', 'options' => CustomerGroup::select('id', 'name')->where('status', 1)->get()->toArray()],
             'created_by' => ['label' => 'Created By', 'showValue'=> true ,'type'=>'hidden' ,'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
             'app_id' => ['label' => 'Environment', 'showValue'=> false ,'type'=>'hidden' ,'value' =>ApplicationEnvironment::$model_id]
@@ -117,6 +144,55 @@ class CouponDatatable extends ExportDataTableComponent
     public function editCreatedCallBack($value)
     {
         return User::find($value)->name;
+    }
+
+    public function isPending($row)
+    {
+        return $row->status_id == status('Pending');
+    }
+
+    public function approve($id)
+    {
+        $coupon = Coupon::find($id);
+        $coupon->status_id = status('Active');
+        $coupon->save();
+        $this->refreshTable();
+    }
+
+    public function onCreate($coupon)
+    {
+        $this->processExcel($coupon);
+    }
+
+    public function onUpdate($coupon)
+    {
+        $this->processExcel($coupon);
+    }
+
+    private function processExcel($coupon)
+    {
+        if (isset($this->formData['stock_excel']) && $this->formData['stock_excel']) {
+            $path = $this->formData['stock_excel']->getRealPath();
+            $data = Excel::toArray(null, $path);
+
+            if (count($data) > 0 && count($data[0]) > 0) {
+                // Clear existing stocks if updating
+                $coupon->couponStocks()->delete();
+
+                foreach ($data[0] as $index => $row) {
+                    // Skip header if it looks like one
+                    if ($index === 0 && !is_numeric($row[0])) continue;
+
+                    $localStockId = $row[0];
+                    if ($localStockId) {
+                        CouponStock::create([
+                            'coupon_id' => $coupon->id,
+                            'local_stock_id' => $localStockId
+                        ]);
+                    }
+                }
+            }
+        }
     }
 
     public function builder(): Builder

@@ -115,6 +115,22 @@ class ApplyCouponCodeController extends ApiController
                 }
             }
 
+            // Specific Stock Validation
+            if ($discount->couponStocks()->exists()) {
+                $allowedStockIds = $discount->couponStocks()->pluck('local_stock_id')->toArray();
+                $cartItems = $checkoutUser->getCart(); // Returns collection of Stock objects from ApplicationUserCheckoutTrait
+
+                if ($cartItems->isEmpty()) {
+                    return $this->sendErrorResponse('Your Shopping cart is empty!', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
+                foreach ($cartItems as $item) {
+                    if (!in_array($item->local_stock_id, $allowedStockIds)) {
+                        return $this->sendErrorResponse('This coupon is only valid for specific products. Your cart contains items that are not eligible.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+                }
+            }
+
             $count = $discount->couponUsageHistories()->where('user_type_id',$checkoutUser->id)->where('user_type_type', get_class($checkoutUser))->count();
 
             if($count > 0 and $count >= $discount->noofuse) {

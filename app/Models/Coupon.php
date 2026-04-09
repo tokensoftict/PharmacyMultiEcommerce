@@ -101,4 +101,9 @@ class Coupon extends Model
     {
         return $this->hasMany(CouponUsageHistory::class);
     }
+
+    public function couponStocks()
+    {
+        return $this->hasMany(CouponStock::class);
+    }
 }
