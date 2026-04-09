@@ -106,6 +106,8 @@
 }" 
 class="dropdown {{ $class }}" 
 id="{{ $id }}"
+wire:key="{{ $id }}"
+wire:ignore
 @click.away="open = false">
     
     <button 
@@ -116,9 +118,7 @@ id="{{ $id }}"
     >
         <span x-text="label" class="text-truncate flex-grow-1 me-2"></span>
         <div class="d-flex align-items-center ms-auto">
-            <template x-if="selected">
-                <span @click.stop="clear" class="fa-solid fa-xmark fs-9 me-2 text-400 hover-text-danger transition-base" style="cursor: pointer; padding: 2px;"></span>
-            </template>
+            <span x-show="selected" @click.stop="clear" class="fa-solid fa-xmark fs-9 me-2 text-400 hover-text-danger transition-base" style="cursor: pointer; padding: 2px;"></span>
             <span class="fas fa-chevron-down fs-10 text-400"></span>
         </div>
     </button>
@@ -157,9 +157,7 @@ id="{{ $id }}"
                     @click="select(option)"
                 >
                     <span x-text="option.text || option.name"></span>
-                    <template x-if="selected == option.id">
-                        <span class="fas fa-check fs-11"></span>
-                    </template>
+                    <span x-show="selected == option.id" class="fas fa-check fs-11"></span>
                 </button>
             </template>
             
