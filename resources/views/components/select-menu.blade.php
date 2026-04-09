@@ -104,10 +104,10 @@
         });
     }
 }" 
+x-effect="options = @js((array)$options)"
 class="dropdown {{ $class }}" 
 id="{{ $id }}"
 wire:key="{{ $id }}"
-wire:ignore
 @click.away="open = false">
     
     <button 
