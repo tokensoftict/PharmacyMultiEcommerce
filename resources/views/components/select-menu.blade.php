@@ -44,7 +44,7 @@
     open: false,
     search: '',
     options: @js((array)$options),
-    selected: @entangle($attributes->wire('model')),
+    selected: @entangle($attributes->wire('model')).live,
     label: @js($initialLabel),
     placeholder: @js($placeholder),
     isAjax: @js(!empty($ajax)),
