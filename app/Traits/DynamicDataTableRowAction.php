@@ -109,7 +109,7 @@ trait DynamicDataTableRowAction
 
             if($button['type'] == "method") {
                 $method = $button['method'];
-                $extraButtonAction .= '&nbsp;&nbsp;&nbsp;&nbsp;<a  wire:click.prevent="'.$method.'('.$row.')" href="#'.$button['method'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="'.$method.'(' .$row. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="'.$method.'(' .$row. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
+                $extraButtonAction .= '&nbsp;&nbsp;&nbsp;&nbsp;<a  wire:click.prevent="'.$method.'('.$row->id.')" href="#'.$button['method'].'" class="' . ($button['class'] ?? 'btn btn-default') . '"><i wire:loading.remove wire:target="'.$method.'(' .$row->id. ')" class="'.($button['icon'] ?? 'fa fa-trash-alt').'"></i><span wire:loading wire:target="'.$method.'(' .$row->id. ')" class="spinner-border spinner-border-sm me-2" role="status"></span>  ' . $button['label'] . '</a>';
             }
         }
 
