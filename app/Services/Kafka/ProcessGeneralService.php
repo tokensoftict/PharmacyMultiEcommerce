@@ -111,9 +111,9 @@ class ProcessGeneralService
 
     /**
      * @param array $data
-     * @return Productcategory
+     * @return bool|int
      */
-    public static function updateCategory(array $data): Productcategory
+    public static function updateCategory(array $data): bool|int
     {
         return Productcategory::where("id", $data['id'])->update($data);
     }
@@ -138,9 +138,9 @@ class ProcessGeneralService
 
     /**
      * @param array $data
-     * @return Classification|bool
+     * @return Classification|bool|int
      */
-    public static function updateClassification(array $data): Classification|bool
+    public static function updateClassification(array $data): Classification|bool|int
     {
         Schema::disableForeignKeyConstraints();
         DB::table("classifications")->truncate();
@@ -218,9 +218,9 @@ class ProcessGeneralService
 
     /**
      * @param array $data
-     * @return Manufacturer
+     * @return bool|int
      */
-    public static function updateManufacturer(array $data): Manufacturer|bool
+    public static function updateManufacturer(array $data): bool|int
     {
         return Manufacturer::where("id", $data['id'])->update($data);
     }
@@ -273,9 +273,9 @@ class ProcessGeneralService
 
     /**
      * @param array $data
-     * @return Productgroup
+     * @return bool|int
      */
-    public static function updateStockGroup(array $data): Productgroup|bool
+    public static function updateStockGroup(array $data): bool|int
     {
         return Productgroup::where("id", $data['id'])->update($data);
     }
@@ -288,6 +288,7 @@ class ProcessGeneralService
             $oldPoints = $user->loyalty_points;
             $oldRetailPoints = $user->retail_loyalty_points;
             $oldGroupId = $user->member_group_id;
+            $oldRetailGroupId = $user->retail_member_group_id;
 
             $updateData = [
                 'local_id' => $data['local_id']
@@ -302,6 +303,9 @@ class ProcessGeneralService
             if (isset($data['member_group_id'])) {
                 $updateData['member_group_id'] = $data['member_group_id'];
             }
+            if (isset($data['retail_member_group_id'])) {
+                $updateData['retail_member_group_id'] = $data['retail_member_group_id'];
+            }
 
             $user->update($updateData);
             if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
@@ -311,6 +315,10 @@ class ProcessGeneralService
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
                 self::sendMemberGroupNotification($user, $data['member_group_id']);
+            }
+
+            if (isset($data['retail_member_group_id']) && $data['retail_member_group_id'] != $oldRetailGroupId && !is_null($data['retail_member_group_id'])) {
+                self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
             }
 
             return true;
@@ -327,10 +335,12 @@ class ProcessGeneralService
             $oldPoints = $user->loyalty_points;
             $oldRetailPoints = $user->retail_loyalty_points;
             $oldGroupId = $user->member_group_id;
+            $oldRetailGroupId = $user->retail_member_group_id;
             $user->update([
                 'loyalty_points' => $data['loyalty_points'],
                 'retail_loyalty_points' => $data['retail_loyalty_points'] ?? 0,
-                'member_group_id' => $data['member_group_id']
+                'member_group_id' => $data['member_group_id'],
+                'retail_member_group_id' => $data['retail_member_group_id'] ?? $user->retail_member_group_id
             ]);
 
             if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
@@ -340,6 +350,10 @@ class ProcessGeneralService
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
                 self::sendMemberGroupNotification($user, $data['member_group_id']);
+            }
+
+            if (isset($data['retail_member_group_id']) && $data['retail_member_group_id'] != $oldRetailGroupId && !is_null($data['retail_member_group_id'])) {
+                self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
             }
 
             return true;
@@ -361,7 +375,7 @@ class ProcessGeneralService
         }
     }
 
-    public static function updateMemberGroup(array $data): MemberGroup|bool
+    public static function updateMemberGroup(array $data): bool|int
     {
         return MemberGroup::where("id", $data['id'])->update($data);
     }

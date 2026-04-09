@@ -98,7 +98,8 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         'local_id',
         'loyalty_points',
         'retail_loyalty_points',
-        'member_group_id'
+        'member_group_id',
+        'retail_member_group_id'
     ];
 
     protected $appends = ['cus_exist'];
@@ -207,5 +208,10 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
     public function memberGroup()
     {
         return $this->belongsTo(MemberGroup::class, 'member_group_id');
+    }
+
+    public function retailMemberGroup()
+    {
+        return $this->belongsTo(MemberGroup::class, 'retail_member_group_id');
     }
 }
