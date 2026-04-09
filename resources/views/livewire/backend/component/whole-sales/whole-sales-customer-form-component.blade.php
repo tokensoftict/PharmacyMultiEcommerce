@@ -60,12 +60,77 @@
     window.addEventListener('creatingCustomerOnSuccess', creatingCustomerOnSuccess);
     window.addEventListener('forceCloseWholesalesCustomerModal', forceCloseWholesalesCustomerModal)
     document.addEventListener('livewire:navigated',function(){
+        Livewire.hook('morph.updated', ({ el, component }) => {
+
+            if(el === document.getElementById('select_state_id')){
+                $('#select_state_id').select2({
+                    dropdownParent: $('#modal-holder'),
+                    placeholder:  'Select State',
+                    searchInputPlaceholder: 'Search State..'
+                });
+
+                $('#select_state_id').val(component.$wire.get('formData.wholesale.state_id'));
+                $('#select_state_id').off('change');
+                $('#select_state_id').on('change', function (e) {
+                    component.$wire.set('formData.wholesale.state_id', $(this).val(), true);
+                });
+            }
+
+            if(el === document.getElementById('select_town_id')){
+                $('#select_town_id').select2({
+                    dropdownParent: $('#modal-holder'),
+                    placeholder:  'Select Town',
+                    searchInputPlaceholder: 'Search Town..'
+                });
+
+                $('#select_town_id').val(component.$wire.get('formData.wholesale.town_id'));
+                $('#select_town_id').off('change');
+                $('#select_town_id').on('change', function (e) {
+                    component.$wire.set('formData.wholesale.town_id', $(this).val());
+                });
+            }
+
+            if(el === document.getElementById('business_type')){
+                $('#business_type').select2({
+                    dropdownParent: $('#modal-holder'),
+                    placeholder:  'Select Business Type',
+                    searchInputPlaceholder: 'Search Business Type..'
+                });
+
+                $('#business_type').val(component.$wire.get('formData.wholesale.business_type'));
+                $('#business_type').off('change');
+                $('#business_type').on('change', function (e) {
+                    component.$wire.set('formData.wholesale.business_type', $(this).val());
+                });
+            }
+
+
+            if(el === document.getElementById('business_group')){
+                $('#business_group').select2({
+                    dropdownParent: $('#modal-holder'),
+                    placeholder:  'Select Business Group',
+                    searchInputPlaceholder: 'Search Business Group..'
+                });
+
+                $('#business_group').val(component.$wire.get('formData.wholesale.business_group'));
+                $('#business_group').off('change');
+                $('#business_group').on('change', function (e) {
+                    component.$wire.set('formData.wholesale.business_group', $(this).val());
+                });
+            }
+
         });
     });
 </script>
 @endscript
 
+@push('css')
+    <link href="{{ asset('backend/admin/lib/select2/css/select2.min.css') }}" rel="stylesheet">
+@endpush
 
+@push('js')
+    <script src="{{ asset('backend/admin/lib/select2/js/select2.min.js') }}"></script>
+@endpush
 
 
 <div>
