@@ -102,8 +102,7 @@ class ProcessGeneralService
             $result = DB::table("productcategories")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
-        }
-        else {
+        } else {
             return Productcategory::create($data);
         }
 
@@ -130,8 +129,7 @@ class ProcessGeneralService
             $result = DB::table("classifications")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
-        }
-        else {
+        } else {
             return Classification::create($data);
         }
 
@@ -162,8 +160,7 @@ class ProcessGeneralService
                 self::updateUserLocalId($customer);
             }
             return $result;
-        }
-        else {
+        } else {
             $customer = LocalCustomer::create($data);
             self::updateUserLocalId($data);
             return $customer;
@@ -187,8 +184,7 @@ class ProcessGeneralService
                 $localCustomer->update($customer);
             }
             return true;
-        }
-        else {
+        } else {
             $localCustomer = LocalCustomer::where('local_id', $data['local_id'])->first();
             if (!$localCustomer) {
                 self::updateUserLocalId($data);
@@ -213,8 +209,7 @@ class ProcessGeneralService
             $result = DB::table("manufacturers")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
-        }
-        else {
+        } else {
             return Manufacturer::create($data);
         }
 
@@ -242,10 +237,10 @@ class ProcessGeneralService
         $stocks = Stock::whereIn("local_stock_id", $localStockIDs)->get();
         $newArrivalStocks = $stocks->map(function ($stock) use ($store, $localStock) {
             return [
-            "stock_id" => $stock->id,
-            "app_id" => $store,
-            "quantity" => $localStock[$stock->local_stock_id]['qty'],
-            "arrival_date" => date("Y-m-d")
+                "stock_id" => $stock->id,
+                "app_id" => $store,
+                "quantity" => $localStock[$stock->local_stock_id]['qty'],
+                "arrival_date" => date("Y-m-d")
             ];
         })->toArray();
 
@@ -269,8 +264,7 @@ class ProcessGeneralService
             $result = DB::table("productgroups")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
-        }
-        else {
+        } else {
             return Productgroup::create($data);
         }
     }
@@ -293,13 +287,22 @@ class ProcessGeneralService
             $oldPoints = $user->loyalty_points;
             $oldRetailPoints = $user->retail_loyalty_points;
             $oldGroupId = $user->member_group_id;
-            $user->update([
-                'local_id' => $data['local_id'],
-                'loyalty_points' => $data['loyalty_points'],
-                'retail_loyalty_points' => $data['retail_loyalty_points'] ?? 0,
-                'member_group_id' => $data['member_group_id']
-            ]);
 
+            $updateData = [
+                'local_id' => $data['local_id']
+            ];
+
+            if (isset($data['loyalty_points'])) {
+                $updateData['loyalty_points'] = $data['loyalty_points'];
+            }
+            if (isset($data['retail_loyalty_points'])) {
+                $updateData['retail_loyalty_points'] = $data['retail_loyalty_points'];
+            }
+            if (isset($data['member_group_id'])) {
+                $updateData['member_group_id'] = $data['member_group_id'];
+            }
+
+            $user->update($updateData);
             if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
                 $totalPoints = $data['loyalty_points'] + ($data['retail_loyalty_points'] ?? 0);
                 self::sendLoyaltyNotification($user, $totalPoints);
@@ -308,6 +311,7 @@ class ProcessGeneralService
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
                 self::sendMemberGroupNotification($user, $data['member_group_id']);
             }
+
             return true;
         }
         return false;
@@ -351,8 +355,7 @@ class ProcessGeneralService
             $result = DB::table("member_groups")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
-        }
-        else {
+        } else {
             return MemberGroup::create($data);
         }
     }
@@ -401,7 +404,8 @@ class ProcessGeneralService
     private static function sendMemberGroupNotification(User $user, int $newGroupId): void
     {
         $group = MemberGroup::find($newGroupId);
-        if (!$group) return;
+        if (!$group)
+            return;
 
         $label = $group->label;
 
