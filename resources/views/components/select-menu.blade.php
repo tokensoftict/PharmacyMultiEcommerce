@@ -16,6 +16,9 @@
     $actualId = $id . '-custom';
     $initialLabel = $placeholder;
     $initialValue = $attributes->wire('model')->value() ?? $value;
+    
+    // Generate a hash of options to force re-render when they change
+    $optionsHash = md5(json_encode($options));
 
     if ($initialValue) {
         if (!empty($options)) {
@@ -111,7 +114,7 @@
 x-effect="options = @js((array)$options)"
 class="dropdown {{ $class }}" 
 id="{{ $actualId }}"
-wire:key="{{ $actualId }}"
+wire:key="{{ $actualId }}-{{ $optionsHash }}"
 @click.away="open = false">
     
     <button 
