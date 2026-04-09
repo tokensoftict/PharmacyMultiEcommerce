@@ -210,13 +210,13 @@
 
                                     <div class="mb-3">
                                         <label for="business_type" class="form-label">Business Type</label>
-                                        <x-dropdown-select-menu :options="$data['customer_type_id']['options']"  wire:model="formData.wholesale.customer_type_id" id="business_type" placeholder="Select Business Type"/>
+                                        <x-select-menu :options="$data['customer_type_id']['options']"  wire:model="formData.wholesale.customer_type_id" id="business_type" placeholder="Select Business Type"/>
                                         @error("formData.wholesale.customer_type_id") <span class="text-danger d-block">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="business_group" class="form-label">Business Group</label>
-                                        <x-dropdown-select-menu placeholder="Select Business Group" wire:model="formData.wholesale.customer_group_id" id="business_group" :options="$data['customer_group_id']['options']"/>
+                                        <x-select-menu placeholder="Select Business Group" wire:model="formData.wholesale.customer_group_id" id="business_group" :options="$data['customer_group_id']['options']"/>
                                         @error("formData.wholesale.customer_group_id") <span class="text-danger d-block">{{ $message }}</span> @enderror
                                     </div>
 
@@ -250,13 +250,13 @@
 
                                     <div class="mb-3">
                                         <label for="state"  class="form-label">State</label>
-                                        <x-dropdown-select-menu id="select_state_id" placeholder="Select State" wire:model.live="formData.wholesale.state_id" :options="$data['state_id']['options']"/>
+                                        <x-select-menu id="select_state_id" placeholder="Select State" wire:model.live="formData.wholesale.state_id" :options="$data['state_id']['options']"/>
                                         @error("formData.wholesale.state_id") <span class="text-danger d-block">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="town"  class="form-label">Town</label>
-                                        <x-dropdown-select-menu :options="$data['town_id']['options']" wire:model="formData.wholesale.town_id" id="select_town_id" placeholder="Select Town"/>
+                                        <x-select-menu :options="$data['town_id']['options']" wire:model="formData.wholesale.town_id" id="select_town_id" placeholder="Select Town"/>
                                         @error("formData.wholesale.town_id") <span class="text-danger d-block">{{ $message }}</span> @enderror
                                     </div>
 

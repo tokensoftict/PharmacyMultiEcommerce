@@ -144,7 +144,7 @@ new class extends Component {
                                 <div class="mb-3">
                                     <label class="form-label" for="salesRep_select2">Select Customers</label>
                                     <div class="wd-md-100p" id="salesRep_select2_parent">
-                                        <x-dropdown-select-menu placeholder="Search Customer" wire:model="user_id"
+                                        <x-select-menu placeholder="Search Customer" wire:model="user_id"
                                                                 :edit-model="\App\Models\User::class"
                                                                 edit-column="name"
                                                                 :value="$this->user_id ?? ''"
@@ -156,7 +156,7 @@ new class extends Component {
                                 <div class="mb-3">
                                     <label class="form-label" for="salesRep_select2">Select Stock</label>
                                     <div class="wd-md-100p" id="salesRep_select2_parent">
-                                        <x-dropdown-select-menu placeholder="Search Stock" wire:model="stock_id"
+                                        <x-select-menu placeholder="Search Stock" wire:model="stock_id"
                                                                 id="stock_id"
                                                                 :edit-model="\App\Models\Stock::class"
                                                                 edit-column="name"
@@ -183,7 +183,7 @@ new class extends Component {
 
                                 <div class="mb-3">
                                     <label class="form-label" for="type">Med Type</label>
-                                    <x-dropdown-select-menu wire:model="type" id="type"
+                                    <x-select-menu wire:model="type" id="type"
                                                             :options="[['id'=>'ONE-TIME', 'text' => 'ONE TIME'], ['id' => 'CONTINUES', 'text' => 'CONTINUES']]"/>
                                     @error("type") <span class="text-danger d-block">{{ $message }}</span> @enderror
                                 </div>

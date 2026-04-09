@@ -121,7 +121,7 @@ new class  extends Component
                             <br/>
                             <div class="mb-3">
                                 <label  class="form-label">Select Banks</label>
-                                <x-dropdown-select-menu placeholder="Select Bank Accounts" wire:model="bank_id" :options="$this->bankAccounts" id="select_bank_account"/>
+                                <x-select-menu placeholder="Select Bank Accounts" wire:model="bank_id" :options="$this->bankAccounts" id="select_bank_account"/>
                                 @error('bank_id') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <div class="pull-left">

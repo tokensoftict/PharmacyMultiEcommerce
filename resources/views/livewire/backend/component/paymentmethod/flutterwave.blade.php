@@ -68,7 +68,7 @@ new class  extends Component {
                         <form id="validate" wire:submit.prevent="saveSettings()">
                             <div class="mb-3">
                                 <label class="form-label">Environment</label>
-                                <x-dropdown-select-menu wire:model="environment" id="environment"  :options="$data['environment']['options']"/>
+                                <x-select-menu wire:model="environment" id="environment"  :options="$data['environment']['options']"/>
                                 @error("environment") <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 

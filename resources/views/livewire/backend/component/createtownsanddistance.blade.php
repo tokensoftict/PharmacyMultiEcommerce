@@ -194,7 +194,7 @@ new class extends Component {
                         @endif
                         <div class="mb-3">
                             <label for="town_id" class="form-label">Town</label>
-                            <x-dropdown-select-menu :options="$this->towns"  wire:model="formData.town_id" id="town_id_select" placeholder="Select Town"/>
+                            <x-select-menu :options="$this->towns"  wire:model="formData.town_id" id="town_id_select" placeholder="Select Town"/>
                             @error("formData.town_id") <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">

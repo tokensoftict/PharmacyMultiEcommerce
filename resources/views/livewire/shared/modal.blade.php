@@ -58,7 +58,7 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ $value['label'] }}</label>
                                         <div class="wd-md-100p" id="select2Parent{{ $key }}">
-                                            <x-dropdown-select-menu :options="$value['options']" wire:model="formData.{{ $key }}" :id="$key"  placeholder="{{ $value['label'] }}"/>
+                                            <x-select-menu :options="$value['options']" wire:model="formData.{{ $key }}" :id="$key"  placeholder="{{ $value['label'] }}"/>
                                         </div>
                                     </div>
                                     @error("formData.".$key) <span class="text-danger">{{ $message }}</span> @enderror
@@ -68,7 +68,7 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ $value['label'] }}</label>
                                         <div class="wd-md-100p" id="select2Parent{{ $key }}">
-                                            <x-dropdown-select-menu placeholder="{{ $value['label'] }}" wire:model="formData.{{ $key }}" :id="$key" :ajax="$value['search-route'] ?? route('utilities.user.search')"/>
+                                            <x-select-menu placeholder="{{ $value['label'] }}" wire:model="formData.{{ $key }}" :id="$key" :ajax="$value['search-route'] ?? route('utilities.user.search')"/>
                                         </div>
                                     </div>
                                     @error("formData.".$key) <span class="text-danger">{{ $message }}</span> @enderror

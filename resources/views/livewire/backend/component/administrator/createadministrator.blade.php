@@ -106,7 +106,7 @@ new class extends Component {
                                 <div class="mb-3">
                                     <label class="form-label" for="salesRep_select2">Search For Users</label>
                                     <div class="wd-md-100p" id="salesRep_select2_parent">
-                                        <x-dropdown-select-menu placeholder="Search For Users"
+                                        <x-select-menu placeholder="Search For Users"
                                                                 :value="$this->administrator"
                                                                 edit-column="name" :edit-model="\App\Models\User::class"
                                                                 wire:model="administrator" id="administrator"
