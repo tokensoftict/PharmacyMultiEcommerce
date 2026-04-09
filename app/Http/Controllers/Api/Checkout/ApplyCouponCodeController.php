@@ -101,6 +101,22 @@ class ApplyCouponCodeController extends ApiController
             if($discount->usage_status !="NOT-USED"){
                 return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
+
+            // Voucher Specific Stock Validation (from Parent Voucher)
+            if ($discount->voucherStocks()->exists()) {
+                $allowedStockIds = $discount->voucherStocks()->pluck('local_stock_id')->toArray();
+                $cartItems = $checkoutUser->getCart();
+
+                if ($cartItems->isEmpty()) {
+                    return $this->sendErrorResponse('Your Shopping cart is empty!', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
+                foreach ($cartItems as $item) {
+                    if (!in_array($item->local_stock_id, $allowedStockIds)) {
+                        return $this->sendErrorResponse('This voucher is only valid for specific products. Your cart contains items that are not eligible.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+                }
+            }
         }
 
 

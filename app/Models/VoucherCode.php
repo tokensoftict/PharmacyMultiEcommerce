@@ -109,4 +109,9 @@ class VoucherCode extends Model
 	{
 		return $this->belongsTo(Voucher::class);
 	}
+
+    public function voucherStocks()
+    {
+        return $this->hasMany(VoucherStock::class, 'voucher_id', 'voucher_id');
+    }
 }
