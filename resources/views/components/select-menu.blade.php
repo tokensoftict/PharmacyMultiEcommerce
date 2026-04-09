@@ -12,6 +12,8 @@
 
 @php
     $id = $id ?? 'select-' . Str::random(8);
+    // Suffix the ID to prevent legacy scripts (Select2) from targeting this component
+    $actualId = $id . '-custom';
     $initialLabel = $placeholder;
     $initialValue = $attributes->wire('model')->value() ?? $value;
 
@@ -54,7 +56,9 @@
             }
             if (!this.isAjax) {
                 const found = this.options.find(o => o.id == value);
-                if (found) this.label = found.text || found.name;
+                if (found) {
+                    this.label = found.text || found.name;
+                }
             }
         });
     },
@@ -106,8 +110,8 @@
 }" 
 x-effect="options = @js((array)$options)"
 class="dropdown {{ $class }}" 
-id="{{ $id }}"
-wire:key="{{ $id }}"
+id="{{ $actualId }}"
+wire:key="{{ $actualId }}"
 @click.away="open = false">
     
     <button 
