@@ -109,7 +109,7 @@ class SupermarketHomeController extends ApiController
         $carouselItems = [];
         foreach ($activePromos as $promo) {
             $firstImage = null;
-            $firstItem = $promo->promotion_items()->first();
+            $firstItem = $promo->promotion_items->first();
             if ($firstItem && $firstItem->stock) {
                  $firstImage = $firstItem->stock->product_image;
             }
