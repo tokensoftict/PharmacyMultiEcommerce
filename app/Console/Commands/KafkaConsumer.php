@@ -33,7 +33,8 @@ class KafkaConsumer extends Command
      */
     public function handle()
     {
-        $consumer = Kafka::consumer([KafkaTopics::ORDERS, KafkaTopics::STOCKS, KafkaTopics::GENERAL])
+        //KafkaTopics::STOCKS, KafkaTopics::GENERAL
+        $consumer = Kafka::consumer([KafkaTopics::ORDERS])
             ->withConsumerGroupId(config('kafka.consumer_group_id'))
             ->withHandler(function (ConsumedMessage $message) {
                 // Process the incoming message
@@ -56,7 +57,7 @@ class KafkaConsumer extends Command
             ->build();
         try {
             $consumer->consume();
-        } catch (Exception|ConsumerException $e) {
+        } catch (Exception | ConsumerException $e) {
             report($e);
         }
 

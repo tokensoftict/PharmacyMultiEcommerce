@@ -110,6 +110,9 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         if ($local) {
             return $local->local_id;
         }
+        if(!empty($this->local_id)) {
+            return $this->local_id;
+        }
         return "";
     }
 

@@ -38,6 +38,16 @@ class UserLoginResource extends JsonResource
             "memberGroup" => $this->memberGroup,
             "retailLoyaltyPoints" => $this->retail_loyalty_points,
             "retailMemberGroup" => $this->retailMemberGroup,
+            "memberSince" => $this->created_at->format("M Y"),
+            "nextTierPoints" => \App\Models\MemberGroup::where('status', 1)
+                ->where('min_sales_amount', '>', $this->memberGroup?->min_sales_amount ?? 0)
+                ->orderBy('min_sales_amount', 'asc')
+                ->first()?->min_sales_amount ?? 0,
+            "retailNextTierPoints" => \App\Models\MemberGroup::where('status', 1)
+                ->where('retail_min_sales_amount', '>', $this->retailMemberGroup?->retail_min_sales_amount ?? 0)
+                ->orderBy('retail_min_sales_amount', 'asc')
+                ->first()?->retail_min_sales_amount ?? 0,
+            "totalOrders" => ($this->supermarket_user?->order()->count() ?? 0) + ($this->wholesales_user?->order()->count() ?? 0),
         ];
 
         $apps = [];
