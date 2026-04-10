@@ -38,13 +38,27 @@ trait SimpleDatatableComponentTrait
             ])
             ->setLayout('layout.app')
             ->setEmptyMessage('No Data found..')
-            ->setTableAttributes(['class' => '',]);
+            ->setTableAttributes([
+                'class' => 'table-premium table-hover align-middle',
+            ])
+            ->setThAttributes(function(Column $column) {
+                return [
+                    'class' => 'py-3 px-4 text-uppercase fw-bold text-nowrap',
+                    'style' => 'font-size: 0.85rem; letter-spacing: 0.05em;',
+                ];
+            })
+            ->setTdAttributes(function(Column $column, $row, $columnIndex, $rowIndex) {
+                return [
+                    'class' => 'py-3 px-4',
+                ];
+            });
     }
 
 
     public function columns(): array
     {
-        $this->index = $this->getPage() > 1 ? ($this->getPage() - 1) * $this->getPage() : 0;
+        $perPage = $this->getPerPage() ?? 25;
+        $this->index = ($this->getPage() - 1) * $perPage;
 
         $columns =  [
             Column::make('No.','id')->format(fn () => ++$this->index),
