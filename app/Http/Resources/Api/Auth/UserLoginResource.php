@@ -21,6 +21,16 @@ class UserLoginResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+        $nextTierPoints = \App\Models\MemberGroup::where('status', 1)
+            ->where('min_sales_amount', '>', $this->memberGroup?->min_sales_amount ?? 0)
+            ->orderBy('min_sales_amount', 'asc')
+            ->first()?->min_sales_amount ?? 0;
+        $retailNextTierPoints = \App\Models\MemberGroup::where('status', 1)
+            ->where('retail_min_sales_amount', '>', $this->retailMemberGroup?->retail_min_sales_amount ?? 0)
+            ->orderBy('retail_min_sales_amount', 'asc')
+            ->first()?->retail_min_sales_amount ?? 0;
+
         $user = [
             "id" => $this->id,
             "name" => $this->name,
@@ -39,14 +49,8 @@ class UserLoginResource extends JsonResource
             "retailLoyaltyPoints" => $this->retail_loyalty_points,
             "retailMemberGroup" => $this->retailMemberGroup,
             "memberSince" => $this->created_at->format("M Y"),
-            "nextTierPoints" => \App\Models\MemberGroup::where('status', 1)
-                ->where('min_sales_amount', '>', $this->memberGroup?->min_sales_amount ?? 0)
-                ->orderBy('min_sales_amount', 'asc')
-                ->first()?->min_sales_amount ?? 0,
-            "retailNextTierPoints" => \App\Models\MemberGroup::where('status', 1)
-                ->where('retail_min_sales_amount', '>', $this->retailMemberGroup?->retail_min_sales_amount ?? 0)
-                ->orderBy('retail_min_sales_amount', 'asc')
-                ->first()?->retail_min_sales_amount ?? 0,
+            "nextTierPoints" => money($nextTierPoints),
+            "retailNextTierPoints" => money($retailNextTierPoints),
             "totalOrders" => ($this->supermarket_user?->order()->count() ?? 0) + ($this->wholesales_user?->order()->count() ?? 0),
         ];
 
@@ -54,8 +58,8 @@ class UserLoginResource extends JsonResource
 
         $frontEndApps = AppUser::where("user_id", $this->id)
             ->whereHas("app", function ($query) {
-            $query->where("type", "Frontend");
-        })->orderBy('app_id', 'desc')->get();
+                $query->where("type", "Frontend");
+            })->orderBy('app_id', 'desc')->get();
 
         foreach ($frontEndApps as $app) {
             if ($app->app->id === 4) {
@@ -103,8 +107,7 @@ class UserLoginResource extends JsonResource
                 'token_type' => 'bearer',
                 'access_token' => Str::replace("Bearer ", "", $request->headers->get("authorization"))
             ];
-        }
-        else {
+        } else {
             $user['token'] = [
                 'token_type' => 'bearer',
                 'access_token' => $this->createToken(config("app.name"))->plainTextToken
