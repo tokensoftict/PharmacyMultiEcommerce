@@ -5,6 +5,7 @@ namespace App\Http\Resources\Api\Auth;
 use App\Http\Resources\Api\MedReminder\MedReminderScheduleResource;
 use App\Models\App;
 use App\Models\AppUser;
+use App\Models\MemberGroup;
 use App\Services\Api\MedReminder\MedReminderService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -54,9 +55,9 @@ class UserLoginResource extends JsonResource
             'dosageForms' => MedReminderService::$dosageForm,
             "medReminderDuration" => MedReminderService::$repeatDuration,
             "loyaltyPoints" => $this->loyalty_points,
-            "memberGroup" => $this->memberGroup,
+            "memberGroup" => $this->memberGroup ?? \App\Models\MemberGroup::where("min_sales_amount", 0)->first(),
             "retailLoyaltyPoints" => $this->retail_loyalty_points,
-            "retailMemberGroup" => $this->retailMemberGroup,
+            "retailMemberGroup" => $this->retailMemberGroup ?? \App\Models\MemberGroup::where("retail_min_sales_amount", 0)->first(),
             "memberSince" => $this->created_at->format("M Y"),
             "nextTierPoints" => $nextTierPoints,
             "retailNextTierPoints" => $retailNextTierPoints,
