@@ -13,22 +13,6 @@ class SupermarketHomeController extends ApiController
     public function __invoke()
     {
         $data = [];
-        $activePromos = \App\Models\Promotion::where('status_id', status('Active'))
-            ->where('app_id', 4) // Supermarket
-            ->where('from_date', '<=', now())
-            ->where('end_date', '>=', now())
-            ->get();
-
-        foreach ($activePromos as $promo) {
-            $data[] = [
-                "component" => "PromoBanner",
-                "type" => "PromoBanner",
-                "promotionId" => $promo->id,
-                "title" => $promo->name,
-                "endDate" => $promo->end_date->toIso8601String(),
-            ];
-        }
-
         $components = [
             [
                 "component" => "topBrands",
@@ -115,6 +99,47 @@ class SupermarketHomeController extends ApiController
             $data[] = $oneData;
         }
 
-        return $this->sendSuccessResponse($data);
+        $activePromos = \App\Models\Promotion::where('status_id', status('Active'))
+            ->where('app_id', 4) // Supermarket
+            ->where('from_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->with(['promotion_items.stock'])
+            ->get();
+
+        $carouselItems = [];
+        foreach ($activePromos as $promo) {
+            $firstImage = null;
+            $firstItem = $promo->promotion_items()->first();
+            if ($firstItem && $firstItem->stock) {
+                 $firstImage = $firstItem->stock->product_image;
+            }
+
+            if (!$firstImage) {
+                // Try to find any stock in the promo that has an image
+                foreach ($promo->promotion_items as $item) {
+                    if ($item->stock && $item->stock->product_image) {
+                        $firstImage = $item->stock->product_image;
+                        break;
+                    }
+                }
+            }
+
+            $carouselItems[] = [
+                "promotionId" => $promo->id,
+                "title" => $promo->name,
+                "endDate" => $promo->end_date->toIso8601String(),
+                "image"   => $firstImage ?? asset("logo/no-image.png"),
+            ];
+        }
+
+        if (count($carouselItems) > 0) {
+            $data[] = [
+                "component" => "PromoCarousel",
+                "type"      => "PromoCarousel",
+                "data"      => $carouselItems,
+            ];
+        }
+
+        return $this->sendSuccessResponse(array_merge($promos ?? [], $data));
     }
 }
