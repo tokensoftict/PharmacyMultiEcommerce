@@ -35,6 +35,8 @@ class MemberGroup extends Model
         'retail_color',
         'retail_bg_color',
         'retail_min_sales_amount',
+        'card_gradient_start',
+        'card_gradient_end',
         'status'
     ];
 
