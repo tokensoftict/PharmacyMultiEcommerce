@@ -31,6 +31,9 @@ class UserLoginResource extends JsonResource
             ->orderBy('retail_min_sales_amount', 'asc')
             ->first()?->retail_min_sales_amount ?? 0;
 
+        $totalSpend = $this->wholesales_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->sum('total');
+        $totalRetailSpend = $this->supermarket_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->sum('total');
+
         $user = [
             "id" => $this->id,
             "name" => $this->name,
@@ -53,7 +56,12 @@ class UserLoginResource extends JsonResource
             "retailNextTierPoints" => $retailNextTierPoints,
             "nextTierPoints_formatted" => money($nextTierPoints),
             "retailNextTierPoints_formatted" => money($retailNextTierPoints),
-            "totalOrders" => ($this->supermarket_user?->order()->count() ?? 0) + ($this->wholesales_user?->order()->count() ?? 0),
+            "totalOrders" => ($this->wholesales_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->count() ?? 0),
+            "retailtotalOrders" => ($this->supermarket_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->count() ?? 0),
+            "totalSpend" => $totalSpend,
+            "totalSpendFormatted" => money($totalSpend),
+            "retailTotalSpend" => $totalRetailSpend,
+            "retailTotalSpendFormatted" => money($totalRetailSpend),
         ];
 
         $apps = [];
