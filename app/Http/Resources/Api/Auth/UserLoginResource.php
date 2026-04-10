@@ -23,12 +23,12 @@ class UserLoginResource extends JsonResource
     public function toArray(Request $request): array
     {
         $nextTier = \App\Models\MemberGroup::where('status', 1)
-            ->where('min_sales_amount', '>', $this->memberGroup?->min_sales_amount ?? -1)
+            ->where('min_sales_amount', '>', $this->memberGroup?->min_sales_amount ?? 0)
             ->orderBy('min_sales_amount', 'asc')
             ->first();
 
         $retailNextTier = \App\Models\MemberGroup::where('status', 1)
-            ->where('retail_min_sales_amount', '>', $this->retailMemberGroup?->retail_min_sales_amount ?? -1)
+            ->where('retail_min_sales_amount', '>', $this->retailMemberGroup?->retail_min_sales_amount ?? 0)
             ->orderBy('retail_min_sales_amount', 'asc')
             ->first();
 
