@@ -34,6 +34,9 @@ class UserLoginResource extends JsonResource
         $totalSpend = $this->wholesales_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->sum('total');
         $totalRetailSpend = $this->supermarket_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->sum('total');
 
+        $progress = $totalSpend > 0 ? round(($totalSpend / 100) * $nextTierPoints) : 0;
+        $retailProgress = $totalRetailSpend > 0 ? round(($totalRetailSpend / 100) * $retailNextTierPoints) : 0;
+
         $user = [
             "id" => $this->id,
             "name" => $this->name,
@@ -62,6 +65,8 @@ class UserLoginResource extends JsonResource
             "totalSpendFormatted" => money($totalSpend),
             "retailTotalSpend" => $totalRetailSpend,
             "retailTotalSpendFormatted" => money($totalRetailSpend),
+            "progress" => $progress,
+            "retailProgress" => $retailProgress,
         ];
 
         $apps = [];
