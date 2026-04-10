@@ -22,6 +22,7 @@ Route::domain(config('app.MAIN_DOMAIN'))->middleware(['web'])->group(function ()
 
 
     Route::get('{path}', [FileController::class, 'show'])->where('path', '.*')->name('assets.show');
+    Route::view('/coupon-terms', 'coupon_terms')->name('coupon.terms');
 });
 
 
