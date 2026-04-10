@@ -22,8 +22,8 @@ class MemberGroupColorSeeder extends Seeder
                 'end' => '#708090',
             ],
             'BRONZE' => [
-                'start' => '#CD7F32',
-                'end' => '#8B4513',
+                'start' => '#A85E34',
+                'end' => '#7A3E1D',
             ],
         ];
 
