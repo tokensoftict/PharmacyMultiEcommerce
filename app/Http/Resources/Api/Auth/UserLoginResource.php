@@ -21,15 +21,18 @@ class UserLoginResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
-        $nextTierPoints = \App\Models\MemberGroup::where('status', 1)
+        $nextTier = \App\Models\MemberGroup::where('status', 1)
             ->where('min_sales_amount', '>', $this->memberGroup?->min_sales_amount ?? 0)
             ->orderBy('min_sales_amount', 'asc')
-            ->first()?->min_sales_amount ?? 0;
-        $retailNextTierPoints = \App\Models\MemberGroup::where('status', 1)
+            ->first();
+
+        $retailNextTier = \App\Models\MemberGroup::where('status', 1)
             ->where('retail_min_sales_amount', '>', $this->retailMemberGroup?->retail_min_sales_amount ?? 0)
             ->orderBy('retail_min_sales_amount', 'asc')
-            ->first()?->retail_min_sales_amount ?? 0;
+            ->first();
+
+        $nextTierPoints = $nextTier?->min_sales_amount ?? 0;
+        $retailNextTierPoints = $retailNextTier?->retail_min_sales_amount ?? 0;
 
         $totalSpend = $this->wholesales_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->sum('total');
         $totalRetailSpend = $this->supermarket_user?->order()->whereIn('status_id', [status('Paid'), status('Dispatched'), status('Complete')])->sum('total');
@@ -67,6 +70,8 @@ class UserLoginResource extends JsonResource
             "retailTotalSpendFormatted" => money($totalRetailSpend),
             "progress" => $progress,
             "retailProgress" => $retailProgress,
+            "nextMemberGroup" => $nextTier?->name ?? "-",
+            "nextRetailMemberGroup" => $retailNextTier?->name ?? "-",
         ];
 
         $apps = [];
