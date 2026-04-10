@@ -124,6 +124,7 @@ class WholesalesHomeController extends ApiController
             $carouselItems[] = [
                 "promotionId" => $promo->id,
                 "title" => $promo->name,
+                "startDate" => $promo->from_date->toIso8601String(),
                 "endDate" => $promo->end_date->toIso8601String(),
                 "image"   => $firstImage ?? asset("logo/no-image.png"),
             ];
