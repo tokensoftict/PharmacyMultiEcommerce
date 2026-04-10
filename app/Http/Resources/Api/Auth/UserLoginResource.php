@@ -36,6 +36,8 @@ class UserLoginResource extends JsonResource
             "medReminderDuration" => MedReminderService::$repeatDuration,
             "loyaltyPoints" => $this->loyalty_points,
             "memberGroup" => $this->memberGroup,
+            "retailLoyaltyPoints" => $this->retail_loyalty_points,
+            "retailMemberGroup" => $this->retailMemberGroup,
         ];
 
         $apps = [];
