@@ -131,11 +131,11 @@ class WholesalesHomeController extends ApiController
         }
 
         if (count($carouselItems) > 0) {
-            $data[] = [
+            array_unshift($data, [
                 "component" => "PromoCarousel",
                 "type"      => "PromoCarousel",
                 "data"      => $carouselItems,
-            ];
+            ]);
         }
 
         return $this->sendSuccessResponse(array_merge($promos ?? [], $data));
