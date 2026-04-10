@@ -71,8 +71,8 @@ class UserLoginResource extends JsonResource
             "retailTotalSpendFormatted" => money($totalRetailSpend),
             "progress" => $progress,
             "retailProgress" => $retailProgress,
-            "nextMemberGroup" => $nextTier?->name ?? "-",
-            "nextRetailMemberGroup" => $retailNextTier?->name ?? "-",
+            "nextMemberGroup" => $nextTier?->label ?? "-",
+            "nextRetailMemberGroup" => $retailNextTier?->label ?? "-",
         ];
 
         $apps = [];
