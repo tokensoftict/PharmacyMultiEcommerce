@@ -1,107 +1,151 @@
-/* Premium Table Design System for PSGDC */
+/* Enhanced Premium Table Design System for PSGDC */
 
+/* Overall Container Styling - High Elevation Card */
+.laravel-livewire-tables {
+    background: #ffffff !important;
+    border-radius: 2rem !important;
+    padding: 2.5rem !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 10px 15px -5px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(226, 232, 240, 0.5) !important;
+    margin: 3rem 0 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add a subtle top border accent to the card */
+.laravel-livewire-tables::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #3b82f6, #2563eb, #1d4ed8);
+}
+
+/* The Table Itself */
 .table-premium {
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: 100%;
-    background-color: #ffffff;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-    border: 1px solid #e2e8f0 !important;
-    margin-bottom: 1.5rem;
+    width: 100% !important;
+    border: none !important;
+    margin-top: 1rem !important;
 }
 
+/* Header Styling - Ultra Modern Gradient */
 .table-premium thead th {
-    background-color: #0f172a !important; /* Deep Navy/Slate 900 */
-    color: #f8fafc !important;
-    border-bottom: none !important;
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    padding: 1.25rem 1rem !important;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    color: #ffffff !important;
+    text-transform: uppercase !important;
+    font-weight: 800 !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.1em !important;
+    padding: 1.5rem 1rem !important;
+    border: none !important;
+    white-space: nowrap;
 }
 
+/* Mega Rounded Header Corners */
 .table-premium thead th:first-child {
-    border-top-left-radius: 0.75rem;
+    border-top-left-radius: 1rem !important;
+    border-bottom-left-radius: 1rem !important;
 }
 
 .table-premium thead th:last-child {
-    border-top-right-radius: 0.75rem;
+    border-top-right-radius: 1rem !important;
+    border-bottom-right-radius: 1rem !important;
 }
 
+/* Row Styling - Interactive & Spacious */
 .table-premium tbody tr {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
 .table-premium tbody tr:hover {
-    background-color: #f8fafc !important;
-    transform: scale(1.001);
+    background-color: #f1f7ff !important;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1) !important;
+    transform: translateY(-2px) scale(1.005);
+    z-index: 10;
+    position: relative;
 }
 
 .table-premium tbody td {
+    padding: 1.25rem 1rem !important;
     border-bottom: 1px solid #f1f5f9 !important;
-    padding: 1rem !important;
-    color: #334155;
-    font-size: 0.9rem;
-    vertical-align: middle;
+    color: #334155 !important;
+    font-size: 0.95rem !important;
+    vertical-align: middle !important;
+    background: transparent !important;
 }
 
 .table-premium tbody tr:last-child td {
     border-bottom: none !important;
 }
 
-/* Serial Number Column Styling */
+/* Serial Number Column - The "Badge" Pillar */
 .table-premium tbody td:first-child {
-    font-weight: 600;
-    color: #64748b;
-    background-color: #f8fafc;
-    width: 60px;
-    text-align: center;
+    width: 80px !important;
+    text-align: center !important;
+    font-weight: 900 !important;
+    color: #1e293b !important;
+    background-color: #f8fafc !important;
+    border-right: 2px solid #e2e8f0 !important;
+    font-family: 'Inter', sans-serif;
 }
 
-/* ToolBar & Search Styling */
+/* Action Buttons - Premium Mini Buttons */
+.table-premium .btn {
+    border-radius: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    transition: all 0.2s !important;
+}
+
+.table-premium .btn:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+}
+
+/* Search Input - Floating Interaction */
 .laravel-livewire-tables-search-input {
-    border-radius: 0.5rem !important;
-    border: 1px solid #e2e8f0 !important;
-    padding: 0.6rem 1rem !important;
-    transition: all 0.2s;
-    background-color: #fff !important;
+    border-radius: 1.25rem !important;
+    border: 2px solid #e2e8f0 !important;
+    padding: 0.85rem 1.5rem !important;
+    background-color: #fcfcfc !important;
+    transition: all 0.3s !important;
 }
 
 .laravel-livewire-tables-search-input:focus {
+    background-color: #ffffff !important;
     border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
-    background-color: #fff !important;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2) !important;
+    transform: translateY(-1px);
 }
 
-/* Pagination Styling */
+/* Pagination - Futuristic Navigation */
 .pagination {
-    gap: 0.25rem;
+    margin-top: 3rem !important;
 }
 
-.page-link {
-    border-radius: 0.5rem !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #475569 !important;
-    padding: 0.5rem 0.85rem !important;
-    font-weight: 500;
+.page-item .page-link {
+    border: none !important;
+    margin: 0 0.35rem !important;
+    border-radius: 1rem !important;
+    padding: 0.75rem 1.25rem !important;
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+    transition: all 0.3s !important;
 }
 
 .page-item.active .page-link {
-    background-color: #0f172a !important;
-    border-color: #0f172a !important;
-    color: #fff !important;
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4) !important;
+    transform: translateY(-2px);
 }
 
-.page-link:hover {
-    background-color: #f1f5f9 !important;
-}
-
-/* Responsive Container Fix */
-div.overflow-auto {
-    border-radius: 0.75rem;
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 #f8fafc;
+.page-item .page-link:hover:not(.active) {
+    background: #e2e8f0 !important;
+    transform: translateY(-1px);
 }
