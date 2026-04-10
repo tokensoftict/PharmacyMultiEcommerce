@@ -41,13 +41,13 @@ trait SimpleDatatableComponentTrait
             ->setTableAttributes([
                 'class' => 'table-premium table-hover align-middle',
             ])
-            ->setThAttributes(function(Column $column) {
+            ->setThAttributes(function(\Rappasoft\LaravelLivewireTables\Views\Column $column) {
                 return [
                     'class' => 'py-3 px-4 text-uppercase fw-bold text-nowrap',
                     'style' => 'font-size: 0.85rem; letter-spacing: 0.05em;',
                 ];
             })
-            ->setTdAttributes(function(Column $column, $row, $columnIndex, $rowIndex) {
+            ->setTdAttributes(function(\Rappasoft\LaravelLivewireTables\Views\Column $column, $row, $columnIndex, $rowIndex) {
                 return [
                     'class' => 'py-3 px-4',
                 ];
