@@ -35,8 +35,7 @@ Route::prefix("stock")->namespace("Stock")->group(function(){
     Route::get("/special-offers", ["as" => "stock.special-offers", "uses" => "SpecialOfferStockController"]);
     Route::get("/{classification}/by_classification", ["as" => "stock.by_classification", "uses" => "StockByProductClassificationController"]);
     Route::get("/{productcategory}/by_productcategory", ["as" => "stock.by_productcategory", "uses" => "StockByProductCategoriesController"]);
-    Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.manufacturer", "uses" => "StockByProductManufacturerController"]);
-
+    Route::get("/{promotion}/by_promotion", ["as" => "stock.by_promotion", "uses" => "StockByPromotionController"]);
 });
 
 Route::middleware(['auth:sanctum'])->group(function(){
