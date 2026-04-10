@@ -49,8 +49,10 @@ class UserLoginResource extends JsonResource
             "retailLoyaltyPoints" => $this->retail_loyalty_points,
             "retailMemberGroup" => $this->retailMemberGroup,
             "memberSince" => $this->created_at->format("M Y"),
-            "nextTierPoints" => money($nextTierPoints),
-            "retailNextTierPoints" => money($retailNextTierPoints),
+            "nextTierPoints" => $nextTierPoints,
+            "retailNextTierPoints" => $retailNextTierPoints,
+            "nextTierPoints_formatted" => money($nextTierPoints),
+            "retailNextTierPoints_formatted" => money($retailNextTierPoints),
             "totalOrders" => ($this->supermarket_user?->order()->count() ?? 0) + ($this->wholesales_user?->order()->count() ?? 0),
         ];
 
