@@ -23,7 +23,7 @@ class StockByPromotionController extends ApiController
         $stockIds = $promotion->promotion_items()->pluck('stock_id');
         
         $stocks = Stock::whereIn('id', $stockIds)
-            ->where('status', 1)
+            ->where('status_id', 1)
             ->paginate();
 
         return $this->sendPaginatedSuccessResponse(
