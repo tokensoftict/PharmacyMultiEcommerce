@@ -5,6 +5,7 @@ use App\Classes\ApplicationEnvironment;
 use App\Models\PushNotification;
 use App\Models\SalesRepresentative;
 use App\Notifications\DevicePushNotification;
+use App\Notifications\DevicePushNotificationNoQueue;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -804,7 +805,7 @@ function futureCarbon(int $number) : Carbon {
     return Carbon::now()->addMinute($number);
 }
 
-function sendNotificationToDevice(PushNotification $notification, $status = null) : void
+function sendNotificationToDevice(PushNotification $notification, $status = null, $queue = true) : void
 {
     if(is_null($status)) $status = status('Pending');
 
@@ -819,7 +820,12 @@ function sendNotificationToDevice(PushNotification $notification, $status = null
         if(!$customer->customer->device_key) continue;
         $customer->status_id = status('Dispatched');
         $customer->save();
-        $customer->customer->notify(new DevicePushNotification($notification, $customer));
+        if($queue === true) {
+            $customer->customer->notify(new DevicePushNotification($notification, $customer));
+        } else {
+            $customer->customer->notify(new DevicePushNotificationNoQueue($notification, $customer));
+        }
+
     }
 }
 
