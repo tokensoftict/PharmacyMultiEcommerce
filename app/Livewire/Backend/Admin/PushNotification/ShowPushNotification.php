@@ -50,7 +50,7 @@ class ShowPushNotification extends Component
 
     public function resend() : void
     {
-        sendNotificationToDevice($this->pushNotification, [status('Dispatched'), status('Failed'), status('Complete')], false);
+        sendNotificationToDevice($this->pushNotification, [status('Dispatched'), status('Processing Error'), status('Complete')], false);
 
         $this->alert(
             "success",
