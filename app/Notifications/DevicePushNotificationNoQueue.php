@@ -45,8 +45,8 @@ class DevicePushNotificationNoQueue extends Notification
         $fcm->name("{$this->pushNotification->title}");
 
         $data = [];
-        $data ['notificationType'] = $this->pushNotification->action ?? "DEFAULT";
-        if($this->pushNotification->stocks->count() > 0) {
+        $data['notificationType'] = $this->pushNotification->action ?? "DEFAULT";
+        if ($this->pushNotification->stocks->count() > 0) {
             $stocks = $this->pushNotification->stocks->map(function ($stock) {
                 return $stock['stock_id'];
             })->toArray();
@@ -54,17 +54,17 @@ class DevicePushNotificationNoQueue extends Notification
 
         }
 
-        if(!is_null($this->pushNotification->payload)) {
-            if(is_string($this->pushNotification->payload)) {
-                $data ['extra'] = $this->pushNotification->payload;
+        if (!is_null($this->pushNotification->payload)) {
+            if (is_string($this->pushNotification->payload)) {
+                $data['extra'] = $this->pushNotification->payload;
             } else {
-                $data ['extra'] = json_encode($this->pushNotification->payload);
+                $data['extra'] = json_encode($this->pushNotification->payload);
             }
         }
 
         //setEnvironment
 
-        $data['environment'] = match ( $this->pushNotification->app->model_id) {
+        $data['environment'] = match ($this->pushNotification->app->model_id) {
             6 => "supermarket",
             4 => "sales_representative",
             default => "wholesales"
@@ -77,19 +77,18 @@ class DevicePushNotificationNoQueue extends Notification
 
         $fcm->custom([
             'android' => [
-                "priority"=> "high",
+                "priority" => "high",
                 'notification' => [
                     'color' => '#FFFFFF',
                     'sound' => 'medication_reminder',
-                    'channel_id' => 'psgdc_high_priority_v1',
                 ],
                 'fcm_options' => [
                     'analytics_label' => 'analytics',
                 ],
             ],
             'apns' => [
-                "headers"=> [
-                    "apns-priority"=> "10" // 10 = High priority, 5 = Normal
+                "headers" => [
+                    "apns-priority" => "10" // 10 = High priority, 5 = Normal
                 ],
                 'payload' => [
                     'aps' => [

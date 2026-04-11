@@ -77,7 +77,6 @@ class DevicePushNotification extends Notification implements ShouldQueue
                 'notification' => [
                     'color' => '#FFFFFF',
                     'sound' => 'medication_reminder',
-                    'channel_id' => 'psgdc_high_priority_v1',
                 ],
                 'fcm_options' => [
                     'analytics_label' => 'analytics',
