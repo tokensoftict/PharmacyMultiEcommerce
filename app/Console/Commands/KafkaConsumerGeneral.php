@@ -40,10 +40,6 @@ class KafkaConsumerGeneral extends Command
             ->withHandler(function (ConsumedMessage $message) {
                 // Process the incoming message
                 $topic = $message->getTopicName();
-                Log::info([
-                    "offset" => $message->getOffset(),
-                    "message" => $message->getBody(),
-                ]);
                 switch ($topic) {
                     case KafkaTopics::ORDERS:
                         ProcessOrderService::handle($message);
