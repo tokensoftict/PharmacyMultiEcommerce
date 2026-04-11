@@ -8,6 +8,7 @@ use App\Services\Kafka\ProcessOrderService;
 use App\Services\Kafka\ProcessStockService;
 use Carbon\Exceptions\Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Junges\Kafka\Exceptions\ConsumerException;
 use Junges\Kafka\Facades\Kafka;
 use Junges\Kafka\Message\ConsumedMessage;
@@ -39,6 +40,10 @@ class KafkaConsumerGeneral extends Command
             ->withHandler(function (ConsumedMessage $message) {
                 // Process the incoming message
                 $topic = $message->getTopicName();
+                Log::info([
+                    "offset" => $message->getOffset(),
+                    "message" => $message->getBody(),
+                ]);
                 switch ($topic) {
                     case KafkaTopics::ORDERS:
                         ProcessOrderService::handle($message);
