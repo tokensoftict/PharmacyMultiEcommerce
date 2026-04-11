@@ -31,35 +31,35 @@ class PushNotificationFailedListener
                 $event->notification->customerPushNotification->save();
             }
 
-            $report = Arr::get($event->data, 'report');
-
-            $target = $report->target();
-
-            $wholesale = WholesalesUser::query()->where('device_key', $target->value())
-                ->first();
-
-            $supermarket = SupermarketUser::query()->where('device_key', $target->value())
-                ->first();
-
-            if($supermarket) {
-                $supermarket->device_key = NULL;
-                $supermarket->save();
-            }
-
-            if($wholesale) {
-                $wholesale->device_key = NULL;
-                $wholesale->save();
-            }
-
-            Storage::append('logs/invalid_tokens.txt', $target->value());
-
-            if($wholesale) {
-                Storage::append('logs/wholesales.txt', $wholesale->id);
-            }
-
-            if($supermarket) {
-                Storage::append('logs/supermarket.txt', $supermarket->id);
-            }
+//            $report = Arr::get($event->data, 'report');
+//
+//            $target = $report->target();
+//
+//            $wholesale = WholesalesUser::query()->where('device_key', $target->value())
+//                ->first();
+//
+//            $supermarket = SupermarketUser::query()->where('device_key', $target->value())
+//                ->first();
+//
+//            if($supermarket) {
+//                $supermarket->device_key = NULL;
+//                $supermarket->save();
+//            }
+//
+//            if($wholesale) {
+//                $wholesale->device_key = NULL;
+//                $wholesale->save();
+//            }
+//
+//            Storage::append('logs/invalid_tokens.txt', $target->value());
+//
+//            if($wholesale) {
+//                Storage::append('logs/wholesales.txt', $wholesale->id);
+//            }
+//
+//            if($supermarket) {
+//                Storage::append('logs/supermarket.txt', $supermarket->id);
+//            }
         }
     }
 }
