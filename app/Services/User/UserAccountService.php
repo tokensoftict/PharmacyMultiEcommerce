@@ -63,6 +63,11 @@ class UserAccountService
 
         if(!$user){
 
+            $data['loyalty_points'] = 0;
+            $data['retail_loyalty_points'] = 0;
+            $data['member_group_id'] = 3;
+            $data['retail_member_group_id'] = 3;
+
             $user = User::create($data);
 
             $this->generateInitialPicture($user);
