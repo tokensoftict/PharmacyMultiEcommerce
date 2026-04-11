@@ -39,7 +39,7 @@ return [
      |
      */
 
-    'debug' => (bool)env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
      |--------------------------------------------------------------------------
@@ -101,8 +101,8 @@ return [
 
     'previous_keys' => [
         ...array_filter(
-        explode(',', env('APP_PREVIOUS_KEYS', ''))
-    ),
+            explode(',', env('APP_PREVIOUS_KEYS', ''))
+        ),
     ],
 
     /*
@@ -187,5 +187,5 @@ return [
 
     'PROCESS_OLD_APP_URL' => env("PROCESS_OLD_APP_URL", "https://admin.generaldrugcentre.com/api/data/"),
     'mustVerify' => env("MUST_VERIFY", 'phone'),
-    'searchEngine' => env('SEARCH_ENGINE', 'MILISEARCH'),
+    'searchEngine' => env('SEARCH_ENGINE', 'APISEARCH'),
 ];
