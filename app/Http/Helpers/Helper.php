@@ -804,9 +804,19 @@ function futureCarbon(int $number) : Carbon {
     return Carbon::now()->addMinute($number);
 }
 
-function sendNotificationToDevice(PushNotification $notification) : void
+function sendNotificationToDevice(PushNotification $notification, $status = null) : void
 {
-    foreach ($notification->push_notification_customers()->where('status_id', status('Pending'))->get() as $customer) {
+    if(is_null($status)) $status = status('Pending');
+
+    $query = $notification->push_notification_customers();
+    if(is_array($status)) {
+        $query->whereIn('status_id', $status);
+    } else {
+        $query->where('status_id', $status);
+    }
+
+    foreach ($query->get() as $customer) {
+        if(!$customer->customer->device_key) continue;
         $customer->status_id = status('Dispatched');
         $customer->save();
         $customer->customer->notify(new DevicePushNotification($notification, $customer));

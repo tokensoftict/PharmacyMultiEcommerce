@@ -96,11 +96,6 @@ class DevicePushNotification extends Notification implements ShouldQueue
         $fcm->token($notifiable->device_key);
 
 
-        if($this->customerPushNotification and $this->customerPushNotification->customer) {
-            $this->customerPushNotification->status_id = status('Complete');
-            $this->customerPushNotification->save();
-        }
-
         return $fcm;
     }
 }

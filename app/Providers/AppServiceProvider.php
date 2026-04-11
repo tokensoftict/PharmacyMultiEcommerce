@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Classes\Settings;
 use App\Http\Middleware\DetectApplicationEnvironment;
 use App\Listeners\PushNotificationFailedListener;
+use App\Listeners\PushNotificationSentListener;
 use App\Models\Old\RetailCustomer;
 use App\Models\Old\User;
 use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -48,6 +50,11 @@ class AppServiceProvider extends ServiceProvider
         \Event::listen(
             NotificationFailed::class ,
             PushNotificationFailedListener::class
+        );
+
+        \Event::listen(
+            NotificationSent::class ,
+            PushNotificationSentListener::class
         );
     }
 }

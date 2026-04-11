@@ -29,6 +29,9 @@
             <div class="row g-3">
                 @if($this->pushNotification->status == "APPROVED")
                     <div class="col-auto">
+                        <button type="button" wire:click="resend"  wire:confirm="Are you sure you want to resend failed/stuck notifications?" class="btn btn-phoenix-warning"><span class="fas fa-sync me-2"></span>Resend</button>
+                    </div>
+                    <div class="col-auto">
                         <button type="button" wire:click="cancel"  wire:confirm="Are you sure you want approved this push notification" class="btn btn-phoenix-danger"><span class="fas fa-close me-2"></span>Cancel</button>
                     </div>
                 @endif

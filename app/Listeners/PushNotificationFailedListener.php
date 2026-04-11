@@ -26,6 +26,11 @@ class PushNotificationFailedListener
     {
         if ($event->channel == FcmChannel::class) {
 
+            if (isset($event->notification->customerPushNotification)) {
+                $event->notification->customerPushNotification->status_id = status('Failed');
+                $event->notification->customerPushNotification->save();
+            }
+
             $report = Arr::get($event->data, 'report');
 
             $target = $report->target();
