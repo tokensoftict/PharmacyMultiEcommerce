@@ -73,18 +73,23 @@ class DevicePushNotification extends Notification implements ShouldQueue
 
         $fcm->custom([
             'android' => [
+                "priority"=> "high",
                 'notification' => [
                     'color' => '#FFFFFF',
-                    'sound' => 'default',
+                    'sound' => 'medication_reminder',
+                    'channel_id' => 'psgdc_high_priority_v1',
                 ],
                 'fcm_options' => [
                     'analytics_label' => 'analytics',
                 ],
             ],
             'apns' => [
+                "headers"=> [
+                    "apns-priority"=> "10" // 10 = High priority, 5 = Normal
+                ],
                 'payload' => [
                     'aps' => [
-                        'sound' => 'default'
+                        'sound' => 'medication_reminder.wav'
                     ],
                 ],
                 'fcm_options' => [
