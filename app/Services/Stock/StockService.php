@@ -141,4 +141,27 @@ class StockService
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
+    /**
+     * @param string $query
+     * @return LengthAwarePaginator
+     */
+    public final function search(string $query) : LengthAwarePaginator
+    {
+        $builder = Stock::query()
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'LIKE', '%' . $query . '%')
+                    ->orWhere('description', 'LIKE', '%' . $query . '%')
+                    ->orWhere('seo', 'LIKE', '%' . $query . '%');
+            })
+            ->where('admin_status', true);
+
+        if (ApplicationEnvironment::$stock_model_string === "wholessales_stock_prices") {
+            $builder->where('is_wholesales', true);
+        }
+
+        return $builder->whereHas(ApplicationEnvironment::$stock_model_string, function($q){
+            $q->where("status", true);
+        })->paginate(config("app.PAGINATE_NUMBER"));
+    }
+
 }

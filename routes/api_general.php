@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix("stock")->namespace("Stock")->group(function () {
     Route::get("{stock}/show", ["as" => "stock.show", "uses" => "StockController"]);
     Route::get("scan/{code}", ["as" => "stock.scan", "uses" => "ScanController@scan"]);
+    Route::get("search", ["as" => "stock.search", "uses" => "SearchStockController"]);
 });
 
 Route::prefix("pop-ups")->namespace("Popup")->group(function () {

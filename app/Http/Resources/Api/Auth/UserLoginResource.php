@@ -138,6 +138,7 @@ class UserLoginResource extends JsonResource
         $user['systemSettings'] = [
             'mustVerify' => config("app.mustVerify"),
             'verifyField' => config("app.mustVerify") === "email" ? "email_verification_status" : "phone_verified_status",
+            'searchEngine' => config("app.searchEngine"),
         ];
 
         return $user;

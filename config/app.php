@@ -187,4 +187,5 @@ return [
 
     'PROCESS_OLD_APP_URL' => env("PROCESS_OLD_APP_URL", "https://admin.generaldrugcentre.com/api/data/"),
     'mustVerify' => env("MUST_VERIFY", 'phone'),
+    'searchEngine' => env('SEARCH_ENGINE', 'MILISEARCH'),
 ];
