@@ -2,16 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix("stock")->namespace("Stock")->group(function(){
+Route::prefix("stock")->namespace("Stock")->group(function () {
     Route::get("{stock}/show", ["as" => "stock.show", "uses" => "StockController"]);
     Route::get("scan/{code}", ["as" => "stock.scan", "uses" => "ScanController@scan"]);
 });
 
-Route::prefix("pop-ups")->namespace("Popup")->group(function(){
+Route::prefix("pop-ups")->namespace("Popup")->group(function () {
     Route::get("list", ["as" => "pop-ups.list", "uses" => "CustomerSpecialPromotionController"]);
 });
 
-Route::prefix("general")->namespace("General")->group(function(){
+Route::prefix("general")->namespace("General")->group(function () {
     Route::get("/manufacturers", ["as" => "manufacturer.list", "uses" => "ManufacturerController"]);
     Route::get("/product_categories", ["as" => "product_categories.list", "uses" => "ProductCategoryController"]);
     Route::get("/product_manufacturers", ["as" => "product_categories.list", "uses" => "ProductManufacturerController"]);
@@ -27,7 +27,7 @@ Route::prefix("general")->namespace("General")->group(function(){
 });
 
 
-Route::prefix("stock")->namespace("Stock")->group(function(){
+Route::prefix("stock")->namespace("Stock")->group(function () {
     Route::get("/bestseller", ["as" => "stock.bestseller", "uses" => "BestSellerController"]);
     Route::get("/promo", ["as" => "stock.promo", "uses" => "PromoStockController"]);
     Route::get("/offer", ["as" => "stock.offer", "uses" => "SpecialOfferStockController"]);
@@ -35,18 +35,19 @@ Route::prefix("stock")->namespace("Stock")->group(function(){
     Route::get("/special-offers", ["as" => "stock.special-offers", "uses" => "SpecialOfferStockController"]);
     Route::get("/{classification}/by_classification", ["as" => "stock.by_classification", "uses" => "StockByProductClassificationController"]);
     Route::get("/{productcategory}/by_productcategory", ["as" => "stock.by_productcategory", "uses" => "StockByProductCategoriesController"]);
+    Route::get("/{manufacturer}/by_manufacturer", ["as" => "stock.by_manufacturer", "uses" => "StockByProductManufacturerController"]);
     Route::get("/{promotion}/by_promotion", ["as" => "stock.by_promotion", "uses" => "StockByPromotionController"]);
 });
 
-Route::middleware(['auth:sanctum'])->group(function(){
+Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::prefix("general")->namespace("General")->group(function(){
+    Route::prefix("general")->namespace("General")->group(function () {
         Route::get("/{deliveryMethod}/delivery_method", ["as" => "delivery_method.setDefault", "uses" => "SetDeliveryMethodAsDefaultDeliveryMethodController"]);
         Route::get("/{paymentMethod}/payment_method", ["as" => "payment_method.setDefault", "uses" => "SetPaymentMethodAsDefaultPaymentMethodController"]);
         Route::get("notifications", ["as" => "notifications", "uses" => "UsersNotificationController"]);
     });
 
-    Route::prefix("address")->namespace("Address")->group(function(){
+    Route::prefix("address")->namespace("Address")->group(function () {
         Route::get("/{address}/show", ["as" => "address.get", "uses" => "AddressController"]);
         Route::get("/list", ["as" => "address.list", "uses" => "ListAddressesController"]);
         Route::post("/create", ["as" => "address.create", "uses" => "CreateNewAddressController"]);
@@ -55,7 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
         Route::get("/{address}/set_as_default", ["as" => "address.set_as_default", "uses" => "SetAddressAsDefaultCheckoutAddress"]);
     });
 
-    Route::prefix("cart")->namespace("Cart")->group(function(){
+    Route::prefix("cart")->namespace("Cart")->group(function () {
         Route::post("/add-item", ["as" => "cart.add-item", "uses" => "AddItemToCartController"]);
         Route::get("{stock}/remove-item", ["as" => "cart.remove-item", "uses" => "RemoveItemFromCartController"]);
         Route::get("lists", ["as" => "cart.lists", "uses" => "ListItemsInCart"]);
@@ -63,7 +64,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     });
 
 
-    Route::prefix("wishlist")->namespace("Wishlist")->group(function(){
+    Route::prefix("wishlist")->namespace("Wishlist")->group(function () {
         Route::post("/add-item", ["as" => "wishlist.add-item", "uses" => "AddItemToWishlistController"]);
         Route::get("{stock}/remove-item", ["as" => "wishlist.remove-item", "uses" => "RemoveItemFromWishlistController"]);
         Route::get("lists", ["as" => "wishlist.lists", "uses" => "ListItemsInWishlist"]);
@@ -71,7 +72,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     });
 
 
-    Route::prefix("checkout")->namespace("Checkout")->group(function(){
+    Route::prefix("checkout")->namespace("Checkout")->group(function () {
         Route::get("payment_methods", ["as" => "checkout.payment_methods", "uses" => "PaymentMethodListController"]);
         Route::get("delivery_methods", ["as" => "checkout.delivery_methods", "uses" => "DeliveryMethodListController"]);
 
@@ -95,7 +96,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     });
 
 
-    Route::prefix("order")->namespace("Order")->group(function(){
+    Route::prefix("order")->namespace("Order")->group(function () {
         Route::get("lists", ["as" => "order.lists", "uses" => "OrdersController"]);
         Route::get("{order}/show", ["as" => "order.show", "uses" => "OrderController"]);
     });
