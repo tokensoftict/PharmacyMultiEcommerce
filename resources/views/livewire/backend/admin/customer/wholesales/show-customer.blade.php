@@ -39,7 +39,13 @@
 </script>
 @endscript
 @php
-    $myCarts =   $this->wholesalesUser->getCart()
+    $myCarts = $this->wholesalesUser->getCart();
+    $recentPushNotifications = \App\Models\PushNotificationCustomer::with(['push_notification', 'status'])
+        ->where('customer_id', $this->wholesalesUser->id)
+        ->where('customer_type', get_class($this->wholesalesUser))
+        ->orderBy('created_at', 'desc')
+        ->limit(10)
+        ->get();
 @endphp
 <div>
     <div class="row align-items-center justify-content-between g-3 mt-n5">
@@ -269,6 +275,51 @@
                                     <td class="total align-middle fw-bold text-body-highlight text-end">{{ money($item->price * $item->cart_quantity) }}</td>
                                 </tr>
                             @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-6">
+                <h3 class="mb-4">Recent Push Notifications <span
+                        class="text-body-tertiary fw-normal">({{ $recentPushNotifications->count() }})</span></h3>
+                <div class="border-translucent border-top border-bottom" id="customerPushNotificationTable"
+                    data-list='{"valueNames":["title","body","status","date"],"page":5,"pagination":true}'>
+                    <div class="table-responsive scrollbar">
+                        <table class="table fs-9 mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="sort white-space-nowrap align-middle" scope="col" style="width:20%;" data-sort="title">Title</th>
+                                    <th class="sort align-middle" scope="col" data-sort="body" style="width:40%;">Message</th>
+                                    <th class="sort align-middle" scope="col" data-sort="status" style="width:15%;">Status</th>
+                                    <th class="sort align-middle text-end" scope="col" data-sort="date" style="width:15%;">Date</th>
+                                    <th class="sort align-middle text-end" scope="col" style="width:10%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="list" id="customer-push-notification-table-body">
+                                @forelse($recentPushNotifications as $notification)
+                                    <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                                        <td class="title align-middle fw-semibold text-body-highlight">{{ $notification->push_notification->title ?? 'N/A' }}</td>
+                                        <td class="body align-middle text-body-tertiary">{{ \Illuminate\Support\Str::limit($notification->push_notification->body ?? 'N/A', 80) }}</td>
+                                        <td class="status align-middle white-space-nowrap fw-bold">
+                                              {!! showStatus($notification->status_id) !!}
+                                        </td>
+                                        <td class="date align-middle white-space-nowrap text-body-tertiary text-end">{{ $notification->created_at->format('D, M jS, Y h:i a') }}</td>
+                                        <td class="align-middle white-space-nowrap text-end">
+                                            <button wire:click="resendNotification({{ $notification->id }})" 
+                                                    wire:confirm="Are you sure you want to resend this notification?"
+                                                    class="btn btn-sm btn-outline-primary py-0 px-2" 
+                                                    title="Resend Notification">
+                                                <span class="fas fa-redo-alt fs-10"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-3">No recent push notifications found for this customer.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
                         </table>
                     </div>
                 </div>

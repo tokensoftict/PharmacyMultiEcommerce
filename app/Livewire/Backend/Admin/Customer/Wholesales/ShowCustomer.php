@@ -7,10 +7,14 @@ use App\Models\SupermarketUser;
 use App\Models\WholesalesUser;
 use App\Models\WholessalesStockPrice;
 use App\Services\User\Wholesales\WholeSalesCustomerService;
+use App\Models\PushNotificationCustomer;
+use App\Notifications\DevicePushNotification;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
 
 class ShowCustomer extends Component
 {
+    use LivewireAlert;
 
     public WholesalesUser|SupermarketUser $wholesalesUser;
     public int $account;
@@ -52,5 +56,30 @@ class ShowCustomer extends Component
         $this->wholesalesUser->user->save();
         $this->dispatch("hideUpdateCustomerModal", []);
         $this->alert("success", "Phone Number has been updated successfully");
+    }
+
+    public function resendNotification($notificationCustomerId)
+    {
+        $notificationCustomer = PushNotificationCustomer::find($notificationCustomerId);
+
+        if (!$notificationCustomer) {
+            $this->alert("error", "Notification record not found.");
+            return;
+        }
+
+        if (!$notificationCustomer->customer->device_key) {
+            $this->alert("error", "Customer has no registered device to receive push notifications.");
+            return;
+        }
+
+        try {
+            $notificationCustomer->customer->notify(new DevicePushNotification($notificationCustomer->push_notification, $notificationCustomer));
+            $notificationCustomer->status_id = status('Dispatched');
+            $notificationCustomer->save();
+
+            $this->alert("success", "Notification has been resent successfully!");
+        } catch (\Exception $e) {
+            $this->alert("error", "Failed to resend notification: " . $e->getMessage());
+        }
     }
 }
