@@ -196,131 +196,146 @@
             </div>
         </div>
         <div class="col-12 col-xxl-8">
-            <div class="mb-6">
-                <h3 class="mb-4">Orders <span class="text-body-tertiary fw-normal">({{ $this->wholesalesUser->order->count() }})</span></h3>
-                <div class="border-top border-bottom border-translucent" id="customerOrdersTable">
-                    <div class="table-responsive scrollbar">
-                        <table class="table table-sm fs-9 mb-0">
-                            <thead>
-                            <tr>
-                                <th class="sort white-space-nowrap align-middle ps-0 pe-3">Order</th>
-                                <th class="sort align-middle text-end pe-7">Total</th>
-                                <th class="sort align-middle white-space-nowrap pe-3">Status</th>
-                                <th class="sort align-middle white-space-nowrap text-start pe-3">Payment Method</th>
-                                <th class="sort align-middle white-space-nowrap text-start">Delivery Method</th>
-                                <th class="sort align-middle text-end pe-0">Date</th>
-                                <th class="sort text-end align-middle pe-0 ps-5"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($this->wholesalesUser->order as $order)
-                                <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                    <td class="order align-middle white-space-nowrap ps-0"><a class="fw-semibold" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">#{{ $order->id }}</a></td>
-                                    <td class="total align-middle text-end fw-semibold pe-7 text-body-highlight">{{ money($order->total) }}</td>
-                                    <td class="payment_status align-middle white-space-nowrap text-start fw-bold text-body-tertiary">{!! showStatus($order->status_id) !!}</td>
-                                    <td class="fulfilment_status align-middle white-space-nowrap text-start fw-bold text-body-tertiary">{{ $order->payment_method->name }}</td>
-                                    <td class="delivery_type align-middle white-space-nowrap text-body fs-9 text-start">{{ $order->delivery_method->name }}</td>
-                                    <td class="date align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 text-end">{{ $order->order_date->format('D, F jS, Y') }}</td>
-                                    <td class="align-middle white-space-nowrap text-end pe-0 ps-5">
-                                        <div class="btn-reveal-trigger position-static"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h fs-10"></span></button>
-                                            <div class="dropdown-menu dropdown-menu-end py-2">
-                                                <a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">View</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    @if($this->wholesalesUser->order->count() > 6)
-                        <div class="row align-items-center justify-content-between py-2 pe-0 fs-9">
-                            <div class="col-auto d-flex">
-                                <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body" data-list-info="data-list-info"></p>
-                                <a class="fw-semibold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
-                                <a class="fw-semibold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
-                            </div>
-                            <div class="col-auto d-flex"><button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-                                <ul class="mb-0 pagination"></ul>
-                                <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-            <div class="mb-6">
-                <h3 class="mb-4">Shopping Cart <span class="text-body-tertiary fw-normal">({{ $myCarts->count() }})</span></h3>
-                <div class="border-translucent border-top border-bottom" id="customerWishlistTable" data-list='{"valueNames":["products","color","size","price","quantity","total"],"page":5,"pagination":true}'>
-                    <div class="table-responsive scrollbar">
-                        <table class="table fs-9 mb-0">
-                            <thead>
-                            <tr>
-                                <th class="sort white-space-nowrap align-middle fs-10" scope="col" style="width:5%;"></th>
-                                <th class="sort white-space-nowrap align-middle" scope="col" style="width:35%; min-width:250px;" data-sort="products">Product</th>
-                                <th class="sort align-middle" scope="col" data-sort="size" style="width:10%;">Quantity</th>
-                                <th class="sort align-middle text-end" scope="col" data-sort="price" style="width:15%;">Price</th>
-                                <th class="sort align-middle text-end" scope="col" data-sort="total" style="width:15%;">Total</th>
-                            </tr>
-                            </thead>
-                            <tbody class="list" id="customer-wishlist-table-body">
-                            @foreach($myCarts as $item)
-                                <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                    <td class="align-middle white-space-nowrap py-1">
-                                        <a class="border border-translucent rounded-2 d-inline-block" href="#">
-                                            <img src="{{ $item->product_image }}" alt="" width="40" height="40" /></a>
-                                    </td>
-                                    <td class="products align-middle"><a class="fw-semibold mb-0" href="#">{{ $item->name }}</a></td>
-                                    <td class="size align-middle white-space-nowrap text-body-tertiary fs-9 fw-semibold">{{ $item->cart_quantity }}</td>
-                                    <td class="price align-middle text-body fs-9 fw-semibold text-end">{{ money($item->price) }}</td>
-                                    <td class="total align-middle fw-bold text-body-highlight text-end">{{ money($item->price * $item->cart_quantity) }}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-6">
-                <h3 class="mb-4">Recent Push Notifications <span
-                        class="text-body-tertiary fw-normal">({{ $recentPushNotifications->count() }})</span></h3>
-                <div class="border-translucent border-top border-bottom" id="customerPushNotificationTable"
-                    data-list='{"valueNames":["title","body","status","date"],"page":5,"pagination":true}'>
-                    <div class="table-responsive scrollbar">
-                        <table class="table fs-9 mb-0">
-                            <thead>
+            <ul class="nav nav-underline fs-9 mb-4" id="customerTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="true">Orders ({{ $this->wholesalesUser->order->count() }})</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="cart-tab" data-bs-toggle="tab" href="#tab-cart" role="tab" aria-controls="tab-cart" aria-selected="false">Shopping Cart ({{ $myCarts->count() }})</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="notifications-tab" data-bs-toggle="tab" href="#tab-notifications" role="tab" aria-controls="tab-notifications" aria-selected="false">Notifications ({{ $recentPushNotifications->count() }})</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="customerTabContent">
+                <!-- Orders Tab -->
+                <div class="tab-pane fade show active" id="tab-orders" role="tabpanel" aria-labelledby="orders-tab">
+                    <div class="border-top border-bottom border-translucent" id="customerOrdersTable">
+                        <div class="table-responsive scrollbar">
+                            <table class="table table-sm fs-9 mb-0">
+                                <thead>
                                 <tr>
-                                    <th class="sort white-space-nowrap align-middle" scope="col" style="width:20%;" data-sort="title">Title</th>
-                                    <th class="sort align-middle" scope="col" data-sort="body" style="width:40%;">Message</th>
-                                    <th class="sort align-middle" scope="col" data-sort="status" style="width:15%;">Status</th>
-                                    <th class="sort align-middle text-end" scope="col" data-sort="date" style="width:15%;">Date</th>
-                                    <th class="sort align-middle text-end" scope="col" style="width:10%;">Action</th>
+                                    <th class="sort white-space-nowrap align-middle ps-0 pe-3">Order</th>
+                                    <th class="sort align-middle text-end pe-7">Total</th>
+                                    <th class="sort align-middle white-space-nowrap pe-3">Status</th>
+                                    <th class="sort align-middle white-space-nowrap text-start pe-3">Payment Method</th>
+                                    <th class="sort align-middle white-space-nowrap text-start">Delivery Method</th>
+                                    <th class="sort align-middle text-end pe-0">Date</th>
+                                    <th class="sort text-end align-middle pe-0 ps-5"></th>
                                 </tr>
-                            </thead>
-                            <tbody class="list" id="customer-push-notification-table-body">
-                                @forelse($recentPushNotifications as $notification)
+                                </thead>
+                                <tbody>
+                                @foreach($this->wholesalesUser->order as $order)
                                     <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                        <td class="title align-middle fw-semibold text-body-highlight">{{ $notification->push_notification->title ?? 'N/A' }}</td>
-                                        <td class="body align-middle text-body-tertiary">{{ \Illuminate\Support\Str::limit($notification->push_notification->body ?? 'N/A', 80) }}</td>
-                                        <td class="status align-middle white-space-nowrap fw-bold">
-                                              {!! showStatus($notification->status_id) !!}
-                                        </td>
-                                        <td class="date align-middle white-space-nowrap text-body-tertiary text-end">{{ $notification->created_at->format('D, M jS, Y h:i a') }}</td>
-                                        <td class="align-middle white-space-nowrap text-end">
-                                            <button wire:click="resendNotification({{ $notification->id }})" 
-                                                    wire:confirm="Are you sure you want to resend this notification?"
-                                                    class="btn btn-sm btn-outline-primary py-0 px-2" 
-                                                    title="Resend Notification">
-                                                <span class="fas fa-redo-alt fs-10"></span>
-                                            </button>
+                                        <td class="order align-middle white-space-nowrap ps-0"><a class="fw-semibold" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">#{{ $order->id }}</a></td>
+                                        <td class="total align-middle text-end fw-semibold pe-7 text-body-highlight">{{ money($order->total) }}</td>
+                                        <td class="payment_status align-middle white-space-nowrap text-start fw-bold text-body-tertiary">{!! showStatus($order->status_id) !!}</td>
+                                        <td class="fulfilment_status align-middle white-space-nowrap text-start fw-bold text-body-tertiary">{{ $order->payment_method->name }}</td>
+                                        <td class="delivery_type align-middle white-space-nowrap text-body fs-9 text-start">{{ $order->delivery_method->name }}</td>
+                                        <td class="date align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 text-end">{{ $order->order_date->format('D, F jS, Y') }}</td>
+                                        <td class="align-middle white-space-nowrap text-end pe-0 ps-5">
+                                            <div class="btn-reveal-trigger position-static"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h fs-10"></span></button>
+                                                <div class="dropdown-menu dropdown-menu-end py-2">
+                                                    <a class="dropdown-item" href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.order.view', $order->id) }}">View</a>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
-                                @empty
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @if($this->wholesalesUser->order->count() > 6)
+                            <div class="row align-items-center justify-content-between py-2 pe-0 fs-9">
+                                <div class="col-auto d-flex">
+                                    <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body" data-list-info="data-list-info"></p>
+                                    <a class="fw-semibold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+                                    <a class="fw-semibold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+                                </div>
+                                <div class="col-auto d-flex"><button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+                                    <ul class="mb-0 pagination"></ul>
+                                    <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Shopping Cart Tab -->
+                <div class="tab-pane fade" id="tab-cart" role="tabpanel" aria-labelledby="cart-tab">
+                    <div class="border-translucent border-top border-bottom" id="customerWishlistTable" data-list='{"valueNames":["products","color","size","price","quantity","total"],"page":5,"pagination":true}'>
+                        <div class="table-responsive scrollbar">
+                            <table class="table fs-9 mb-0">
+                                <thead>
+                                <tr>
+                                    <th class="sort white-space-nowrap align-middle fs-10" scope="col" style="width:5%;"></th>
+                                    <th class="sort white-space-nowrap align-middle" scope="col" style="width:35%; min-width:250px;" data-sort="products">Product</th>
+                                    <th class="sort align-middle" scope="col" data-sort="size" style="width:10%;">Quantity</th>
+                                    <th class="sort align-middle text-end" scope="col" data-sort="price" style="width:15%;">Price</th>
+                                    <th class="sort align-middle text-end" scope="col" data-sort="total" style="width:15%;">Total</th>
+                                </tr>
+                                </thead>
+                                <tbody class="list" id="customer-wishlist-table-body">
+                                @foreach($myCarts as $item)
+                                    <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                                        <td class="align-middle white-space-nowrap py-1">
+                                            <a class="border border-translucent rounded-2 d-inline-block" href="#">
+                                                <img src="{{ $item->product_image }}" alt="" width="40" height="40" /></a>
+                                        </td>
+                                        <td class="products align-middle"><a class="fw-semibold mb-0" href="#">{{ $item->name }}</a></td>
+                                        <td class="size align-middle white-space-nowrap text-body-tertiary fs-9 fw-semibold">{{ $item->cart_quantity }}</td>
+                                        <td class="price align-middle text-body fs-9 fw-semibold text-end">{{ money($item->price) }}</td>
+                                        <td class="total align-middle fw-bold text-body-highlight text-end">{{ money($item->price * $item->cart_quantity) }}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Tab -->
+                <div class="tab-pane fade" id="tab-notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                    <div class="border-translucent border-top border-bottom" id="customerPushNotificationTable"
+                        data-list='{"valueNames":["title","body","status","date"],"page":5,"pagination":true}'>
+                        <div class="table-responsive scrollbar">
+                            <table class="table fs-9 mb-0">
+                                <thead>
                                     <tr>
-                                        <td colspan="5" class="text-center py-3">No recent push notifications found for this customer.</td>
+                                        <th class="sort white-space-nowrap align-middle" scope="col" style="width:20%;" data-sort="title">Title</th>
+                                        <th class="sort align-middle" scope="col" data-sort="body" style="width:40%;">Message</th>
+                                        <th class="sort align-middle" scope="col" data-sort="status" style="width:15%;">Status</th>
+                                        <th class="sort align-middle text-end" scope="col" data-sort="date" style="width:15%;">Date</th>
+                                        <th class="sort align-middle text-end" scope="col" style="width:10%;">Action</th>
                                     </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="list" id="customer-push-notification-table-body">
+                                    @forelse($recentPushNotifications as $notification)
+                                        <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                                            <td class="title align-middle fw-semibold text-body-highlight">{{ $notification->push_notification->title ?? 'N/A' }}</td>
+                                            <td class="body align-middle text-body-tertiary">{{ \Illuminate\Support\Str::limit($notification->push_notification->body ?? 'N/A', 80) }}</td>
+                                            <td class="status align-middle white-space-nowrap fw-bold">
+                                                  {!! showStatus($notification->status_id) !!}
+                                            </td>
+                                            <td class="date align-middle white-space-nowrap text-body-tertiary text-end">{{ $notification->created_at->format('D, M jS, Y h:i a') }}</td>
+                                            <td class="align-middle white-space-nowrap text-end">
+                                                <button wire:click="resendNotification({{ $notification->id }})" 
+                                                        wire:confirm="Are you sure you want to resend this notification?"
+                                                        class="btn btn-sm btn-outline-primary py-0 px-2" 
+                                                        title="Resend Notification">
+                                                    <span class="fas fa-redo-alt fs-10"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-3">No recent push notifications found for this customer.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
