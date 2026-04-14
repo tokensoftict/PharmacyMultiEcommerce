@@ -54,6 +54,7 @@ class PaymentMethod extends Model
 		'checkout_template'
 	];
 
+    protected $appends = ['bank_list'];
 	public function app()
 	{
 		return $this->belongsTo(App::class);
@@ -67,6 +68,23 @@ class PaymentMethod extends Model
     {
         if(!isset( ApplicationEnvironment::getApplicationRelatedModel()?->payment_method_id)) return false;
         return $this->id  === ApplicationEnvironment::getApplicationRelatedModel()?->payment_method_id;
+    }
+
+
+    public function getBankListAttribute()
+    {
+        if($this->code == "Bank") {
+            return BankAccount::query()->where('status', 1)->with('bank')->whereIn('id', $this->template_settings_value)->get()->map(function ($bank) {
+                return [
+                    'id' => $bank->id,
+                    'name' => $bank->bank->name,
+                    'account_name' => $bank->account_name,
+                    'account_number' => $bank->account_number,
+                ];
+            });
+        } else {
+            return [];
+        }
     }
 
     public function getDescriptionAttribute()
