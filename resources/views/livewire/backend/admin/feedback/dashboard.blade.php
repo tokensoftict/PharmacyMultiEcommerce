@@ -6,37 +6,55 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 new class extends Component {
+new class extends Component {
     public $stats = [];
     public $trendData = [];
     public $sentimentData = [];
     public $storeData = [];
     public $recentFeedbacks = [];
+    public $staffRanking = [];
+    public $staff_id = null;
+    public $selectedStaff = null;
+
+    protected $queryString = ['staff_id'];
 
     public function mount()
+    {
+        if ($this->staff_id) {
+            $this->selectedStaff = \App\Models\Staff::find($this->staff_id);
+        }
+        $this->loadAllData();
+    }
+
+    public function loadAllData()
     {
         $this->loadStats();
         $this->loadTrendData();
         $this->loadSentimentData();
         $this->loadStoreData();
         $this->loadRecentFeedbacks();
+        if (!$this->staff_id) {
+            $this->loadStaffRanking();
+        }
     }
 
     public function loadStats()
     {
-        $total = Feedback::count();
-        $avgRating = Feedback::avg('rating') ?: 0;
+        $query = Feedback::query()->when($this->staff_id, fn($q) => $q->where('staff_id', $this->staff_id));
+        
+        $total = $query->count();
+        $avgRating = (clone $query)->avg('rating') ?: 0;
 
         // NPS Calculation (1-5 scale)
-        // Promoters: 5, Passives: 4, Detractors: 1-3
-        $promoters = Feedback::where('rating', 5)->count();
-        $detractors = Feedback::where('rating', '<=', 3)->count();
+        $promoters = (clone $query)->where('rating', 5)->count();
+        $detractors = (clone $query)->where('rating', '<=', 3)->count();
         $nps = $total > 0 ? (($promoters - $detractors) / $total) * 100 : 0;
 
         $this->stats = [
             'total' => $total,
             'avg_rating' => round($avgRating, 1),
             'nps' => round($nps, 0),
-            'trend_up' => Feedback::where('created_at', '>=', Carbon::now()->subDays(7))->count(),
+            'trend_up' => (clone $query)->where('created_at', '>=', Carbon::now()->subDays(7))->count(),
         ];
     }
 
@@ -44,6 +62,7 @@ new class extends Component {
     {
         $days = 30;
         $trend = Feedback::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as aggregate'))
+            ->when($this->staff_id, fn($q) => $q->where('staff_id', $this->staff_id))
             ->where('created_at', '>=', Carbon::now()->subDays($days))
             ->groupBy('date')
             ->orderBy('date')
@@ -67,8 +86,10 @@ new class extends Component {
 
     public function loadSentimentData()
     {
-        $positive = Feedback::where('feedback_type', 'Positive')->count();
-        $negative = Feedback::where('feedback_type', 'Negative')->count();
+        $query = Feedback::query()->when($this->staff_id, fn($q) => $q->where('staff_id', $this->staff_id));
+        
+        $positive = (clone $query)->where('feedback_type', 'Positive')->count();
+        $negative = (clone $query)->where('feedback_type', 'Negative')->count();
 
         $this->sentimentData = [
             ['value' => $positive, 'name' => 'Positive'],
@@ -79,6 +100,7 @@ new class extends Component {
     public function loadStoreData()
     {
         $this->storeData = Feedback::select('store', DB::raw('count(*) as aggregate'))
+            ->when($this->staff_id, fn($q) => $q->where('staff_id', $this->staff_id))
             ->groupBy('store')
             ->get()
             ->map(function ($item) {
@@ -88,7 +110,21 @@ new class extends Component {
 
     public function loadRecentFeedbacks()
     {
-        $this->recentFeedbacks = Feedback::with('staff')->latest()->take(5)->get();
+        $this->recentFeedbacks = Feedback::with('staff')
+            ->when($this->staff_id, fn($q) => $q->where('staff_id', $this->staff_id))
+            ->latest()
+            ->take(5)
+            ->get();
+    }
+
+    public function loadStaffRanking()
+    {
+        $this->staffRanking = \App\Models\Staff::where('status', true)
+            ->withCount('feedbacks')
+            ->withAvg('feedbacks as avg_rating', 'rating')
+            ->orderByDesc('feedbacks_count')
+            ->take(5)
+            ->get();
     }
 }; ?>
 
@@ -160,10 +196,27 @@ new class extends Component {
 <div class="pb-9">
     <div class="row align-items-center justify-content-between g-3 mb-4">
         <div class="col-auto">
-            <h2 class="mb-0">Extreme Feedback Dashboard</h2>
-            <p class="text-body-tertiary lh-sm mb-0">Real-time customer feedback insights for quick decision making.</p>
+            <h2 class="mb-0">
+                @if($selectedStaff)
+                    Performance Analysis: {{ $selectedStaff->name }}
+                @else
+                    Extreme Feedback Dashboard
+                @endif
+            </h2>
+            <p class="text-body-tertiary lh-sm mb-0">
+                @if($selectedStaff)
+                    Deep-dive into performance metrics for {{ $selectedStaff->name }} ({{ $selectedStaff->department }}).
+                @else
+                    Real-time customer feedback insights for quick decision making.
+                @endif
+            </p>
         </div>
-        <div class="col-auto">
+        <div class="col-auto d-flex gap-2">
+            @if($selectedStaff)
+                <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.dashboard') }}" class="btn btn-phoenix-secondary">
+                    <span class="fas fa-globe me-2"></span>Back to Global View
+                </a>
+            @endif
             <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.list') }}"
                 class="btn btn-phoenix-primary">
                 <span class="fas fa-list me-2"></span>View All Feedbacks
@@ -326,4 +379,55 @@ new class extends Component {
             </div>
         </div>
     </div>
+
+    @if(!$staff_id && count($staffRanking) > 0)
+    <div class="row g-3 mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Top Performing Staff</h3>
+                    <div class="table-responsive">
+                        <table class="table table-sm fs-9 mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-0">Staff Member</th>
+                                    <th>Department</th>
+                                    <th>Feedback Count</th>
+                                    <th>Avg Rating</th>
+                                    <th class="text-end pe-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($staffRanking as $staff)
+                                    <tr>
+                                        <td class="ps-0 py-3">
+                                            <div class="fw-bold">{{ $staff->name }}</div>
+                                        </td>
+                                        <td class="py-3">{{ $staff->department }}</td>
+                                        <td class="py-3">
+                                            <span class="badge badge-phoenix badge-phoenix-primary">{{ $staff->feedbacks_count }}</span>
+                                        </td>
+                                        <td class="py-3">
+                                            <div class="d-flex align-items-center">
+                                                <span class="fw-bold me-2">{{ number_format($staff->avg_rating, 1) }}</span>
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <span class="fas fa-star {{ $i <= $staff->avg_rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
+                                                @endfor
+                                            </div>
+                                        </td>
+                                        <td class="text-end py-3 pe-0">
+                                            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.dashboard', ['staff_id' => $staff->id]) }}" class="btn btn-sm btn-phoenix-primary">
+                                                Analyze Performance
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

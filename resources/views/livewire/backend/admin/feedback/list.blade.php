@@ -14,8 +14,10 @@ new class extends Component {
     public $store = '';
     public $department = '';
     public $type = '';
+    public $staff_id = '';
     public $fromDate = '';
     public $toDate = '';
+    public $staffs_list = [];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -23,11 +25,17 @@ new class extends Component {
         'store' => ['except' => ''],
         'department' => ['except' => ''],
         'type' => ['except' => ''],
+        'staff_id' => ['except' => ''],
     ];
+
+    public function mount()
+    {
+        $this->staffs_list = \App\Models\Staff::where('status', true)->orderBy('name')->get();
+    }
 
     public function updated($propertyName)
     {
-        if (in_array($propertyName, ['search', 'rating', 'store', 'department', 'type', 'fromDate', 'toDate'])) {
+        if (in_array($propertyName, ['search', 'rating', 'store', 'department', 'type', 'staff_id', 'fromDate', 'toDate'])) {
             $this->resetPage();
         }
     }
@@ -53,6 +61,7 @@ new class extends Component {
             ->when($this->store, fn($q) => $q->where('store', $this->store))
             ->when($this->department, fn($q) => $q->where('department', $this->department))
             ->when($this->type, fn($q) => $q->where('feedback_type', $this->type))
+            ->when($this->staff_id, fn($q) => $q->where('staff_id', $this->staff_id))
             ->when($this->fromDate, fn($q) => $q->whereDate('created_at', '>=', $this->fromDate))
             ->when($this->toDate, fn($q) => $q->whereDate('created_at', '<=', $this->toDate))
             ->latest();
@@ -139,6 +148,15 @@ new class extends Component {
                 <div class="col-6 col-md-2">
                     <label class="form-label fs-10 mb-0">To Date</label>
                     <input type="date" wire:model.live="toDate" class="form-control form-control-sm" />
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label fs-10 mb-0">Filter by Staff</label>
+                    <select wire:model.live="staff_id" class="form-select form-select-sm">
+                        <option value="">All Staff</option>
+                        @foreach($staffs_list as $s)
+                            <option value="{{ $s->id }}">{{ $s->name }} ({{ $s->department }})</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
         </div>

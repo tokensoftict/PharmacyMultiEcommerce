@@ -82,6 +82,7 @@ Route::middleware([PermitTask::class])->group(function () {
     Route::prefix('feedback')->group(function () {
         Volt::route('/dashboard', 'backend.admin.feedback.dashboard')->name('backend.admin.feedback.dashboard');
         Volt::route('/list', 'backend.admin.feedback.list')->name('backend.admin.feedback.list');
+        Volt::route('/staff-reports', 'backend.admin.feedback.staff-reports')->name('backend.admin.feedback.staff-reports');
     });
 
 });

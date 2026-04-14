@@ -109,6 +109,11 @@ class StaffDatatable extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Created At", "created_at")
                 ->sortable(),
+            Column::make("Feedback", "id")
+                ->format(function ($value, $row, Column $column) {
+                    $url = route(ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.dashboard', ['staff_id' => $value]);
+                    return '<a href="' . $url . '" class="btn btn-sm btn-phoenix-primary">Analyze Performance</a>';
+                })->html(),
         ];
     }
 }

@@ -51,7 +51,7 @@ class FeedbackExport implements FromCollection, WithHeadings, WithMapping
             $feedback->staff?->name ?? 'N/A',
             $feedback->feedback_type,
             $feedback->feedback,
-            $feedback->created_at->format('Y-m-d H:i:s'),
+            $feedback->created_at ? $feedback->created_at->format('Y-m-d H:i:s') : 'N/A',
         ];
     }
 }
