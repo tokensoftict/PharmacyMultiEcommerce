@@ -164,7 +164,8 @@ new class extends Component {
             <p class="text-body-tertiary lh-sm mb-0">Real-time customer feedback insights for quick decision making.</p>
         </div>
         <div class="col-auto">
-            <a href="{{ route('backend.admin.feedback.list') }}" class="btn btn-phoenix-primary">
+            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.list') }}"
+                class="btn btn-phoenix-primary">
                 <span class="fas fa-list me-2"></span>View All Feedbacks
             </a>
         </div>
