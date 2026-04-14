@@ -31,7 +31,9 @@ class CreateOrderTotalService
         return [
             'order_total_id' => $attributes['order_total_id'] ?? ($attributes['id'] ?? NULL),
             'name' => $attributes['name'],
-            'value' => $attributes['amount'] ?? $attributes['value']
+            'value' => $attributes['amount'] ?? $attributes['value'],
+            'discount_id' => $attributes['discount_id'] ?? NULL,
+            'discount_type' => $attributes['discount_type'] ?? NULL,
         ];
     }
 

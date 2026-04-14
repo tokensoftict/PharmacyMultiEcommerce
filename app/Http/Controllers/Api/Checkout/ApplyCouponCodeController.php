@@ -102,6 +102,13 @@ class ApplyCouponCodeController extends ApiController
                 return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
 
+            // Minimum Amount Validation
+            if ($discount->minimum_amount > 0) {
+                if ($cartTotal < $discount->minimum_amount) {
+                    return $this->sendErrorResponse('Your shopping cart total must be ' . money($discount->minimum_amount) . ' or more to use this voucher.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                }
+            }
+
             // Voucher Specific Stock Validation (from Parent Voucher)
             if ($discount->voucherStocks()->exists()) {
                 $allowedStockIds = $discount->voucherStocks()->pluck('local_stock_id')->toArray();
@@ -122,12 +129,13 @@ class ApplyCouponCodeController extends ApiController
 
         if($discountType == "Coupon"){
 
-            if($discount->order_amount != NULL) {
+            // Minimum Amount Validation
+            if($discount->minimum_amount > 0) {
 
                 if($cartTotal === 0) return $this->sendErrorResponse( 'Your Shopping cart is empty!', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
-                if (!($cartTotal >= $discount->order_amount)) {
-                    return $this->sendErrorResponse( 'Your shopping cart total must be or more than ' . money($discount->order_amount), ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                if ($cartTotal < $discount->minimum_amount) {
+                    return $this->sendErrorResponse( 'Your shopping cart total must be ' . money($discount->minimum_amount) . ' or more to use this coupon.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
                 }
             }
 

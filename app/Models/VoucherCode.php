@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $customer_type_id
  * @property int|null $customer_group_id
  * @property int|null $status_id
- * @property int|null $created_by
+ * @property float $minimum_amount
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -54,7 +54,8 @@ class VoucherCode extends Model
 		'customer_type_id' => 'int',
 		'customer_group_id' => 'int',
 		'status_id' => 'int',
-		'created_by' => 'int'
+		'created_by' => 'int',
+        'minimum_amount' => 'float'
 	];
 
 	protected $fillable = [
@@ -72,7 +73,8 @@ class VoucherCode extends Model
 		'customer_type_id',
 		'customer_group_id',
 		'status_id',
-		'created_by'
+		'created_by',
+        'minimum_amount'
 	];
 
 	public function app()

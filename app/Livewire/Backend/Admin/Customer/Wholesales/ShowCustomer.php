@@ -6,6 +6,7 @@ use App\Classes\ApplicationEnvironment;
 use App\Models\SupermarketUser;
 use App\Models\WholesalesUser;
 use App\Models\WholessalesStockPrice;
+use App\Notifications\DevicePushNotificationNoQueue;
 use App\Services\User\Wholesales\WholeSalesCustomerService;
 use App\Models\PushNotificationCustomer;
 use App\Notifications\DevicePushNotification;
@@ -22,8 +23,7 @@ class ShowCustomer extends Component
 
     public function mount()
     {
-        if(ApplicationEnvironment::$stock_model == WholessalesStockPrice::class)
-        {
+        if (ApplicationEnvironment::$stock_model == WholessalesStockPrice::class) {
             $this->wholesalesUser = WholesalesUser::find($this->account);
         } else {
             $this->wholesalesUser = SupermarketUser::find($this->account);
@@ -42,7 +42,7 @@ class ShowCustomer extends Component
 
     public function approveStore()
     {
-        if($this->wholesalesUser instanceof WholesalesUser) {
+        if ($this->wholesalesUser instanceof WholesalesUser) {
             $service = app(WholeSalesCustomerService::class);
             $this->wholesalesUser = $service->activateBusiness($this->wholesalesUser);
             LivewireAlert::title("Success")->text("Business has been activated and approved successfully")->show();
@@ -72,7 +72,7 @@ class ShowCustomer extends Component
         }
 
         try {
-            $notificationCustomer->customer->notify(new DevicePushNotification($notificationCustomer->push_notification, $notificationCustomer));
+            $notificationCustomer->customer->notify(new DevicePushNotificationNoQueue($notificationCustomer->push_notification, $notificationCustomer));
             $notificationCustomer->status_id = status('Dispatched');
             $notificationCustomer->save();
 

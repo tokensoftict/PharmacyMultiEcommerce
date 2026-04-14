@@ -122,6 +122,7 @@ class CouponDatatable extends ExportDataTableComponent
                 ]
             ],
             'type_value' => ['label' => 'Coupon Value', 'type' => 'number'],
+            'minimum_amount' => ['label' => 'Minimum Order Amount', 'type' => 'number'],
             'customer_type_id' => [
                 'label' => 'Customer Type',
                 'type' => 'select',

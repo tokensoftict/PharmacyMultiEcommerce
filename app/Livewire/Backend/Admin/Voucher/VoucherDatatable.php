@@ -114,6 +114,7 @@ class VoucherDatatable extends ExportDataTableComponent
                 ]
             ]],
             'type_value' =>['label' => 'Voucher Value', 'type' =>'number'],
+            'minimum_amount' =>['label' => 'Minimum Order Amount', 'type' =>'number'],
             'noofvoucher' =>['label' => 'Number of Voucher', 'type' =>'number'],
             'domain' =>['label' => 'Store', 'type' => 'select', 'options' => [
                 [
@@ -262,6 +263,7 @@ class VoucherDatatable extends ExportDataTableComponent
                 'user_id' => $voucher->user_id,
                 'user_type' =>$voucher->user_type,
                 'voucher_id' => $voucher->id,
+                'minimum_amount' => $voucher->minimum_amount,
             ]);
         }
 
@@ -292,6 +294,7 @@ class VoucherDatatable extends ExportDataTableComponent
                 'user_id' => $voucher->user_id,
                 'user_type' =>$voucher->user_type,
                 'voucher_id' => $voucher->id,
+                'minimum_amount' => $voucher->minimum_amount,
             ]);
         }
 

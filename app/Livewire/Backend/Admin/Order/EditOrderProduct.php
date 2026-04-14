@@ -4,6 +4,9 @@ namespace App\Livewire\Backend\Admin\Order;
 
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\OrderTotalOrder;
+use App\Models\Coupon;
+use App\Models\VoucherCode;
 use App\Services\Order\CreateOrderService;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -57,6 +60,33 @@ class EditOrderProduct extends Component
                     })->first();
                 $orderTotal->value = $subTotal;
                 $orderTotal->save();
+
+                // Re-validate discounts based on new subtotal
+                $discounts = $this->order->order_total_orders()
+                    ->whereNotNull('discount_id')
+                    ->get();
+
+                foreach ($discounts as $discountRow) {
+                    $isValid = true;
+                    if ($discountRow->discount_type === 'Coupon') {
+                        $coupon = Coupon::find($discountRow->discount_id);
+                        if ($coupon && $coupon->minimum_amount > 0 && $subTotal < $coupon->minimum_amount) {
+                            $isValid = false;
+                        }
+                    } elseif ($discountRow->discount_type === 'Voucher') {
+                        $voucher = VoucherCode::find($discountRow->discount_id);
+                        if ($voucher && $voucher->minimum_amount > 0 && $subTotal < $voucher->minimum_amount) {
+                            $isValid = false;
+                        }
+                    }
+
+                    if (!$isValid) {
+                        $discountRow->delete();
+                    }
+                }
+
+                // Refresh order total orders to ensure sums are correct
+                $this->order = $this->order->refresh();
 
 
                 //if this is door step delivery
