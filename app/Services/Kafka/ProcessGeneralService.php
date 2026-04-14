@@ -432,7 +432,10 @@ class ProcessGeneralService
     /**
      * @param User $user
      * @param int $newGroupId
-     * @return    private static function sendMemberGroupNotification(User $user, int $newGroupId): void
+     * @return
+     **/
+
+    private static function sendMemberGroupNotification(User $user, int $newGroupId): void
     {
         $group = MemberGroup::find($newGroupId);
         if (!$group)
