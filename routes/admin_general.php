@@ -79,4 +79,9 @@ Route::middleware([PermitTask::class])->group(function () {
         Route::get('/list', ['uses' => 'App\Livewire\Backend\Admin\Staff\StaffDatatable'])->name('backend.admin.staff.list');
     });
 
+    Route::prefix('feedback')->group(function () {
+        Volt::route('/dashboard', 'backend.admin.feedback.dashboard')->name('backend.admin.feedback.dashboard');
+        Volt::route('/list', 'backend.admin.feedback.list')->name('backend.admin.feedback.list');
+    });
+
 });
