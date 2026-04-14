@@ -29,7 +29,6 @@ new class  extends Component
             ];
         }
         $this->template_settings_value = $this->paymentMethod->template_settings_value;
-        dd($this->template_settings_value);
         $this->existingBanks = BankAccount::query()->with(['bank'])->whereIn('id', $this->template_settings_value)->get();
     }
 
