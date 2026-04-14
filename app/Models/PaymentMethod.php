@@ -78,8 +78,13 @@ class PaymentMethod extends Model
 
     public function appendBankTransferAccount()
     {
+        if($this->id == "5") {
+            $settingsValue = json_decode('[{"bank": "PS GENERAL DRUGS", "name": "STERLING BANK", "number": "0079729045"}]',true);
+        } else {
+            $settingsValue = json_decode('[{"bank": "PS GENERAL DRUGS", "name": "GTBank", "number": "0736145025"}]', true);
+        }
         $html = "";
-        foreach($this->template_settings_value as $setting) {
+        foreach($settingsValue as $setting) {
             $html.="<p><b>Bank Name</b> : ".$setting['bank']."</p>";
             $html.="<p><b>Account Name</b> : ".$setting['name']."</p>";
             $html.="<p><b>Account Number</b> : ".$setting['number']."</p>";
