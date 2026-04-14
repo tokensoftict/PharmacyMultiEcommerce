@@ -8,6 +8,18 @@ new class extends Component {
     use WithPagination;
 
     public $search = '';
+    public $sortField = 'avg_rating';
+    public $sortDirection = 'asc';
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
 
     public function getStaffQuery()
     {
@@ -18,7 +30,7 @@ new class extends Component {
             })
             ->withCount('feedbacks')
             ->withAvg('feedbacks as avg_rating', 'rating')
-            ->orderByDesc('feedbacks_count');
+            ->orderBy($this->sortField, $this->sortDirection);
     }
 
     public function rendering($view, $data)
@@ -39,7 +51,7 @@ new class extends Component {
     <div class="row align-items-center justify-content-between g-3 mb-4">
         <div class="col-auto">
             <h2 class="mb-0">Staff Performance Reports</h2>
-            <p class="text-body-tertiary lh-sm mb-0">Overview of all staff performance metrics based on customer feedback.</p>
+            <p class="text-body-tertiary lh-sm mb-0">Overview of all staff performance metrics. Currently showing <strong>{{ $sortField == 'avg_rating' ? ($sortDirection == 'asc' ? 'Low-Performing' : 'High-Performing') : 'All' }}</strong> staff first.</p>
         </div>
     </div>
 
@@ -54,6 +66,14 @@ new class extends Component {
                         </div>
                     </div>
                 </div>
+                <div class="col-auto">
+                    <button wire:click="sortBy('avg_rating')" class="btn btn-sm {{ $sortField == 'avg_rating' ? 'btn-phoenix-primary' : 'btn-outline-primary' }}">
+                        Sort by Rating {{ $sortField == 'avg_rating' ? ($sortDirection == 'asc' ? '↓' : '↑') : '' }}
+                    </button>
+                    <button wire:click="sortBy('feedbacks_count')" class="btn btn-sm {{ $sortField == 'feedbacks_count' ? 'btn-phoenix-primary' : 'btn-outline-primary' }}">
+                        Sort by Volume {{ $sortField == 'feedbacks_count' ? ($sortDirection == 'asc' ? '↓' : '↑') : '' }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -64,16 +84,36 @@ new class extends Component {
                 <table class="table table-sm fs-9 mb-0">
                     <thead>
                         <tr>
-                            <th class="sort border-top ps-0">Staff Member</th>
-                            <th class="sort border-top">Department</th>
-                            <th class="sort border-top">Total Feedback</th>
-                            <th class="sort border-top">Average Rating</th>
-                            <th class="sort border-top text-end pe-0">Action</th>
+                            <th class="border-top ps-0 cursor-pointer" wire:click="sortBy('name')">
+                                Staff Member {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            </th>
+                            <th class="border-top cursor-pointer" wire:click="sortBy('department')">
+                                Department {!! $sortField === 'department' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            </th>
+                            <th class="border-top cursor-pointer" wire:click="sortBy('feedbacks_count')">
+                                Total Feedback {!! $sortField === 'feedbacks_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            </th>
+                            <th class="border-top cursor-pointer" wire:click="sortBy('avg_rating')">
+                                Average Rating {!! $sortField === 'avg_rating' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            </th>
+                            <th class="border-top text-end pe-0">Action</th>
                         </tr>
                     </thead>
                     <tbody class="list">
                         @forelse($staffs as $staff)
-                            <tr class="hover-actions-trigger btn-reveal-trigger">
+                            @php
+                                $perfClass = 'badge-phoenix-success';
+                                $rowClass = '';
+                                if ($staff->avg_rating > 0) {
+                                    if ($staff->avg_rating < 3.0) {
+                                        $perfClass = 'badge-phoenix-danger';
+                                        $rowClass = 'bg-danger-subtle';
+                                    } elseif ($staff->avg_rating < 4.0) {
+                                        $perfClass = 'badge-phoenix-warning';
+                                    }
+                                }
+                            @endphp
+                            <tr class="hover-actions-trigger btn-reveal-trigger {{ $rowClass }}">
                                 <td class="align-middle white-space-nowrap ps-0 py-3">
                                     <div class="d-flex align-items-center">
                                         <div class="avatar avatar-l me-2">
@@ -90,10 +130,12 @@ new class extends Component {
                                 </td>
                                 <td class="align-middle py-3">
                                     <div class="d-flex align-items-center">
-                                        <span class="fw-bold me-2">{{ number_format($staff->avg_rating, 1) }}</span>
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <span class="fas fa-star {{ $i <= $staff->avg_rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
-                                        @endfor
+                                        <span class="badge {{ $perfClass }} me-2 fw-bold fs-9">{{ number_format($staff->avg_rating, 1) }}</span>
+                                        <div class="d-none d-lg-block">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span class="fas fa-star {{ $i <= $staff->avg_rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
+                                            @endfor
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="align-middle text-end white-space-nowrap py-3 pe-0">

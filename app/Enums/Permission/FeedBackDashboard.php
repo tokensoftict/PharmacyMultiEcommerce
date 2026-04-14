@@ -30,6 +30,13 @@ enum FeedBackDashboard
             "visibility" => "0",
             "guard_name" => "web",
         ],
+        [
+            "name" => "backend.admin.feedback.staff-reports",
+            "label" => "Staff Performance Reports",
+            "visibility" => "1",
+            "guard_name" => "web",
+            'app_id' => [2, 3]
+        ],
     ];
 
 }

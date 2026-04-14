@@ -12,6 +12,7 @@ new class extends Component {
     public $storeData = [];
     public $recentFeedbacks = [];
     public $staffRanking = [];
+    public $nonPerformingStaff = [];
     public $staff_id = null;
     public $selectedStaff = null;
 
@@ -34,6 +35,7 @@ new class extends Component {
         $this->loadRecentFeedbacks();
         if (!$this->staff_id) {
             $this->loadStaffRanking();
+            $this->loadNonPerformingStaff();
         }
     }
 
@@ -123,6 +125,17 @@ new class extends Component {
             ->withAvg('feedbacks as avg_rating', 'rating')
             ->orderByDesc('feedbacks_count')
             ->take(5)
+            ->get();
+    }
+
+    public function loadNonPerformingStaff()
+    {
+        $this->nonPerformingStaff = \App\Models\Staff::where('status', true)
+            ->withCount('feedbacks')
+            ->withAvg('feedbacks as avg_rating', 'rating')
+            ->having('feedbacks_count', '>', 0)
+            ->orderBy('avg_rating', 'asc')
+            ->take(10)
             ->get();
     }
 }; ?>
@@ -428,5 +441,57 @@ new class extends Component {
             </div>
         </div>
     </div>
+
+    @if(!$staff_id && count($nonPerformingStaff) > 0)
+    <div class="row g-3 mt-3">
+        <div class="col-12">
+            <div class="card border border-danger">
+                <div class="card-body">
+                    <h3 class="text-danger"><span class="fas fa-exclamation-triangle me-2"></span>Staff Requiring Attention</h3>
+                    <p class="text-body-tertiary">Staff members with the lowest average ratings (minimum 1 feedback).</p>
+                    <div class="table-responsive">
+                        <table class="table table-sm fs-9 mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-0">Staff Member</th>
+                                    <th>Department</th>
+                                    <th>Feedback Count</th>
+                                    <th>Avg Rating</th>
+                                    <th class="text-end pe-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($nonPerformingStaff as $staff)
+                                    <tr class="bg-danger-subtle">
+                                        <td class="ps-0 py-3">
+                                            <div class="fw-bold">{{ $staff->name }}</div>
+                                        </td>
+                                        <td class="py-3">{{ $staff->department }}</td>
+                                        <td class="py-3">
+                                            <span class="badge badge-phoenix badge-phoenix-danger">{{ $staff->feedbacks_count }}</span>
+                                        </td>
+                                        <td class="py-3">
+                                            <div class="d-flex align-items-center">
+                                                <span class="fw-bold me-2 text-danger">{{ number_format($staff->avg_rating, 1) }}</span>
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <span class="fas fa-star {{ $i <= $staff->avg_rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
+                                                @endfor
+                                            </div>
+                                        </td>
+                                        <td class="text-end py-3 pe-0">
+                                            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.dashboard', ['staff_id' => $staff->id]) }}" class="btn btn-sm btn-danger">
+                                                Analyze Issues
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
     @endif
 </div>
