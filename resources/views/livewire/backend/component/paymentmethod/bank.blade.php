@@ -15,7 +15,7 @@ new class  extends Component
 
     public Collection $existingBanks;
 
-    public array $bankAccounts;
+    public array $bankAccounts = [];
 
 
     public function mount()
