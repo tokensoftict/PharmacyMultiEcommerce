@@ -41,12 +41,12 @@ new class extends Component {
     protected function getFeedbacksQuery()
     {
         return Feedback::with('staff')
-            ->when($this->search, function($query) {
-                $query->where(function($q) {
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
                     $q->where('full_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('phone_number', 'like', '%' . $this->search . '%')
-                      ->orWhere('invoice_number', 'like', '%' . $this->search . '%')
-                      ->orWhere('feedback', 'like', '%' . $this->search . '%');
+                        ->orWhere('phone_number', 'like', '%' . $this->search . '%')
+                        ->orWhere('invoice_number', 'like', '%' . $this->search . '%')
+                        ->orWhere('feedback', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->rating, fn($q) => $q->where('rating', $this->rating))
@@ -67,8 +67,11 @@ new class extends Component {
 }; ?>
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('backend.admin.feedback.dashboard') }}">Feedback Dashboard</a></li>
+    <li class="breadcrumb-item"><a
+            href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a
+            href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.dashboard') }}">Feedback
+            Dashboard</a></li>
     <li class="breadcrumb-item active">Feedback List</li>
 @endpush
 
@@ -90,7 +93,8 @@ new class extends Component {
                 <div class="col-12 col-md-4">
                     <div class="search-box">
                         <div class="position-relative">
-                            <input wire:model.live.debounce.300ms="search" class="form-control search-input" type="search" placeholder="Search by name, phone, invoice..." />
+                            <input wire:model.live.debounce.300ms="search" class="form-control search-input"
+                                type="search" placeholder="Search by name, phone, invoice..." />
                             <span class="fas fa-search search-box-icon text-body-quaternary"></span>
                         </div>
                     </div>
@@ -166,24 +170,28 @@ new class extends Component {
                                     @endif
                                 </td>
                                 <td class="align-middle white-space-nowrap py-3">
-                                    <a class="text-body-emphasis fw-semibold" href="tel:{{ $fb->phone_number }}">{{ $fb->phone_number }}</a>
+                                    <a class="text-body-emphasis fw-semibold"
+                                        href="tel:{{ $fb->phone_number }}">{{ $fb->phone_number }}</a>
                                 </td>
                                 <td class="align-middle white-space-nowrap py-3">
                                     <span class="badge badge-phoenix fs-10 badge-phoenix-info me-1">{{ $fb->store }}</span>
-                                    <span class="badge badge-phoenix fs-10 badge-phoenix-secondary">{{ $fb->department }}</span>
+                                    <span
+                                        class="badge badge-phoenix fs-10 badge-phoenix-secondary">{{ $fb->department }}</span>
                                 </td>
                                 <td class="align-middle white-space-nowrap py-3">
                                     <span class="fw-semibold text-primary">#{{ $fb->invoice_number }}</span>
                                 </td>
                                 <td class="align-middle py-3">
                                     <div class="d-flex align-items-center">
-                                        @for($i=1; $i<=5; $i++)
-                                            <span class="fas fa-star {{ $i <= $fb->rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <span
+                                                class="fas fa-star {{ $i <= $fb->rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
                                         @endfor
                                     </div>
                                 </td>
                                 <td class="align-middle py-3">
-                                    <span class="badge badge-phoenix fs-10 {{ $fb->feedback_type == 'Positive' ? 'badge-phoenix-success' : 'badge-phoenix-danger' }}">
+                                    <span
+                                        class="badge badge-phoenix fs-10 {{ $fb->feedback_type == 'Positive' ? 'badge-phoenix-success' : 'badge-phoenix-danger' }}">
                                         {{ $fb->feedback_type }}
                                     </span>
                                 </td>
