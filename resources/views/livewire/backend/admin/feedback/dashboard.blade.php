@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 new class extends Component {
-new class extends Component {
     public $stats = [];
     public $trendData = [];
     public $sentimentData = [];
