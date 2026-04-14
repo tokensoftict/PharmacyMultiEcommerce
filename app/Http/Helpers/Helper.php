@@ -427,9 +427,6 @@ function getUserMenu($app_id)
         }
     }
 
-    $userMenus .= '<p class="navbar-vertical-label">FEEDBACK</p>';
-    $userMenus .= '<a class="nav-link ' . (str_contains(\Route::currentRouteName(), 'feedback') ? 'active' : '') . '" href="'.route("backend.admin.feedback.dashboard").'" role="button" data-bs-toggle="" aria-expanded="false"><div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="message-square"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text">Feedback Reports</span></span></div></a>';
-
     return $userMenus;
 }
 

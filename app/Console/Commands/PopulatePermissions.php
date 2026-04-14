@@ -14,6 +14,7 @@ use App\Enums\Permission\StockManager;
 use App\Enums\Permission\UserManager;
 use App\Enums\Permission\VoucherManager;
 use App\Enums\Permission\StaffManagement;
+use App\Enums\Permission\FeedBackDashboard;
 use App\Models\Module;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
@@ -72,6 +73,7 @@ class PopulatePermissions extends Command
             PromotionalManager::class,
             UserManager::class,
             StaffManagement::class,
+            FeedBackDashboard::class
         ];
 
         foreach ($modules as $module) {
