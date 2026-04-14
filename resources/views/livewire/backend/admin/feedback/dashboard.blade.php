@@ -275,7 +275,8 @@ new class extends Component {
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3>Latest Feedback</h3>
-                        <a href="{{ route('backend.admin.feedback.list') }}" class="btn btn-link p-0">View all</a>
+                        <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.list') }}"
+                            class="btn btn-link p-0">View all</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm fs-9 mb-0">
