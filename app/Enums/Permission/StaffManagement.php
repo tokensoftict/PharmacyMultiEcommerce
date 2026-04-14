@@ -12,21 +12,27 @@ enum StaffManagement
         'visibility' => '1',
         'order' => '1',
         'icon' => 'icon',
-        'app_id' => [2,3]
+        'app_id' => [2, 3]
     ];
 
 
     const PERMISSION = [
         [
             "name" => "backend.admin.staff.list",
-            "label" => "Administrator List",
+            "label" => "Staff List",
             "visibility" => "1",
             "guard_name" => "web",
-            'app_id' => [2,3]
+            'app_id' => [2, 3]
         ],
         [
             "name" => "backend.admin.staff.create",
-            "label" => "Add New Administrator",
+            "label" => "Add New Staff",
+            "visibility" => "0",
+            "guard_name" => "web",
+        ],
+        [
+            "name" => "backend.admin.staff.update",
+            "label" => "Update Med Reminder",
             "visibility" => "0",
             "guard_name" => "web",
         ],
