@@ -76,6 +76,9 @@ class ProcessGeneralService
             case KafkaAction::UPDATE_MEMBER_GROUP:
                 self::updateMemberGroup($data);
                 break;
+            case KafkaAction::SYNC_STAFF:
+                self::syncStaff($data);
+                break;
         }
 
     }
@@ -429,9 +432,7 @@ class ProcessGeneralService
     /**
      * @param User $user
      * @param int $newGroupId
-     * @return void
-     */
-    private static function sendMemberGroupNotification(User $user, int $newGroupId): void
+     * @return    private static function sendMemberGroupNotification(User $user, int $newGroupId): void
     {
         $group = MemberGroup::find($newGroupId);
         if (!$group)
@@ -460,6 +461,27 @@ class ProcessGeneralService
             ->setAction(PushNotificationAction::NONE)
             ->approve()
             ->send();
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public static function syncStaff(array $data): void
+    {
+        $department = (isset($data['department_id']) && $data['department_id'] == 4) ? 'Retail' : 'Wholesales';
+
+        \App\Models\Staff::updateOrCreate(
+            ['local_id' => $data['local_id']],
+            [
+                'name' => $data['name'],
+                'email' => $data['email'] ?? null,
+                'phone' => $data['phone'] ?? null,
+                'username' => $data['username'] ?? null,
+                'department' => $department,
+                'status' => $data['status'],
+            ]
+        );
     }
 
 }

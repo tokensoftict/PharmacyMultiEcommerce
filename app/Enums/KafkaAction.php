@@ -36,4 +36,5 @@ enum KafkaAction
     const UPDATE_MEMBER_GROUP = "UPDATE_MEMBER_GROUP";
     const SYNC_LOCAL_ORDER = "SYNC_LOCAL_ORDER";
     const UPLOAD_IMAGE = "UPLOAD_IMAGE";
+    const SYNC_STAFF = "SYNC_STAFF";
 }
