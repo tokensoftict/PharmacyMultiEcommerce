@@ -25,7 +25,7 @@ new class extends Component {
     {
         $total = Feedback::count();
         $avgRating = Feedback::avg('rating') ?: 0;
-        
+
         // NPS Calculation (1-5 scale)
         // Promoters: 5, Passives: 4, Detractors: 1-3
         $promoters = Feedback::where('rating', 5)->count();
@@ -81,7 +81,7 @@ new class extends Component {
         $this->storeData = Feedback::select('store', DB::raw('count(*) as aggregate'))
             ->groupBy('store')
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 return ['value' => $item->aggregate, 'name' => $item->store];
             })->toArray();
     }
@@ -93,7 +93,8 @@ new class extends Component {
 }; ?>
 
 @push('breadcrumbs')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a
+            href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'admin.dashboard') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Feedback Dashboard</li>
 @endpush
 
@@ -146,7 +147,7 @@ new class extends Component {
                     }
                 }]
             });
-            
+
             window.addEventListener('resize', () => {
                 trendChart.resize();
                 sentimentChart.resize();
@@ -177,7 +178,8 @@ new class extends Component {
                         <h4 class="mb-1 text-primary">Total Feedback</h4>
                         <div class="d-flex align-items-center">
                             <h3 class="mb-0 text-primary-emphasis">{{ $stats['total'] }}</h3>
-                            <span class="badge badge-phoenix badge-phoenix-primary ms-2">+{{ $stats['trend_up'] }} this week</span>
+                            <span class="badge badge-phoenix badge-phoenix-primary ms-2">+{{ $stats['trend_up'] }} this
+                                week</span>
                         </div>
                     </div>
                 </div>
@@ -191,8 +193,9 @@ new class extends Component {
                         <div class="d-flex align-items-center">
                             <h3 class="mb-0 text-success-emphasis">{{ $stats['avg_rating'] }} / 5</h3>
                             <div class="ms-2">
-                                @for($i=1; $i<=5; $i++)
-                                    <span class="fas fa-star {{ $i <= $stats['avg_rating'] ? 'text-warning' : 'text-body-quaternary' }} fs-10"></span>
+                                @for($i = 1; $i <= 5; $i++)
+                                    <span
+                                        class="fas fa-star {{ $i <= $stats['avg_rating'] ? 'text-warning' : 'text-body-quaternary' }} fs-10"></span>
                                 @endfor
                             </div>
                         </div>
@@ -207,7 +210,8 @@ new class extends Component {
                         <h4 class="mb-1 text-info">NPS Score</h4>
                         <div class="d-flex align-items-center">
                             <h2 class="mb-0 text-info-emphasis">{{ $stats['nps'] }}</h2>
-                            <span class="ms-2 fw-bold {{ $stats['nps'] > 50 ? 'text-success' : ($stats['nps'] > 0 ? 'text-info' : 'text-danger') }}">
+                            <span
+                                class="ms-2 fw-bold {{ $stats['nps'] > 50 ? 'text-success' : ($stats['nps'] > 0 ? 'text-info' : 'text-danger') }}">
                                 {{ $stats['nps'] > 50 ? 'EXCELLENT' : ($stats['nps'] > 0 ? 'GOOD' : 'CRITICAL') }}
                             </span>
                         </div>
@@ -227,7 +231,8 @@ new class extends Component {
                             @endphp
                             <h3 class="mb-0">{{ $rate }}%</h3>
                             <div class="progress ms-2 flex-1" style="height: 8px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ $rate }}%"></div>
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ $rate }}%">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -290,17 +295,20 @@ new class extends Component {
                                             <div class="fs-10 text-body-tertiary">{{ $fb->invoice_number }}</div>
                                         </td>
                                         <td class="border-0 py-3">
-                                            @for($i=1; $i<=5; $i++)
-                                                <span class="fas fa-star {{ $i <= $fb->rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span
+                                                    class="fas fa-star {{ $i <= $fb->rating ? 'text-warning' : 'text-body-quaternary' }} fs-11"></span>
                                             @endfor
                                         </td>
                                         <td class="border-0 py-3">
-                                            <span class="badge badge-phoenix fs-10 {{ $fb->feedback_type == 'Positive' ? 'badge-phoenix-success' : 'badge-phoenix-danger' }}">
+                                            <span
+                                                class="badge badge-phoenix fs-10 {{ $fb->feedback_type == 'Positive' ? 'badge-phoenix-success' : 'badge-phoenix-danger' }}">
                                                 {{ $fb->feedback_type }}
                                             </span>
                                         </td>
                                         <td class="border-0 py-3">
-                                            <div class="text-truncate" style="max-width: 200px;" title="{{ $fb->feedback }}">
+                                            <div class="text-truncate" style="max-width: 200px;"
+                                                title="{{ $fb->feedback }}">
                                                 {{ $fb->feedback }}
                                             </div>
                                         </td>
