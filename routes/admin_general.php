@@ -75,4 +75,8 @@ Route::middleware([PermitTask::class])->group(function () {
         Route::get('/users', ['uses' => 'App\Livewire\Backend\Admin\Administrator\AdministratorManagerDataTable'])->name('backend.admin.user.list');
     });
 
+    Route::prefix('staff')->group(function () {
+        Route::get('/list', ['uses' => 'App\Livewire\Backend\Admin\Staff\StaffDatatable'])->name('backend.admin.staff.list');
+    });
+
 });

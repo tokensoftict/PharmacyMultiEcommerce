@@ -11,10 +11,17 @@ class Feedback extends Model
     protected $fillable = [
         'full_name',
         'phone_number',
+        'store',
         'department',
         'invoice_number',
-        'staff_name',
+        'rating',
+        'staff_id',
         'feedback_type',
         'feedback',
     ];
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class);
+    }
 }

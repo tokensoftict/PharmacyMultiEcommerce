@@ -23,9 +23,11 @@ class FeedbackController extends Controller
         $validated = $request->validate([
             'fullName' => 'required|string|max:255',
             'phoneNumber' => 'required|string|max:20',
-            'department' => 'required|in:wholesales,retail,online',
+            'store' => 'required|in:physical,online',
+            'department' => 'required|in:wholesales,retail',
             'invoiceNumber' => 'required|string|max:100',
-            'staffName' => 'required|string|max:255',
+            'rating' => 'required|integer|min:1|max:5',
+            'staffId' => 'nullable|exists:staffs,id',
             'feedbackType' => 'required|in:positive,negative',
             'feedback' => 'required|string',
         ]);
@@ -33,10 +35,12 @@ class FeedbackController extends Controller
         $feedback = Feedback::create([
             'full_name' => $validated['fullName'],
             'phone_number' => $validated['phoneNumber'],
-            'department' => $validated['department'],
+            'store' => ucfirst($validated['store']),
+            'department' => ucfirst($validated['department']),
             'invoice_number' => $validated['invoiceNumber'],
-            'staff_name' => $validated['staffName'],
-            'feedback_type' => $validated['feedbackType'],
+            'rating' => $validated['rating'],
+            'staff_id' => $validated['staffId'] ?? null,
+            'feedback_type' => ucfirst($validated['feedbackType']),
             'feedback' => $validated['feedback'],
         ]);
 

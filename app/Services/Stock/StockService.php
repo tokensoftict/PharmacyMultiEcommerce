@@ -151,18 +151,18 @@ class StockService
         $name = explode(" ", $query);
 
         $builder = Stock::query()
-            ->where(function ($query) use (&$name) {
-                foreach ($name as $char) {
-                    $query->where('stocks.name', 'LIKE', "%$char%")
-                        ->orWhere('description', 'LIKE', '%' . $char . '%')
-                        ->orWhere('seo', 'LIKE', '%' . $char . '%');
-                }
-            })
-            // ->where(function ($q) use ($query) {
-            //     $q->where('name', 'LIKE', '%' . $query . '%')
-            //         ->orWhere('description', 'LIKE', '%' . $query . '%')
-            //         ->orWhere('seo', 'LIKE', '%' . $query . '%');
+            // ->where(function ($query) use (&$name) {
+            //     foreach ($name as $char) {
+            //         $query->where('stocks.name', 'LIKE', "%$char%")
+            //             ->orWhere('description', 'LIKE', '%' . $char . '%')
+            //             ->orWhere('seo', 'LIKE', '%' . $char . '%');
+            //     }
             // })
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'LIKE', '%' . $query . '%')
+                    ->orWhere('description', 'LIKE', '%' . $query . '%')
+                    ->orWhere('seo', 'LIKE', '%' . $query . '%');
+            })
             ->where('admin_status', true);
 
         if (ApplicationEnvironment::$stock_model_string === "wholessales_stock_prices") {

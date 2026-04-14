@@ -9,3 +9,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/feedback', [FeedbackController::class, 'store']);
+Route::get('/staffs', \App\Http\Controllers\Api\General\StaffController::class);
