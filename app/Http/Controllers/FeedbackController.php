@@ -12,7 +12,7 @@ class FeedbackController extends Controller
     public function store(Request $request)
     {
 
-//        $allowedDomains = ['https://feedback.generaldrugcentre.com/', 'http://localhost:8080/'];
+        //        $allowedDomains = ['https://feedback.generaldrugcentre.com/', 'http://localhost:8080/'];
 //        $origin = $request->headers->get('origin');
 //
 //        if (!in_array($origin, $allowedDomains)) {
@@ -25,7 +25,6 @@ class FeedbackController extends Controller
             'phoneNumber' => 'required|string|max:20',
             'store' => 'required|in:physical,online',
             'department' => 'required|in:wholesales,retail',
-            'invoiceNumber' => 'required|string|max:100',
             'rating' => 'required|integer|min:1|max:5',
             'staffId' => 'nullable|exists:staffs,id',
             'feedbackType' => 'required|in:positive,negative',
