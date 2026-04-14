@@ -36,7 +36,7 @@ class FeedbackController extends Controller
             'phone_number' => $validated['phoneNumber'],
             'store' => ucfirst($validated['store']),
             'department' => ucfirst($validated['department']),
-            'invoice_number' => $validated['invoiceNumber'],
+            'invoice_number' => $validated['invoiceNumber'] ?? null,
             'rating' => $validated['rating'],
             'staff_id' => $validated['staffId'] ?? null,
             'feedback_type' => ucfirst($validated['feedbackType']),
