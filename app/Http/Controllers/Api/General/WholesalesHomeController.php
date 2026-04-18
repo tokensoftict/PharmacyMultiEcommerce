@@ -17,11 +17,11 @@ class WholesalesHomeController extends ApiController
         $components = [
             [
                 "component" => "topBrands",
-                "type"       => "topBrands",
+                "type" => "topBrands",
             ],
             [
                 "component" => "ImageSlider",
-                "type"       => "ImageSlider",
+                "type" => "ImageSlider",
             ],
             [
                 "component" => "Horizontal_List",
@@ -31,20 +31,20 @@ class WholesalesHomeController extends ApiController
                 "label" => "PEACE PHARMACEUTICAL STORE",
                 "seeAll" => "stock/114/by_manufacturer"
             ],
-         /*
-            [
-                "component" => "Horizontal_List",
-                "type" => "classifications",
-                "id" => 12,
-                "limit" => 15,
-                "label" => "ANTIMALARIAL",
-                "seeAll" => "stock/12/by_classification"
-            ],
-           */
+            /*
+               [
+                   "component" => "Horizontal_List",
+                   "type" => "classifications",
+                   "id" => 12,
+                   "limit" => 15,
+                   "label" => "ANTIMALARIAL",
+                   "seeAll" => "stock/12/by_classification"
+               ],
+              */
             [
                 "component" => "FlashDeals",
-                "type"       => "lowestClassifications",
-                "label"     => "LOWEST PRICE YOU CAN TRUST",
+                "type" => "lowestClassifications",
+                "label" => "LOWEST PRICE YOU CAN TRUST",
             ],
             [
                 "component" => "Horizontal_List",
@@ -56,8 +56,8 @@ class WholesalesHomeController extends ApiController
             ],
         ];
 
-        foreach ($components as $component){
-            $data[] = array_merge($component, [ "data" => HomePageApiParser::parseProductType($component)]);
+        foreach ($components as $component) {
+            $data[] = array_merge($component, ["data" => HomePageApiParser::parseProductType($component)]);
         }
 
         //check for new Arrival
@@ -70,8 +70,8 @@ class WholesalesHomeController extends ApiController
             "seeAll" => "stock/new-arrivals"
         ];
         $NewArrivalData = HomePageApiParser::parseProductType($checkNewArrivals);
-        if($NewArrivalData->count() > 0) {
-            $arrivalData = array_merge($checkNewArrivals, [ "data" => $NewArrivalData]);
+        if ($NewArrivalData->count() > 0) {
+            $arrivalData = array_merge($checkNewArrivals, ["data" => $NewArrivalData]);
             $oneData = $data[2];
             $data[2] = $arrivalData;
             $data[] = $oneData;
@@ -89,14 +89,14 @@ class WholesalesHomeController extends ApiController
 
 
         $offers = HomePageApiParser::parseProductType($specialOffers);
-        if($offers->count() > 0) {
-            $offerData = array_merge($specialOffers, [ "data" => $offers]);
+        if ($offers->count() > 0) {
+            $offerData = array_merge($specialOffers, ["data" => $offers]);
             $oneData = $data[3];
             $data[3] = $offerData;
             $data[] = $oneData;
         }
 
-        $activePromos = \App\Models\Promotion::where('status_id', status('Active'))
+        $activePromos = \App\Models\Promotion::where('status_id', status('Approved'))
             ->where('app_id', 5) // Wholesales
             ->where('from_date', '<=', now())
             ->where('end_date', '>=', now())
@@ -108,7 +108,7 @@ class WholesalesHomeController extends ApiController
             $firstImage = null;
             $firstItem = $promo->promotion_items->first();
             if ($firstItem && $firstItem->stock) {
-                 $firstImage = $firstItem->stock->product_image;
+                $firstImage = $firstItem->stock->product_image;
             }
 
             if (!$firstImage) {
@@ -126,15 +126,15 @@ class WholesalesHomeController extends ApiController
                 "title" => $promo->name,
                 "startDate" => $promo->from_date->toIso8601String(),
                 "endDate" => $promo->end_date->toIso8601String(),
-                "image"   => $firstImage ?? asset("logo/no-image.png"),
+                "image" => $firstImage ?? asset("logo/no-image.png"),
             ];
         }
 
         if (count($carouselItems) > 0) {
             array_unshift($data, [
                 "component" => "PromoCarousel",
-                "type"      => "PromoCarousel",
-                "data"      => $carouselItems,
+                "type" => "PromoCarousel",
+                "data" => $carouselItems,
             ]);
         }
 

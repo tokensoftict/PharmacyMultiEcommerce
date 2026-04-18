@@ -16,11 +16,11 @@ class SupermarketHomeController extends ApiController
         $components = [
             [
                 "component" => "topBrands",
-                "type"       => "topBrands",
+                "type" => "topBrands",
             ],
             [
                 "component" => "ImageSlider",
-                "type"       => "ImageSlider",
+                "type" => "ImageSlider",
             ],
             [
                 "component" => "Horizontal_List",
@@ -48,8 +48,8 @@ class SupermarketHomeController extends ApiController
             ],
             [
                 "component" => "FlashDeals",
-                "type"       => "lowestClassifications",
-                "label"     => "LOWEST PRICE YOU CAN TRUST",
+                "type" => "lowestClassifications",
+                "label" => "LOWEST PRICE YOU CAN TRUST",
             ],
             [
                 "component" => "Horizontal_List",
@@ -78,8 +78,8 @@ class SupermarketHomeController extends ApiController
         ];
 
 
-        foreach ($components as $component){
-            $data[] = array_merge($component, [ "data" => HomePageApiParser::parseProductType($component)]);
+        foreach ($components as $component) {
+            $data[] = array_merge($component, ["data" => HomePageApiParser::parseProductType($component)]);
         }
 
         //check for new Arrival
@@ -92,14 +92,14 @@ class SupermarketHomeController extends ApiController
             "seeAll" => "stock/new-arrivals"
         ];
         $NewArrivalData = HomePageApiParser::parseProductType($checkNewArrivals);
-        if($NewArrivalData->count() > 0) {
-            $arrivalData = array_merge($checkNewArrivals, [ "data" => $NewArrivalData]);
+        if ($NewArrivalData->count() > 0) {
+            $arrivalData = array_merge($checkNewArrivals, ["data" => $NewArrivalData]);
             $oneData = $data[2];
             $data[2] = $arrivalData;
             $data[] = $oneData;
         }
 
-        $activePromos = \App\Models\Promotion::where('status_id', status('Active'))
+        $activePromos = \App\Models\Promotion::where('status_id', status('Approved'))
             ->where('app_id', 4) // Supermarket
             ->where('from_date', '<=', now())
             ->where('end_date', '>=', now())
@@ -111,7 +111,7 @@ class SupermarketHomeController extends ApiController
             $firstImage = null;
             $firstItem = $promo->promotion_items->first();
             if ($firstItem && $firstItem->stock) {
-                 $firstImage = $firstItem->stock->product_image;
+                $firstImage = $firstItem->stock->product_image;
             }
 
             if (!$firstImage) {
@@ -129,15 +129,15 @@ class SupermarketHomeController extends ApiController
                 "title" => $promo->name,
                 "startDate" => $promo->from_date->toIso8601String(),
                 "endDate" => $promo->end_date->toIso8601String(),
-                "image"   => $firstImage ?? asset("logo/no-image.png"),
+                "image" => $firstImage ?? asset("logo/no-image.png"),
             ];
         }
 
         if (count($carouselItems) > 0) {
             array_unshift($data, [
                 "component" => "PromoCarousel",
-                "type"      => "PromoCarousel",
-                "data"      => $carouselItems,
+                "type" => "PromoCarousel",
+                "data" => $carouselItems,
             ]);
         }
 
