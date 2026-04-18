@@ -100,7 +100,7 @@ class SupermarketHomeController extends ApiController
         }
 
         $activePromos = \App\Models\Promotion::where('status_id', status('Approved'))
-            ->where('app_id', 4) // Supermarket
+            ->where('app_id', 6) // Supermarket
             ->where('from_date', '<=', now())
             ->where('end_date', '>=', now())
             ->with(['promotion_items.stock'])
