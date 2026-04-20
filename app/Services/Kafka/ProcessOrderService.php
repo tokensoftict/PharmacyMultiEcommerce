@@ -24,7 +24,7 @@ class ProcessOrderService
 
         if ($action === KafkaAction::SYNC_LOCAL_ORDER) {
             $createOrderService = new CreateOrderService();
-            $createOrderService->syncLocalOrder($data);
+            $createOrderService->syncLocalOrder($data['data']);
             return;
         }
 
