@@ -314,20 +314,32 @@ class ProcessGeneralService
 
             $user->update($updateData);
             if (($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
-                self::sendLoyaltyNotification($user->supermarket_user, $data['retail_loyalty_points']);
+                $supermarket_user = SupermarketUser::query()->where("user_id", $user->id)->first();
+                if($supermarket_user){
+                    self::sendLoyaltyNotification($supermarket_user, ($data['retail_loyalty_points'] + $oldRetailPoints));
+                }
             }
 
             if($data['loyalty_points'] > $oldPoints) {
-                self::sendLoyaltyNotification($user->wholesales_user, $data['loyalty_points']);
+                $wholesales_user = WholesalesUser::query()->where("user_id", $user->id)->first();
+                if($wholesales_user) {
+                    self::sendLoyaltyNotification($wholesales_user, ($data['loyalty_points'] + $oldPoints));
+                }
             }
 
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
-                self::sendMemberGroupNotification($user->wholesales_user, $data['member_group_id']);
+                $wholesales_user = WholesalesUser::query()->where("user_id", $user->id)->first();
+                if($wholesales_user) {
+                    self::sendMemberGroupNotification($wholesales_user, $data['member_group_id']);
+                }
             }
 
             if (isset($data['retail_member_group_id']) && $data['retail_member_group_id'] != $oldRetailGroupId && !is_null($data['retail_member_group_id'])) {
-                self::sendMemberGroupNotification($user->supermarket_user, $data['retail_member_group_id']);
+                $supermarket_user = SupermarketUser::query()->where("user_id", $user->id)->first();
+                if($supermarket_user) {
+                    self::sendMemberGroupNotification($supermarket_user, $data['retail_member_group_id']);
+                }
             }
 
             return true;
@@ -367,17 +379,32 @@ class ProcessGeneralService
 
             $user->update($updateData);
 
-            if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
-                $totalPoints = $data['loyalty_points'] + ($data['retail_loyalty_points'] ?? 0);
-                self::sendLoyaltyNotification($user, $totalPoints);
+            if (($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
+                $supermarket_user = SupermarketUser::query()->where("user_id", $user->id)->first();
+                if($supermarket_user) {
+                    self::sendLoyaltyNotification($supermarket_user, ($data['retail_loyalty_points'] + $oldRetailPoints));
+                }
+            }
+
+            if ($data['loyalty_points'] > $oldPoints) {
+                $wholesales_user = WholesalesUser::query()->where("user_id", $user->id)->first();
+                if($wholesales_user) {
+                    self::sendLoyaltyNotification($wholesales_user, ($data['retail_loyalty_points'] + $oldPoints));
+                }
             }
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
-                self::sendMemberGroupNotification($user, $data['member_group_id']);
+                $wholesales_user = WholesalesUser::query()->where("user_id", $user->id)->first();
+                if($wholesales_user) {
+                    self::sendMemberGroupNotification($wholesales_user, $data['member_group_id']);
+                }
             }
 
             if (isset($data['retail_member_group_id']) && $data['retail_member_group_id'] != $oldRetailGroupId && !is_null($data['retail_member_group_id'])) {
-                self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
+                $supermarket_user = SupermarketUser::query()->where("user_id", $user->id)->first();
+                if($supermarket_user){
+                    self::sendMemberGroupNotification($supermarket_user, $data['retail_member_group_id']);
+                }
             }
 
             return true;
