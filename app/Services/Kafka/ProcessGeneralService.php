@@ -12,7 +12,9 @@ use App\Models\NewStockArrival;
 use App\Models\Productcategory;
 use App\Models\Productgroup;
 use App\Models\Stock;
+use App\Models\SupermarketUser;
 use App\Models\User;
+use App\Models\WholesalesUser;
 use App\Services\Utilities\PushNotificationService;
 use Arr;
 use Illuminate\Support\Facades\DB;
@@ -311,17 +313,21 @@ class ProcessGeneralService
             }
 
             $user->update($updateData);
-            if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
-                $totalPoints = $data['loyalty_points'] + ($data['retail_loyalty_points'] ?? 0);
-                self::sendLoyaltyNotification($user, $totalPoints);
+            if (($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
+                self::sendLoyaltyNotification($user->supermarket_user, $data['retail_loyalty_points']);
             }
 
+            if($data['loyalty_points'] > $oldPoints) {
+                self::sendLoyaltyNotification($user->wholesales_user, $data['loyalty_points']);
+            }
+
+
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
-                self::sendMemberGroupNotification($user, $data['member_group_id']);
+                self::sendMemberGroupNotification($user->wholesales_user, $data['member_group_id']);
             }
 
             if (isset($data['retail_member_group_id']) && $data['retail_member_group_id'] != $oldRetailGroupId && !is_null($data['retail_member_group_id'])) {
-                self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
+                self::sendMemberGroupNotification($user->supermarket_user, $data['retail_member_group_id']);
             }
 
             return true;
@@ -403,7 +409,7 @@ class ProcessGeneralService
      * @param float $newPoints
      * @return void
      */
-    private static function sendLoyaltyNotification(User $user, float $newPoints): void
+    private static function sendLoyaltyNotification(SupermarketUser|WholesalesUser $user, float $newPoints): void
     {
         $notifications = [
             ["title" => "Points Alert! 🎊", "body" => "You've just earned more loyalty points! Your total is now $newPoints. Keep it up!"],
@@ -417,12 +423,12 @@ class ProcessGeneralService
 
         $notificationService = new PushNotificationService();
         $notificationService
-            ->setApplicationEnvironment(6) // Supermarket
+            ->setApplicationEnvironment($user->app_user->app) // Supermarket
             ->createNotification([
                 "title" => $randomNotification['title'],
                 "body" => $randomNotification['body'],
             ])
-            ->setSuperMarketCustomer($user->supermarket_user)
+            ->determineCustomerTypeAndSetCustomer($user)
 
             ->setAction(PushNotificationAction::NONE)
             ->approve()
@@ -455,8 +461,8 @@ class ProcessGeneralService
 
         $notificationService = new PushNotificationService();
         $notificationService
-            ->setApplicationEnvironment(6) // Supermarket
-            ->setSuperMarketCustomer($user->supermarket_user)
+            ->setApplicationEnvironment($user->app_user->app) // Supermarket
+            ->setSuperMarketCustomer($user)
             ->createNotification([
                 "title" => $randomNotification['title'],
                 "body" => $randomNotification['body'],
