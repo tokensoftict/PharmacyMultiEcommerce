@@ -97,9 +97,9 @@ class PaymentMethod extends Model
     public function appendBankTransferAccount()
     {
         if($this->id == "1") {
-            $settingsValue = json_decode('[{"bank": "PS GENERAL DRUGS", "name": "STERLING BANK", "number": "0079729045"}]',true);
+            $settingsValue = json_decode('[{"bank": "SQUAD PSPIL GENERAL DRUG", "name": "GT BANK", "number": "9002038672"}]',true);
         } else {
-            $settingsValue = json_decode('[{"bank": "PS GENERAL DRUGS", "name": "GTBank", "number": "0736145025"}]', true);
+            $settingsValue = json_decode('[{"bank": "SQUAD PSPIL GENERAL DRUG", "name": "GT BANK", "number": "9001676385"}]', true);
         }
         $html = "";
         foreach($settingsValue as $setting) {
