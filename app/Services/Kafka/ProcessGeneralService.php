@@ -489,7 +489,7 @@ class ProcessGeneralService
         $notificationService = new PushNotificationService();
         $notificationService
             ->setApplicationEnvironment($user->app_user->app) // Supermarket
-            ->setSuperMarketCustomer($user)
+            ->determineCustomerTypeAndSetCustomer($user)
             ->createNotification([
                 "title" => $randomNotification['title'],
                 "body" => $randomNotification['body'],
