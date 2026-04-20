@@ -483,6 +483,7 @@ class ProcessGeneralService
                 'username' => $data['username'] ?? null,
                 'department' => $department,
                 'status' => $data['status'],
+                'usergroup_id' => $data['usergroup_id'] ?? null
             ]
         );
     }

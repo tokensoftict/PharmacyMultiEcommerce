@@ -16,6 +16,7 @@ class Staff extends Model
         'username',
         'department',
         'status',
+        'usergroup_id',
     ];
 
     public function feedbacks()
