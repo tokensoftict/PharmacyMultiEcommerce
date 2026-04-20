@@ -599,7 +599,7 @@ class CreateOrderService
 
                 // Send Rating Notification
                 $staffId = $orderData['created_by'] ?? '';
-                $staff = \App\Models\Staff::where('local_id', $staffId)->first();
+                $staff = \App\Models\Staff::where('local_id', $staffId)->whereIn('usergroup_id', [6, 7])->first();
 
                 if ($staff) {
                     $invoiceNo = $orderData['invoice_no'];
