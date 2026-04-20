@@ -13,7 +13,7 @@ class StaffController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $staffs = Staff::where('status', true)->get();
+        $staffs = Staff::where('status', true)->whereIn('usergroup_id', [6, 7])->get();
 
         $groupedStaffs = [
             'retail' => $staffs->where('department', 'Retail')->values(),
