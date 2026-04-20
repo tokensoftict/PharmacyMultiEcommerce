@@ -313,15 +313,15 @@ class ProcessGeneralService
             $user->update($updateData);
             if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
                 $totalPoints = $data['loyalty_points'] + ($data['retail_loyalty_points'] ?? 0);
-                //self::sendLoyaltyNotification($user, $totalPoints);
+                self::sendLoyaltyNotification($user, $totalPoints);
             }
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
-                //self::sendMemberGroupNotification($user, $data['member_group_id']);
+                self::sendMemberGroupNotification($user, $data['member_group_id']);
             }
 
             if (isset($data['retail_member_group_id']) && $data['retail_member_group_id'] != $oldRetailGroupId && !is_null($data['retail_member_group_id'])) {
-                //self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
+                self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
             }
 
             return true;
@@ -363,15 +363,15 @@ class ProcessGeneralService
 
             if ($data['loyalty_points'] > $oldPoints || ($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
                 $totalPoints = $data['loyalty_points'] + ($data['retail_loyalty_points'] ?? 0);
-                //self::sendLoyaltyNotification($user, $totalPoints);
+                self::sendLoyaltyNotification($user, $totalPoints);
             }
 
             if ($data['member_group_id'] != $oldGroupId && !is_null($data['member_group_id'])) {
-                //self::sendMemberGroupNotification($user, $data['member_group_id']);
+                self::sendMemberGroupNotification($user, $data['member_group_id']);
             }
 
             if (isset($data['retail_member_group_id']) && $data['retail_member_group_id'] != $oldRetailGroupId && !is_null($data['retail_member_group_id'])) {
-                //self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
+                self::sendMemberGroupNotification($user, $data['retail_member_group_id']);
             }
 
             return true;
