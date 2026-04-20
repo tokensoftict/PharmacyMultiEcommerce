@@ -313,17 +313,19 @@ class ProcessGeneralService
             }
 
             $user->update($updateData);
+
+            $user = $user->fresh();
             if (($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
                 $supermarket_user = SupermarketUser::query()->where("user_id", $user->id)->first();
                 if($supermarket_user){
-                    self::sendLoyaltyNotification($supermarket_user, ($data['retail_loyalty_points'] + $oldRetailPoints));
+                    self::sendLoyaltyNotification($supermarket_user, $user->retail_loyalty_points);
                 }
             }
 
             if($data['loyalty_points'] > $oldPoints) {
                 $wholesales_user = WholesalesUser::query()->where("user_id", $user->id)->first();
                 if($wholesales_user) {
-                    self::sendLoyaltyNotification($wholesales_user, ($data['loyalty_points'] + $oldPoints));
+                    self::sendLoyaltyNotification($wholesales_user, $user->loyalty_points);
                 }
             }
 
@@ -378,18 +380,18 @@ class ProcessGeneralService
 
 
             $user->update($updateData);
-
+            $user = $user->fresh();
             if (($data['retail_loyalty_points'] ?? 0) > $oldRetailPoints) {
                 $supermarket_user = SupermarketUser::query()->where("user_id", $user->id)->first();
                 if($supermarket_user) {
-                    self::sendLoyaltyNotification($supermarket_user, ($data['retail_loyalty_points'] + $oldRetailPoints));
+                    self::sendLoyaltyNotification($supermarket_user, $user->retail_loyalty_points);
                 }
             }
 
             if ($data['loyalty_points'] > $oldPoints) {
                 $wholesales_user = WholesalesUser::query()->where("user_id", $user->id)->first();
                 if($wholesales_user) {
-                    self::sendLoyaltyNotification($wholesales_user, ($data['retail_loyalty_points'] + $oldPoints));
+                    self::sendLoyaltyNotification($wholesales_user, $user->loyalty_points);
                 }
             }
 
