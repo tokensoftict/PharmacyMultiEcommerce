@@ -41,7 +41,7 @@ class StockService
         return Stock::query()->select("stocks.*", ApplicationEnvironment::$stock_model_string . ".price", ApplicationEnvironment::$stock_model_string . ".quantity as quantity", ApplicationEnvironment::$stock_model_string . ".expiry_date as expiry_date")->withoutGlobalScope('filter_stocks')
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string . ".stock_id", "=", "stocks.id")
             ->where("manufacturer_id", $manufacturer->id)
-            ->orderBy(ApplicationEnvironment::$stock_model_string . ".price", "asc")
+            ->orderBy(ApplicationEnvironment::$stock_model_string . ".quantity", "desc")
             ->paginate(config("app.PAGINATE_NUMBER"));
 
     }
@@ -58,7 +58,7 @@ class StockService
         return Stock::query()->select("stocks.*", ApplicationEnvironment::$stock_model_string . ".price", ApplicationEnvironment::$stock_model_string . ".quantity as quantity", ApplicationEnvironment::$stock_model_string . ".expiry_date as expiry_date")->withoutGlobalScope('filter_stocks')
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string . ".stock_id", "=", "stocks.id")
             ->where("productcategory_id", $productcategory->id)
-            ->orderBy(ApplicationEnvironment::$stock_model_string . ".price", "asc")
+            ->orderBy(ApplicationEnvironment::$stock_model_string . ".quantity", "desc")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
@@ -74,7 +74,7 @@ class StockService
         return Stock::query()->select("stocks.*", ApplicationEnvironment::$stock_model_string . ".price", ApplicationEnvironment::$stock_model_string . ".quantity as quantity", ApplicationEnvironment::$stock_model_string . ".expiry_date as expiry_date")->withoutGlobalScope('filter_stocks')
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string . ".stock_id", "=", "stocks.id")
             ->where("classification_id", $classification->id)
-            ->orderBy(ApplicationEnvironment::$stock_model_string . ".price", "asc")
+            ->orderBy(ApplicationEnvironment::$stock_model_string . ".quantity", "desc")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
