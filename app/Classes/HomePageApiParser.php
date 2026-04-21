@@ -40,13 +40,7 @@ class HomePageApiParser
      */
     public static function getProductByClassification(int $id, int $limit =15) : AnonymousResourceCollection
     {
-        return StockListResource::collection(
-            Stock::query()->with([ApplicationEnvironment::$stock_model_string])->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
-                ->where('stocks.classification_id', $id)
-                ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
-                ->limit($limit)
-                ->get()
-        );
+        return StockListResource::collection(Stock::where('classification_id', $id)->limit($limit)->get());
     }
 
 
@@ -57,13 +51,7 @@ class HomePageApiParser
      */
     public static function getProductByManufacturer(int $id, int $limit =15) : AnonymousResourceCollection
     {
-        return StockListResource::collection(
-            Stock::query()->with([ApplicationEnvironment::$stock_model_string])->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
-                ->where('stocks.manufacturer_id', $id)
-                ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
-                ->limit($limit)
-                ->get()
-        );
+        return StockListResource::collection(Stock::where('manufacturer_id', $id)->limit($limit)->get());
     }
 
 
@@ -74,13 +62,7 @@ class HomePageApiParser
      */
     public static function getProductByProductCategories(int $id, int $limit =15) : AnonymousResourceCollection
     {
-        return StockListResource::collection(
-            Stock::query()->with([ApplicationEnvironment::$stock_model_string])->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
-                ->where('stocks.productcategory_id', $id)
-                ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
-                ->limit($limit)
-                ->get()
-        );
+        return StockListResource::collection(Stock::where('productcategory_id', $id)->limit($limit)->get());
     }
 
 
