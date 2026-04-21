@@ -41,7 +41,7 @@ class HomePageApiParser
     public static function getProductByClassification(int $id, int $limit =15) : AnonymousResourceCollection
     {
         return StockListResource::collection(
-            Stock::query()->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
+            Stock::query()->with([ApplicationEnvironment::$stock_model_string])->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
                 ->where('stocks.classification_id', $id)
                 ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
                 ->limit($limit)
@@ -58,7 +58,7 @@ class HomePageApiParser
     public static function getProductByManufacturer(int $id, int $limit =15) : AnonymousResourceCollection
     {
         return StockListResource::collection(
-            Stock::query()->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
+            Stock::query()->with([ApplicationEnvironment::$stock_model_string])->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
                 ->where('stocks.manufacturer_id', $id)
                 ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
                 ->limit($limit)
@@ -75,7 +75,7 @@ class HomePageApiParser
     public static function getProductByProductCategories(int $id, int $limit =15) : AnonymousResourceCollection
     {
         return StockListResource::collection(
-            Stock::query()->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
+            Stock::query()->with([ApplicationEnvironment::$stock_model_string])->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
                 ->where('stocks.productcategory_id', $id)
                 ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
                 ->limit($limit)
