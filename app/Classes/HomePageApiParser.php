@@ -62,7 +62,7 @@ class HomePageApiParser
                 ->where('stocks.manufacturer_id', $id)
                 ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
                 ->limit($limit)
-                ->ddRawSql()
+                ->get()
         );
     }
 
