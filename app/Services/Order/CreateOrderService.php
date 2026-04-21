@@ -597,32 +597,46 @@ class CreateOrderService
                     ->approve()
                     ->send();
 
-                // Send Rating Notification
-                $staffId = $orderData['created_by'] ?? '';
-                $staff = \App\Models\Staff::where('local_id', $staffId)->whereIn('usergroup_id', [6, 7])->first();
-
-                if ($staff) {
-                    $invoiceNo = $orderData['invoice_no'];
-                    $dept = strtolower($orderData['in_department'] ?? '');
-                    $fullName = urlencode($user->name);
-                    $phone = urlencode($customerPhoneNumber);
-
-                    $feedbackUrl = "https://feedback.generaldrugcentre.com/?staffId=$staffId&invoiceNumber=$invoiceNo&department=$dept&fullName=$fullName&phoneNumber=$phone";
-
-                    $ratingNotificationService = new PushNotificationService();
-                    $ratingNotificationService
-                        ->setApplicationEnvironment(\App\Models\App::find($appId))
-                        ->createNotification([
-                            "title" => "How was your experience? ⭐",
-                            "body" => "Please take a moment to rate the staff member who attended to you. Your feedback helps us improve!",
-                        ])
-                        ->determineCustomerTypeAndSetCustomer($customer)
-                        ->setAction(PushNotificationAction::OPEN_URL)
-                        ->setPayload(['url' => $feedbackUrl])
-                        ->approve()
-                        ->send();
-                }
             }
+
+            // Send Rating Notification
+            $this->sendRatingNotification($orderData, $user, $customer, $appId, $customerPhoneNumber);
         });
+    }
+
+    /**
+     * @param array $orderData
+     * @param User $user
+     * @param mixed $customer
+     * @param int $appId
+     * @param string $customerPhoneNumber
+     * @return void
+     */
+    private function sendRatingNotification(array $orderData, User $user, $customer, int $appId, string $customerPhoneNumber): void
+    {
+        $staffId = $orderData['created_by'] ?? '';
+        $staff = \App\Models\Staff::where('local_id', $staffId)->whereIn('usergroup_id', [6, 7])->first();
+
+        if ($staff) {
+            $invoiceNo = $orderData['invoice_no'];
+            $dept = strtolower($orderData['in_department'] ?? '');
+            $fullName = urlencode($user->name);
+            $phone = urlencode($customerPhoneNumber);
+
+            $feedbackUrl = "https://feedback.generaldrugcentre.com/?staffId=$staffId&invoiceNumber=$invoiceNo&department=$dept&fullName=$fullName&phoneNumber=$phone";
+
+            $ratingNotificationService = new PushNotificationService();
+            $ratingNotificationService
+                ->setApplicationEnvironment(\App\Models\App::find($appId))
+                ->createNotification([
+                    "title" => "How was your experience? ⭐",
+                    "body" => "Please take a moment to rate the staff member who attended to you. Your feedback helps us improve!",
+                ])
+                ->determineCustomerTypeAndSetCustomer($customer)
+                ->setAction(PushNotificationAction::OPEN_URL)
+                ->setPayload(['url' => $feedbackUrl])
+                ->approve()
+                ->send();
+        }
     }
 }
