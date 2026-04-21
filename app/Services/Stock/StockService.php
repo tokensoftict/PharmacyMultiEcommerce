@@ -147,7 +147,6 @@ class StockService
      */
     public final function search(string $query): LengthAwarePaginator
     {
-
         $name = explode(" ", $query);
 
         $builder = Stock::query()

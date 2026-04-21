@@ -622,8 +622,8 @@ class CreateOrderService
             $dept = strtolower($orderData['in_department'] ?? '');
             $fullName = urlencode($user->name);
             $phone = urlencode($customerPhoneNumber);
-
-            $feedbackUrl = "https://feedback.generaldrugcentre.com/?staffId=$staffId&invoiceNumber=$invoiceNo&department=$dept&fullName=$fullName&phoneNumber=$phone";
+            $id = $staff->id;
+            $feedbackUrl = "https://feedback.generaldrugcentre.com/?staffId=$id&invoiceNumber=$invoiceNo&department=$dept&fullName=$fullName&phoneNumber=$phone";
 
             $ratingNotificationService = new PushNotificationService();
             $ratingNotificationService
