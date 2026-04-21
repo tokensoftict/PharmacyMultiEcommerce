@@ -43,7 +43,7 @@ class HomePageApiParser
         return StockListResource::collection(
             Stock::query()->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
                 ->where('stocks.classification_id', $id)
-                ->orderBy(ApplicationEnvironment::$stock_model_string."quantity", "DESC")
+                ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
                 ->limit($limit)
                 ->get()
         );
@@ -60,7 +60,7 @@ class HomePageApiParser
         return StockListResource::collection(
             Stock::query()->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
                 ->where('stocks.manufacturer_id', $id)
-                ->orderBy(ApplicationEnvironment::$stock_model_string."quantity", "DESC")
+                ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
                 ->limit($limit)
                 ->get()
         );
@@ -77,7 +77,7 @@ class HomePageApiParser
         return StockListResource::collection(
             Stock::query()->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string.".stock_id", "=", "stocks.id" )
                 ->where('stocks.productcategory_id', $id)
-                ->orderBy(ApplicationEnvironment::$stock_model_string."quantity", "DESC")
+                ->orderBy(ApplicationEnvironment::$stock_model_string.".quantity", "DESC")
                 ->limit($limit)
                 ->get()
         );
