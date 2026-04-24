@@ -147,10 +147,7 @@ class ProcessGeneralService
      */
     public static function updateClassification(array $data): Classification|bool|int
     {
-        Schema::disableForeignKeyConstraints();
-        DB::table("classifications")->truncate();
         $result = Classification::where("id", $data['id'])->update($data);
-        Schema::enableForeignKeyConstraints();
         return $result;
     }
 
