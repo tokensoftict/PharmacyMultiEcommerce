@@ -18,6 +18,9 @@
     $actualId = $id . '-custom';
     $isLive = $live || ($attributes->wire('model') && $attributes->wire('model')->hasModifier('live'));
     $optionsHash = md5(json_encode($options));
+    
+    // Safely get initial value from wire:model or value prop
+    $initialValue = ($attributes->wire('model') ? $attributes->wire('model')->value() : null) ?? $value;
 
     $initialLabel = $placeholder;
     if ($multiple) {
