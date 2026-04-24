@@ -115,14 +115,23 @@
     }
 </style>
 
-<div class="row">
+<div class="row position-relative">
+    <!-- Global Loading Spinner -->
+    <div wire:loading class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.5); z-index: 9999;">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <!-- Component List Section -->
     <div class="col-md-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="card-title">Home Page Component Manager ({{ $storeName }})</h4>
                 <div>
-                    <button wire:click="addComponent" class="btn btn-primary btn-sm">Add New Component</button>
+                    <button wire:click="addComponent" wire:loading.attr="disabled" class="btn btn-primary btn-sm">
+                        <span wire:loading wire:target="addComponent" class="spinner-border spinner-border-sm me-1"></span>
+                        Add New Component
+                    </button>
                 </div>
             </div>
             <div class="card-body">
@@ -151,10 +160,15 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <button wire:click="edit({{ $item->id }})" class="btn btn-info btn-sm">Edit</button>
+                                        <button wire:click="edit({{ $item->id }})" wire:loading.attr="disabled" class="btn btn-info btn-sm">
+                                            <span wire:loading wire:target="edit({{ $item->id }})" class="spinner-border spinner-border-sm me-1"></span>
+                                            Edit
+                                        </button>
                                         <button wire:click="delete({{ $item->id }})" 
                                                 wire:confirm="Are you sure you want to delete this component?"
+                                                wire:loading.attr="disabled"
                                                 class="btn btn-danger btn-sm">
+                                            <span wire:loading wire:target="delete({{ $item->id }})" class="spinner-border spinner-border-sm me-1"></span>
                                             Delete
                                         </button>
                                     </td>
@@ -333,8 +347,11 @@
                                     </div>
                                 </div>
                                 <div class="text-end mt-4">
-                                    <button type="button" class="btn btn-light border" wire:click="closeModal()">Cancel</button>
-                                    <button type="submit" class="btn btn-primary px-4 shadow-sm">{{ $editingId ? 'Update' : 'Save' }} Changes</button>
+                                    <button type="button" class="btn btn-light border" wire:click="closeModal()" wire:loading.attr="disabled">Cancel</button>
+                                    <button type="submit" class="btn btn-primary px-4 shadow-sm" wire:loading.attr="disabled">
+                                        <span wire:loading wire:target="store" class="spinner-border spinner-border-sm me-1"></span>
+                                        {{ $editingId ? 'Update' : 'Save' }} Changes
+                                    </button>
                                 </div>
                             </form>
                         </div>
