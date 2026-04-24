@@ -4,6 +4,7 @@ namespace App\Livewire\Backend\Admin\HomePage;
 
 use App\Classes\ApplicationEnvironment;
 use App\Models\App;
+use App\Models\Stock;
 use App\Models\Classification;
 use App\Models\HomePageComponent;
 use App\Models\Manufacturer;
@@ -246,8 +247,40 @@ class HomePageManager extends Component
         $ids = array_filter($ids);
 
         if (empty($ids) && !$compObj) {
-            // Return some dummy placeholders if nothing selected and in edit mode
-            return [['name' => 'Sample Item 1'], ['name' => 'Sample Item 2'], ['name' => 'Sample Item 3']];
+            return [['name' => 'Sample Product 1'], ['name' => 'Sample Product 2']];
+        }
+
+        // If it's a product gallery or flash deals, show actual products
+        if ($component_name === 'Horizontal_List' || $component_name === 'FlashDeals') {
+            $query = Stock::query();
+            
+            if ($type === 'classifications') {
+                $query->whereIn('classification_id', $ids);
+            } elseif ($type === 'manufacturers') {
+                $query->whereIn('manufacturer_id', $ids);
+            } elseif ($type === 'productcategories') {
+                $query->whereIn('productcategory_id', $ids);
+            } elseif ($type === 'lowestClassifications') {
+                 $query->whereIn('classification_id', $ids);
+            } elseif ($type === 'mixed') {
+                $classIds = []; $mfrIds = []; $catIds = [];
+                foreach($ids as $idStr) {
+                    $parts = explode(':', $idStr);
+                    if(count($parts) == 2) {
+                        if($parts[0] == 'classification') $classIds[] = $parts[1];
+                        elseif($parts[0] == 'manufacturer') $mfrIds[] = $parts[1];
+                        elseif($parts[0] == 'productcategory') $catIds[] = $parts[1];
+                    }
+                }
+                $query->where(function($q) use ($classIds, $mfrIds, $catIds) {
+                    if(!empty($classIds)) $q->orWhereIn('classification_id', $classIds);
+                    if(!empty($mfrIds)) $q->orWhereIn('manufacturer_id', $mfrIds);
+                    if(!empty($catIds)) $q->orWhereIn('productcategory_id', $catIds);
+                });
+            }
+
+            $products = $query->limit(5)->get(['id', 'name'])->toArray();
+            return !empty($products) ? $products : [['name' => 'No products found in this source']];
         }
 
         if ($type === 'classifications' || $type === 'lowestClassifications') {
