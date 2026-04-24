@@ -17,7 +17,7 @@ class HomePageManager extends Component
 {
     use WithPagination;
 
-    public $selectedApp;
+    public $selectedApp, $storeName;
     public $component_name, $type, $component_id, $label, $limit = 15, $see_all_link, $sort_order = 0, $status = true;
     public $editingId = null;
     public $isModalOpen = false;
@@ -25,6 +25,7 @@ class HomePageManager extends Component
     public function mount()
     {
         $this->selectedApp = (int) ApplicationEnvironment::$id;
+        $this->storeName = ApplicationEnvironment::$name;
     }
 
     public $itemsForSelect = [];

@@ -1,3 +1,4 @@
+<div>
 <style>
     .mobile-frame {
         border: 8px solid #333;
@@ -119,9 +120,9 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="card-title">Home Page Component Manager</h4>
+                <h4 class="card-title">Home Page Component Manager ({{ $storeName }})</h4>
                 <div>
-                    <button wire:click="openModal()" class="btn btn-primary btn-sm">Add New Component</button>
+                    <button wire:click="openModal" class="btn btn-primary btn-sm">Add New Component</button>
                 </div>
             </div>
             <div class="card-body">
@@ -409,4 +410,5 @@
         </div>
     </div>
     @endif
+</div>
 </div>
