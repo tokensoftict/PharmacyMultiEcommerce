@@ -218,28 +218,31 @@ class HomePageManager extends Component
             ->show();
     }
 
-    public function getPreviewItems()
+    public function getComponentPreviewItems($compObj = null)
     {
-        if (!$this->type) return [];
+        $type = $compObj ? $compObj->type : $this->type;
+        $component_id = $compObj ? $compObj->component_id : $this->component_id;
+        $component_name = $compObj ? $compObj->component_name : $this->component_name;
 
-        $ids = is_array($this->component_id) ? $this->component_id : (empty($this->component_id) ? [] : explode(',', $this->component_id));
+        if (!$type) return [];
+
+        $ids = is_array($component_id) ? $component_id : (empty($component_id) ? [] : explode(',', $component_id));
         $ids = array_filter($ids);
 
-        if (empty($ids)) {
-            // Return some dummy placeholders if nothing selected
+        if (empty($ids) && !$compObj) {
+            // Return some dummy placeholders if nothing selected and in edit mode
             return [['name' => 'Sample Item 1'], ['name' => 'Sample Item 2'], ['name' => 'Sample Item 3']];
         }
 
-        if ($this->type === 'classifications' || $this->type === 'lowestClassifications') {
+        if ($type === 'classifications' || $type === 'lowestClassifications') {
             return Classification::whereIn('id', $ids)->limit(5)->get(['id', 'name'])->toArray();
-        } elseif ($this->type === 'manufacturers') {
+        } elseif ($type === 'manufacturers') {
             return Manufacturer::whereIn('id', $ids)->limit(5)->get(['id', 'name'])->toArray();
-        } elseif ($this->type === 'productcategories') {
+        } elseif ($type === 'productcategories') {
             return Productcategory::whereIn('id', $ids)->limit(5)->get(['id', 'name'])->toArray();
-        } elseif ($this->type === 'ImageSlider') {
+        } elseif ($type === 'ImageSlider') {
             return Slider::whereIn('id', $ids)->limit(5)->get(['id', 'title as name'])->toArray();
-        } elseif ($this->type === 'mixed') {
-            // For mixed, we need to parse the ids like 'classification:1'
+        } elseif ($type === 'mixed') {
             $items = [];
             foreach (array_slice($ids, 0, 5) as $idStr) {
                 $parts = explode(':', $idStr);
