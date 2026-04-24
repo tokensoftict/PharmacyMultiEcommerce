@@ -24,6 +24,14 @@ class HomePageManager extends Component
     public $itemsForSelect = [];
     public $availableTypes = [];
 
+    public $componentDisplayNames = [
+        'Horizontal_List' => 'Scrolling Product Gallery',
+        'ImageSlider' => 'Hero Banner Carousel',
+        'topBrands' => 'Featured Brands Grid',
+        'FlashDeals' => 'Daily Hot Deals',
+        'PromoCarousel' => 'Promotion Spotlight',
+    ];
+
     protected $componentTypeMapping = [
         'Horizontal_List' => [
             'classifications' => 'Classifications',
@@ -208,5 +216,45 @@ class HomePageManager extends Component
         LivewireAlert::title('Success')
             ->text('Component deleted successfully.')
             ->show();
+    }
+
+    public function getPreviewItems()
+    {
+        if (!$this->type) return [];
+
+        $ids = is_array($this->component_id) ? $this->component_id : (empty($this->component_id) ? [] : explode(',', $this->component_id));
+        $ids = array_filter($ids);
+
+        if (empty($ids)) {
+            // Return some dummy placeholders if nothing selected
+            return [['name' => 'Sample Item 1'], ['name' => 'Sample Item 2'], ['name' => 'Sample Item 3']];
+        }
+
+        if ($this->type === 'classifications' || $this->type === 'lowestClassifications') {
+            return Classification::whereIn('id', $ids)->limit(5)->get(['id', 'name'])->toArray();
+        } elseif ($this->type === 'manufacturers') {
+            return Manufacturer::whereIn('id', $ids)->limit(5)->get(['id', 'name'])->toArray();
+        } elseif ($this->type === 'productcategories') {
+            return Productcategory::whereIn('id', $ids)->limit(5)->get(['id', 'name'])->toArray();
+        } elseif ($this->type === 'ImageSlider') {
+            return Slider::whereIn('id', $ids)->limit(5)->get(['id', 'title as name'])->toArray();
+        } elseif ($this->type === 'mixed') {
+            // For mixed, we need to parse the ids like 'classification:1'
+            $items = [];
+            foreach (array_slice($ids, 0, 5) as $idStr) {
+                $parts = explode(':', $idStr);
+                if (count($parts) === 2) {
+                    $model = null;
+                    if ($parts[0] === 'classification') $model = Classification::find($parts[1]);
+                    elseif ($parts[0] === 'manufacturer') $model = Manufacturer::find($parts[1]);
+                    elseif ($parts[0] === 'productcategory') $model = Productcategory::find($parts[1]);
+                    
+                    if ($model) $items[] = ['name' => $model->name];
+                }
+            }
+            return $items;
+        }
+
+        return [];
     }
 }
