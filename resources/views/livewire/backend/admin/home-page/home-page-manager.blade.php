@@ -294,7 +294,7 @@
                                             @endphp
                                             <label class="form-label fw-bold text-dark">Select {{ ucfirst($singularType) }} {{ $isMultiple ? '(Multiple)' : '' }}</label>
                                             <x-select-menu 
-                                                wire:model.live="component_id" 
+                                                wire:model.live.debounce.500ms="component_id" 
                                                 :options="$itemsForSelect" 
                                                 placeholder="Select {{ $singularType }}"
                                                 :multiple="$isMultiple"
@@ -305,7 +305,7 @@
 
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold text-dark">Display Label (Title on App)</label>
-                                        <input type="text" wire:model.live="label" class="form-control border-primary-subtle" placeholder="e.g. Featured Products">
+                                        <input type="text" wire:model.blur="label" class="form-control border-primary-subtle" placeholder="e.g. Featured Products">
                                         @error('label') <span class="text-danger small">{{ $message }}</span> @enderror
                                     </div>
                                     
@@ -329,7 +329,7 @@
                                     
                                     <div class="col-12 mb-3">
                                         <label class="form-label fw-bold text-dark">"See All" Link (Optional)</label>
-                                        <input type="text" wire:model="see_all_link" class="form-control border-primary-subtle" placeholder="e.g. stock/38/by_classification">
+                                        <input type="text" wire:model.blur="see_all_link" class="form-control border-primary-subtle" placeholder="e.g. stock/38/by_classification">
                                     </div>
                                 </div>
                                 <div class="text-end mt-4">
