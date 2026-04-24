@@ -107,7 +107,7 @@ trait ApplicationUserCheckoutTrait
             $max = (int)$priceRule['max_qty'];
 
             if ($department == "wholesales") {
-                if (($quantity / ($stock->carton == 0 ? 1 : $stock->carton)) >= $min && ($quantity / $stock->carton == 0 ? 1 : $stock->carton) < $max) {
+                if (divide($quantity, $stock->carton) >= $min && divide($quantity,$stock->carton) < $max) {
                     return (float)$priceRule['price'];
                 }
             }
