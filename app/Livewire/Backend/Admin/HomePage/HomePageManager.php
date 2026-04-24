@@ -24,7 +24,7 @@ class HomePageManager extends Component
 
     public function mount()
     {
-        $this->selectedApp = ApplicationEnvironment::$id;
+        $this->selectedApp = (int) ApplicationEnvironment::$id;
     }
 
     public $itemsForSelect = [];
@@ -126,6 +126,7 @@ class HomePageManager extends Component
 
     public function openModal()
     {
+        $this->resetInputFields();
         $this->isModalOpen = true;
     }
 
@@ -152,6 +153,10 @@ class HomePageManager extends Component
 
     public function store()
     {
+        if (!$this->selectedApp) {
+            $this->selectedApp = (int) ApplicationEnvironment::$id;
+        }
+
         $this->validate();
 
         $comp_id = is_array($this->component_id) ? implode(',', $this->component_id) : $this->component_id;
