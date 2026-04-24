@@ -127,9 +127,14 @@ class HomePageManager extends Component
         ])->layout('layout.app');
     }
 
-    public function openModal()
+    public function addComponent()
     {
         $this->resetInputFields();
+        $this->openModal();
+    }
+
+    public function openModal()
+    {
         $this->isModalOpen = true;
     }
 

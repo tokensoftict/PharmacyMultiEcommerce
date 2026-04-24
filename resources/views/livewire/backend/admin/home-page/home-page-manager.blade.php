@@ -122,7 +122,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="card-title">Home Page Component Manager ({{ $storeName }})</h4>
                 <div>
-                    <button wire:click="openModal" class="btn btn-primary btn-sm">Add New Component</button>
+                    <button wire:click="addComponent" class="btn btn-primary btn-sm">Add New Component</button>
                 </div>
             </div>
             <div class="card-body">
