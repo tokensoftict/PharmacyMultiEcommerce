@@ -121,11 +121,6 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="card-title">Home Page Component Manager</h4>
                 <div>
-                    <select wire:model.live="selectedApp" class="form-select form-select-sm d-inline-block w-auto me-2">
-                        @foreach($apps as $app)
-                            <option value="{{ $app->id }}">{{ $app->name }}</option>
-                        @endforeach
-                    </select>
                     <button wire:click="openModal()" class="btn btn-primary btn-sm">Add New Component</button>
                 </div>
             </div>
@@ -144,7 +139,7 @@
                         </thead>
                         <tbody>
                             @foreach($components as $item)
-                                <tr>
+                                <tr wire:key="home-comp-{{ $item->id }}">
                                     <td>{{ $item->sort_order }}</td>
                                     <td>{{ $componentDisplayNames[$item->component_name] ?? $item->component_name }}</td>
                                     <td>{{ $item->type }}</td>
@@ -156,7 +151,11 @@
                                     </td>
                                     <td>
                                         <button wire:click="edit({{ $item->id }})" class="btn btn-info btn-sm">Edit</button>
-                                        <button wire:click="delete({{ $item->id }})" class="btn btn-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()">Delete</button>
+                                        <button wire:click="delete({{ $item->id }})" 
+                                                wire:confirm="Are you sure you want to delete this component?"
+                                                class="btn btn-danger btn-sm">
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach

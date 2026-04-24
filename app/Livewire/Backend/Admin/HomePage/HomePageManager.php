@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\HomePage;
 
+use App\Classes\ApplicationEnvironment;
 use App\Models\App;
 use App\Models\Classification;
 use App\Models\HomePageComponent;
@@ -16,10 +17,15 @@ class HomePageManager extends Component
 {
     use WithPagination;
 
-    public $selectedApp = 6; // Default to Supermarket
+    public $selectedApp;
     public $component_name, $type, $component_id, $label, $limit = 15, $see_all_link, $sort_order = 0, $status = true;
     public $editingId = null;
     public $isModalOpen = false;
+
+    public function mount()
+    {
+        $this->selectedApp = ApplicationEnvironment::$id;
+    }
 
     public $itemsForSelect = [];
     public $availableTypes = [];
@@ -113,11 +119,8 @@ class HomePageManager extends Component
             ->orderBy('sort_order', 'asc')
             ->paginate(20);
 
-        $apps = App::whereIn('id', [5, 6])->orderBy('name', 'desc')->get();
-
         return view('livewire.backend.admin.home-page.home-page-manager', [
             'components' => $components,
-            'apps' => $apps
         ])->layout('layout.app');
     }
 
@@ -212,10 +215,17 @@ class HomePageManager extends Component
 
     public function delete($id)
     {
-        HomePageComponent::find($id)->delete();
-        LivewireAlert::title('Success')
-            ->text('Component deleted successfully.')
-            ->show();
+        $component = HomePageComponent::find($id);
+        if ($component) {
+            $component->delete();
+            LivewireAlert::title('Success')
+                ->text('Component deleted successfully.')
+                ->show();
+        } else {
+            LivewireAlert::title('Error')
+                ->text('Component not found.')
+                ->show();
+        }
     }
 
     public function getComponentPreviewItems($compObj = null)
