@@ -113,7 +113,7 @@ class HomePageManager extends Component
             ->orderBy('sort_order', 'asc')
             ->paginate(20);
 
-        $apps = App::all();
+        $apps = App::whereIn('id', [5, 6])->orderBy('name', 'desc')->get();
 
         return view('livewire.backend.admin.home-page.home-page-manager', [
             'components' => $components,
