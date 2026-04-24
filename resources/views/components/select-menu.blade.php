@@ -61,7 +61,16 @@
     multiple: @js($multiple),
 
     init() {
+        // Initial label sync
+        this.updateLabel();
+        
+        // Watch for changes in selected value
         this.$watch('selected', value => {
+            this.updateLabel();
+        });
+
+        // Watch for changes in options from Livewire
+        this.$watch('options', () => {
             this.updateLabel();
         });
     },
@@ -85,6 +94,10 @@
             const found = this.options.find(o => o.id == this.selected);
             if (found) {
                 this.label = found.text || found.name;
+            } else {
+                if (this.label === this.placeholder) {
+                     this.label = 'Selected...';
+                }
             }
         }
     },
@@ -99,7 +112,8 @@
     select(option) {
         if (this.multiple) {
             if (!Array.isArray(this.selected)) this.selected = [];
-            const index = this.selected.indexOf(option.id);
+            // Use loose equality for finding index
+            const index = this.selected.findIndex(s => s == option.id);
             if (index > -1) {
                 this.selected.splice(index, 1);
             } else {
@@ -118,7 +132,7 @@
 
     isSelected(id) {
         if (this.multiple) {
-            return Array.isArray(this.selected) && this.selected.includes(id);
+            return Array.isArray(this.selected) && this.selected.some(s => s == id);
         }
         return this.selected == id;
     },
@@ -154,6 +168,7 @@
     }
 }" 
 x-effect="options = @js((array)$options)"
+wire:ignore.self
 class="dropdown {{ $class }}" 
 id="{{ $actualId }}"
 wire:key="{{ $actualId }}-{{ $optionsHash }}"
