@@ -8,23 +8,24 @@
     'editModel' => null,
     'editColumn' => 'name',
     'class' => '',
-    'live' => false
+    'live' => false,
+    'multiple' => false
 ])
 
 @php
     $id = $id ?? 'select-' . Str::random(8);
     // Suffix the ID to prevent legacy scripts (Select2) from targeting this component
     $actualId = $id . '-custom';
-    $initialLabel = $placeholder;
-    $initialValue = $attributes->wire('model')->value() ?? $value;
-    
-    // Detect if we should use .live based on the prop or wire:model modifier
     $isLive = $live || ($attributes->wire('model') && $attributes->wire('model')->hasModifier('live'));
-
-    // Generate a hash of options to force re-render when they change
     $optionsHash = md5(json_encode($options));
 
-    if ($initialValue) {
+    $initialLabel = $placeholder;
+    if ($multiple) {
+        $initialLabel = '0 selected';
+        if ($initialValue && is_array($initialValue) && count($initialValue) > 0) {
+            $initialLabel = count($initialValue) . ' selected';
+        }
+    } elseif ($initialValue) {
         if (!empty($options)) {
             foreach ($options as $option) {
                 $option = (array)$option;
@@ -54,20 +55,35 @@
     isAjax: @js(!empty($ajax)),
     ajaxUrl: @js($ajax),
     loading: false,
+    multiple: @js($multiple),
 
     init() {
         this.$watch('selected', value => {
-            if (!value) {
-                this.label = this.placeholder;
-                return;
-            }
-            if (!this.isAjax) {
-                const found = this.options.find(o => o.id == value);
-                if (found) {
-                    this.label = found.text || found.name;
-                }
-            }
+            this.updateLabel();
         });
+    },
+
+    updateLabel() {
+        if (this.multiple) {
+            if (!Array.isArray(this.selected) || this.selected.length === 0) {
+                this.label = '0 selected';
+            } else {
+                this.label = this.selected.length + ' selected';
+            }
+            return;
+        }
+
+        if (!this.selected) {
+            this.label = this.placeholder;
+            return;
+        }
+
+        if (!this.isAjax) {
+            const found = this.options.find(o => o.id == this.selected);
+            if (found) {
+                this.label = found.text || found.name;
+            }
+        }
     },
 
     toggle() {
@@ -78,19 +94,38 @@
     },
 
     select(option) {
-        this.selected = option.id;
-        this.label = option.text || option.name;
-        this.open = false;
-        this.search = '';
-        this.$dispatch('input', option.id);
+        if (this.multiple) {
+            if (!Array.isArray(this.selected)) this.selected = [];
+            const index = this.selected.indexOf(option.id);
+            if (index > -1) {
+                this.selected.splice(index, 1);
+            } else {
+                this.selected.push(option.id);
+            }
+            this.updateLabel();
+            this.$dispatch('input', this.selected);
+        } else {
+            this.selected = option.id;
+            this.label = option.text || option.name;
+            this.open = false;
+            this.search = '';
+            this.$dispatch('input', option.id);
+        }
+    },
+
+    isSelected(id) {
+        if (this.multiple) {
+            return Array.isArray(this.selected) && this.selected.includes(id);
+        }
+        return this.selected == id;
     },
 
     clear() {
-        this.selected = null;
-        this.label = this.placeholder;
+        this.selected = this.multiple ? [] : null;
+        this.updateLabel();
         this.open = false;
         this.search = '';
-        this.$dispatch('input', null);
+        this.$dispatch('input', this.selected);
     },
 
     fetchOptions() {
@@ -164,11 +199,11 @@ wire:key="{{ $actualId }}-{{ $optionsHash }}"
                 <button 
                     type="button"
                     class="dropdown-item rounded-2 py-2 d-flex justify-content-between align-items-center"
-                    :class="selected == option.id ? 'active' : ''"
+                    :class="isSelected(option.id) ? 'active' : ''"
                     @click="select(option)"
                 >
                     <span x-text="option.text || option.name"></span>
-                    <span x-show="selected == option.id" class="fas fa-check fs-11"></span>
+                    <span x-show="isSelected(option.id)" class="fas fa-check fs-11"></span>
                 </button>
             </template>
             

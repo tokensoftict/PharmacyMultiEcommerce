@@ -263,24 +263,22 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold text-dark">Component Type</label>
-                                        <select wire:model.live="component_name" class="form-select border-primary-subtle">
-                                            <option value="">Select Component</option>
-                                            @foreach($componentDisplayNames as $key => $name)
-                                                <option value="{{ $key }}">{{ $name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <x-select-menu 
+                                            wire:model.live="component_name" 
+                                            :options="collect($componentDisplayNames)->map(fn($name, $key) => ['id' => $key, 'name' => $name])->values()->toArray()"
+                                            placeholder="Select Component"
+                                        />
                                         @error('component_name') <span class="text-danger small">{{ $message }}</span> @enderror
                                     </div>
 
                                     @if(count($availableTypes) > 0)
                                         <div class="col-md-12 mb-3">
                                             <label class="form-label fw-bold text-dark">Data Source (Type)</label>
-                                            <select wire:model.live="type" class="form-select border-primary-subtle">
-                                                <option value="">Select Type</option>
-                                                @foreach($availableTypes as $val => $text)
-                                                    <option value="{{ $val }}">{{ $text }}</option>
-                                                @endforeach
-                                            </select>
+                                            <x-select-menu 
+                                                wire:model.live="type" 
+                                                :options="collect($availableTypes)->map(fn($name, $key) => ['id' => $key, 'name' => $name])->values()->toArray()"
+                                                placeholder="Select Type"
+                                            />
                                             @error('type') <span class="text-danger small">{{ $message }}</span> @enderror
                                         </div>
                                     @endif
@@ -295,12 +293,12 @@
                                                 if ($type === 'mixed') $singularType = 'Items';
                                             @endphp
                                             <label class="form-label fw-bold text-dark">Select {{ ucfirst($singularType) }} {{ $isMultiple ? '(Multiple)' : '' }}</label>
-                                            <select wire:model.live="component_id" class="form-select border-primary-subtle" {{ $isMultiple ? 'multiple' : '' }} style="height: {{ $isMultiple ? '150px' : 'auto' }}">
-                                                <option value="">Choose...</option>
-                                                @foreach($itemsForSelect as $dataItem)
-                                                    <option value="{{ $dataItem['id'] }}">{{ $dataItem['name'] }}</option>
-                                                @endforeach
-                                            </select>
+                                            <x-select-menu 
+                                                wire:model.live="component_id" 
+                                                :options="$itemsForSelect" 
+                                                placeholder="Select {{ $singularType }}"
+                                                :multiple="$isMultiple"
+                                            />
                                             @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                         </div>
                                     @endif

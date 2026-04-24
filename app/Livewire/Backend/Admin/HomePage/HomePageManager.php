@@ -5,6 +5,7 @@ namespace App\Livewire\Backend\Admin\HomePage;
 use App\Classes\ApplicationEnvironment;
 use App\Models\App;
 use App\Models\Stock;
+use App\Models\NewStockArrival;
 use App\Models\Classification;
 use App\Models\HomePageComponent;
 use App\Models\Manufacturer;
@@ -276,6 +277,19 @@ class HomePageManager extends Component
                     if(!empty($classIds)) $q->orWhereIn('classification_id', $classIds);
                     if(!empty($mfrIds)) $q->orWhereIn('manufacturer_id', $mfrIds);
                     if(!empty($catIds)) $q->orWhereIn('productcategory_id', $catIds);
+                });
+            } elseif ($type === 'new_arrivals') {
+                $stockIDs = NewStockArrival::where('app_id', $this->selectedApp)
+                    ->orderBy('id', 'DESC')
+                    ->limit(5)
+                    ->pluck('stock_id')
+                    ->toArray();
+                $query->whereIn('id', $stockIDs);
+            } elseif ($type === 'specialOffers') {
+                // Use correct snake_case relationship names from Stock model
+                $relation = $this->selectedApp == 6 ? 'supermarkets_stock_prices' : 'wholessales_stock_prices';
+                $query->whereHas($relation, function($q) {
+                    $q->where('special_offer', 1);
                 });
             }
 
