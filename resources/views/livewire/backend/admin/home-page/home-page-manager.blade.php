@@ -116,11 +116,6 @@
 </style>
 
 <div class="row position-relative">
-    <div wire:loading.delay wire:target="addComponent, edit, store, delete, closeModal, updatedComponentName, updatedType, updatedComponentId" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.5); z-index: 9999;">
-        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
     <!-- Component List Section -->
     <div class="col-md-8">
         <div class="card">
