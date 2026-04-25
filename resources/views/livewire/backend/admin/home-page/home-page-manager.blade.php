@@ -430,6 +430,7 @@
                                             </div>
                                         @endif
                                     @endif
+                                @endif
 
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold text-dark">Display Label (Title on App)</label>
