@@ -127,65 +127,85 @@
         border-radius: 0.5rem;
     }
     /* FlashDeals Redesign */
+    .preview-flash-deal .preview-title {
+        border-left: 3px solid #D50000;
+        padding-left: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .preview-flash-deal .preview-title span:first-child {
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 13px;
+        color: #1A1D1E;
+    }
+    .preview-flash-deal .preview-see-all {
+        background: #D50000;
+        color: #fff !important;
+        font-size: 9px;
+        font-weight: bold;
+        padding: 4px 12px;
+        border-radius: 20px;
+        text-transform: uppercase;
+    }
     .preview-flash-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 12px;
         padding: 5px;
     }
     .preview-flash-card {
         background: #fff;
-        border: 1px solid #FFEAEA;
-        border-radius: 12px;
-        padding: 10px;
-        box-shadow: 0 2px 4px rgba(213, 0, 0, 0.05);
+        border-radius: 16px;
+        padding: 12px;
+        box-shadow: 0 4px 12px rgba(213, 0, 0, 0.08);
         position: relative;
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100px;
     }
     .preview-flash-badge {
         background: #FFF1F1;
         color: #D50000;
         font-size: 8px;
-        font-weight: bold;
-        padding: 2px 6px;
+        font-weight: 800;
+        padding: 2px 8px;
         border-radius: 4px;
         display: inline-block;
         text-transform: uppercase;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+        align-self: flex-start;
     }
     .preview-flash-name {
-        font-size: 11px;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 700;
         color: #1A1D1E;
         margin-bottom: 4px;
-        height: 16px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        width: 70%;
     }
     .preview-flash-price {
-        font-size: 14px;
-        font-weight: bold;
+        font-size: 16px;
+        font-weight: 900;
         color: #D50000;
     }
     .preview-flash-fire {
         position: absolute;
-        right: 5px;
-        bottom: 5px;
-        width: 24px;
-        height: 24px;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
         background: #FFF1F1;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
-        animation: pulse 1.6s infinite;
-    }
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
+        font-size: 24px;
+        box-shadow: inset 0 0 10px rgba(213, 0, 0, 0.05);
     }
 </style>
 
@@ -407,22 +427,26 @@
                                              @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                          </div>
 
-                                         @if($type === 'lowestClassifications' && is_array($component_id) && count($component_id) > 0)
-                                             <div class="col-md-12 mb-3">
-                                                 <label class="form-label fw-bold text-danger"><i class="fa fa-icons"></i> Configure Icons (Smileys)</label>
-                                                 <div class="p-3 bg-white border rounded">
+                                        @if($component_name === 'FlashDeals' && is_array($component_id) && count($component_id) > 0)
+                                            <div class="col-md-12 mb-3">
+                                                <label class="form-label fw-bold text-danger"><i class="fa fa-icons"></i> Configure Icons (Smileys)</label>
+                                                <div class="p-3 bg-white border rounded shadow-sm">
+                                                    <p class="small text-muted mb-2">Add icons for each selected item to show on the app.</p>
                                                     @foreach($component_id as $id)
                                                         @php 
                                                             $item = collect($itemsForSelect)->firstWhere('id', $id);
                                                             $itemName = $item['name'] ?? 'Unknown';
                                                         @endphp
-                                                        <div class="d-flex align-items-center mb-2">
-                                                            <div class="flex-grow-1 small fw-bold text-muted">{{ $itemName }}</div>
-                                                            <div style="width: 100px;">
-                                                                <input type="text" 
-                                                                    wire:model.live="config.icons.{{ $id }}" 
-                                                                    class="form-control form-control-sm text-center" 
-                                                                    placeholder="Icon (e.g. 💊)">
+                                                        <div class="d-flex align-items-center mb-2 p-2 border-bottom border-light">
+                                                            <div class="flex-grow-1 small fw-bold text-dark">{{ $itemName }}</div>
+                                                            <div style="width: 120px;">
+                                                                <div class="input-group input-group-sm">
+                                                                    <span class="input-group-text bg-light border-end-0">Icon</span>
+                                                                    <input type="text" 
+                                                                        wire:model.live="config.icons.{{ $id }}" 
+                                                                        class="form-control form-control-sm text-center border-start-0" 
+                                                                        placeholder="💊">
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     @endforeach
