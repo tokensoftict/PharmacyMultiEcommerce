@@ -14,6 +14,7 @@ class HomePageComponent extends Model
         'label',
         'limit',
         'see_all_link',
+        'config',
         'sort_order',
         'status',
     ];
@@ -23,6 +24,7 @@ class HomePageComponent extends Model
         'limit' => 'integer',
         'sort_order' => 'integer',
         'app_id' => 'integer',
+        'config' => 'array',
     ];
 
     public function app()

@@ -321,7 +321,7 @@
                                                     <div class="preview-flash-badge">Limited</div>
                                                     <div class="preview-flash-name">{{ $pItem['name'] }}</div>
                                                     <div class="preview-flash-price">₦5,000</div>
-                                                    <div class="preview-flash-fire">🔥</div>
+                                                    <div class="preview-flash-fire">{{ $pItem['icon'] ?? '🔥' }}</div>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -388,26 +388,47 @@
                                             />
                                             @error('type') <span class="text-danger small">{{ $message }}</span> @enderror
                                         </div>
-                                    @endif
+                                     @if(in_array($type, ['classifications', 'manufacturers', 'productcategories', 'ImageSlider', 'lowestClassifications', 'mixed']))
+                                         <div class="col-md-12 mb-3">
+                                             @php
+                                                 $isMultiple = in_array($component_name, ['topBrands', 'FlashDeals', 'ImageSlider']);
+                                                 $singularType = $type === 'productcategories' ? 'category' : str_replace('s', '', $type);
+                                                 if ($type === 'ImageSlider') $singularType = 'Slider';
+                                                 if ($type === 'lowestClassifications') $singularType = 'Classification';
+                                                 if ($type === 'mixed') $singularType = 'Items';
+                                             @endphp
+                                             <label class="form-label fw-bold text-dark">Select {{ ucfirst($singularType) }} {{ $isMultiple ? '(Multiple)' : '' }}</label>
+                                             <x-select-menu 
+                                                 wire:model.live.debounce.500ms="component_id" 
+                                                 :options="$itemsForSelect" 
+                                                 placeholder="Select {{ $singularType }}"
+                                                 :multiple="$isMultiple"
+                                             />
+                                             @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                         </div>
 
-                                    @if(in_array($type, ['classifications', 'manufacturers', 'productcategories', 'ImageSlider', 'lowestClassifications', 'mixed']))
-                                        <div class="col-md-12 mb-3">
-                                            @php
-                                                $isMultiple = in_array($component_name, ['topBrands', 'FlashDeals', 'ImageSlider']);
-                                                $singularType = $type === 'productcategories' ? 'category' : str_replace('s', '', $type);
-                                                if ($type === 'ImageSlider') $singularType = 'Slider';
-                                                if ($type === 'lowestClassifications') $singularType = 'Classification';
-                                                if ($type === 'mixed') $singularType = 'Items';
-                                            @endphp
-                                            <label class="form-label fw-bold text-dark">Select {{ ucfirst($singularType) }} {{ $isMultiple ? '(Multiple)' : '' }}</label>
-                                            <x-select-menu 
-                                                wire:model.live.debounce.500ms="component_id" 
-                                                :options="$itemsForSelect" 
-                                                placeholder="Select {{ $singularType }}"
-                                                :multiple="$isMultiple"
-                                            />
-                                            @error('component_id') <span class="text-danger small">{{ $message }}</span> @enderror
-                                        </div>
+                                         @if($type === 'lowestClassifications' && is_array($component_id) && count($component_id) > 0)
+                                             <div class="col-md-12 mb-3">
+                                                 <label class="form-label fw-bold text-danger"><i class="fa fa-icons"></i> Configure Icons (Smileys)</label>
+                                                 <div class="p-3 bg-white border rounded">
+                                                    @foreach($component_id as $id)
+                                                        @php 
+                                                            $item = collect($itemsForSelect)->firstWhere('id', $id);
+                                                            $itemName = $item['name'] ?? 'Unknown';
+                                                        @endphp
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="flex-grow-1 small fw-bold text-muted">{{ $itemName }}</div>
+                                                            <div style="width: 100px;">
+                                                                <input type="text" 
+                                                                    wire:model.live="config.icons.{{ $id }}" 
+                                                                    class="form-control form-control-sm text-center" 
+                                                                    placeholder="Icon (e.g. 💊)">
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
 
                                     <div class="col-md-12 mb-3">
@@ -515,7 +536,7 @@
                                                             <div class="preview-flash-badge">Limited</div>
                                                             <div class="preview-flash-name">{{ $pItem['name'] }}</div>
                                                             <div class="preview-flash-price">₦5,000</div>
-                                                            <div class="preview-flash-fire">🔥</div>
+                                                            <div class="preview-flash-fire">{{ $pItem['icon'] ?? '🔥' }}</div>
                                                         </div>
                                                     @endforeach
                                                 </div>

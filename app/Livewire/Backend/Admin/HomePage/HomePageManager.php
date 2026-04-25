@@ -20,7 +20,7 @@ class HomePageManager extends Component
     use WithPagination;
 
     public $selectedApp, $storeName;
-    public $component_name, $type, $component_id, $label, $limit = 15, $see_all_link, $sort_order = 0, $status = true;
+    public $component_name, $type, $component_id, $label, $limit = 15, $see_all_link, $sort_order = 0, $status = true, $config = [];
     public $editingId = null;
     public $isModalOpen = false;
 
@@ -74,6 +74,7 @@ class HomePageManager extends Component
         'see_all_link' => 'nullable|string',
         'sort_order' => 'required|integer',
         'status' => 'required|boolean',
+        'config' => 'nullable|array',
     ];
 
     public function updatedComponentName($value)
@@ -157,6 +158,7 @@ class HomePageManager extends Component
         $this->editingId = null;
         $this->itemsForSelect = [];
         $this->availableTypes = [];
+        $this->config = [];
     }
 
     public function store()
@@ -177,6 +179,7 @@ class HomePageManager extends Component
             'label' => $this->label,
             'limit' => $this->limit,
             'see_all_link' => $this->see_all_link,
+            'config' => $this->config,
             'sort_order' => $this->sort_order,
             'status' => $this->status,
         ]);
@@ -205,6 +208,7 @@ class HomePageManager extends Component
         $this->label = $component->label;
         $this->limit = $component->limit;
         $this->see_all_link = $component->see_all_link;
+        $this->config = $component->config ?? [];
         $this->sort_order = $component->sort_order;
         $this->status = $component->status;
 
@@ -298,7 +302,16 @@ class HomePageManager extends Component
                 });
             }
 
-            $products = $query->limit(5)->get(['id', 'name'])->toArray();
+            $products = $query->limit(5)->get(['id', 'name', 'classification_id'])->toArray();
+            
+            // Add icons if it's FlashDeals and lowestClassifications
+            if ($component_name === 'FlashDeals' && $type === 'lowestClassifications') {
+                $compConfig = $compObj ? $compObj->config : $this->config;
+                $icons = $compConfig['icons'] ?? [];
+                foreach ($products as &$p) {
+                    $p['icon'] = $icons[$p['classification_id'] ?? ''] ?? '🔥';
+                }
+            }
             return !empty($products) ? $products : [['name' => 'No products found in this source']];
         }
 
