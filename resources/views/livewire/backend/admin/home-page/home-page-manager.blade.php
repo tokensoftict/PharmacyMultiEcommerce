@@ -126,6 +126,67 @@
         z-index: 1060;
         border-radius: 0.5rem;
     }
+    /* FlashDeals Redesign */
+    .preview-flash-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 5px;
+    }
+    .preview-flash-card {
+        background: #fff;
+        border: 1px solid #FFEAEA;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(213, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    .preview-flash-badge {
+        background: #FFF1F1;
+        color: #D50000;
+        font-size: 8px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 4px;
+        display: inline-block;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+    .preview-flash-name {
+        font-size: 11px;
+        font-weight: 600;
+        color: #1A1D1E;
+        margin-bottom: 4px;
+        height: 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .preview-flash-price {
+        font-size: 14px;
+        font-weight: bold;
+        color: #D50000;
+    }
+    .preview-flash-fire {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        width: 24px;
+        height: 24px;
+        background: #FFF1F1;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
 </style>
 
 <div class="row position-relative">
@@ -230,8 +291,8 @@
                                             @endforeach
                                         </div>
                                     </div>
-                                @elseif($item->component_name === 'Horizontal_List' || $item->component_name === 'FlashDeals')
-                                    <div class="preview-section {{ $item->component_name === 'FlashDeals' ? 'preview-flash-deal' : '' }}">
+                                @elseif($item->component_name === 'Horizontal_List')
+                                    <div class="preview-section">
                                         <div class="preview-title">
                                             <span>{{ $item->label ?: 'Product Section' }}</span>
                                             <span class="preview-see-all">See All ></span>
@@ -244,6 +305,23 @@
                                                     </div>
                                                     <div class="preview-product-name">{{ $pItem['name'] }}</div>
                                                     <div class="mt-1 fw-bold text-success" style="font-size: 10px;">₦5,000</div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @elseif($item->component_name === 'FlashDeals')
+                                    <div class="preview-section preview-flash-deal">
+                                        <div class="preview-title">
+                                            <span>{{ $item->label ?: 'Flash Deals' }}</span>
+                                            <span class="preview-see-all">See All ></span>
+                                        </div>
+                                        <div class="preview-flash-grid">
+                                            @foreach($previewItems as $pItem)
+                                                <div class="preview-flash-card">
+                                                    <div class="preview-flash-badge">Limited</div>
+                                                    <div class="preview-flash-name">{{ $pItem['name'] }}</div>
+                                                    <div class="preview-flash-price">₦5,000</div>
+                                                    <div class="preview-flash-fire">🔥</div>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -407,8 +485,8 @@
                                                     @endforeach
                                                 </div>
                                             </div>
-                                        @elseif($component_name === 'Horizontal_List' || $component_name === 'FlashDeals')
-                                            <div class="preview-section {{ $component_name === 'FlashDeals' ? 'preview-flash-deal' : '' }}">
+                                        @elseif($component_name === 'Horizontal_List')
+                                            <div class="preview-section">
                                                 <div class="preview-title">
                                                     <span>{{ $label ?: 'Product Section' }}</span>
                                                     <span class="preview-see-all">See All ></span>
@@ -421,6 +499,23 @@
                                                             </div>
                                                             <div class="preview-product-name">{{ $pItem['name'] }}</div>
                                                             <div class="mt-1 fw-bold text-success" style="font-size: 10px;">₦5,000</div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @elseif($component_name === 'FlashDeals')
+                                            <div class="preview-section preview-flash-deal">
+                                                <div class="preview-title">
+                                                    <span>{{ $label ?: 'Flash Deals' }}</span>
+                                                    <span class="preview-see-all">See All ></span>
+                                                </div>
+                                                <div class="preview-flash-grid">
+                                                    @foreach($previewItems as $pItem)
+                                                        <div class="preview-flash-card">
+                                                            <div class="preview-flash-badge">Limited</div>
+                                                            <div class="preview-flash-name">{{ $pItem['name'] }}</div>
+                                                            <div class="preview-flash-price">₦5,000</div>
+                                                            <div class="preview-flash-fire">🔥</div>
                                                         </div>
                                                     @endforeach
                                                 </div>
