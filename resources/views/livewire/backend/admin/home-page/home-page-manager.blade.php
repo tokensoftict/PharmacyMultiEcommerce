@@ -113,6 +113,19 @@
         text-align: center;
         padding: 40px;
     }
+    .modal-loader-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1060;
+        border-radius: 0.5rem;
+    }
 </style>
 
 <div class="row position-relative">
@@ -258,7 +271,15 @@
     @if($isModalOpen)
     <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
+            <div class="modal-content border-0 shadow-lg position-relative">
+                <!-- Loader Overlay -->
+                <div wire:loading class="modal-loader-overlay">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+                        <p class="mt-2 fw-bold text-primary">Processing...</p>
+                    </div>
+                </div>
+
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">{{ $editingId ? 'Edit' : 'Add' }} Component</h5>
                     <button type="button" class="btn-close btn-close-white" wire:click="closeModal()"></button>
