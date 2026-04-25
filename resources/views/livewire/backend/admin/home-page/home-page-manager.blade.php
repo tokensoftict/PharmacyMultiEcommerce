@@ -339,9 +339,8 @@
                                             @foreach($previewItems as $pItem)
                                                 <div class="preview-flash-card">
                                                     <div class="preview-flash-badge">Limited</div>
-                                                    <div class="preview-flash-name">{{ $pItem['name'] }}</div>
-                                                    <div class="preview-flash-price">₦5,000</div>
-                                                    <div class="preview-flash-fire">{{ $pItem['icon'] ?? '🔥' }}</div>
+                                                     <div class="preview-flash-name">{{ $pItem['name'] }}</div>
+                                                     <div class="preview-flash-fire">{{ $pItem['icon'] ?? '🔥' }}</div>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -559,9 +558,8 @@
                                                     @foreach($previewItems as $pItem)
                                                         <div class="preview-flash-card">
                                                             <div class="preview-flash-badge">Limited</div>
-                                                            <div class="preview-flash-name">{{ $pItem['name'] }}</div>
-                                                            <div class="preview-flash-price">₦5,000</div>
-                                                            <div class="preview-flash-fire">{{ $pItem['icon'] ?? '🔥' }}</div>
+                                                             <div class="preview-flash-name">{{ $pItem['name'] }}</div>
+                                                             <div class="preview-flash-fire">{{ $pItem['icon'] ?? '🔥' }}</div>
                                                         </div>
                                                     @endforeach
                                                 </div>
