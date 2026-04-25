@@ -262,56 +262,56 @@ class HomePageManager extends Component
 
         // If it's a product gallery or flash deals, show actual products
         if ($component_name === 'Horizontal_List' || $component_name === 'FlashDeals') {
-            $query = Stock::query();
             
-            if ($type === 'classifications') {
-                $query->whereIn('classification_id', $ids);
-            } elseif ($type === 'manufacturers') {
-                $query->whereIn('manufacturer_id', $ids);
-            } elseif ($type === 'productcategories') {
-                $query->whereIn('productcategory_id', $ids);
-            } elseif ($type === 'lowestClassifications') {
-                 $query->whereIn('classification_id', $ids);
-            } elseif ($type === 'mixed') {
-                $classIds = []; $mfrIds = []; $catIds = [];
-                foreach($ids as $idStr) {
-                    $parts = explode(':', $idStr);
-                    if(count($parts) == 2) {
-                        if($parts[0] == 'classification') $classIds[] = $parts[1];
-                        elseif($parts[0] == 'manufacturer') $mfrIds[] = $parts[1];
-                        elseif($parts[0] == 'productcategory') $catIds[] = $parts[1];
-                    }
-                }
-                $query->where(function($q) use ($classIds, $mfrIds, $catIds) {
-                    if(!empty($classIds)) $q->orWhereIn('classification_id', $classIds);
-                    if(!empty($mfrIds)) $q->orWhereIn('manufacturer_id', $mfrIds);
-                    if(!empty($catIds)) $q->orWhereIn('productcategory_id', $catIds);
-                });
-            } elseif ($type === 'new_arrivals') {
-                $stockIDs = NewStockArrival::where('app_id', $this->selectedApp)
-                    ->orderBy('id', 'DESC')
-                    ->limit(5)
-                    ->pluck('stock_id')
-                    ->toArray();
-                $query->whereIn('id', $stockIDs);
-            } elseif ($type === 'specialOffers') {
-                // Use correct snake_case relationship names from Stock model
-                $relation = $this->selectedApp == 6 ? 'supermarkets_stock_prices' : 'wholessales_stock_prices';
-                $query->whereHas($relation, function($q) {
-                    $q->where('special_offer', 1);
-                });
-            }
-
-            $products = $query->limit(5)->get(['id', 'name', 'classification_id'])->toArray();
-            
-            // Add icons if it's FlashDeals and lowestClassifications
-            if ($component_name === 'FlashDeals' && $type === 'lowestClassifications') {
+            // Special Case: FlashDeals should show the source names (e.g. Classification names) and icons
+            if ($component_name === 'FlashDeals') {
                 $compConfig = $compObj ? $compObj->config : $this->config;
                 $icons = $compConfig['icons'] ?? [];
-                foreach ($products as &$p) {
-                    $p['icon'] = $icons[$p['classification_id'] ?? ''] ?? '🔥';
+                $items = [];
+
+                if ($type === 'classifications' || $type === 'lowestClassifications') {
+                    $classifications = Classification::whereIn('id', $ids)->get(['id', 'name']);
+                    foreach ($classifications as $class) {
+                        $items[] = [
+                            'name' => $class->name,
+                            'icon' => $icons[$class->id] ?? '🔥'
+                        ];
+                    }
+                } elseif ($type === 'manufacturers') {
+                    $manufacturers = Manufacturer::whereIn('id', $ids)->get(['id', 'name']);
+                    foreach ($manufacturers as $mfr) {
+                        $items[] = [
+                            'name' => $mfr->name,
+                            'icon' => $icons[$mfr->id] ?? '🔥'
+                        ];
+                    }
+                } elseif ($type === 'mixed') {
+                    foreach ($ids as $idStr) {
+                        $parts = explode(':', $idStr);
+                        if (count($parts) === 2) {
+                            $model = null;
+                            if ($parts[0] === 'classification') $model = Classification::find($parts[1]);
+                            elseif ($parts[0] === 'manufacturer') $model = Manufacturer::find($parts[1]);
+                            
+                            if ($model) {
+                                $items[] = [
+                                    'name' => $model->name,
+                                    'icon' => $icons[$idStr] ?? '🔥'
+                                ];
+                            }
+                        }
+                    }
                 }
+
+                if (empty($items)) {
+                    return [['name' => 'Sample Category', 'icon' => '🔥']];
+                }
+                return array_slice($items, 0, 6);
             }
+
+            $query = Stock::query();
+
+            $products = $query->limit(5)->get(['id', 'name', 'classification_id'])->toArray();
             return !empty($products) ? $products : [['name' => 'No products found in this source']];
         }
 
