@@ -8,6 +8,7 @@ use App\Classes\ExportDataTableComponent;
 use App\Models\CustomerGroup;
 use App\Models\CustomerType;
 use App\Models\PushNotification;
+use App\Models\SupermarketUser;
 use App\Models\User;
 use App\Models\WholesalesUser;
 use App\Models\CouponStock;
@@ -93,7 +94,7 @@ class CouponDatatable extends ExportDataTableComponent
 
         $this->data = [
             'name' => ['label' => 'Coupon Name', 'type' => 'text'],
-            'code' => ['label' => 'Coupon Code', 'type' => 'hidden', 'showValue' => true, 'display' => $this->couponCode, 'value' => $this->couponCode],
+            'code' => ['label' => 'Coupon Code', 'type' => 'text', 'value' => $this->couponCode],
             'valid_from' => ['label' => 'Valid From', 'type' => 'datepicker'],
             'valid_to' => ['label' => 'Valid From', 'type' => 'datepicker'],
             'noofuse' => ['label' => 'Number of Usage', 'type' => 'number'],
@@ -111,16 +112,7 @@ class CouponDatatable extends ExportDataTableComponent
                     ]
                 ]
             ],
-            'domain' => [
-                'label' => 'Store',
-                'type' => 'select',
-                'options' => [
-                    [
-                        'id' => AppLists::getApp((new WholesalesUser())),
-                        'text' => 'Wholesales Store'
-                    ],
-                ]
-            ],
+            'domain' =>  ['label' => 'Environment', 'showValue' => false, 'type' => 'hidden', 'value' => AppLists::getApp((ApplicationEnvironment::$stock_model_string == "wholessales_stock_prices" ? new WholesalesUser() : new SupermarketUser()))],
             'type_value' => ['label' => 'Coupon Value', 'type' => 'number'],
             'minimum_amount' => ['label' => 'Minimum Order Amount', 'type' => 'number'],
             'customer_type_id' => [
@@ -140,6 +132,19 @@ class CouponDatatable extends ExportDataTableComponent
             'created_by' => ['label' => 'Created By', 'showValue' => true, 'type' => 'hidden', 'display' => auth()->user()->name, 'value' => auth()->id(), 'editCallback' => 'editCreatedCallBack'],
             'app_id' => ['label' => 'Environment', 'showValue' => false, 'type' => 'hidden', 'value' => ApplicationEnvironment::$model_id]
         ];
+
+        /*
+         * [
+                'label' => 'Store',
+                'type' => 'select',
+                'options' => [
+                    [
+                        'id' => AppLists::getApp((new WholesalesUser())),
+                        'text' => 'Wholesales Store'
+                    ],
+                ]
+            ],
+         */
 
         $this->newValidateRules = [
             'name' => 'required|min:3',

@@ -271,17 +271,19 @@ class PushNotificationService
      */
     public final function setAllAvailableCustomer(string $className) : self
     {
-        $userIds = $className::whereNotNull('device_key')->pluck('id')->toArray();
-        $pushNotificationCustomer = [];
-        foreach($userIds as $userId){
-            $pushNotificationCustomer[] = new PushNotificationCustomer([
-                'customer_type' =>$className,
-                'customer_id' => $userId,
-                'status_id' => status('Pending'),
-            ]);
+        if($className === WholesalesUser::class) {
+            $userIds = $className::whereNotNull('device_key')->where('status', "1")->pluck('id')->toArray();
+            $pushNotificationCustomer = [];
+            foreach($userIds as $userId){
+                $pushNotificationCustomer[] = new PushNotificationCustomer([
+                    'customer_type' =>$className,
+                    'customer_id' => $userId,
+                    'status_id' => status('Pending'),
+                ]);
+            }
+            $this->pushNotification->push_notification_customers()->saveMany($pushNotificationCustomer);
+            $this->pushNotification =  $this->pushNotification->fresh();
         }
-        $this->pushNotification->push_notification_customers()->saveMany($pushNotificationCustomer);
-        $this->pushNotification =  $this->pushNotification->fresh();
         return $this;
     }
 }
