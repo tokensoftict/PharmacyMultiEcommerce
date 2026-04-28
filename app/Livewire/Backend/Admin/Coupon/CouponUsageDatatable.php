@@ -42,7 +42,7 @@ class CouponUsageDatatable extends ExportDataTableComponent
                 'active' => false
             ],
             [
-                'route' => route(ApplicationEnvironment::$storePrefix . 'admin.coupon.list'),
+                'route' => route(ApplicationEnvironment::$storePrefix . 'backend.admin.coupon.list'),
                 'name' => "Coupon Manager",
                 'active' => false
             ],
