@@ -51,12 +51,11 @@ class CouponDatatable extends ExportDataTableComponent
             'edit' => 'backend.admin.coupon.update',
             'destroy' => 'backend.admin.coupon.destroy',
             'create' => 'backend.admin.coupon.create',
-        ];
-
-
-        $this->extraRowAction = [
             'view_report' => 'backend.admin.coupon.view_report'
         ];
+
+
+        $this->extraRowAction = ["view_report"];
 
         $this->extraRowActionButton = [
             [
@@ -69,12 +68,12 @@ class CouponDatatable extends ExportDataTableComponent
                 'visible' => 'isPending'
             ],
             [
-                'label' => 'Usages',
+                'label' => 'View Usages',
                 'icon' => 'fa fa-list',
                 'class' => 'btn btn-sm btn-phoenix-info',
                 'type' => 'link',
                 'route' => 'backend.admin.coupon.view_report',
-                'permission' => 'backend.admin.coupon.view_report'
+                'permission' => 'view_report'
             ]
         ];
 
