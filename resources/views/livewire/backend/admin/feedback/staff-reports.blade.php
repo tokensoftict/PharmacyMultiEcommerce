@@ -70,6 +70,13 @@ new class extends Component {
             'staffs' => $this->getStaffQuery()->paginate(15)
         ]);
     }
+
+    public function exportExcel()
+    {
+        $staffs = $this->getStaffQuery()->get();
+        $fileName = 'staff_ranking_report_' . $this->filter . '_' . now()->format('Y_m_d_His') . '.xlsx';
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\StaffRankingExport($staffs), $fileName);
+    }
 }; ?>
 
 @push('breadcrumbs')
@@ -91,6 +98,11 @@ new class extends Component {
                 <option value="weekly">Weekly (This Week)</option>
                 <option value="monthly">Monthly (This Month)</option>
             </select>
+            <button wire:click="exportExcel" class="btn btn-phoenix-success btn-sm">
+                <span wire:loading.remove wire:target="exportExcel" class="fas fa-file-excel me-2"></span>
+                <span wire:loading wire:target="exportExcel" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                Export Excel
+            </button>
         </div>
     </div>
 
