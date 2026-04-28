@@ -98,6 +98,18 @@ class CreateOrderTotalService
             }
         }
 
+        // Include any applied coupons in the order totals
+        if(!empty($this->checkOutUser->coupon_data) and $this->checkOutUser->coupon_data != "{}") {
+            $coupon = $this->checkOutUser->coupon_data;
+            if (isset($coupon['id'])) {
+                $coupon['order_total_id'] = $coupon['id'];
+                unset($coupon['id']);
+            }
+            $orderTotalOrder[] = new OrderTotalOrder(
+                $this->formatOrderTotal($coupon),
+            );
+        }
+
 
         return $orderTotalOrder;
     }

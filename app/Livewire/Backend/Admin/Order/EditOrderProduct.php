@@ -58,8 +58,10 @@ class EditOrderProduct extends Component
                         $query->orWhere('name', 'Sub Total')
                             ->orWhere('name', 'Subtotal');
                     })->first();
-                $orderTotal->value = $subTotal;
-                $orderTotal->save();
+                if ($orderTotal) {
+                    $orderTotal->value = $subTotal;
+                    $orderTotal->save();
+                }
 
                 // Re-validate discounts based on new subtotal
                 $discounts = $this->order->order_total_orders()
@@ -68,20 +70,34 @@ class EditOrderProduct extends Component
 
                 foreach ($discounts as $discountRow) {
                     $isValid = true;
+                    $discountModel = null;
                     if ($discountRow->discount_type === 'Coupon') {
-                        $coupon = Coupon::find($discountRow->discount_id);
-                        if ($coupon && $coupon->minimum_amount > 0 && $subTotal < $coupon->minimum_amount) {
-                            $isValid = false;
-                        }
+                        $discountModel = Coupon::find($discountRow->discount_id);
                     } elseif ($discountRow->discount_type === 'Voucher') {
-                        $voucher = VoucherCode::find($discountRow->discount_id);
-                        if ($voucher && $voucher->minimum_amount > 0 && $subTotal < $voucher->minimum_amount) {
-                            $isValid = false;
-                        }
+                        $discountModel = VoucherCode::find($discountRow->discount_id);
+                    }
+
+                    if ($discountModel && $discountModel->minimum_amount > 0 && $subTotal < $discountModel->minimum_amount) {
+                        $isValid = false;
                     }
 
                     if (!$isValid) {
                         $discountRow->delete();
+                    } elseif ($discountModel) {
+                        $value = 0;
+                        if ($discountModel->type == 'Percentage') {
+                            $value = ($discountModel->type_value / 100) * $subTotal;
+                            $value = ceil($value);
+                            $value = -$value;
+                        } else {
+                            $value = $discountModel->type_value;
+                            if ($value > $subTotal) {
+                                $value = $subTotal;
+                            }
+                            $value = -$value;
+                        }
+                        $discountRow->value = $value;
+                        $discountRow->save();
                     }
                 }
 
