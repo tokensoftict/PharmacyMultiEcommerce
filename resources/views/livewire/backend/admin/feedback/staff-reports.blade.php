@@ -3,13 +3,16 @@
 use Livewire\Volt\Component;
 use App\Models\Staff;
 use Livewire\WithPagination;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 new class extends Component {
     use WithPagination;
 
     public $search = '';
-    public $sortField = 'avg_rating';
-    public $sortDirection = 'asc';
+    public $sortField = 'feedbacks_count';
+    public $sortDirection = 'desc';
+    public $filter = 'all_time';
 
     public function sortBy($field)
     {
@@ -21,15 +24,43 @@ new class extends Component {
         }
     }
 
+    public function updatedFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
     public function getStaffQuery()
     {
+        $dateConstraint = function (Builder $query) {
+            if ($this->filter === 'daily') {
+                $query->whereDate('created_at', Carbon::today());
+            } elseif ($this->filter === 'weekly') {
+                $query->where('created_at', '>=', Carbon::now()->startOfWeek());
+            } elseif ($this->filter === 'monthly') {
+                $query->where('created_at', '>=', Carbon::now()->startOfMonth());
+            }
+        };
+
         return Staff::where('status', true)
             ->when($this->search, function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
                       ->orWhere('department', 'like', '%' . $this->search . '%');
             })
-            ->withCount('feedbacks')
-            ->withAvg('feedbacks as avg_rating', 'rating')
+            ->withCount(['feedbacks' => $dateConstraint])
+            ->withCount(['feedbacks as positive_count' => function (Builder $query) use ($dateConstraint) {
+                $dateConstraint($query);
+                $query->where('feedback_type', 'Positive');
+            }])
+            ->withCount(['feedbacks as negative_count' => function (Builder $query) use ($dateConstraint) {
+                $dateConstraint($query);
+                $query->where('feedback_type', 'Negative');
+            }])
+            ->withAvg(['feedbacks as avg_rating' => $dateConstraint], 'rating')
             ->orderBy($this->sortField, $this->sortDirection);
     }
 
@@ -44,14 +75,22 @@ new class extends Component {
 @push('breadcrumbs')
     <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'admin.dashboard') }}">Dashboard</a></li>
     <li class="breadcrumb-item"><a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix . 'backend.admin.feedback.dashboard') }}">Feedback Dashboard</a></li>
-    <li class="breadcrumb-item active">Staff Performance Reports</li>
+    <li class="breadcrumb-item active">Staff Ranking Summary</li>
 @endpush
 
 <div>
     <div class="row align-items-center justify-content-between g-3 mb-4">
         <div class="col-auto">
-            <h2 class="mb-0">Staff Performance Reports</h2>
+            <h2 class="mb-0">Staff Ranking Summary</h2>
             <p class="text-body-tertiary lh-sm mb-0">Overview of all staff performance metrics. Currently showing <strong>{{ $sortField == 'avg_rating' ? ($sortDirection == 'asc' ? 'Low-Performing' : 'High-Performing') : 'All' }}</strong> staff first.</p>
+        </div>
+        <div class="col-auto d-flex gap-2">
+            <select wire:model.live="filter" class="form-select form-select-sm" style="max-width: 200px;">
+                <option value="all_time">All Time</option>
+                <option value="daily">Daily (Today)</option>
+                <option value="weekly">Weekly (This Week)</option>
+                <option value="monthly">Monthly (This Month)</option>
+            </select>
         </div>
     </div>
 
@@ -93,6 +132,12 @@ new class extends Component {
                             <th class="border-top cursor-pointer" wire:click="sortBy('feedbacks_count')">
                                 Total Feedback {!! $sortField === 'feedbacks_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
                             </th>
+                            <th class="border-top cursor-pointer text-success" wire:click="sortBy('positive_count')">
+                                Positive Count {!! $sortField === 'positive_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            </th>
+                            <th class="border-top cursor-pointer text-danger" wire:click="sortBy('negative_count')">
+                                Negative Count {!! $sortField === 'negative_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            </th>
                             <th class="border-top cursor-pointer" wire:click="sortBy('avg_rating')">
                                 Average Rating {!! $sortField === 'avg_rating' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
                             </th>
@@ -128,6 +173,12 @@ new class extends Component {
                                 <td class="align-middle white-space-nowrap py-3">
                                     <span class="badge badge-phoenix fs-10 badge-phoenix-primary">{{ $staff->feedbacks_count }} Entries</span>
                                 </td>
+                                <td class="align-middle white-space-nowrap py-3">
+                                    <span class="badge badge-phoenix fs-10 badge-phoenix-success">{{ $staff->positive_count }} Positive</span>
+                                </td>
+                                <td class="align-middle white-space-nowrap py-3">
+                                    <span class="badge badge-phoenix fs-10 badge-phoenix-danger">{{ $staff->negative_count }} Negative</span>
+                                </td>
                                 <td class="align-middle py-3">
                                     <div class="d-flex align-items-center">
                                         <span class="badge {{ $perfClass }} me-2 fw-bold fs-9">{{ number_format($staff->avg_rating, 1) }}</span>
@@ -146,7 +197,7 @@ new class extends Component {
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <h4 class="text-body-quaternary">No staff records found.</h4>
                                 </td>
                             </tr>
