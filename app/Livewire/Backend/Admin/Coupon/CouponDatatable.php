@@ -51,6 +51,7 @@ class CouponDatatable extends ExportDataTableComponent
             'edit' => 'backend.admin.coupon.update',
             'destroy' => 'backend.admin.coupon.destroy',
             'create' => 'backend.admin.coupon.create',
+            'view_report' => 'backend.admin.coupon.view_report'
         ];
 
 
