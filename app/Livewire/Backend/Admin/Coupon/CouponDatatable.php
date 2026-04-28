@@ -65,6 +65,14 @@ class CouponDatatable extends ExportDataTableComponent
                 'method' => 'approve',
                 'permission' => 'backend.admin.coupon.approve',
                 'visible' => 'isPending'
+            ],
+            [
+                'label' => 'Usages',
+                'icon' => 'fa fa-list',
+                'class' => 'btn btn-sm btn-phoenix-info',
+                'type' => 'link',
+                'route' => 'admin.coupon.usages',
+                'permission' => 'backend.admin.coupon.create'
             ]
         ];
 

@@ -56,4 +56,9 @@ class CouponUsageHistory extends Model
 	{
 		return $this->belongsTo(Coupon::class);
 	}
+
+    public function customer()
+    {
+        return $this->morphTo(__FUNCTION__, 'user_type_type', 'user_type_id');
+    }
 }

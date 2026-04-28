@@ -52,6 +52,7 @@ Route::middleware([PermitTask::class])->group(function () {
 
     Route::prefix('coupon')->group(function () {
         Route::get('/list', ['uses' => 'App\Livewire\Backend\Admin\Coupon\CouponDatatable'])->name('backend.admin.coupon.list');
+        Route::get('/{id}/usages', ['uses' => 'App\Livewire\Backend\Admin\Coupon\CouponUsageDatatable'])->name('backend.admin.coupon.usages');
     });
 
     Route::prefix('voucher')->group(function () {
