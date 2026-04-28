@@ -28,7 +28,6 @@ class FeedbackController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'staffId' => 'nullable|exists:staffs,id',
             'feedbackType' => 'required|in:positive,negative',
-            'feedback' => 'required|string',
         ]);
 
         $feedback = Feedback::create([
