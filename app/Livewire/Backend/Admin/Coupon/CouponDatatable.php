@@ -94,7 +94,7 @@ class CouponDatatable extends ExportDataTableComponent
 
         $this->data = [
             'name' => ['label' => 'Coupon Name', 'type' => 'text'],
-            'code' => ['label' => 'Coupon Code', 'type' => 'text', 'value' => $this->couponCode],
+            'code' => ['label' => 'Coupon Code', 'type' => 'text', 'default' => $this->couponCode],
             'valid_from' => ['label' => 'Valid From', 'type' => 'datepicker'],
             'valid_to' => ['label' => 'Valid From', 'type' => 'datepicker'],
             'noofuse' => ['label' => 'Number of Usage', 'type' => 'number'],
@@ -114,7 +114,7 @@ class CouponDatatable extends ExportDataTableComponent
             ],
             'domain' =>  ['label' => 'Environment', 'showValue' => false, 'type' => 'hidden', 'value' => AppLists::getApp((ApplicationEnvironment::$stock_model_string == "wholessales_stock_prices" ? new WholesalesUser() : new SupermarketUser()))],
             'type_value' => ['label' => 'Coupon Value', 'type' => 'number'],
-            'minimum_amount' => ['label' => 'Minimum Order Amount', 'type' => 'number'],
+            'minimum_amount' => ['label' => 'Minimum Order Amount', 'type' => 'number', 'default' => 0],
             'customer_type_id' => [
                 'label' => 'Customer Type',
                 'type' => 'select',
