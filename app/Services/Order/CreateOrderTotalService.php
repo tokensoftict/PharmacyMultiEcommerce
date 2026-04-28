@@ -102,9 +102,9 @@ class CreateOrderTotalService
         if(!empty($this->checkOutUser->coupon_data) and $this->checkOutUser->coupon_data != "{}") {
             $coupon = $this->checkOutUser->coupon_data;
             if (isset($coupon['id'])) {
-                $coupon['order_total_id'] = $coupon['id'];
                 unset($coupon['id']);
             }
+            $coupon['order_total_id'] = null;
             $orderTotalOrder[] = new OrderTotalOrder(
                 $this->formatOrderTotal($coupon),
             );
