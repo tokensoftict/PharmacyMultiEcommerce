@@ -57,6 +57,9 @@ class CouponUsageDatatable extends ExportDataTableComponent
     {
         return CouponUsageHistory::query()
             ->with(['customer.user', 'app'])
+            ->whereHas('coupon', function (Builder $builder) {
+                $builder->where('app_id', ApplicationEnvironment::$id);
+            })
             ->where('coupon_id', $this->coupon_id);
     }
 
