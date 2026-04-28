@@ -105,6 +105,43 @@ class CreateOrderService
         }
 
         $order->save();
+
+        if (!empty($attributes['coupon_information'])) {
+            $couponData = $attributes['coupon_information'];
+            if (is_string($couponData)) {
+                $couponData = json_decode($couponData, true);
+            }
+            if (isset($couponData['discount_id']) || isset($couponData['id'])) {
+                $couponId = $couponData['discount_id'] ?? $couponData['id'];
+                $coupon = \App\Models\Coupon::find($couponId);
+                if ($coupon) {
+                    \App\Models\CouponUsageHistory::create([
+                        'code' => $coupon->code,
+                        'use_date' => now(),
+                        'coupon_id' => $coupon->id,
+                        'app_id' => $attributes['app_id'],
+                        'user_type_type' => $attributes['customer_type'],
+                        'user_type_id' => $attributes['customer_id']
+                    ]);
+                }
+            }
+        }
+
+        if (!empty($attributes['voucher_information'])) {
+            $voucherData = $attributes['voucher_information'];
+            if (is_string($voucherData)) {
+                $voucherData = json_decode($voucherData, true);
+            }
+            if (isset($voucherData['discount_id']) || isset($voucherData['id'])) {
+                $voucherId = $voucherData['discount_id'] ?? $voucherData['id'];
+                $voucher = \App\Models\VoucherCode::find($voucherId);
+                if ($voucher) {
+                    $voucher->usage_status = 'USED';
+                    $voucher->save();
+                }
+            }
+        }
+
         return $order;
     }
 
