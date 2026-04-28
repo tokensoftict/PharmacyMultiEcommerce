@@ -39,7 +39,7 @@ class FeedbackController extends Controller
             'rating' => $validated['rating'],
             'staff_id' => $validated['staffId'] ?? null,
             'feedback_type' => ucfirst($validated['feedbackType']),
-            'feedback' => $validated['feedback'],
+            'feedback' => $validated['feedback'] ?? "",
         ]);
 
         Mail::to('info@generaldrugcentre.com')->queue(new FeedbackSubmitted($feedback));
