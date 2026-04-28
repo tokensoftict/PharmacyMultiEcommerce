@@ -71,8 +71,8 @@ class CouponDatatable extends ExportDataTableComponent
                 'icon' => 'fa fa-list',
                 'class' => 'btn btn-sm btn-phoenix-info',
                 'type' => 'link',
-                'route' => 'admin.coupon.usages',
-                'permission' => 'backend.admin.coupon.create'
+                'route' => 'backend.admin.coupon.view_report',
+                'permission' => 'backend.admin.coupon.view_report'
             ]
         ];
 
