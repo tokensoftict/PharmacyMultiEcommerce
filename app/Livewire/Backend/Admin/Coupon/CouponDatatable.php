@@ -133,19 +133,6 @@ class CouponDatatable extends ExportDataTableComponent
             'app_id' => ['label' => 'Environment', 'showValue' => false, 'type' => 'hidden', 'value' => ApplicationEnvironment::$model_id]
         ];
 
-        /*
-         * [
-                'label' => 'Store',
-                'type' => 'select',
-                'options' => [
-                    [
-                        'id' => AppLists::getApp((new WholesalesUser())),
-                        'text' => 'Wholesales Store'
-                    ],
-                ]
-            ],
-         */
-
         $this->newValidateRules = [
             'name' => 'required|min:3',
             'code' => 'required|min:3',

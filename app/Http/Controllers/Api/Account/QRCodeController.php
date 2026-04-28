@@ -21,9 +21,9 @@ class QRCodeController extends ApiController
         $user = User::find($request->get('id'));
 
         $information = [
-            'first_name' => $user->firstname,
-            'last_name' => $user->lastname,
-            'phone' => $user->phone,
+            'first_name' => $user?->firstname ?? "",
+            'last_name' => $user?->lastname ?? "",
+            'phone' => $user->phone ?? "",
             'email' => $user->email,
             'id' => $user->id,
         ];
