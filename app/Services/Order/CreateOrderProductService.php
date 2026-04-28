@@ -77,14 +77,14 @@ class CreateOrderProductService
      */
     public final function prepareOrderProduct() : array
     {
-        $cart =  $this->checkOutUser->cart;
-        $stockIds = array_keys($cart);
         $cartStocks = [];
-        Stock::whereIn('id', $stockIds)->get()->each(function ($stock) use (&$stockIds, &$cartStocks, &$cart) {
-            $stockIds['stock'] = $stock;
-            $stockIds['quantity'] = $cart[$stock->id]['quantity'];
+        $this->checkOutUser->getCart()->each(function ($stock) use (&$cartStocks) {
+            $attributes = [];
+            $attributes['stock'] = $stock;
+            $attributes['quantity'] = $stock->cart_quantity;
+            $attributes['price'] = $stock->price;
             $cartStocks [] = new OrderProduct(
-                $this->formatOrderProductAttributes($stockIds)
+                $this->formatOrderProductAttributes($attributes)
             );
         });
 

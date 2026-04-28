@@ -41,9 +41,67 @@ class EditOrderProduct extends Component
                 }
 
                 foreach ($this->products as $product) {
-                    OrderProduct::find($product['id'])->update([
-                        'quantity' => $product['quantity'],
-                        'total' => $product['price'] * $product['quantity'],
+                    $orderProduct = OrderProduct::find($product['id']);
+                    $quantity = (int) $product['quantity'];
+                    $stock = \App\Models\Stock::find($orderProduct->stock_id);
+
+                    $price = $product['price'];
+
+                    if ($stock && $orderProduct->quantity != $quantity) {
+                        $app = \App\Models\App::find($this->order->app_id);
+                        $department = ($app && $app->id == 6) ? 'retail' : 'wholesales';
+                        $stockModelString = ($app && $app->id == 6) ? "supermarkets_stock_prices" : "wholessales_stock_prices";
+                        
+                        $defaultPrice = ($stock->special === false ? $stock->{$stockModelString}->price : $stock->special);
+                        $customPrices = $stock->stockquantityprices->where('department', $department);
+                        
+                        if ($customPrices->count() > 0) {
+                            $price = $defaultPrice;
+                            foreach ($customPrices as $priceRule) {
+                                $min = (int)$priceRule['min_qty'];
+                                $max = (int)$priceRule['max_qty'];
+
+                                if ($department == "wholesales") {
+                                    $carton = $stock->carton > 0 ? $stock->carton : 1;
+                                    if (($quantity / $carton) >= $min && ($quantity / $carton) < $max) {
+                                        $price = (float)$priceRule['price'];
+                                        break;
+                                    }
+                                } else {
+                                    if ($quantity >= $min && $quantity < $max) {
+                                        $price = (float)$priceRule['price'];
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            // Re-apply options if present
+                            $cartCache = $this->order->cart_cache ?? [];
+                            $options = $cartCache[$orderProduct->stock_id]['options'] ?? [];
+                            if (count($options) > 0) {
+                                $adjustment = 0;
+                                $priceField = ($department === 'retail') ? 'retail_price' : 'wholesales_price';
+                                $prefixField = ($department === 'retail') ? 'retail_price_prefix' : 'wholesales_price_prefix';
+
+                                foreach ($stock->stock_option_values as $optionValue) {
+                                    foreach ($optionValue->options as $option) {
+                                        if (in_array($option['id'], $options)) {
+                                            $optPrice = (float)($option[$priceField] ?? 0);
+                                            $prefix = $option[$prefixField] ?? '+';
+                                            if ($prefix === '+') $adjustment += $optPrice;
+                                            else if ($prefix === '-') $adjustment -= $optPrice;
+                                        }
+                                    }
+                                }
+                                $price += $adjustment;
+                            }
+                        }
+                    }
+
+                    $orderProduct->update([
+                        'quantity' => $quantity,
+                        'price' => $price,
+                        'total' => $price * $quantity,
                     ]);
                 }
 
