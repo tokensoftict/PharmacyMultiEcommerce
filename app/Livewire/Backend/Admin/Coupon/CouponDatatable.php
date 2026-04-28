@@ -112,7 +112,6 @@ class CouponDatatable extends ExportDataTableComponent
                     ]
                 ]
             ],
-            'domain' =>  ['label' => 'Environment', 'showValue' => false, 'type' => 'hidden',  'value' => AppLists::getApp((ApplicationEnvironment::$stock_model_string == "wholessales_stock_prices" ? new WholesalesUser() : new SupermarketUser())), 'default'=>AppLists::getApp((ApplicationEnvironment::$stock_model_string == "wholessales_stock_prices" ? new WholesalesUser() : new SupermarketUser()))],
             'type_value' => ['label' => 'Coupon Value', 'type' => 'number'],
             'minimum_amount' => ['label' => 'Minimum Order Amount', 'type' => 'number', 'default' => 0],
             'customer_type_id' => [
