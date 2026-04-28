@@ -16,13 +16,13 @@ trait DynamicDataTableFormModal
 
     public array $actionPermission = [];
 
-    public String $modalName = "";
+    public string $modalName = "";
 
     public array $formData = [];
 
-    public String $modalTitle = "New";
+    public string $modalTitle = "New";
 
-    public String $saveButton = "Save";
+    public string $saveButton = "Save";
 
     public $modelId;
 
@@ -33,24 +33,23 @@ trait DynamicDataTableFormModal
 
     protected function parseData($model)
     {
-        foreach($this->formData as $key=>$value)
-        {
-            if($key === "password") {
-                if(!empty($this->formData[$key])){
+        foreach ($this->formData as $key => $value) {
+            if ($key === "password") {
+                if (!empty($this->formData[$key])) {
                     $this->formData[$key] = bcrypt($this->formData[$key]);
                     continue;
                 }
                 continue;
             }
 
-            if($key === "username"){
+            if ($key === "username") {
                 $this->formData[$key] = explode("@", $this->formData['email'])[0];
             }
 
 
             $this->formData[$key] = $this->formData[$key] === "" ? NULL : $this->formData[$key];
 
-            if(isset($this->data[$key]['type']) && $this->data[$key]['type'] === 'hidden'){
+            if (isset($this->data[$key]['type']) && $this->data[$key]['type'] === 'hidden') {
                 $this->formData[$key] = $this->data[$key]['value'];
             }
         }
@@ -64,17 +63,19 @@ trait DynamicDataTableFormModal
         $updateValidationRules = [];
         foreach ($this->data as $key => $value) {
 
-            if($value['type'] == "hidden"){
+            if ($value['type'] == "hidden") {
                 $this->formData[$key] = $value['value'];
-            }else {
+            } else if (isset($value['default'])) {
+                $this->formData[$key] = $value['default'];
+            } else {
                 $this->formData[$key] = "";
             }
 
-            if(isset($this->newValidateRules[$key])) {
+            if (isset($this->newValidateRules[$key])) {
                 $validateRules['formData.' . $key] = $this->newValidateRules[$key];
             }
 
-            if(isset($this->updateValidateRules[$key])) {
+            if (isset($this->updateValidateRules[$key])) {
                 $updateValidationRules['formData.' . $key] = $this->updateValidateRules[$key];
             }
         }
@@ -96,31 +97,31 @@ trait DynamicDataTableFormModal
     }
 
 
-    protected function checkEmailAndPasswordForUpdate($id) :void
+    protected function checkEmailAndPasswordForUpdate($id): void
     {
-        if(array_key_exists('email', $this->formData)){
-            $this->updateValidateRules['formData.email'] = "required|email|unique:users,email,".$id;
-        }else{
+        if (array_key_exists('email', $this->formData)) {
+            $this->updateValidateRules['formData.email'] = "required|email|unique:users,email," . $id;
+        } else {
             unset($this->updateValidateRules['formData.email']);
         }
 
-        if(array_key_exists('password',$this->formData) && !empty($this->formData['password'])){
+        if (array_key_exists('password', $this->formData) && !empty($this->formData['password'])) {
             $this->updateValidateRules['formData.password'] = "required|min:6|max:36";
-        }else{
+        } else {
             unset($this->updateValidateRules['formData.password']);
         }
     }
 
-    public final function update($id) : void
+    public final function update($id): void
     {
         $this->checkEmailAndPasswordForUpdate($id);
         $this->validate($this->updateValidateRules);
-        DB::transaction(function() use ($id){
-            $model =  $this->loadModel($id);
+        DB::transaction(function () use ($id) {
+            $model = $this->loadModel($id);
             $model = $this->parseData($model);
             $model->update($this->formData);
             Cache::forget($model->getTable());
-            if(method_exists($this, "onUpdate")) {
+            if (method_exists($this, "onUpdate")) {
                 $this->onUpdate($model);
             }
         });
@@ -129,11 +130,11 @@ trait DynamicDataTableFormModal
 
 
     #[PermissionAttribute('Delete', 'Destroy', 'destroy')]
-    public function destroy($id) :void
+    public function destroy($id): void
     {
-        DB::transaction(function () use ($id){
+        DB::transaction(function () use ($id) {
             $model = $this->loadModel($id);
-            if(method_exists($this, "onDestroy")) {
+            if (method_exists($this, "onDestroy")) {
                 $this->onDestroy($model);
             }
             $model->delete();
@@ -145,12 +146,13 @@ trait DynamicDataTableFormModal
     #[PermissionAttribute('Create', 'Create', 'create')]
     public function create()
     {
-        foreach($this->data as $key=>$value)
-        {
-            if($value['type'] == "hidden"){
+        foreach ($this->data as $key => $value) {
+            if ($value['type'] == "hidden") {
                 $this->formData[$key] = $value['value'];
                 unset($this->data[$key]['editDisplay']);
-            }else{
+            } else if (isset($value['default'])) {
+                $this->formData[$key] = $value['default'];
+            } else {
                 $this->formData[$key] = "";
             }
         }
@@ -159,7 +161,7 @@ trait DynamicDataTableFormModal
 
         $this->saveButton = "Save";
 
-        if(method_exists($this, "onNew")) {
+        if (method_exists($this, "onNew")) {
             $this->onNew();
         }
 
@@ -167,13 +169,13 @@ trait DynamicDataTableFormModal
     }
 
     #[PermissionAttribute('Toggle', 'Toggle', 'toggle')]
-    public function toggle($id) : void
+    public function toggle($id): void
     {
-        DB::transaction(function () use ($id){
+        DB::transaction(function () use ($id) {
             $model = $this->model::find($id);
             $model->status = !$model->status;
             $model->save();
-            if(method_exists($this, "onToggle")) {
+            if (method_exists($this, "onToggle")) {
                 $this->onToggle($model);
             }
             Cache::forget($model->getTable());
@@ -183,12 +185,12 @@ trait DynamicDataTableFormModal
 
     public function save()
     {
-        DB::transaction(function (){
+        DB::transaction(function () {
             $this->validate($this->newValidateRules);
             $model = new $this->model();
             $this->parseData($model);
             $model = $this->model::create($this->formData);
-            if(method_exists($this, "onCreate")) {
+            if (method_exists($this, "onCreate")) {
                 $this->onCreate($model);
             }
             Cache::forget($model->getTable());
@@ -197,7 +199,7 @@ trait DynamicDataTableFormModal
     }
 
     #[PermissionAttribute('Update', 'Update', 'update')]
-    public function edit($id) : void
+    public function edit($id): void
     {
         $this->modelId = $id;
 
@@ -205,27 +207,27 @@ trait DynamicDataTableFormModal
 
         $data = $this->loadModel($id);
 
-        if(method_exists($this, "onEdit")) {
+        if (method_exists($this, "onEdit")) {
             $this->onEdit($data);
         }
 
         $this->formData = $data->toArray();
 
-        foreach ($this->data as $key =>$data){
+        foreach ($this->data as $key => $data) {
 
-            if($data['type'] == "password"){
+            if ($data['type'] == "password") {
                 $this->formData[$key] = "";
             }
 
-            if($data['type'] == "datepicker"){
+            if ($data['type'] == "datepicker") {
                 $this->formData[$key] = (new Carbon($this->formData[$key]))->format("Y-m-d");
             }
 
-            if($data['type'] == "hidden"){
-                if(isset($this->data[$key]['editCallback'])){
+            if ($data['type'] == "hidden") {
+                if (isset($this->data[$key]['editCallback'])) {
                     $editFunction = $this->data[$key]['editCallback'];
                     $this->data[$key]['editDisplay'] = $this->$editFunction($this->formData[$key]);
-                }else {
+                } else {
                     $this->data[$key]['editDisplay'] = $this->formData[$key];
                 }
             }
@@ -236,7 +238,7 @@ trait DynamicDataTableFormModal
 
 
 
-    public final function refreshTable() : void
+    public final function refreshTable(): void
     {
         $this->dispatch('closeModal');
         $this->dispatch('$refresh');
