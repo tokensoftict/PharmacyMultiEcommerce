@@ -29,7 +29,7 @@ class OrderResource extends JsonResource
             'paymentMethod' => $this->payment_method->name,
             'itemsCount' => $this->order_products->count(),
             'payment_method_id' => $this->payment_method_id,
-            'prove_of_payment' => $this->prove_of_payment
+            'prove_of_payment' => $this->prove_of_payment ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->prove_of_payment) : null
         ];
     }
 

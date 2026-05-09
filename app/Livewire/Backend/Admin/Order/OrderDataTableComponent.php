@@ -143,7 +143,7 @@ class OrderDataTableComponent extends ExportDataTableComponent
             Column::make("Proof of Payment", "prove_of_payment")
                 ->format(function($value, $row, Column $column){
                     if($value){
-                        $url = \Illuminate\Support\Facades\Storage::url($value);
+                        $url = \Illuminate\Support\Facades\Storage::disk('public')->url($value);
                         return '<a href="'.$url.'" target="_blank"><img src="'.$url.'" width="50" height="50" class="img-thumbnail"></a>';
                     }
                     return 'No Proof';
