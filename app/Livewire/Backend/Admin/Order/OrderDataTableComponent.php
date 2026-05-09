@@ -136,12 +136,20 @@ class OrderDataTableComponent extends ExportDataTableComponent
         $orderColumn = array_merge($orderColumn, [
             Column::make("No Of Items", "id")
                 ->format(fn($value, $row, Column $column) => $row->order_products->count()),
-            Column::make("Date", "order_date")
-                ->format(fn($value, $row, Column $column) => $row->order_date->format('D, F jS, Y'))
-                ->searchable()
-                ->sortable(),
             Column::make("Total", "total")
                 ->format(fn($value, $row, Column $column) => money($value))
+                ->searchable()
+                ->sortable(),
+            Column::make("Proof of Payment", "prove_of_payment")
+                ->format(function($value, $row, Column $column){
+                    if($value){
+                        $url = \Illuminate\Support\Facades\Storage::url($value);
+                        return '<a href="'.$url.'" target="_blank"><img src="'.$url.'" width="50" height="50" class="img-thumbnail"></a>';
+                    }
+                    return 'No Proof';
+                })->html(),
+            Column::make("Date", "order_date")
+                ->format(fn($value, $row, Column $column) => $row->order_date->format('D, F jS, Y'))
                 ->searchable()
                 ->sortable(),
         ]);
@@ -151,4 +159,3 @@ class OrderDataTableComponent extends ExportDataTableComponent
 
 
 }
-

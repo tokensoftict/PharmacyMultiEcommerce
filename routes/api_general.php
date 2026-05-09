@@ -100,6 +100,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix("order")->namespace("Order")->group(function () {
         Route::get("lists", ["as" => "order.lists", "uses" => "OrdersController"]);
         Route::get("{order}/show", ["as" => "order.show", "uses" => "OrderController"]);
+        Route::post("{order}/upload-proof", ["as" => "order.upload_proof", "uses" => "OrderUploadController@uploadProofOfPayment"]);
     });
 
 });
