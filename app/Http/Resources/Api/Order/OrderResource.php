@@ -19,15 +19,17 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'orderDate' => $this->order_date->format('d M, Y'),
-            'orderId' => "#".$this->order_id,
-            'invoiceNo' => "#".$this->invoice_no,
+            'orderId' => "#" . $this->order_id,
+            'invoiceNo' => "#" . $this->invoice_no,
             'totalAmount' => money($this->total),
             'status' => $this->status->name,
             'products' => OrderProductResource::collection($this->order_products),
             'orderTotals' => OrderTotalResource::collection($this->order_total_orders),
             'address' => $this->address->full_address,
             'paymentMethod' => $this->payment_method->name,
-            'itemsCount' => $this->order_products->count()
+            'itemsCount' => $this->order_products->count(),
+            'payment_method_id' => $this->payment_method_id,
+            'prove_of_payment' => $this->prove_of_payment
         ];
     }
 
