@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property int $discount_percentage
  * 
  * @property App|null $app
  * @property Status|null $status
@@ -43,7 +44,8 @@ class UserStockPromotion extends Model
 		'from_date' => 'datetime',
 		'end_date' => 'datetime',
 		'created' => 'datetime',
-		'price' => 'float'
+		'price' => 'float',
+		'discount_percentage' => 'int'
 	];
 
 	protected $fillable = [
@@ -54,7 +56,8 @@ class UserStockPromotion extends Model
 		'from_date',
 		'end_date',
 		'created',
-		'price'
+		'price',
+		'discount_percentage'
 	];
 
 	public function app()

@@ -31,20 +31,22 @@ class TriggerGenerateMedReminderDiscount implements ShouldQueue
      */
     public function handle(): void
     {
-        if($this->medReminder->is_discount_generated)  return ;
+        if ($this->medReminder->is_discount_generated)
+            return;
 
-        $settings =  app(Settings::class);
+        $settings = app(Settings::class);
         $discount = $settings->get('discount_percentage');
-        $validity = (int)$settings->get('validity', 5);
+        $validity = (int) $settings->get('validity', 5);
         $stock = $this->medReminder->stock;
         $price = $stock->supermarkets_stock_prices->price;
-        $discountAmount = $price - ceil(($discount/100) * $price);
+        $discountAmount = $price - ceil(($discount / 100) * $price);
 
         $fromDate = Carbon::now()->format('Y-m-d');
-        $toDate =   Carbon::now()->addDays($validity)->format('Y-m-d');
+        $toDate = Carbon::now()->addDays($validity)->format('Y-m-d');
 
         UserStockPromotion::create([
             'price' => $discountAmount,
+            'discount_percentage' => (int) $discount,
             'user_id' => $this->medReminder->user_id,
             'stock_id' => $this->medReminder->stock_id,
             'app_id' => 6,
@@ -54,12 +56,12 @@ class TriggerGenerateMedReminderDiscount implements ShouldQueue
             'status_id' => status('Approved')
         ]);
 
-       $this->medReminder->update([
-           'discount_percentage' => (int)$discount,
-           'discount_generated_date' => now()->toDateTimeString(),
-           'discount_expiry_date' => $toDate,
-           'is_discount_generated' => true
-       ]);
+        $this->medReminder->update([
+            'discount_percentage' => (int) $discount,
+            'discount_generated_date' => now()->toDateTimeString(),
+            'discount_expiry_date' => $toDate,
+            'is_discount_generated' => true
+        ]);
 
 
         $notifications = [
@@ -128,7 +130,7 @@ class TriggerGenerateMedReminderDiscount implements ShouldQueue
         $randomNotification = $notifications[array_rand($notifications)];
         $randomNotification['app_id'] = 6;
 
-        request()->setUserResolver(function (){
+        request()->setUserResolver(function () {
             return $this->medReminder->user;
         });
 
@@ -137,7 +139,7 @@ class TriggerGenerateMedReminderDiscount implements ShouldQueue
 
         $data = (new StockShowResource($this->medReminder->stock))->toArray(request());
 
-       //generate notification for user
+        //generate notification for user
         $pushNotificationService = app(PushNotificationService::class);
         $pushNotificationService
             ->setApplicationEnvironment(6)
