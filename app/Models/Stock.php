@@ -107,7 +107,8 @@ class Stock extends Model
 		'is_wholesales',
         'admin_status',
 		'max',
-		'user_id'
+		'user_id',
+        'store_type'
 	];
 
     protected $appends = ['wholesales_status', 'retail_status'];

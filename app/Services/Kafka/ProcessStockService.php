@@ -75,7 +75,7 @@ class ProcessStockService
      */
     public static function updateStock(array $data): Stock
     {
-        $stockUpdate = Arr::only($data, ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet', 'is_wholesales']);
+        $stockUpdate = Arr::only($data, ['local_stock_id', 'description', 'name', 'classification_id', 'productcategory_id', 'manufacturer_id', 'productgroup_id', 'box', 'max', 'carton', 'sachet', 'is_wholesales', 'store_type']);
 
         if (!isset($stockUpdate['local_stock_id'])) {
             Storage::append("stockLog", "Missing local_stock_id: " . json_encode($data));
