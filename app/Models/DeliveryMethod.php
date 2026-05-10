@@ -39,7 +39,8 @@ class DeliveryMethod extends Model
 	protected $casts = [
 		'app_id' => 'int',
 		'template_settings_value' => 'json',
-		'status' => 'int'
+		'status' => 'int',
+		'free_delivery_until' => 'datetime'
 	];
 
 	protected $fillable = [
@@ -51,8 +52,14 @@ class DeliveryMethod extends Model
 		'template_settings',
 		'template_settings_value',
 		'checkout_template',
-		'status'
+		'status',
+		'free_delivery_until'
 	];
+
+	public function isFreeDeliveryActive()
+	{
+		return $this->free_delivery_until && $this->free_delivery_until->isFuture();
+	}
 
 	public function app()
 	{

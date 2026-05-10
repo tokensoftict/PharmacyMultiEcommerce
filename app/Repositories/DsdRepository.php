@@ -97,13 +97,21 @@ class DsdRepository
             $doorStepDeliveryAmount = $door_step_down_distance->fixed_shipping_amount;
         }
 
+        $originalAmount = $doorStepDeliveryAmount;
+        if($methodOfDelivery->isFreeDeliveryActive()){
+            $doorStepDeliveryAmount = 0;
+        }
+
         $nextDayDelivery = carbonize($nextDayDelivery)->format('D, jS, F Y');
         return [
             'status' => true,
             'name'=>$methodOfDelivery->name." (".$nextDayDelivery.")",
             'amount'=>$doorStepDeliveryAmount,
+            'original_amount' => $originalAmount,
+            'is_free' => $methodOfDelivery->isFreeDeliveryActive(),
             'deliveryDate' => $nextDayDelivery,
             'amount_formatted'=>money($doorStepDeliveryAmount),
+            'original_amount_formatted' => money($originalAmount),
         ];
     }
 
@@ -218,9 +226,16 @@ class DsdRepository
             $doorStepDeliveryAmount = $door_step_down_distance->fixed_shipping_amount;
         }
 
+        $originalAmount = $doorStepDeliveryAmount;
+        if($methodOfDelivery->isFreeDeliveryActive()){
+            $doorStepDeliveryAmount = 0;
+        }
+
         return [
             "status" => true,
             "total"=> money($doorStepDeliveryAmount),
+            "original_total" => money($originalAmount),
+            "is_free" => $methodOfDelivery->isFreeDeliveryActive(),
             "delivery_date"=>carbonize($this->getNextDelivery($door_step_down_distance))->format('D, jS, F Y'),
         ];
     }

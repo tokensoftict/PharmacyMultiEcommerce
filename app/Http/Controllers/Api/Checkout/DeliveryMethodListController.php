@@ -18,6 +18,27 @@ class DeliveryMethodListController extends ApiController
     public  function __invoke(Request $request)  : JsonResponse
     {
         $deliveryMethods = DeliveryMethod::where("app_id", ApplicationEnvironment::$id)->get();
+        
+        $deliveryMethods->each(function($method){
+            if($method->isFreeDeliveryActive()){
+                if($method->template_settings_value){
+                    $settings = $method->template_settings_value;
+                    foreach($settings as &$setting){
+                        if(isset($setting['amount'])){
+                            $setting['original_amount'] = $setting['amount'];
+                            $setting['amount'] = 0;
+                        }
+                        if(isset($setting['price'])){
+                            $setting['original_price'] = $setting['price'];
+                            $setting['price'] = 0;
+                        }
+                    }
+                    $method->template_settings_value = $settings;
+                    $method->is_free = true;
+                }
+            }
+        });
+
         return $this->showAll($deliveryMethods);
     }
 

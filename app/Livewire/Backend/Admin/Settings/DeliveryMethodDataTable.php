@@ -22,11 +22,12 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
 
     public function __construct()
     {
-        $this->rowAction = [];
+        $this->rowAction = ['edit'];
 
         $this->actionPermission = [
             'status' => 'backend.admin.settings.delivery_methods.toggle',
-            'delivery_methods_settings' => 'backend.admin.settings.delivery_methods.settings'
+            'delivery_methods_settings' => 'backend.admin.settings.delivery_methods.settings',
+            'edit' => 'backend.admin.settings.delivery_methods.update',
         ];
 
         $this->extraRowAction = ['delivery_methods_settings'];
@@ -71,7 +72,23 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
     {
         $this->modalName = "Delivery Methods";
 
-        $this->data = [];
+        $this->data = [
+            'name' => ['label' => 'Name', 'type' => 'text'],
+            'code' => ['label' => 'Code', 'type' => 'text'],
+            'free_delivery_until' => ['label' => 'Free Delivery End Date', 'type' => 'datepicker'],
+        ];
+
+        $this->newValidateRules = [
+            'name' => 'required',
+            'code' => 'required',
+            'free_delivery_until' => 'nullable|date',
+        ];
+
+        $this->updateValidateRules = [
+            'name' => 'required',
+            'code' => 'required',
+            'free_delivery_until' => 'nullable|date',
+        ];
 
         $this->initControls();
     }
@@ -90,6 +107,13 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Code", "code")
                 ->sortable(),
+            Column::make("Free Delivery Until", "free_delivery_until")
+                ->format(function($value, $row, Column $column){
+                    if($row->isFreeDeliveryActive()){
+                        return '<span class="badge badge-success">Active until '.$row->free_delivery_until->format('Y-m-d').'</span>';
+                    }
+                    return $value ? '<span class="badge badge-secondary">Expired ('.$row->free_delivery_until->format('Y-m-d').')</span>' : '<span class="badge badge-light">Not Set</span>';
+                })->html(),
         ];
     }
 }
