@@ -145,9 +145,10 @@ class StockService
 
     /**
      * @param string $query
+     * @param string|null $storeType
      * @return LengthAwarePaginator
      */
-    public final function search(string $query): LengthAwarePaginator
+    public final function search(string $query, string $storeType = null): LengthAwarePaginator
     {
         $name = explode(" ", $query);
 
@@ -158,6 +159,10 @@ class StockService
                     ->orWhere('seo', 'LIKE', '%' . $query . '%');
             })
             ->where('admin_status', true);
+
+        if ($storeType) {
+            $builder->where('store_type', $storeType);
+        }
 
         if (ApplicationEnvironment::$stock_model_string === "wholessales_stock_prices") {
             $builder->where('is_wholesales', true);

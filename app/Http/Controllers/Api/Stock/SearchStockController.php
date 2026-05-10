@@ -24,13 +24,14 @@ class SearchStockController extends ApiController
     public function __invoke(Request $request) : JsonResponse
     {
         $query = $request->get('query');
+        $storeType = $request->get('store_type');
 
         if (!$query) {
             return $this->errorResponse("Search query is required", 400);
         }
 
         return $this->sendPaginatedSuccessResponse(
-            SearchStockResource::collection($this->service->search($query))
+            SearchStockResource::collection($this->service->search($query, $storeType))
                 ->response()->getData(true)
         );
     }
