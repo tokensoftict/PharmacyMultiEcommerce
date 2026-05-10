@@ -100,15 +100,6 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
 
 
 
-    public function rowButtonAction()
-    {
-        return [
-            Column::make('Settings')->format(function ($value, $row) {
-                return '<a href="' . route(ApplicationEnvironment::$storePrefix . 'backend.admin.settings.delivery_methods.settings', $row->id) . '" class="btn btn-sm btn-phoenix-primary"><i class="fa fa-cog"></i> Settings</a>';
-            })->html()
-        ];
-    }
-
     public static function mountColumn(): array
     {
         return [
