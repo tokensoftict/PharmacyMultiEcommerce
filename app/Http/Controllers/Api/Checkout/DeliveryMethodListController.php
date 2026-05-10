@@ -38,8 +38,6 @@ class DeliveryMethodListController extends ApiController
                         ];
                     })->toArray();
                 $method->template_settings_value = $locations;
-
-                dd($method);
             }
 
             if ($method->isFreeDeliveryActive()) {
