@@ -34,7 +34,7 @@ class RecCalculateDoorStepDelivery extends Command
                 foreach ($deliveryTownDistances as $deliveryTownDistance) {
 
                     $from = Carbon::parse($deliveryTownDistance->starting_date);
-                    $to   = now();
+                    $to = now();
 
                     $days = $from->diffInDays($to);
 
@@ -47,7 +47,7 @@ class RecCalculateDoorStepDelivery extends Command
                             $frequency,
                             $deliveryTownDistance->interval_no
                         );
-
+                        dump($newDate);
                         // Update and save
                         $deliveryTownDistance->starting_date = $newDate;
                         $deliveryTownDistance->save();
