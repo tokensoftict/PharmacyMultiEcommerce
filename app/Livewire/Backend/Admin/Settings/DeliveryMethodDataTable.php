@@ -17,7 +17,7 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
     use SimpleDatatableComponentTrait, DynamicDataTableExport, DynamicDataTableFormModal;
 
     protected $model = DeliveryMethod::class;
-    public static String $permissionComponentName = 'delivery_method';
+    public static string $permissionComponentName = 'delivery_method';
 
 
     public function __construct()
@@ -45,13 +45,13 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
 
         $this->breadcrumbs = [
             [
-                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix . 'admin.dashboard'),
                 'name' => "Dashboard",
-                'active' =>false
+                'active' => false
             ],
             [
                 'name' => "Delivery Methods",
-                'active' =>true
+                'active' => true
             ]
         ];
 
@@ -100,7 +100,7 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
 
 
 
-    public static function  mountColumn() : array
+    public static function mountColumn(): array
     {
         return [
             Column::make("Name", "name")
@@ -108,11 +108,11 @@ class DeliveryMethodDataTable extends ExportDataTableComponent
             Column::make("Code", "code")
                 ->sortable(),
             Column::make("Free Delivery Until", "free_delivery_until")
-                ->format(function($value, $row, Column $column){
-                    if($row->isFreeDeliveryActive()){
-                        return '<span class="badge badge-success">Active until '.$row->free_delivery_until->format('Y-m-d').'</span>';
+                ->format(function ($value, $row, Column $column) {
+                    if ($row->isFreeDeliveryActive()) {
+                        return 'Active until ' . $row->free_delivery_until->format('Y-m-d');
                     }
-                    return $value ? '<span class="badge badge-secondary">Expired ('.$row->free_delivery_until->format('Y-m-d').')</span>' : '<span class="badge badge-light">Not Set</span>';
+                    return $value ? 'Expired (' . $row->free_delivery_until->format('Y-m-d') : 'Not Set';
                 })->html(),
         ];
     }
