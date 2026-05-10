@@ -26,7 +26,11 @@ class ConfirmOrderController extends ApiController
         $confirmOrder = $this->confirmOrderService->confirmOrderReturnAnalysis();
 
         if($confirmOrder['status'] === false) {
-            return $this->sendErrorResponse($confirmOrder['message'], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json([
+                'status' => false,
+                'message' => $confirmOrder['message'],
+                'inventory_errors' => $confirmOrder['inventory_errors'] ?? []
+            ], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->sendSuccessResponse($confirmOrder['confirmOrder']);
