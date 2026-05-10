@@ -46,10 +46,17 @@ class DoiRepository
         }
 
 
+        $amount = $deliverySelected['amount'];
+        if($methodOfDelivery->isFreeDeliveryActive()){
+            $amount = 0;
+        }
+
         return [
             "status" => true,
             'name'=>$methodOfDelivery->name.'[ '.$deliverySelected['name'].' ]',
-            'amount'=>$deliverySelected['amount'],
+            'amount'=>$amount,
+            'original_amount_formatted' => money($deliverySelected['amount']),
+            'is_free' => $methodOfDelivery->isFreeDeliveryActive(),
         ];
 
     }

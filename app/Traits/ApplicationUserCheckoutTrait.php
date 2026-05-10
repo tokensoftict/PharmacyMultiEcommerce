@@ -339,6 +339,8 @@ trait ApplicationUserCheckoutTrait
         $deliveryItems[] = [
             "name" => $deliveryTotal['name'] . " - " . money($deliveryTotal['amount']),
             "amount" => $deliveryTotal['amount'],
+            "original_amount_formatted" => $deliveryTotal['original_amount_formatted'] ?? money($deliveryTotal['amount']),
+            "is_free" => $deliveryTotal['is_free'] ?? false,
             "amount_formatted" => money($deliveryTotal['amount']),
             "disabled" => true,
             "autoCheck" => true
