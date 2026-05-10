@@ -35,7 +35,7 @@ class RecCalculateDoorStepDelivery extends Command
                     $from = Carbon::parse($deliveryTownDistance->starting_date);
                     $to = now();
 
-                    $days = $from->diffInDays($to, true);
+                    $days = $to->diffInDays($from);
                     dump($days);
                     if ($days <= $deliveryTownDistance->reset_time_days) {
 
