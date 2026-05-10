@@ -28,13 +28,13 @@ trait ApplicationUserCheckoutTrait
         $errors = [];
         foreach ($stocks as $stock) {
             $requestedQty = $cart[$stock->id]['quantity'];
-            if ($stock->quantity < $requestedQty) {
+            if ($stock->{ApplicationEnvironment::$stock_model_string}?->quantity < $requestedQty) {
                 $errors[] = [
                     'id' => $stock->id,
                     'name' => $stock->name,
                     'available' => $stock->quantity,
                     'requested' => $requestedQty,
-                    'message' => "Insufficient inventory for {$stock->name}. Only {$stock->quantity} available."
+                    'message' => "Insufficient inventory for {$stock->name}. Only {$stock->{ApplicationEnvironment::$stock_model_string}?->quantity} available."
                 ];
             }
         }
