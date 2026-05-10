@@ -48,6 +48,6 @@ class RemoveItemFromCartController extends ApiController
 
         $application->update();
 
-        return $this->sendSuccessMessageResponse("Item has been removed successfully");
+        return $this->sendSuccessResponse($application->getShoppingCartItems());
     }
 }

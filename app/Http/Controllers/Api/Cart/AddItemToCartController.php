@@ -84,6 +84,6 @@ class AddItemToCartController extends ApiController
         $application->cart = $cart;
         $application->update();
 
-        return $this->sendSuccessResponse(['message' => "Item has been added to cart successfully"]);
+        return $this->sendSuccessResponse($application->getShoppingCartItems());
     }
 }

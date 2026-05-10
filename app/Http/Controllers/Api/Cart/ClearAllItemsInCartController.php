@@ -25,6 +25,6 @@ class ClearAllItemsInCartController extends ApiController
         $application->cart = [];
         $application->update();
 
-        return $this->sendSuccessMessageResponse("All Item(s) in cart has been removed successfully");
+        return $this->sendSuccessResponse($application->getShoppingCartItems());
     }
 }
