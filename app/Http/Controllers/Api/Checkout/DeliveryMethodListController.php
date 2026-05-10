@@ -20,6 +20,26 @@ class DeliveryMethodListController extends ApiController
         $deliveryMethods = DeliveryMethod::where("app_id", ApplicationEnvironment::$id)->get();
         
         $deliveryMethods->each(function($method){
+            if($method->code === 'Dwi' || $method->code === 'DI-ILN') {
+                $locations = \App\Models\DeliveryWithinIlorin::where('app_id', ApplicationEnvironment::$id)
+                    ->where('status', true)
+                    ->get()
+                    ->map(function($loc) use ($method) {
+                        $amount = $loc->amount;
+                        $original_amount = $loc->amount;
+                        if($method->isFreeDeliveryActive()){
+                            $amount = 0;
+                        }
+                        return [
+                            'SN' => $loc->id,
+                            'name' => $loc->name,
+                            'amount' => $amount,
+                            'original_amount' => $original_amount
+                        ];
+                    })->toArray();
+                $method->template_settings_value = $locations;
+            }
+
             if($method->isFreeDeliveryActive()){
                 if($method->template_settings_value){
                     $settings = $method->template_settings_value;

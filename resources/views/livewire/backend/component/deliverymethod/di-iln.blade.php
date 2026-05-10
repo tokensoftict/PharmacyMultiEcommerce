@@ -9,25 +9,26 @@ new class  extends Component
 {
     public DeliveryMethod $deliveryMethod;
 
-    public array $template_settings_value = [];
+    public $template_settings_value = [];
 
     public String $name, $amount = "";
 
     public function mount()
     {
-        $this->template_settings_value = $this->deliveryMethod->template_settings_value;
+        $this->loadData();
+    }
+
+    public function loadData()
+    {
+        $this->template_settings_value = \App\Models\DeliveryWithinIlorin::where('app_id', $this->deliveryMethod->app_id)
+            ->get();
     }
 
 
-    public function deleteDwi($name)
+    public function deleteDwi($id)
     {
-        $this->template_settings_value = collect($this->template_settings_value)->filter(function($dwi) use ($name){
-            return $dwi['name'] != $name;
-        })->values()->toArray();
-        $this->deliveryMethod->template_settings_value = $this->template_settings_value;
-        $this->deliveryMethod->save();
-        $this->deliveryMethod->fresh();
-        $this->template_settings_value =  array_reverse($this->deliveryMethod->template_settings_value);
+        \App\Models\DeliveryWithinIlorin::find($id)->delete();
+        $this->loadData();
         $this->name = "";
         $this->amount = "";
         $this->alert("Item has been Deleted Successfully!..");
@@ -36,17 +37,17 @@ new class  extends Component
 
     public function saveSettings()
     {
-        $this->validate(['name' => 'required', "amount" => 'required']);
-        $template_settings_value = $this->template_settings_value;
-        $template_settings_value[] = [
-            'SN' => (count($template_settings_value) ?? 0) + 1,
+        $this->validate(['name' => 'required', "amount" => 'required|numeric']);
+        
+        \App\Models\DeliveryWithinIlorin::create([
+            'app_id' => $this->deliveryMethod->app_id,
             'name' => $this->name,
-            'amount' => $this->amount
-        ];
-        $this->deliveryMethod->template_settings_value = $template_settings_value;
-        $this->deliveryMethod->save();
+            'amount' => $this->amount,
+            'status' => true
+        ]);
+
         $this->alert("Item has been saved Successfully!..");
-        $this->template_settings_value =  $this->deliveryMethod->template_settings_value;
+        $this->loadData();
         $this->name = "";
         $this->amount = "";
     }
@@ -88,19 +89,19 @@ new class  extends Component
                                 </thead>
                                 <tbody>
                                     @foreach($template_settings_value as $value)
-                                        <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                            <td class="align-middle text-wrap">{{ $loop->iteration }}</td>
-                                            <td class="align-middle text-wrap">{{ $value['name'] }}</td>
-                                            <td class="align-middle text-wrap">{{ number_format($value['amount']) }}</td>
-                                            <td class="align-middle text-wrap">
-                                                <a wire:click="deleteDwi('{{ $value['name'] }}')" class="btn btn-sm btn-danger">
-                                                    <span wire:loading wire:target="deleteDwi('{{ $value['name'] }}')" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                                    <i wire:loading.remove wire:target="deleteDwi('{{ $value['name'] }}')" class="fa fa-trash"></i>
-                                                    Delete
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                         <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                                             <td class="align-middle text-wrap">{{ $loop->iteration }}</td>
+                                             <td class="align-middle text-wrap">{{ $value->name }}</td>
+                                             <td class="align-middle text-wrap">{{ number_format($value->amount) }}</td>
+                                             <td class="align-middle text-wrap">
+                                                 <a wire:click="deleteDwi('{{ $value->id }}')" class="btn btn-sm btn-danger">
+                                                     <span wire:loading wire:target="deleteDwi('{{ $value->id }}')" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                     <i wire:loading.remove wire:target="deleteDwi('{{ $value->id }}')" class="fa fa-trash"></i>
+                                                     Delete
+                                                 </a>
+                                             </td>
+                                         </tr>
+                                     @endforeach
                                 </tbody>
                             </table>
                         </div>

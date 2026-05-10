@@ -17,13 +17,12 @@ class DwiRepository
     public function calculateDeliveryTotal(?array $shoppingCart, DeliveryMethod $methodOfDelivery , ?array $extraData) : array
     {
 
-        if(is_string($extraData['template_settings'])) {
-            $extraData['template_settings'] = json_decode($extraData['template_settings'], true);
-        }
+        $name = $extraData['template_settings']['name'] ?? ($extraData['template_settings']['title'] ?? null);
 
-        $deliverySelected = collect($methodOfDelivery->template_settings_value)->filter(function ($value) use ($extraData){
-            return $value['name'] == ( $extraData['template_settings']['name'] ??  $extraData['template_settings']['title']);
-        })->first();
+        $deliverySelected = \App\Models\DeliveryWithinIlorin::where('app_id', \App\Classes\ApplicationEnvironment::$id)
+            ->where('name', $name)
+            ->where('status', true)
+            ->first();
 
         if(!$deliverySelected){
             return [
@@ -34,16 +33,16 @@ class DwiRepository
             ];
         }
 
-        $amount = $deliverySelected['amount'];
+        $amount = $deliverySelected->amount;
         if($methodOfDelivery->isFreeDeliveryActive()){
             $amount = 0;
         }
 
         return [
             'status' => true,
-            'name'=>$methodOfDelivery->name.'[ '.$deliverySelected['name'].' ]',
+            'name'=>$methodOfDelivery->name.'[ '.$deliverySelected->name.' ]',
             'amount'=>$amount,
-            'original_amount_formatted' => money($deliverySelected['amount']),
+            'original_amount_formatted' => money($deliverySelected->amount),
             'is_free' => $methodOfDelivery->isFreeDeliveryActive(),
         ];
     }
