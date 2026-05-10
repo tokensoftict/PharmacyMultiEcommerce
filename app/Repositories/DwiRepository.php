@@ -18,7 +18,7 @@ class DwiRepository
     {
 
         $name = $extraData['template_settings']['name'] ?? ($extraData['template_settings']['title'] ?? null);
-dd($name);
+dd($extraData);
         $deliverySelected = \App\Models\DeliveryWithinIlorin::where('app_id', \App\Classes\ApplicationEnvironment::$id)
             ->where('name', $name)
             ->where('status', true)
