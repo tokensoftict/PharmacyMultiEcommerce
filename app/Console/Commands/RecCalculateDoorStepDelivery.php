@@ -37,7 +37,7 @@ class RecCalculateDoorStepDelivery extends Command
                     $to = now();
 
                     $days = $from->diffInDays($to);
-
+                    dump($days, $deliveryTownDistance->reset_time_days);
                     if ($days <= $deliveryTownDistance->reset_time_days) {
 
                         $frequency = Str::plural($deliveryTownDistance->interval_frequency);
