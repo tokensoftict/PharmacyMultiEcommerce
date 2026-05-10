@@ -32,12 +32,10 @@ class RecCalculateDoorStepDelivery extends Command
             ->where("delivery_type", "1")
             ->chunk(100, function ($deliveryTownDistances) {
                 foreach ($deliveryTownDistances as $deliveryTownDistance) {
-                    dump("am here");
                     $from = Carbon::parse($deliveryTownDistance->starting_date);
                     $to = now();
 
-                    $days = $from->diffInDays($to);
-                    dump($days, $deliveryTownDistance->reset_time_days);
+                    $days = $from->diffInDays($to, true);
                     if ($days <= $deliveryTownDistance->reset_time_days) {
 
                         $frequency = Str::plural($deliveryTownDistance->interval_frequency);
@@ -47,7 +45,6 @@ class RecCalculateDoorStepDelivery extends Command
                             $frequency,
                             $deliveryTownDistance->interval_no
                         );
-                        dump($newDate);
                         // Update and save
                         $deliveryTownDistance->starting_date = $newDate;
                         $deliveryTownDistance->save();
