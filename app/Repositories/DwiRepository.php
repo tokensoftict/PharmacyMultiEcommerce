@@ -16,9 +16,11 @@ class DwiRepository
      */
     public function calculateDeliveryTotal(?array $shoppingCart, DeliveryMethod $methodOfDelivery, ?array $extraData): array
     {
-
+        if(!is_array($extraData['template_settings'])) {
+            $extraData['template_settings'] = json_decode($extraData['template_settings'], true);
+        }
         $name = $extraData['template_settings']['name'] ?? ($extraData['template_settings']['title'] ?? null);
-dd($extraData);
+
         $deliverySelected = \App\Models\DeliveryWithinIlorin::where('app_id', \App\Classes\ApplicationEnvironment::$id)
             ->where('name', $name)
             ->where('status', true)
