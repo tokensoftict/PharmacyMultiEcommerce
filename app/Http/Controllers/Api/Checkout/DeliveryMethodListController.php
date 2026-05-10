@@ -25,16 +25,11 @@ class DeliveryMethodListController extends ApiController
                     ->where('status', true)
                     ->get()
                     ->map(function ($loc) use ($method) {
-                        $amount = $loc->amount;
-                        $original_amount = $loc->amount;
-                        if ($method->isFreeDeliveryActive()) {
-                            $amount = 0;
-                        }
                         return [
                             'SN' => $loc->id,
                             'name' => $loc->name,
-                            'amount' => $amount,
-                            'original_amount' => $original_amount
+                            'amount' => $loc->amount,
+                            'original_amount' => $loc->amount
                         ];
                     })->toArray();
                 $method->template_settings_value = $locations;
