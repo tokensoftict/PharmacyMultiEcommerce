@@ -41,6 +41,16 @@ class ConfirmOrderService
             ];
         }
 
+        // Validate Inventory
+        $inventoryValidation = $this->checkoutUser->validateInventory();
+        if ($inventoryValidation['status'] === false) {
+            return [
+                "status" => false,
+                "message" => $inventoryValidation['message'],
+                "inventory_errors" => $inventoryValidation['errors']
+            ];
+        }
+
 
         //get checkout user cart order
         $userSubTotal = $this->checkoutUser->calculateShoppingCartTotal();

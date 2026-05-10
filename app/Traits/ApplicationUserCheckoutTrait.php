@@ -15,6 +15,43 @@ use Illuminate\Support\Collection;
 trait ApplicationUserCheckoutTrait
 {
     /**
+     * @return array
+     */
+    public final function validateInventory(): array
+    {
+        $cart = $this->cart ?? [];
+        if (count($cart) == 0) return ['status' => true];
+
+        $stockIDs = array_keys($cart);
+        $stocks = Stock::whereIn('id', $stockIDs)->get();
+
+        $errors = [];
+        foreach ($stocks as $stock) {
+            $requestedQty = $cart[$stock->id]['quantity'];
+            if ($stock->quantity < $requestedQty) {
+                $errors[] = [
+                    'id' => $stock->id,
+                    'name' => $stock->name,
+                    'available' => $stock->quantity,
+                    'requested' => $requestedQty,
+                    'message' => "Insufficient inventory for {$stock->name}. Only {$stock->quantity} available."
+                ];
+            }
+        }
+
+        if (count($errors) > 0) {
+            return [
+                'status' => false,
+                'errors' => $errors,
+                'message' => "Some items in your cart are out of stock or have insufficient inventory."
+            ];
+        }
+
+        return ['status' => true];
+    }
+
+
+    /**
      * @return int
      */
     public final function calculateShoppingCartTotal(): int
