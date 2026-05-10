@@ -15,19 +15,20 @@ class DeliveryMethodListController extends ApiController
      * @param Request $request
      * @return JsonResponse
      */
-    public  function __invoke(Request $request)  : JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $deliveryMethods = DeliveryMethod::where("app_id", ApplicationEnvironment::$id)->get();
-        
-        $deliveryMethods->each(function($method){
-            if($method->code === 'Dwi' || $method->code === 'DI-ILN') {
+
+        $deliveryMethods->each(function ($method) {
+            if ($method->code === 'Dwi' || $method->code === 'DI-ILN') {
                 $locations = \App\Models\DeliveryWithinIlorin::where('app_id', ApplicationEnvironment::$id)
                     ->where('status', true)
                     ->get()
-                    ->map(function($loc) use ($method) {
+                    ->map(function ($loc) use ($method) {
+                        dd($loc);
                         $amount = $loc->amount;
                         $original_amount = $loc->amount;
-                        if($method->isFreeDeliveryActive()){
+                        if ($method->isFreeDeliveryActive()) {
                             $amount = 0;
                         }
                         return [
@@ -40,15 +41,15 @@ class DeliveryMethodListController extends ApiController
                 $method->template_settings_value = $locations;
             }
 
-            if($method->isFreeDeliveryActive()){
-                if($method->template_settings_value){
+            if ($method->isFreeDeliveryActive()) {
+                if ($method->template_settings_value) {
                     $settings = $method->template_settings_value;
-                    foreach($settings as &$setting){
-                        if(isset($setting['amount'])){
+                    foreach ($settings as &$setting) {
+                        if (isset($setting['amount'])) {
                             $setting['original_amount'] = $setting['amount'];
                             $setting['amount'] = 0;
                         }
-                        if(isset($setting['price'])){
+                        if (isset($setting['price'])) {
                             $setting['original_price'] = $setting['price'];
                             $setting['price'] = 0;
                         }
