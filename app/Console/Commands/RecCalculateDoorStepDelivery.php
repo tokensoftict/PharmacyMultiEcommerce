@@ -32,7 +32,7 @@ class RecCalculateDoorStepDelivery extends Command
             ->where("delivery_type", "1")
             ->chunk(100, function ($deliveryTownDistances) {
                 foreach ($deliveryTownDistances as $deliveryTownDistance) {
-
+                    dump("am here");
                     $from = Carbon::parse($deliveryTownDistance->starting_date);
                     $to = now();
 
