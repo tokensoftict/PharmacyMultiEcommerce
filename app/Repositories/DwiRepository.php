@@ -16,12 +16,6 @@ class DwiRepository
      */
     public function calculateDeliveryTotal(?array $shoppingCart, DeliveryMethod $methodOfDelivery, ?array $extraData): array
     {
-        return [
-            'status' => false,
-            'name' => $methodOfDelivery->name,
-            'amount' => 0,
-            'error' => ['Unable able to determine your delivery price, please try again!']
-        ];
         if(!is_array($extraData['template_settings'])) {
             $extraData['template_settings'] = json_decode($extraData['template_settings'], true);
         }
