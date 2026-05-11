@@ -13,6 +13,8 @@ new class extends Component {
     public $sortField = 'feedbacks_count';
     public $sortDirection = 'desc';
     public $filter = 'all_time';
+    public $dateFrom = '';
+    public $dateTo = '';
 
     public function sortBy($field)
     {
@@ -27,9 +29,23 @@ new class extends Component {
     public function updatedFilter()
     {
         $this->resetPage();
+        if ($this->filter !== 'custom') {
+            $this->dateFrom = '';
+            $this->dateTo = '';
+        }
     }
 
     public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+    
+    public function updatedDateFrom()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateTo()
     {
         $this->resetPage();
     }
@@ -43,6 +59,13 @@ new class extends Component {
                 $query->where('created_at', '>=', Carbon::now()->startOfWeek());
             } elseif ($this->filter === 'monthly') {
                 $query->where('created_at', '>=', Carbon::now()->startOfMonth());
+            } elseif ($this->filter === 'custom') {
+                if ($this->dateFrom) {
+                    $query->where('created_at', '>=', Carbon::parse($this->dateFrom)->startOfDay());
+                }
+                if ($this->dateTo) {
+                    $query->where('created_at', '<=', Carbon::parse($this->dateTo)->endOfDay());
+                }
             }
         };
 
@@ -97,7 +120,14 @@ new class extends Component {
                 <option value="daily">Daily (Today)</option>
                 <option value="weekly">Weekly (This Week)</option>
                 <option value="monthly">Monthly (This Month)</option>
+                <option value="custom">Custom Range</option>
             </select>
+            @if($filter === 'custom')
+                <div class="d-flex gap-2">
+                    <input type="date" wire:model.live="dateFrom" class="form-control form-control-sm" placeholder="From Date">
+                    <input type="date" wire:model.live="dateTo" class="form-control form-control-sm" placeholder="To Date">
+                </div>
+            @endif
             <button wire:click="exportExcel" class="btn btn-phoenix-success btn-sm">
                 <span wire:loading.remove wire:target="exportExcel" class="fas fa-file-excel me-2"></span>
                 <span wire:loading wire:target="exportExcel" class="spinner-border spinner-border-sm me-2" role="status"></span>
