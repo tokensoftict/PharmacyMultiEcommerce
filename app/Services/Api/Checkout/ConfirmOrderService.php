@@ -42,13 +42,42 @@ class ConfirmOrderService
         }
 
         // Validate Inventory
-        $inventoryValidation = $this->checkoutUser->validateInventory();
-        if ($inventoryValidation['status'] === false) {
-            return [
-                "status" => false,
-                "message" => $inventoryValidation['message'],
-                "inventory_errors" => $inventoryValidation['errors']
-            ];
+        $applyValidation = true;
+        $deviceType = request('deviceType');
+        $version = request('version');
+        $versionCode = request('versionCode');
+
+        if ($deviceType === 'android') {
+            $isNewVersion = false;
+            if ($versionCode && $versionCode >= 114) {
+                $isNewVersion = true;
+            } elseif ($version && version_compare($version, '1.14', '>=')) {
+                $isNewVersion = true;
+            }
+            if (!$isNewVersion) {
+                $applyValidation = false;
+            }
+        } elseif ($deviceType === 'ios') {
+            $isNewVersion = false;
+            if ($versionCode && $versionCode >= 104) {
+                $isNewVersion = true;
+            } elseif ($version && version_compare($version, '1.04', '>=')) {
+                $isNewVersion = true;
+            }
+            if (!$isNewVersion) {
+                $applyValidation = false;
+            }
+        }
+
+        if ($applyValidation) {
+            $inventoryValidation = $this->checkoutUser->validateInventory();
+            if ($inventoryValidation['status'] === false) {
+                return [
+                    "status" => false,
+                    "message" => $inventoryValidation['message'],
+                    "inventory_errors" => $inventoryValidation['errors']
+                ];
+            }
         }
 
 
