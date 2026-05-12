@@ -300,6 +300,38 @@ trait ApplicationUserCheckoutTrait
             return !in_array($orderTotal->id, $removeOrderTotal) ? $amount : 0;
         });
 
+        // Add Membership Discount if applicable
+        $department = \App\Classes\ApplicationEnvironment::$stock_model_string == "supermarkets_stock_prices" ? 'retail' : 'wholesales';
+        $memberGroup = ($department === 'retail') ? $this->user?->retailMemberGroup : $this->user?->memberGroup;
+
+        if ($memberGroup && $memberGroup->status && $memberGroup->member_discount > 0) {
+            $isExpired = false;
+            if ($memberGroup->discount_until) {
+                $isExpired = \Carbon\Carbon::parse($memberGroup->discount_until)->isPast();
+            }
+
+            if (!$isExpired) {
+                $membershipDiscountValue = ($memberGroup->member_discount / 100) * $subTotal;
+                // Rounding policy: eCommerce usually subtracts, so we make it negative in the total sum if it's a discount
+                // But getUserCheckOutOrderTotal seems to return positive amounts that are later summed.
+                // Looking at Coupon logic in CreateOrderTotalService, it's negative.
+                // However, the sum() above adds $amount. 
+                // Let's make it negative to ensure it's a deduction.
+                $amount = -$membershipDiscountValue;
+                
+                $orderTotalList[] = [
+                    "name" => "Membership Discount (" . strtoupper($memberGroup->label ?? $memberGroup->name) . ") - " . $memberGroup->member_discount . "%",
+                    "amount" => $amount,
+                    "amount_formatted" => money($amount),
+                    "id" => NULL, // Dynamic entry
+                    "code" => "membership_discount",
+                    "autoCheck" => true,
+                    "disabled" => true
+                ];
+                $totalOfOrderTotal += $amount;
+            }
+        }
+
         return [
             'status' => true,
             'items' => $orderTotalList,

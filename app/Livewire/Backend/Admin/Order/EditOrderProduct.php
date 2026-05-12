@@ -154,8 +154,39 @@ class EditOrderProduct extends Component
                             }
                             $value = -$value;
                         }
-                        $discountRow->value = $value;
+                    $discountRow->value = $value;
                         $discountRow->save();
+                    }
+                }
+
+                // Re-validate Membership Discount
+                $membershipDiscountRow = $this->order->order_total_orders()
+                    ->where('name', 'like', 'Membership Discount%')
+                    ->first();
+
+                if ($membershipDiscountRow) {
+                    $department = ($this->order->app_id == 6) ? 'retail' : 'wholesales';
+                    $user = $this->order->customer?->user;
+                    $memberGroup = ($department === 'retail') ? $user?->retailMemberGroup : $user?->memberGroup;
+
+                    $isValid = false;
+                    if ($memberGroup && $memberGroup->status && $memberGroup->member_discount > 0) {
+                        $isExpired = false;
+                        if ($memberGroup->discount_until) {
+                            $isExpired = \Carbon\Carbon::parse($memberGroup->discount_until)->isPast();
+                        }
+                        if (!$isExpired) {
+                            $isValid = true;
+                        }
+                    }
+
+                    if (!$isValid) {
+                        $membershipDiscountRow->delete();
+                    } else {
+                        $membershipDiscountValue = ($memberGroup->member_discount / 100) * $subTotal;
+                        $membershipDiscountRow->value = -$membershipDiscountValue;
+                        $membershipDiscountRow->name = "Membership Discount (" . strtoupper($memberGroup->label ?? $memberGroup->name) . ") - " . $memberGroup->member_discount . "%";
+                        $membershipDiscountRow->save();
                     }
                 }
 
