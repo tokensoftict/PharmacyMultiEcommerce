@@ -12,12 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('member_groups', function (Blueprint $table) {
-            if (!Schema::hasColumn('member_groups', 'card_gradient_start')) {
-                $table->string('card_gradient_start')->nullable()->after('bg_color');
-            }
-            if (!Schema::hasColumn('member_groups', 'card_gradient_end')) {
-                $table->string('card_gradient_end')->nullable()->after('card_gradient_start');
-            }
+            $table->decimal('member_discount', 5, 2)->default(0)->after('retail_min_sales_amount');
         });
     }
 
@@ -27,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('member_groups', function (Blueprint $table) {
-            $table->dropColumn(['card_gradient_start', 'card_gradient_end']);
+            $table->dropColumn('member_discount');
         });
     }
 };

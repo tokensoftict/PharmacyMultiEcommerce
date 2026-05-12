@@ -17,6 +17,8 @@ class LocalInvoice extends Model
         'invoice_date',
         'customer_phone_number',
         'total',
+        'membership_discount',
+        'membership_discount_value',
         'payment_methods',
         'data',
     ];

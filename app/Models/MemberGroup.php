@@ -23,7 +23,9 @@ class MemberGroup extends Model
     protected $casts = [
         'status' => 'bool',
         'min_sales_amount' => 'float',
-        'retail_min_sales_amount' => 'float'
+        'retail_min_sales_amount' => 'float',
+        'member_discount' => 'float',
+        'discount_until' => 'date'
     ];
 
     protected $fillable = [
@@ -35,6 +37,8 @@ class MemberGroup extends Model
         'retail_color',
         'retail_bg_color',
         'retail_min_sales_amount',
+        'member_discount',
+        'discount_until',
         'card_gradient_start',
         'card_gradient_end',
         'status'

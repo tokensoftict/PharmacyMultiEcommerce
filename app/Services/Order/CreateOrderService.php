@@ -583,6 +583,8 @@ class CreateOrderService
                     'invoice_date' => $orderData['invoice_date'] ?? null,
                     'customer_phone_number' => $customerPhoneNumber,
                     'total' => $orderData['total'] ?? 0,
+                    'membership_discount' => $orderData['membership_discount'] ?? 0,
+                    'membership_discount_value' => $orderData['membership_discount_value'] ?? 0,
                     'payment_methods' => $orderData['payment_methods'] ?? null,
                     'data' => $data
                 ]
