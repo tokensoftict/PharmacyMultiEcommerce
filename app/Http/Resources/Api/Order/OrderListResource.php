@@ -19,7 +19,7 @@ class OrderListResource extends JsonResource
         return [
             'id' => $this->id,
             'orderDate' => $this->order_date->format('d M, Y'),
-            'orderId' => "#".$this->order_id,
+            'orderId' => "#" . $this->order_id,
             'total' => money($this->total),
             'payment_method' => $this->payment_method->name,
             'status' => $this->status->name,
@@ -30,15 +30,15 @@ class OrderListResource extends JsonResource
 
     private function getOrderImage(): ?string
     {
-       $products = $this->order_products->filter(function (OrderProduct $orderProduct)  {
-           return $orderProduct->stock->image !== NULL;
+        $products = $this->order_products->filter(function (OrderProduct $orderProduct) {
+            return optional($orderProduct->stock)->image !== NULL;
         });
 
-       if($products->count() === 0) {;
-           return optional($this->order_products->first()?->stock)->product_image ?? NULL;
-       } else {
-          $products = $products->shuffle();
-          return $products->first()?->stock->product_image;
-       }
+        if ($products->count() === 0) {
+            return optional($this->order_products->first()?->stock)->product_image ?? NULL;
+        } else {
+            $products = $products->shuffle();
+            return optional($products->first()?->stock)->product_image;
+        }
     }
 }
