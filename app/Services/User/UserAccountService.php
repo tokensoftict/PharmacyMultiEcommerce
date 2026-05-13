@@ -65,8 +65,8 @@ class UserAccountService
 
             $data['loyalty_points'] = 0;
             $data['retail_loyalty_points'] = 0;
-            $data['member_group_id'] = 3;
-            $data['retail_member_group_id'] = 3;
+            $data['member_group_id'] = 4;
+            $data['retail_member_group_id'] = 4;
 
             $user = User::create($data);
 
