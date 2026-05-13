@@ -167,16 +167,20 @@ class EditOrderProduct extends Component
                 if ($membershipDiscountRow) {
                     $department = ($this->order->app_id == 6) ? 'retail' : 'wholesales';
                     $user = $this->order->customer?->user;
-                    $memberGroup = ($department === 'retail') ? $user?->retailMemberGroup : $user?->memberGroup;
 
                     $isValid = false;
-                    if ($memberGroup && $memberGroup->status && $memberGroup->member_discount > 0) {
-                        $isExpired = false;
-                        if ($memberGroup->discount_until) {
-                            $isExpired = \Carbon\Carbon::parse($memberGroup->discount_until)->isPast();
-                        }
-                        if (!$isExpired) {
-                            $isValid = true;
+                    $memberGroup = null;
+                    if ($department === 'retail') {
+                        $memberGroup = $user?->retailMemberGroup;
+
+                        if ($memberGroup && $memberGroup->status && $memberGroup->member_discount > 0) {
+                            $isExpired = false;
+                            if ($memberGroup->discount_until) {
+                                $isExpired = \Carbon\Carbon::parse($memberGroup->discount_until)->isPast();
+                            }
+                            if (!$isExpired) {
+                                $isValid = true;
+                            }
                         }
                     }
 
