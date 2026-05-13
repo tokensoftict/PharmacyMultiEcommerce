@@ -23,9 +23,9 @@ class UserAccountService
      * @param User $user
      * @return void
      */
-    private  function generateInitialPicture(User &$user) :void
+    private function generateInitialPicture(User &$user): void
     {
-        if(file_exists(public_path("storage/users/$user->id.png"))) {
+        if (file_exists(public_path("storage/users/$user->id.png"))) {
             @unlink(public_path("storage/users/$user->id.png"));
         }
 
@@ -42,7 +42,7 @@ class UserAccountService
      * @param array $data
      * @return User
      */
-    public final function createUserAccount(array $data) : User
+    public final function createUserAccount(array $data): User
     {
 
         $data['firstname'] = ucwords(strtolower($data['firstname']));
@@ -51,9 +51,10 @@ class UserAccountService
 
         $user = User::where("email", $data['email'])->first();
 
-        if(!$user) $user = User::where("phone", $data['phone'])->first();
+        if (!$user)
+            $user = User::where("phone", $data['phone'])->first();
 
-        if(!app()->runningInConsole()) {
+        if (!app()->runningInConsole()) {
             $data['password'] = bcrypt($data['password']);
         }
 
@@ -61,7 +62,7 @@ class UserAccountService
         $data['phone'] = str_replace("-", "", $data['phone']);
         $data['phone'] = str_replace(" ", "", $data['phone']);
 
-        if(!$user){
+        if (!$user) {
 
             $data['loyalty_points'] = 0;
             $data['retail_loyalty_points'] = 0;
@@ -77,21 +78,21 @@ class UserAccountService
             $user->updateLastSeen();
             $verifyFields = [];
 
-            if(!is_null($user->phone)){
-                $verifyFields[] = false; //"phone";
+            if (!is_null($user->phone)) {
+                $verifyFields[] = "phone";
             }
 
-            if(!is_null($user->email)){
+            if (!is_null($user->email)) {
                 $verifyFields[] = "email";
             }
 
-            if(!app()->runningInConsole()) {
+            if (!app()->runningInConsole()) {
                 NewAccountNotificationManager::notifyAll($user, $verifyFields);
             }
 
-        }else{
+        } else {
 
-            $user = $this->updateUserAccount($user->id , $data);
+            $user = $this->updateUserAccount($user->id, $data);
 
         }
 
@@ -104,11 +105,11 @@ class UserAccountService
      * @param array $data
      * @return User
      */
-    public final function updateUserAccount(int $id, array $data) : User
+    public final function updateUserAccount(int $id, array $data): User
     {
         $user = User::findorfail($id);
 
-        if($user){
+        if ($user) {
             $this->generateInitialPicture($user);
             $user->update($data);
         }
@@ -121,7 +122,7 @@ class UserAccountService
      * @param User $user
      * @return User
      */
-    public final function activateUserAccount(User $user) : User
+    public final function activateUserAccount(User $user): User
     {
         $user->email_verified_at = now();
         $user->phone_verified_at = now();
@@ -137,7 +138,7 @@ class UserAccountService
      * @param bool $sendMail
      * @return SalesRepresentative
      */
-    public final function createSalesRepAccount(User $user, array $data, bool $sendMail=true) : SalesRepresentative
+    public final function createSalesRepAccount(User $user, array $data, bool $sendMail = true): SalesRepresentative
     {
         $data = Arr::only($data, [
             'status',
@@ -153,7 +154,7 @@ class UserAccountService
 
         $data['code'] = generateUniqueReferralCode();
 
-        if($sendMail && !isset($data['token'])){
+        if ($sendMail && !isset($data['token'])) {
             $data['token'] = sha1(md5(generateRandomString(50)));
         }
 
@@ -161,13 +162,13 @@ class UserAccountService
 
         app(AppUserService::class)->createAppUser($user, $rep);
 
-        if($sendMail){
+        if ($sendMail) {
             //trigger invent to send invite email to the user
             $link = route('sales-representative.sales_rep.accept-invitation', $rep->token);
             Mail::to($rep->user->email)->send(new SalesRepInvitationMail($rep, $link));
         }
 
-        return  $rep;
+        return $rep;
     }
 
 
@@ -177,7 +178,7 @@ class UserAccountService
      * @param bool $sendMail
      * @return WholesalesAdmin
      */
-    public final function createWholesalesAdministrator(User $user, array $data, bool $sendMail=true) : WholesalesAdmin
+    public final function createWholesalesAdministrator(User $user, array $data, bool $sendMail = true): WholesalesAdmin
     {
         $data = Arr::only($data, [
             'status',
@@ -189,19 +190,19 @@ class UserAccountService
             'token',
         ]);
 
-        if($sendMail && !isset($data['token'])){
+        if ($sendMail && !isset($data['token'])) {
             $data['token'] = sha1(md5(generateRandomString(50)));
         }
 
         $admin = WholesalesAdmin::updateOrCreate(['user_id' => $user->id], $data);
         app(AppUserService::class)->createAppUser($user, $admin);
 
-        if($sendMail){
+        if ($sendMail) {
             $link = route('administrator.admin.accept-invitation', $admin->token);
             Mail::to($admin->user->email)->send(new AdministratorInvitationMail($admin, $link));
         }
 
-        return  $admin;
+        return $admin;
     }
 
 
@@ -211,7 +212,7 @@ class UserAccountService
      * @param bool $sendMail
      * @return SupermarketAdmin
      */
-    public final function createSuperMarketAdministrator(User $user, array $data, bool $sendMail=true) : SupermarketAdmin
+    public final function createSuperMarketAdministrator(User $user, array $data, bool $sendMail = true): SupermarketAdmin
     {
         $data = Arr::only($data, [
             'status',
@@ -222,18 +223,18 @@ class UserAccountService
             'token',
         ]);
 
-        if($sendMail && !isset($data['token'])){
+        if ($sendMail && !isset($data['token'])) {
             $data['token'] = sha1(md5(generateRandomString(50)));
         }
 
         $admin = SupermarketAdmin::updateOrCreate(['user_id' => $user->id], $data);
         app(AppUserService::class)->createAppUser($user, $admin);
 
-        if($sendMail){
+        if ($sendMail) {
             $link = route('administrator.admin.accept-invitation', $admin->token);
             Mail::to($admin->user->email)->send(new AdministratorInvitationMail($admin, $link));
         }
 
-        return  $admin;
+        return $admin;
     }
 }
