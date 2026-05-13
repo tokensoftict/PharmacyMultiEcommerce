@@ -143,7 +143,7 @@ class CouponDatatable extends ExportDataTableComponent
 
         $this->newValidateRules = [
             'name' => 'required|min:3',
-            'code' => 'required|min:3',
+            'code' => 'required|min:3|unique:coupons,code,NULL,id,app_id,' . ApplicationEnvironment::$model_id,
             'valid_from' => 'required',
             'valid_to' => 'required',
             'noofuse' => 'required',
@@ -156,6 +156,11 @@ class CouponDatatable extends ExportDataTableComponent
         $this->updateValidateRules = $this->newValidateRules;
 
         $this->initControls();
+    }
+
+    protected function checkEmailAndPasswordForUpdate($id): void
+    {
+        $this->updateValidateRules['formData.code'] = 'required|min:3|unique:coupons,code,' . $id . ',id,app_id,' . ApplicationEnvironment::$model_id;
     }
 
 
