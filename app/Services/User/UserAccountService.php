@@ -47,7 +47,11 @@ class UserAccountService
 
         $data['firstname'] = ucwords(strtolower($data['firstname']));
         $data['lastname'] = ucwords(strtolower($data['lastname']));
-        $data['email'] = ucwords(strtolower($data['email']));
+        $data['email'] = strtolower($data['email']);
+
+        $data['phone'] = normalizePhoneNumber($data['phone']);
+        $data['phone'] = str_replace("-", "", $data['phone']);
+        $data['phone'] = str_replace(" ", "", $data['phone']);
 
         $user = User::where("email", $data['email'])->first();
 
@@ -58,10 +62,6 @@ class UserAccountService
             $data['password'] = bcrypt($data['password']);
         }
 
-        $data['phone'] = normalizePhoneNumber($data['phone']);
-        $data['phone'] = str_replace("-", "", $data['phone']);
-        $data['phone'] = str_replace(" ", "", $data['phone']);
-
         if (!$user) {
 
             $data['loyalty_points'] = 0;
@@ -71,29 +71,29 @@ class UserAccountService
 
             $user = User::create($data);
 
-            $this->generateInitialPicture($user);
-
-            $user->update();
-
-            $user->updateLastSeen();
-            $verifyFields = [];
-
-            if (!is_null($user->phone)) {
-                $verifyFields[] = "phone";
-            }
-
-            if (!is_null($user->email)) {
-                $verifyFields[] = "email";
-            }
-
-            if (!app()->runningInConsole()) {
-                NewAccountNotificationManager::notifyAll($user, $verifyFields);
-            }
-
         } else {
 
-            $user = $this->updateUserAccount($user->id, $data);
+            $user->update($data);
 
+        }
+
+        $this->generateInitialPicture($user);
+
+        $user->update();
+
+        $user->updateLastSeen();
+        $verifyFields = [];
+
+        if (!is_null($user->phone)) {
+            $verifyFields[] = "phone";
+        }
+
+        if (!is_null($user->email)) {
+            $verifyFields[] = "email";
+        }
+
+        if (!app()->runningInConsole()) {
+            NewAccountNotificationManager::notifyAll($user, $verifyFields);
         }
 
         return $user;

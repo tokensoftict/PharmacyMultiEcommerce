@@ -28,12 +28,16 @@ class SignUpRequest extends FormRequest
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users', 'email')->whereNull('deleted_at'),
+                Rule::unique('users', 'email')->where(function ($query) {
+                    $query->whereNull('deleted_at')->whereNotNull('email_verified_at');
+                }),
             ],
             'password' => 'required|string|min:6',
             'phone' => [
                 'nullable',
-                Rule::unique('users', 'phone')->whereNull('deleted_at'),
+                Rule::unique('users', 'phone')->where(function ($query) {
+                    $query->whereNull('deleted_at')->whereNotNull('phone_verified_at');
+                }),
             ],
         ];
     }
