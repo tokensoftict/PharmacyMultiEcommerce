@@ -160,7 +160,7 @@ class HomePageApiParser
                     "id" => $specialClassification->id,
                     "price" => money($stock->{ApplicationEnvironment::$stock_model_string}->price),
                     "name" => $specialClassification->name,
-                    "icon"  => $classifications[$specialClassification->name],
+                    "icon"  => $classifications[ucwords(strtolower($specialClassification->name))],
                     "seeAll" => "stock/".$specialClassification->id."/by_classification"
                 ];
             }
