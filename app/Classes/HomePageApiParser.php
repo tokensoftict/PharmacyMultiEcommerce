@@ -116,7 +116,11 @@ class HomePageApiParser
             ->pluck("stock_id")->toArray();
 
         return StockListResource::collection(
-            Stock::whereIn('id', $stockID)->get()
+            Stock::whereIn('id', $stockID)
+                ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
+                    $query->where('quantity', ">",  "1");
+                })
+                ->get()
         );
     }
 
