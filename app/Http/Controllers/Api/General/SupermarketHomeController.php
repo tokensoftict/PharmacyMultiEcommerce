@@ -19,7 +19,7 @@ class SupermarketHomeController extends ApiController
                 "type" => "topSellingProduct",
                 "id" => 989,
                 "limit" => 15,
-                "label" => "BESTSELLERS",
+                "label" => "BEST SELLERS",
                 "seeAll" => "stock/bestseller",
             ],
             [
