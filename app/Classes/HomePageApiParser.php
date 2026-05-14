@@ -136,12 +136,12 @@ class HomePageApiParser
     public static function lowestClassifications() : array
     {
         $classifications = [
-            "Injections" => "💉",
-            "Anti-Ulcer Kit" => "🩺🫃",
+            "Anti-Malaria Injection" => "💉",
+            "Anti-Biotics" => "🩺🫃",
             "Multivitamins" => "💊🍊",
-            "Antidiabetic" => "🩸🧪",
-            "Baby Supplement" => "👶🍼",
-            "Antitubercular" => "🫁💊"
+            "Anti-Diabetic" => "🩸🧪",
+            "Anti-Malaria" => "🦟",
+            "Anti-Allergy" => "🫁💊"
         ];
         $specialClassifications = Classification::whereIn("name", array_keys($classifications))->get();
         $lowestPriceClassification = [];
