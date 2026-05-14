@@ -177,7 +177,7 @@ class HomePageApiParser
             "Vitamins" => "💊🍊",
             "Antacids" => "🥛🫄",
             "Baby Products" => "👶🍼",
-            "Anti-biotics" => "🛡️🦠"
+            "Anti-Biotics" => "🛡️🦠"
         ];
         $specialClassifications = Classification::whereIn("name", array_keys($classifications))->get();
         $lowestPriceClassification = [];
