@@ -185,6 +185,9 @@ class HomePageApiParser
 
             $stock = $specialClassification->stocks()
                 ->with(ApplicationEnvironment::$stock_model_string)
+                ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
+                    $query->where('quantity', ">", "1");
+                })
                 ->get()
                 ->sortBy(function ($stock) {
                     return optional($stock->{ApplicationEnvironment::$stock_model_string})->price;
