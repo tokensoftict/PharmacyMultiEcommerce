@@ -8,88 +8,72 @@ use App\Http\Resources\Api\General\GeneralResource;
 use App\Models\Manufacturer;
 use Illuminate\Support\Arr;
 
-class SupermarketHomeController extends ApiController
+class SupermarketHomeControllerBankup extends ApiController
 {
     public function __invoke()
     {
         $data = [];
         $components = [
             [
-                "component" => "Horizontal_List",
-                "type" => "topSellingProduct",
-                "id" => 989,
-                "limit" => 15,
-                "label" => "BESTSELLERS",
-                "seeAll" => "stock/bestseller",
+                "component" => "topBrands",
+                "type" => "topBrands",
             ],
             [
-                "component" => "Horizontal_List",
-                "type" => "manufacturers",
-                "id" => 114,
-                "limit" => 15,
-                "label" => "PEACE PHARMACEUTICAL STORE",
-                "seeAll" => "stock/114/by_manufacturer"
+                "component" => "ImageSlider",
+                "type" => "ImageSlider",
             ],
             [
                 "component" => "Horizontal_List",
                 "type" => "classifications",
-                "id" => 72,
+                "id" => 38,
                 "limit" => 15,
-                "label" => "SUPPLEMENTS",
-                "seeAll" => "stock/72/by_classification"
+                "label" => "DEODORANT",
+                "seeAll" => "stock/38/by_classification"
             ],
             [
                 "component" => "Horizontal_List",
                 "type" => "classifications",
-                "id" => 93,
+                "id" => 12,
                 "limit" => 15,
-                "label" => "DRINKS",
-                "seeAll" => "stock/93/by_classification"
+                "label" => "ANTIMALARIAL",
+                "seeAll" => "stock/12/by_classification"
             ],
             [
                 "component" => "Horizontal_List",
                 "type" => "classifications",
-                "id" => 71,
+                "id" => 27,
                 "limit" => 15,
-                "label" => "BODY CREAMS & LOTIONS",
-                "seeAll" => "stock/71/by_classification"
-            ],
-            [
-                "component" => "Horizontal_List",
-                "type" => "classifications",
-                "id" => 148,
-                "limit" => 15,
-                "label" => "PERFUMES & BODY SPRAYS",
-                "seeAll" => "stock/148/by_classification"
-            ],
-            [
-                "component" => "Horizontal_List",
-                "type" => "classifications",
-                "id" => 189,
-                "limit" => 15,
-                "label" => "BABY PRODUCTS",
-                "seeAll" => "stock/189/by_classification"
-            ],
-            [
-                "component" => "Horizontal_List",
-                "type" => "classifications",
-                "id" => 105,
-                "limit" => 15,
-                "label" => "PROVISIONS & FOOD STUFF",
-                "seeAll" => "stock/105/by_classification"
+                "label" => "HERBAL SUPPLEMENT",
+                "seeAll" => "stock/27/by_classification"
             ],
             [
                 "component" => "FlashDeals",
-                "type" => "lowestClassificationsRetail",
+                "type" => "lowestClassifications",
                 "label" => "LOWEST PRICE YOU CAN TRUST",
             ],
             [
                 "component" => "Horizontal_List",
                 "type" => "classifications",
-                "id" => 68,
+                "id" => 31,
                 "limit" => 15,
-                "label" => "BEVERAGES",
-                "seeAll" => "stock/68/by_classification"
+                "label" => "BABY SUPPLEMENT",
+                "seeAll" => "stock/31/by_classification"
+            ],
+            [
+                "component" => "Horizontal_List",
+                "type" => "classifications",
+                "id" => 149,
+                "limit" => 15,
+                "label" => "SKIN SOAPS",
+                "seeAll" => "stock/149/by_classification"
+            ],
+            [
+                "component" => "Horizontal_List",
+                "type" => "manufacturers",
+                "id" => 161,
+                "limit" => 15,
+                "label" => "TUYIL PHARMACEUTICAL STORE",
+                "seeAll" => "stock/161/by_manufacturer"
             ],
         ];
 
@@ -110,8 +94,8 @@ class SupermarketHomeController extends ApiController
         $NewArrivalData = HomePageApiParser::parseProductType($checkNewArrivals);
         if ($NewArrivalData->count() > 0) {
             $arrivalData = array_merge($checkNewArrivals, ["data" => $NewArrivalData]);
-            $oneData = $data[1];
-            $data[1] = $arrivalData;
+            $oneData = $data[2];
+            $data[2] = $arrivalData;
             $data[] = $oneData;
         }
 

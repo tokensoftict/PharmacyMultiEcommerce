@@ -7,6 +7,7 @@ use App\Http\Resources\Api\Stock\StockListResource;
 use App\Models\Classification;
 use App\Models\Manufacturer;
 use App\Models\NewStockArrival;
+use App\Models\OrderProduct;
 use App\Models\Stock;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -26,8 +27,10 @@ class HomePageApiParser
             "new_arrivals" => self::newArrivals($product['limit']),
             "topBrands" => self::topBrands(),
             "lowestClassifications" => self::lowestClassifications(),
+            "lowestClassificationsRetail" => self::lowestClassificationsRetail(),
             "ImageSlider" => self::ImageSlider(),
             "specialOffers" => self::getSpecialOffers($product['limit']),
+            "topSellingProduct" =>self::topSellingProduct($product['limit']),
             default => []
         };
     }
@@ -165,6 +168,41 @@ class HomePageApiParser
         return $lowestPriceClassification;
     }
 
+    public static function lowestClassificationsRetail() : array
+    {
+        $classifications = [
+            "Anti-Malaria" => "🦟",
+            "Analgesics" => "🙂🤕",
+            "Vitamins" => "💊🍊",
+            "Antacids" => "🥛🫄",
+            "Baby Products" => "👶🍼",
+            "Anti-biotics" => "🛡️🦠"
+        ];
+        $specialClassifications = Classification::whereIn("name", array_keys($classifications))->get();
+        $lowestPriceClassification = [];
+        foreach ($specialClassifications as $specialClassification) {
+
+            $stock = $specialClassification->stocks()
+                ->with(ApplicationEnvironment::$stock_model_string)
+                ->get()
+                ->sortBy(function ($stock) {
+                    return optional($stock->{ApplicationEnvironment::$stock_model_string})->price;
+                })
+                ->first();
+
+            if ($stock) {
+                $lowestPriceClassification[] =[
+                    "id" => $specialClassification->id,
+                    "price" => money($stock->{ApplicationEnvironment::$stock_model_string}->price),
+                    "name" => $specialClassification->name,
+                    "icon"  => $classifications[$specialClassification->name],
+                    "seeAll" => "stock/".$specialClassification->id."/by_classification"
+                ];
+            }
+        }
+        return $lowestPriceClassification;
+    }
+
 
     public static function ImageSlider() :array
     {
@@ -182,5 +220,26 @@ class HomePageApiParser
                 "seeAll" => "stock/9/by_classification"
             ]
         ];
+    }
+
+
+    /**
+     * @param int $limit
+     * @return AnonymousResourceCollection
+     */
+    public static function topSellingProduct(int $limit =25) : AnonymousResourceCollection
+    {
+      $bestSellingProduct = OrderProduct::query()->select("stock_id")
+           ->where('app_id', ApplicationEnvironment::$model_id)
+           ->groupBy('stock_id')
+           ->orderByRaw('COUNT(*) DESC')
+           ->limit($limit)
+           ->pluck("stock_id")
+           ->toArray();
+
+       return StockListResource::collection(
+           Stock::query()->whereIn("id", $bestSellingProduct)->get()
+       );
+
     }
 }
