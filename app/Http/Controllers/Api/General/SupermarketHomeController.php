@@ -110,8 +110,8 @@ class SupermarketHomeController extends ApiController
         $NewArrivalData = HomePageApiParser::parseProductType($checkNewArrivals);
         if ($NewArrivalData->count() > 0) {
             $arrivalData = array_merge($checkNewArrivals, ["data" => $NewArrivalData]);
-            $oneData = $data[1];
-            $data[1] = $arrivalData;
+            $oneData = $data[2];
+            $data[2] = $arrivalData;
             $data[] = $oneData;
         }
 
