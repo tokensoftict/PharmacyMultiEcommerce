@@ -10,6 +10,7 @@ use App\Models\NewStockArrival;
 use App\Models\OrderProduct;
 use App\Models\Stock;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Str;
 
 class HomePageApiParser
 {
@@ -160,7 +161,7 @@ class HomePageApiParser
                     "id" => $specialClassification->id,
                     "price" => money($stock->{ApplicationEnvironment::$stock_model_string}->price),
                     "name" => $specialClassification->name,
-                    "icon"  => $classifications[ucwords(strtolower($specialClassification->name))],
+                    "icon"  => $classifications[Str::title($specialClassification->name)],
                     "seeAll" => "stock/".$specialClassification->id."/by_classification"
                 ];
             }
@@ -195,7 +196,7 @@ class HomePageApiParser
                     "id" => $specialClassification->id,
                     "price" => money($stock->{ApplicationEnvironment::$stock_model_string}->price),
                     "name" => $specialClassification->name,
-                    "icon"  => $classifications[ucwords(strtolower($specialClassification->name))],
+                    "icon"  => $classifications[Str::title($specialClassification->name)],
                     "seeAll" => "stock/".$specialClassification->id."/by_classification"
                 ];
             }
