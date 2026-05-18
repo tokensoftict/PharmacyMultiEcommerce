@@ -187,7 +187,7 @@ return [
 
     /** TERMII_API_KEY */
 
-    "TERMII_API_KEY" => env("TERMI_API_KEY"),
+    "TERMII_API_KEY" => env("TERMII_API_KEY"),
     "TERMII_API_URL" => env("TERMII_API_URL"),
     "TERMII_SENDER" => env("TERMII_SENDER"),
 
