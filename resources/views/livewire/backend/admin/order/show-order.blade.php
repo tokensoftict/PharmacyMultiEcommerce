@@ -94,7 +94,27 @@
                                                 {{ $product->name }}
                                                 @if(!is_null($product->error))
                                                     <span class="d-block text-danger">{!! $product->error !!}</span>
-                                                 @endif
+                                                @endif
+                                                @if(!empty($product->options) && is_array($product->options))
+                                                    <ul class="list-unstyled mb-0 mt-1 fs-10 text-secondary" style="padding-left: 0; list-style-type: none;">
+                                                        @foreach($product->options as $option)
+                                                            @php
+                                                                $groupName = $option['name'] ?? ($option['group_name'] ?? '');
+                                                                $valueName = $option['value'] ?? ($option['value_name'] ?? '');
+                                                                $priceAdj = (float)($option['price'] ?? 0);
+                                                                $prefix = $option['price_prefix'] ?? '+';
+                                                            @endphp
+                                                            @if(!empty($groupName) || !empty($valueName))
+                                                                <li>
+                                                                    * {{ $groupName }}: {{ $valueName }}
+                                                                    @if($priceAdj > 0)
+                                                                        ({{ $prefix }}{{ money($priceAdj) }})
+                                                                    @endif
+                                                                </li>
+                                                            @endif
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
                                             </td>
                                             <td class="sort align-middle text-end ps-4">{{ money($product->price) }}</td>
                                             <td class="sort align-middle text-end ps-4">{{ $product->quantity }}</td>

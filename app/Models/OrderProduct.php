@@ -50,7 +50,8 @@ class OrderProduct extends Model
 		'tax' => 'float',
 		'reward' => 'int',
 		'app_id' => 'int',
-		'sales_representative_id' => 'int'
+		'sales_representative_id' => 'int',
+		'options' => 'array'
 	];
 
 	protected $fillable = [
@@ -67,7 +68,8 @@ class OrderProduct extends Model
 		'tax',
 		'reward',
 		'app_id',
-		'sales_representative_id'
+		'sales_representative_id',
+		'options'
 	];
 
 

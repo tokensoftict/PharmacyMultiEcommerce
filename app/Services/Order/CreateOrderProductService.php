@@ -11,11 +11,14 @@ use App\Models\SupermarketAdmin;
 use App\Models\SupermarketUser;
 use App\Models\WholesalesAdmin;
 use App\Models\WholesalesUser;
+use App\Traits\StockResourceHelper;
 use Illuminate\Support\Arr;
 use Ramsey\Collection\Collection;
 
 class CreateOrderProductService
 {
+    use StockResourceHelper;
+
     private WholesalesUser | SupermarketUser | WholesalesAdmin | SupermarketAdmin | SalesRepresentative| bool  $checkOutUser;
     public function __construct()
     {
@@ -44,6 +47,25 @@ class CreateOrderProductService
         $attributes['reward'] = $attributes['reward'] ?? 5;
         $attributes['app_id'] = ApplicationEnvironment::$id;
         $attributes['sales_representative_id'] = $this->checkOutUser->sales_representative_id ?? NULL;
+
+        // Resolve selected options into detailed option objects
+        $selectedOptionIds = $attributes['selected_options'] ?? [];
+        $resolvedOptions = [];
+        if (count($selectedOptionIds) > 0) {
+            $rawResolved = $this->resolveSelectedOptions($attributes['stock'], $selectedOptionIds);
+            foreach ($rawResolved as $opt) {
+                $resolvedOptions[] = [
+                    'id' => $opt['id'],
+                    'name' => $opt['group_name'] ?? '',
+                    'value' => $opt['name'] ?? '',
+                    'price' => (float)($opt['price'] ?? 0),
+                    'price_prefix' => $opt['price_prefix'] ?? '+',
+                    'group_name' => $opt['group_name'] ?? '',
+                    'value_name' => $opt['name'] ?? ''
+                ];
+            }
+        }
+        $attributes['options'] = $resolvedOptions;
 
         return $attributes;
     }
@@ -83,6 +105,7 @@ class CreateOrderProductService
             $attributes['stock'] = $stock;
             $attributes['quantity'] = $stock->cart_quantity;
             $attributes['price'] = $stock->price;
+            $attributes['selected_options'] = $stock->selected_options ?? [];
             $cartStocks [] = new OrderProduct(
                 $this->formatOrderProductAttributes($attributes)
             );
