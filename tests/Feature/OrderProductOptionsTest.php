@@ -46,7 +46,11 @@ class OrderProductOptionsTest extends TestCase
                 'price' => 250.0,
                 'price_prefix' => '+',
                 'group_name' => 'Color',
-                'value_name' => 'Crimson Red'
+                'value_name' => 'Crimson Red',
+                'option_name' => 'Color',
+                'selectedValue' => 'Crimson Red',
+                'amount' => 250.0,
+                'sign' => '+'
             ],
             [
                 'id' => 102,
@@ -55,7 +59,11 @@ class OrderProductOptionsTest extends TestCase
                 'price' => 0.0,
                 'price_prefix' => '+',
                 'group_name' => 'Size',
-                'value_name' => 'XXL'
+                'value_name' => 'XXL',
+                'option_name' => 'Size',
+                'selectedValue' => 'XXL',
+                'amount' => 0.0,
+                'sign' => '+'
             ]
         ];
 
@@ -83,6 +91,12 @@ class OrderProductOptionsTest extends TestCase
         $this->assertEquals('Crimson Red', $retrieved->options[0]['value']);
         $this->assertEquals(250.0, $retrieved->options[0]['price']);
         $this->assertEquals('XXL', $retrieved->options[1]['value']);
+        
+        // Assert Kafka-compatible keys are casted/saved correctly
+        $this->assertEquals('Color', $retrieved->options[0]['option_name']);
+        $this->assertEquals('Crimson Red', $retrieved->options[0]['selectedValue']);
+        $this->assertEquals(250.0, $retrieved->options[0]['amount']);
+        $this->assertEquals('+', $retrieved->options[0]['sign']);
     }
 
     /**

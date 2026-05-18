@@ -206,6 +206,8 @@ class CreateOrderService
             $order = Order::findorfail($order);
         }
 
+        $order->loadMissing(['order_products']);
+
         $message = new Message(
             headers: ['event' => KafkaEvent::ONLINE_PUSH],
             body: ['order' => $order->toArray(), "action" => KAFKAAction::PROCESS_ORDER],

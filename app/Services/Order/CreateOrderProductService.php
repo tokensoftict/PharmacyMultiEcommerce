@@ -61,7 +61,11 @@ class CreateOrderProductService
                     'price' => (float)($opt['price'] ?? 0),
                     'price_prefix' => $opt['price_prefix'] ?? '+',
                     'group_name' => $opt['group_name'] ?? '',
-                    'value_name' => $opt['name'] ?? ''
+                    'value_name' => $opt['name'] ?? '',
+                    'option_name' => $opt['group_name'] ?? '',
+                    'selectedValue' => $opt['name'] ?? '',
+                    'amount' => (float)($opt['price'] ?? 0),
+                    'sign' => $opt['price_prefix'] ?? '+'
                 ];
             }
         }
