@@ -936,7 +936,7 @@ function sendSMS($phone, &$user, string $message)
     if(config("app.BULKSMS_ENGINE") == "TERMII") {
         $jsonString = json_encode([
             "api_key" => config("app.TERMII_API_KEY"),
-            "to"=> "",
+            "to"=> preparePhoneNumberForTermii($phone),
             "from"=> config("app.TERMII_SENDER"),
             "sms"=> $message,
             "type"=> "plain",
@@ -949,6 +949,27 @@ function sendSMS($phone, &$user, string $message)
     return ['status' => $sent];
 }
 
+
+function preparePhoneNumberForTermii($phone)
+{
+    // Remove spaces, dashes, brackets, etc.
+    $phone = preg_replace('/\D+/', '', $phone);
+
+    // Remove leading +
+    $phone = ltrim($phone, '+');
+
+    // If already starts with 234, return as is
+    if (strpos($phone, '234') === 0) {
+        return $phone;
+    }
+
+    // If starts with 0, replace with 234
+    if (strpos($phone, '0') === 0) {
+        return '234' . substr($phone, 1);
+    }
+
+    return $phone;
+}
 
 function divide($num1, $num2)
 {
