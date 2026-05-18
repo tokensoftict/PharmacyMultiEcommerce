@@ -76,7 +76,7 @@ class NewAccountRegistration extends Notification
         $notifiable->verification_pin = $otp;
         $notifiable->update();
 
-        return "Hello ".$notifiable->firstname." Please use $otp to verify your phone number";
+        return "Hello ".$notifiable->firstname." your PS GDC verification code is $otp";
     }
 
     protected function buildMailMessage($url, $notifiable)
@@ -86,10 +86,10 @@ class NewAccountRegistration extends Notification
             ->greeting("Hello $notifiable->firstname $notifiable->lastname")
             ->line("Click the button below to confirm your email address.");
 
-        if(!is_null($notifiable->email_verification_pin)){
-            $mail->line("Or use this 6-digit verification code:")
-                ->line("**{$notifiable->email_verification_pin}**") ;
-        }
+//        if(!is_null($notifiable->email_verification_pin)){
+//            $mail->line("Or use this 6-digit verification code:")
+//                ->line("**{$notifiable->email_verification_pin}**") ;
+//        }
 
         $mail ->action("Verify Email", $url)
             ->line(Lang::get("If you did not request this email, you can safely delete this email."))

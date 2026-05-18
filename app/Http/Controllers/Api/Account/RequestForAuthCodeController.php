@@ -65,7 +65,7 @@ class RequestForAuthCodeController extends ApiController
     {
         $otp = mt_rand(1000, 9999);
         $user->auth_code = $otp;
-        $message = "Your login code is $otp. It will expire in 10 minutes. Ignore if you didn’t request this.";
+        $message = "Your PS GDC login code is $otp. It will expire in 10 minutes. Ignore if you didn’t request this.";
         $response = sendSMS($user->phone, $user, $message);
         $response = is_array($response) ? $response : json_decode($response, true);
         return true;

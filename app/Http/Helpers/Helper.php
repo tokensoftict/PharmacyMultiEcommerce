@@ -380,11 +380,11 @@ function getUserMenu2($app_id)
                 $userMenus.= '</ul></li>';
             }
 
-           if(($menus->count() - 1) === $index) {
-               $userMenus .= '';
-               $userMenus .= '</ul>';
-               $userMenus .= '</li>';
-           }
+            if(($menus->count() - 1) === $index) {
+                $userMenus .= '';
+                $userMenus .= '</ul>';
+                $userMenus .= '</li>';
+            }
 
         }else {
             if (accessToModule($menu->id)) {
@@ -920,15 +920,33 @@ function normalizePhoneNumber($phone)
 
 function sendSMS($phone, &$user, string $message)
 {
-    Http::post(config("app.BULKSMS_URL"), [
-        "email" => config("app.BULKSMS_EMAIL"),
-        "password" => config("app.BULKSMS_PASSWORD"),
-        "recipient" => $phone,
-        "message" => $message,
-        "senderid" => config("app.BULKSMS_SENDER"),
-    ]);
+    $sent = false;
+    if(config("app.BULKSMS_ENGINE") == "OTHERS") {
+        Http::post(config("app.BULKSMS_URL"), [
+            "email" => config("app.BULKSMS_EMAIL"),
+            "password" => config("app.BULKSMS_PASSWORD"),
+            "recipient" => $phone,
+            "message" => $message,
+            "senderid" => config("app.BULKSMS_SENDER"),
+        ]);
 
-    return ['status' => true];
+        $sent = true;
+    }
+
+    if(config("app.BULKSMS_ENGINE") == "TERMII") {
+        $jsonString = json_encode([
+            "api_key" => config("app.TERMII_API_KEY"),
+            "to"=> "",
+            "from"=> config("app.TERMII_SENDER"),
+            "sms"=> $message,
+            "type"=> "plain",
+            "channel"=> "dnd"
+        ]);
+        Http::withBody($jsonString, 'application/json')->post(config("app.TERMII_API_URL"));
+        $sent = true;
+    }
+
+    return ['status' => $sent];
 }
 
 

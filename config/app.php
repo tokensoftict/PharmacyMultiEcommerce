@@ -185,6 +185,12 @@ return [
     'SEND_CHAMP_TOKEN_LENGTH' => env("SEND_CHAMP_TOKEN_LENGTH", 4),
     'SEND_CHAMP_EXPIRATION_TIME' => env("SEND_CHAMP_EXPIRATION_TIME", 5),
 
+    /** TERMII_API_KEY */
+
+    "TERMII_API_KEY" => env("TERMI_API_KEY"),
+    "TERMII_API_URL" => env("TERMII_API_URL"),
+    "TERMII_SENDER" => env("TERMII_SENDER"),
+
     'PROCESS_OLD_APP_URL' => env("PROCESS_OLD_APP_URL", "https://admin.generaldrugcentre.com/api/data/"),
     'mustVerify' => env("MUST_VERIFY", 'phone'),
     'searchEngine' => env('SEARCH_ENGINE', 'APISEARCH'),
