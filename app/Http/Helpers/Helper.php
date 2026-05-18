@@ -942,7 +942,9 @@ function sendSMS($phone, &$user, string $message)
             "type"=> "plain",
             "channel"=> "dnd"
         ]);
+        dump($jsonString);
         $response = Http::withBody($jsonString, 'application/json')->post(config("app.TERMII_API_URL"));
+        dump($response->json());
         Storage::append('logs/termii_response.txt', $response->body());
         $sent = true;
     }
