@@ -50,7 +50,7 @@ class NewAccountNotificationManager
                 $otp = mt_rand(1000, 9999);
                 $user->verification_pin = $otp;
                 $user->update();
-                return "Hello " . $notifiable->firstname . " Please use $otp to verify your phone number";
+                return "Hello ".$notifiable->firstname." your PS GDC verification code is $otp";
             });
         }
 
