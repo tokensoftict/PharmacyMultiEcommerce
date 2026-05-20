@@ -3,6 +3,7 @@
 namespace App\Livewire\Backend\Admin\Customer\Wholesales;
 
 use App\Classes\ApplicationEnvironment;
+use App\Classes\ExportDataTableComponent;
 use App\Livewire\Backend\Component\WholeSales\WholeSalesCustomerFormComponent;
 use App\Models\Address;
 use App\Models\AppUser;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 
-class CustomerManagerDatatable extends DataTableComponent
+class CustomerManagerDatatable extends ExportDataTableComponent
 {
     use SimpleDatatableComponentTrait, DynamicDataTableExport, DynamicDataTableFormModal;
 
