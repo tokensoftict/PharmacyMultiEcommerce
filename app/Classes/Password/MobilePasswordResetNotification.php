@@ -54,6 +54,6 @@ class MobilePasswordResetNotification extends Notification
 
     public function toSms($notifiable)
     {
-        return "Your PS GDC reset code is ".$this->pin.". It will expire in 10 minutes. Ignore if you didn’t request this";
+        return "Your PS GDC reset code is ".$this->pin.".";
     }
 }
