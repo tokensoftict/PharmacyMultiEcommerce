@@ -131,11 +131,7 @@ class CustomerManagerDatatable extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Status", "status")
                 ->format(function($value, $row, Column $column){
-                    $status = [
-                        '1' => '<span class="badge text-bg-success">Active</span>',
-                        '0' => '<span class="badge text-bg-danger">Inactive</span>'
-                    ][$value];
-                    if(!$status) return '<span class="badge text-bg-danger">Inactive</span>';
+                    return '';
                 })->sortable()->html(),
         ];
     }
