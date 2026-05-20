@@ -82,7 +82,7 @@ class CustomerManagerDatatable extends ExportDataTableComponent
 
     public function builder(): Builder
     {
-        return WholesalesUser::query()->with(['customer_group', 'user', 'customer_type'])->orderBy('id', 'desc');
+        return WholesalesUser::query()->with(['customer_group', 'user', 'customer_type'])->orderBy('wholesales_users.id', 'desc');
     }
 
     public function mount()
