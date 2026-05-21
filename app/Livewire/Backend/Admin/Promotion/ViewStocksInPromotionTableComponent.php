@@ -83,14 +83,6 @@ class ViewStocksInPromotionTableComponent extends ExportDataTableComponent
     {
         return [
             Column::make("ID", "stock.id")->searchable()->sortable(),
-            ImageColumn::make('Image', 'stock.image')
-                ->location(function ($row) {
-                    $img = $row->stock->image ?? null;
-                    return $img === null ? asset('logo/placeholder.jpg') : asset('images/' . $img);
-                })->attributes(fn($row) => [
-                    'class' => 'd-block rounded-5',
-                    'alt' => $row->stock->name ?? '',
-                ]),
             Column::make("Name", "stock.name")->searchable()->sortable(),
             Column::make("Category", "stock.productcategory.name")
                 ->format(fn($value, $row, Column $column) => $value)
