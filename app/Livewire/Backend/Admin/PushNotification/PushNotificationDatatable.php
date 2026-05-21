@@ -186,13 +186,16 @@ class PushNotificationDatatable extends ExportDataTableComponent
             foreach ($items as $item) {
                 $item->save();
             }
-
         }
 
         $pushNotification->push_notification_customers()->delete();
-        $pushNotification->push_notification_customers()->saveMany(
-            $this->prepareAndSaveCustomers($pushNotification)
-        );
+        
+        $customers = $this->prepareAndSaveCustomers($pushNotification);
+        if (!empty($customers)) {
+            foreach (array_chunk($customers, 500) as $chunk) {
+                PushNotificationCustomer::insert($chunk);
+            }
+        }
 
         $this->pushNotification = NULL;
     }
@@ -212,18 +215,20 @@ class PushNotificationDatatable extends ExportDataTableComponent
         }
 
         $customers  = $this->prepareAndSaveCustomers($pushNotification);
-        if(is_null($customers)) {
+        if(empty($customers)) {
             $this->alert("error", "Unable to create push notification because there are zero customers found in the customer group or type you selected?");
+        } else {
+            foreach (array_chunk($customers, 500) as $chunk) {
+                PushNotificationCustomer::insert($chunk);
+            }
         }
-        $pushNotification->push_notification_customers()->saveMany($customers);
         $this->pushNotification = NULL;
-
     }
 
 
     /**
      * @param PushNotification $pushNotification
-     * @return PushNotificationCustomer[]|mixed[]
+     * @return array
      */
     public final function prepareAndSaveCustomers(PushNotification $pushNotification) : array
     {
@@ -233,25 +238,16 @@ class PushNotificationDatatable extends ExportDataTableComponent
         };
 
         if(is_null($pushNotification->customer_group_id) and is_null($pushNotification->customer_type_id)) {
-            $customers = $userModel::select('id', 'device_key')->whereNotNull('device_key')->get()->toArray();
-            return array_map(function($customer) use ($userModel){
-                return new PushNotificationCustomer([
-                    'device_key' => $customer['device_key'],
-                    'customer_type' => $userModel,
-                    'customer_id' => $customer['id'],
-                    'status_id' => status('Pending'),
-                ]);
-            }, $customers);
-
+            $customers = $userModel::select('id')->whereNotNull('device_key')->get()->toArray();
         } else {
             $typedCustomer = [];
             $groupedCustomer = [];
             if(!is_null($pushNotification->customer_group_id)) {
-                $groupedCustomer = $userModel::select('id', 'device_key')->where('customer_group_id', $pushNotification->customer_group_id)->whereNotNull('device_key')->get()->toArray();
+                $groupedCustomer = $userModel::select('id')->where('customer_group_id', $pushNotification->customer_group_id)->whereNotNull('device_key')->get()->toArray();
             }
 
             if(!is_null($pushNotification->customer_type_id)) {
-                $typedCustomer = $userModel::select('id', 'device_key')->where('customer_type_id', $pushNotification->customer_type_id)->whereNotNull('device_key')->get()->toArray();
+                $typedCustomer = $userModel::select('id')->where('customer_type_id', $pushNotification->customer_type_id)->whereNotNull('device_key')->get()->toArray();
             }
 
             $customers = array_merge($typedCustomer, $groupedCustomer);
@@ -259,20 +255,25 @@ class PushNotificationDatatable extends ExportDataTableComponent
             $cachedCustomerID = [];
             $customers = array_filter($customers, function($customer) use (&$cachedCustomerID) {
                 if(!in_array($customer['id'], $cachedCustomerID)) {
-                    return $customer;
+                    $cachedCustomerID[] = $customer['id'];
+                    return true;
                 }
                 return false;
             });
-
-            return array_map(function ($customer) use ($userModel){
-                return new PushNotificationCustomer([
-                    'device_key' => $customer['device_key'],
-                    'customer_type' => $userModel,
-                    'customer_id' => $customer['id'],
-                    'status_id' => status('Pending'),
-                ]);
-            }, $customers);
         }
 
+        $now = now();
+        $statusPending = status('Pending');
+
+        return array_map(function ($customer) use ($pushNotification, $userModel, $statusPending, $now) {
+            return [
+                'push_notification_id' => $pushNotification->id,
+                'customer_type' => $userModel,
+                'customer_id' => $customer['id'],
+                'status_id' => $statusPending,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }, $customers);
     }
 }
