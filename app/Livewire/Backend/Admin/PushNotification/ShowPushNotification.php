@@ -60,6 +60,8 @@ class ShowPushNotification extends Component
         $this->pushNotification->status = 'APPROVED';
         $this->pushNotification->save();
 
+        sendNotificationToDevice($this->pushNotification);
+
         $this->dispatch('refreshPage');
         $this->alert(
             "success",

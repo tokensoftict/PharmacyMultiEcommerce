@@ -42,9 +42,10 @@ class PromotionTableComponent extends ExportDataTableComponent
             'destroy' => 'backend.admin.settings.customer_group.destroy',
             'create'   => 'backend.admin.settings.customer_group.create',
             'approve' => 'backend.admin.promotion.approve',
+            'view_stocks' => 'backend.admin.promotion.create',
         ];
 
-        $this->extraRowAction = [];
+        $this->extraRowAction = ['view_stocks'];
 
         $this->extraRowActionButton = [
             [
@@ -55,6 +56,17 @@ class PromotionTableComponent extends ExportDataTableComponent
                 'method' => 'approve',
                 'permission' => 'approve',
                 'visible' => 'isPending'
+            ],
+            [
+                'label' => 'View Stocks',
+                'icon' => 'fa fa-eye',
+                'class' => 'btn btn-sm btn-phoenix-primary',
+                'type' => 'link',
+                'route' => "backend.admin.promotion.view_stocks",
+                'permission' => 'view_stocks',
+                'parameters' => [
+                    'id' => 'id',
+                ]
             ]
         ];
 

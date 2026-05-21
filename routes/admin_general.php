@@ -70,6 +70,7 @@ Route::middleware([PermitTask::class])->group(function () {
 
     Route::prefix('promotion')->group(function () {
         Route::get('/promotion', ['uses' => 'App\Livewire\Backend\Admin\Promotion\PromotionTableComponent'])->name('backend.admin.promotion.list');
+        Route::get('{id}/view_stocks', ['uses' => 'App\Livewire\Backend\Admin\Promotion\ViewStocksInPromotionTableComponent'])->name('backend.admin.promotion.view_stocks');
     });
 
     Route::prefix('administrator')->group(function () {
