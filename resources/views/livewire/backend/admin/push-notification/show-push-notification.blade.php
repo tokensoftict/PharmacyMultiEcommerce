@@ -123,8 +123,19 @@
                     <div class="row justify-content-between">
                         <div id="members">
                             <div class="row align-items-center justify-content-between g-3 mb-4">
-                                <h2 class="text-bold text-body-emphasis mb-1">Customer
-                                    List({{ $this->pushNotification->push_notification_customers->count() }})</h2>
+                                <div class="col-auto">
+                                    <h2 class="text-bold text-body-emphasis mb-1">Customer
+                                        List({{ $push_notification_customers->total() }})</h2>
+                                </div>
+                                <div class="col-auto col-md-6">
+                                    <div class="search-box">
+                                        <div class="position-relative">
+                                            <input wire:model.live.debounce.300ms="search" class="form-control search-input"
+                                                type="search" placeholder="Search by name, email, phone..." />
+                                            <span class="fas fa-search search-box-icon text-body-quaternary"></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="px-4 px-lg-6 mb-5 bg-body-emphasis border-y mt-2 position-relative top-1">
                                 <div class="table-responsive scrollbar ms-n1 ps-1">
@@ -142,7 +153,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="list" id="members-table-body">
-                                            @foreach($this->pushNotification->push_notification_customers as $customer)
+                                            @forelse($push_notification_customers as $customer)
                                                 <tr class="hover-actions-trigger btn-reveal-trigger position-static">
                                                     <td class="customer align-middle white-space-nowrap"><a
                                                             class="d-flex align-items-center text-body text-hover-1000"
@@ -164,9 +175,16 @@
                                                     </td>
                                                     <td>{!! showStatus($customer->status_id) !!}</td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center py-4 text-muted">No customers found.</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="mt-3">
+                                    {{ $push_notification_customers->links() }}
                                 </div>
                             </div>
                         </div>
