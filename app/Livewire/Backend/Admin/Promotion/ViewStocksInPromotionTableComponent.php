@@ -20,7 +20,7 @@ class ViewStocksInPromotionTableComponent extends ExportDataTableComponent
 
     protected $model = PromotionItem::class;
 
-    public static String $permissionComponentName = 'promotion_manager';
+    public static string $permissionComponentName = 'promotion_manager';
 
     public function __construct()
     {
@@ -30,32 +30,32 @@ class ViewStocksInPromotionTableComponent extends ExportDataTableComponent
             'view' => 'backend.admin.promotion.create',
         ];
 
-        $this->extraRowAction = ['view'];
+        // $this->extraRowAction = ['view'];
 
-        $this->extraRowActionButton = [
-            [
-                'label' => 'View',
-                'type' => 'link',
-                'route' => "backend.admin.stock_manager.view",
-                'permission' => 'view',
-                'class' => 'btn btn-sm btn-outline-primary',
-                'icon' => 'fa fa-eye-o',
-                'parameters' => [
-                    'id' => 'stock_id',
-                ]
-            ]
-        ];
+        // $this->extraRowActionButton = [
+        //     [
+        //         'label' => 'View',
+        //         'type' => 'link',
+        //         'route' => "backend.admin.stock_manager.view",
+        //         'permission' => 'view',
+        //         'class' => 'btn btn-sm btn-outline-primary',
+        //         'icon' => 'fa fa-eye-o',
+        //         'parameters' => [
+        //             'id' => 'stock_id',
+        //         ]
+        //     ]
+        // ];
 
         $this->pageHeaderTitle = "Promotion Stock Lists";
 
         $this->breadcrumbs = [
             [
-                'route' => route(ApplicationEnvironment::$storePrefix.'admin.dashboard'),
+                'route' => route(ApplicationEnvironment::$storePrefix . 'admin.dashboard'),
                 'name' => "Dashboard",
                 'active' => false
             ],
             [
-                'route' => route(ApplicationEnvironment::$storePrefix.'backend.admin.promotion.list'),
+                'route' => route(ApplicationEnvironment::$storePrefix . 'backend.admin.promotion.list'),
                 'name' => "Promotion Lists",
                 'active' => false
             ],
@@ -69,7 +69,7 @@ class ViewStocksInPromotionTableComponent extends ExportDataTableComponent
     public function builder(): Builder
     {
         return PromotionItem::query()
-            ->with(['stock.productgroup', 'stock.'.ApplicationEnvironment::$stock_model_string, 'stock.manufacturer', 'stock.classification', 'stock.productcategory'])
+            ->with(['stock.productgroup', 'stock.' . ApplicationEnvironment::$stock_model_string, 'stock.manufacturer', 'stock.classification', 'stock.productcategory'])
             ->where('promotion_id', $this->id);
     }
 
@@ -79,15 +79,15 @@ class ViewStocksInPromotionTableComponent extends ExportDataTableComponent
         $this->data = [];
     }
 
-    public static function mountColumn() : array
+    public static function mountColumn(): array
     {
         return [
             Column::make("ID", "stock.id")->searchable()->sortable(),
             ImageColumn::make('Image', 'stock.image')
-                ->location(function($row) {
+                ->location(function ($row) {
                     $img = $row->stock->image ?? null;
-                    return $img === null ? asset('logo/placeholder.jpg') : asset('images/'.$img);
-                }) ->attributes(fn($row) => [
+                    return $img === null ? asset('logo/placeholder.jpg') : asset('images/' . $img);
+                })->attributes(fn($row) => [
                     'class' => 'd-block rounded-5',
                     'alt' => $row->stock->name ?? '',
                 ]),
@@ -98,7 +98,7 @@ class ViewStocksInPromotionTableComponent extends ExportDataTableComponent
             Column::make("Classification", "stock.classification.name")
                 ->format(fn($value, $row, Column $column) => $value)
                 ->searchable()->sortable(),
-            Column::make("Original Price", "stock.".ApplicationEnvironment::$stock_model_string.".price")
+            Column::make("Original Price", "stock." . ApplicationEnvironment::$stock_model_string . ".price")
                 ->format(fn($value, $row, Column $column) => money($value))
                 ->sortable(),
             Column::make("Promo Price", "price")
