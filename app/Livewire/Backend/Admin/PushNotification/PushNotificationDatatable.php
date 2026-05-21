@@ -204,16 +204,20 @@ class PushNotificationDatatable extends ExportDataTableComponent
      */
     public final function onCreate(PushNotification $pushNotification)
     {
-        $items = $this->ImportPushNotificationItems($pushNotification);
-        foreach ($items as $item) {
-            $item->save();
+        if(isset($this->formData['file'])) {
+            $items = $this->ImportPushNotificationItems($pushNotification);
+            foreach ($items as $item) {
+                $item->save();
+            }
         }
+
         $customers  = $this->prepareAndSaveCustomers($pushNotification);
         if(is_null($customers)) {
             $this->alert("error", "Unable to create push notification because there are zero customers found in the customer group or type you selected?");
         }
         $pushNotification->push_notification_customers()->saveMany($customers);
         $this->pushNotification = NULL;
+
     }
 
 

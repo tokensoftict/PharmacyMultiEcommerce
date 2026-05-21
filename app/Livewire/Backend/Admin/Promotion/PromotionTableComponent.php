@@ -41,9 +41,22 @@ class PromotionTableComponent extends ExportDataTableComponent
             'edit' => 'backend.admin.promotion.create',
             'destroy' => 'backend.admin.settings.customer_group.destroy',
             'create'   => 'backend.admin.settings.customer_group.create',
+            'approve' => 'backend.admin.promotion.approve',
         ];
 
         $this->extraRowAction = [];
+
+        $this->extraRowActionButton = [
+            [
+                'label' => 'Approve',
+                'icon' => 'fa fa-check',
+                'class' => 'btn btn-sm btn-phoenix-success',
+                'type' => 'method',
+                'method' => 'approve',
+                'permission' => 'approve',
+                'visible' => 'isPending'
+            ]
+        ];
 
         $this->pageHeaderTitle = "Promotion Lists";
 
@@ -250,5 +263,33 @@ class PromotionTableComponent extends ExportDataTableComponent
         else {
             return Excel::download(new ExportPromotionTemplate(), 'stock-promotional-template-' . todaysDate() . '.xlsx');
         }
+    }
+
+    /**
+     * Check if a promotion is pending approval.
+     *
+     * @param Promotion $row
+     * @return bool
+     */
+    public function isPending($row)
+    {
+        return $row->status_id == status('Pending');
+    }
+
+    /**
+     * Approve a promotion.
+     *
+     * @param int $id
+     * @return void
+     */
+    public function approve($id)
+    {
+        $promotion = Promotion::find($id);
+        if ($promotion) {
+            $promotion->status_id = status('Approved');
+            $promotion->save();
+            $promotion->promotion_items()->update(['status_id' => status('Approved')]);
+        }
+        $this->refreshTable();
     }
 }
