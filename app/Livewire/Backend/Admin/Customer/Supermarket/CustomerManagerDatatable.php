@@ -103,7 +103,7 @@ class CustomerManagerDatatable extends ExportDataTableComponent
             Column::make("Group", "customer_group.name")
                 ->format(fn($value, $row, Column $column) => $value)
                 ->sortable(),
-            Column::make("Phone Number", "phone")->searchable()->sortable(),
+            Column::make("Phone Number", "user.lastname")->searchable()->sortable(),
             Column::make("Exist On Local", "customer_local_id")
                 ->format(function($value, $row, Column $column){
                     return match ($value){
@@ -112,11 +112,11 @@ class CustomerManagerDatatable extends ExportDataTableComponent
                     };
                 })->sortable()->html()
                 ->sortable(),
-            Column::make("Status", "status")
+            Column::make("Status", "user.email_verified_at")
                 ->format(function($value, $row, Column $column){
                     return [
-                        '1' => '<span class="badge text-bg-success">Active</span>',
-                        '0' => '<span class="badge text-bg-danger">Inactive</span>'
+                        !null => '<span class="badge text-bg-success">Active</span>',
+                        null => '<span class="badge text-bg-danger">Inactive</span>'
                     ][$value];
                 })->sortable()->html(),
         ];
