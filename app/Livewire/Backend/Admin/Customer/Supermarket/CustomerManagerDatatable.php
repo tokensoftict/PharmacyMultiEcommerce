@@ -103,7 +103,7 @@ class CustomerManagerDatatable extends ExportDataTableComponent
             Column::make("Group", "customer_group.name")
                 ->format(fn($value, $row, Column $column) => $value)
                 ->sortable(),
-            Column::make("Phone Number", "user.lastname")->searchable()->sortable(),
+            Column::make("Phone Number", "user.phone")->searchable()->sortable(),
             Column::make("Exist On Local", "customer_local_id")
                 ->format(function($value, $row, Column $column){
                     return match ($value){
