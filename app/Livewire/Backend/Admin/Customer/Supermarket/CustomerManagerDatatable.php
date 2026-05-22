@@ -112,12 +112,12 @@ class CustomerManagerDatatable extends ExportDataTableComponent
                     };
                 })->sortable()->html()
                 ->sortable(),
-            Column::make("Status", "user.email_verified_at")
+            Column::make("Status", "user.phone_verified_at")
                 ->format(function($value, $row, Column $column){
-                    if(is_null($value)){
-                        return  '<span class="badge text-bg-danger">Inactive</span>';
-                    }
-                    return '<span class="badge text-bg-success">Active</span>';
+                    return match ($value) {
+                        !null => '<span class="badge text-bg-success">Active</span>',
+                        null => '<span class="badge text-bg-danger">Inactive</span>'
+                    };
                 })->sortable()->html(),
         ];
     }
