@@ -29,7 +29,7 @@ class ImportOrderFromOldServer extends Command
     public function handle()
     {
         $importOrderService = app(ImportOrderService::class);
-        $lastOrder = Cache::get('last_order_id', 26279);
+        $lastOrder = Cache::get('last_order_id', 64525);
         $orders = Order::with(['user','address','address.zone','orderStatus','orderTotalOrders','orderProducts','paymentMethod','shippingMethod','shippingAddress','shippingAddress.zone'])
             ->where('id', '>',$lastOrder)->limit(50)->get();
 
