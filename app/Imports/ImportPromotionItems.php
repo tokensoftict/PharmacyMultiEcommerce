@@ -39,6 +39,7 @@ class ImportPromotionItems implements ToCollection,WithHeadingRow
                 'customer_group_id' => $this->promotion->customer_group_id,
                 'customer_type_id' => $this->promotion->customer_type_id,
                 'domain' => $this->promotion->domain,
+                'app_id' => $this->promotion->app_id,
                 'from_date' => $this->promotion->from_date,
                 'end_date' => $this->promotion->end_date,
                 'created' => $this->promotion->created,
