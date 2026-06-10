@@ -7,24 +7,25 @@ use LivewireFilemanager\Filemanager\Http\Controllers\Files\FileController;
 
 
 
+foreach (config('app.MAIN_DOMAIN', []) as $domain) {
+    Route::domain($domain)->middleware(['web'])->group(function () {
+        Route::view('/coupon-terms', 'coupon_terms')->name('coupon.terms');
+        Volt::route('/', 'pages.frontend.customer.index')->name('customer.index');
+        //Route::get('/', [\App\Http\Controllers\HomePageController::class, 'index'])->name('customer.index');
+        Route::get('file-manager', 'App\Http\Controllers\Utilities\FileManagerController@index')->name('file-manager.index');
+        Route::prefix('sales-representative')->name('sales-representative.')->group(function () {
+            Volt::route('{token}/accept-invitation', 'pages.salesrep.accept_invitation')->name('sales_rep.accept-invitation');
+        });
 
-Route::domain(config('app.MAIN_DOMAIN'))->middleware(['web'])->group(function () {
-    Route::view('/coupon-terms', 'coupon_terms')->name('coupon.terms');
-    Volt::route('/', 'pages.frontend.customer.index')->name('customer.index');
-    //Route::get('/', [\App\Http\Controllers\HomePageController::class, 'index'])->name('customer.index');
-    Route::get('file-manager', 'App\Http\Controllers\Utilities\FileManagerController@index')->name('file-manager.index');
-    Route::prefix('sales-representative')->name('sales-representative.')->group(function () {
-        Volt::route('{token}/accept-invitation', 'pages.salesrep.accept_invitation')->name('sales_rep.accept-invitation');
+        Route::prefix('administrator')->name('administrator.')->group(function () {
+            Volt::route('{token}/accept-invitation', 'pages.administrator.accept_invitation')->name('admin.accept-invitation');
+        });
+
+
+        Route::get('{path}', [FileController::class, 'show'])->where('path', '.*')->name('assets.show');
+
     });
-
-    Route::prefix('administrator')->name('administrator.')->group(function () {
-        Volt::route('{token}/accept-invitation', 'pages.administrator.accept_invitation')->name('admin.accept-invitation');
-    });
-
-
-    Route::get('{path}', [FileController::class, 'show'])->where('path', '.*')->name('assets.show');
-
-});
+}
 
 
 

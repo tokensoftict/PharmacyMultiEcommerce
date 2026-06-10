@@ -126,26 +126,30 @@ return [
     'SUPER_ADMINISTRATOR' => env('SUPER_ADMINISTRATOR', 'Super Administrator'),
 
     /** Admin URL */
-    'WHOLESALES_ADMIN' => env('WHOLESALES_ADMIN', 'wa.psgdc.store'),
+    'WHOLESALES_ADMIN' => explode(",",env('WHOLESALES_ADMIN', 'wa.generaldrugcentre.com,wa.psgdc.store')),
     'WHOLESALES_ADMIN_ROUTE_PREFIX' => env('WHOLESALES_ADMIN_ROUTE_PREFIX', 'wa.'),
 
-    'SUPERMARKET_ADMIN' => env('SUPERMARKET_ADMIN', 'sa.psgdc.store'),
+    'SUPERMARKET_ADMIN' =>  explode(",",env('SUPERMARKET_ADMIN', 'sa.generaldrugcentre.com,sa.psgdc.store')),
     'SUPERMARKET_ADMIN_ROUTE_PREFIX' => env('SUPERMARKET_ADMIN_ROUTE_PREFIX', 'sa.'),
 
-    'WHOLESALES_DOMAIN' => env('WHOLESALES_DOMAIN', 'wholesales.psgdc.store'),
+    'WHOLESALES_DOMAIN' => explode(",",env('WHOLESALES_DOMAIN', 'wholesales.generaldrugcentre.com,wholesales.psgdc.store')),
     'WHOLESALES_DOMAIN_ROUTE_PREFIX' => env('WHOLESALES_DOMAIN_ROUTE_PREFIX', 'wholesales.'),
 
-    'SUPERMARKET_DOMAIN' => env('SUPERMARKET_DOMAIN', 'supermarket.psgdc.store'),
+    'SUPERMARKET_DOMAIN' => explode(",",env('SUPERMARKET_DOMAIN', 'supermarkets.generaldrugcentre.com,supermarket.psgdc.store')),
     'SUPERMARKET_DOMAIN_ROUTE_PREFIX' => env('SUPERMARKET_DOMAIN_ROUTE_PREFIX', 'supermarket.'),
 
 
-
     /** Main URL */
-    'MAIN_DOMAIN' => env('MAIN_DOMAIN', 'psgdc.store'),
-    'AUTH_DOMAIN' => env('AUTH_DOMAIN', "auth.psgdc.store"),
-    'ADMIN_DOMAIN' => env('ADMIN_DOMAIN', 'admin.psgdc.store'),
-    "PUSH_DOMAIN" => env("PUSH_DOMAIN", "pa.psgdc.store"),
-    'SALES_REPRESENTATIVES' => env('SALES_REPRESENTATIVES', 'rep.psgdc.store'),
+    'MAIN_DOMAIN' => explode(",",env('MAIN_DOMAIN', 'generaldrugcentre.com,psgdc.store')),
+
+    'AUTH_DOMAIN' => explode(",",env('AUTH_DOMAIN', "auth.generaldrugcentre.com,auth.psgdc.store")),
+
+    'ADMIN_DOMAIN' => explode(",",env('ADMIN_DOMAIN', 'admin.generaldrugcentre.com,admin.psgdc.store')),
+
+    "PUSH_DOMAIN" => explode(",",env("PUSH_DOMAIN", "pa.generaldrugcentre.com,pa.psgdc.store")),
+
+    'SALES_REPRESENTATIVES' => explode(",",env('SALES_REPRESENTATIVES', 'rep.generaldrugcentre.com,rep.psgdc.store')),
+
     'SALES_REPRESENTATIVES_ROUTE_PREFIX' => env('SALES_REPRESENTATIVES_ROUTE_PREFIX', 'sales_representatives.'),
     /** Api URL */
 

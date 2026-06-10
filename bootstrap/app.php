@@ -22,59 +22,235 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
-        then: function (){
-            Route::middleware([DetectApplicationEnvironment::class, 'web'])->group(base_path("routes/auth.php"));
+        then: function () {
 
-            Route::middleware(['auth',DetectApplicationEnvironment::class, 'web','verified'])
-                ->domain(config('app.SUPERMARKET_ADMIN'))
-                ->name(config('app.SUPERMARKET_ADMIN_ROUTE_PREFIX'))
-                ->group(base_path("routes/admin_general.php"))
-                ->group(base_path("routes/supermaket.admin.php"));
+            /*
+            |--------------------------------------------------------------------------
+            | AUTH ROUTES
+            |--------------------------------------------------------------------------
+            */
+            Route::middleware([DetectApplicationEnvironment::class, 'web'])
+                ->group(base_path("routes/auth.php"));
 
+            /*
+            |--------------------------------------------------------------------------
+            | SHARED MIDDLEWARE DEFINITIONS
+            |--------------------------------------------------------------------------
+            */
+            $webAuthMiddleware = [
+                'auth',
+                DetectApplicationEnvironment::class,
+                'web',
+                'verified'
+            ];
 
-            Route::middleware(['auth',DetectApplicationEnvironment::class, 'web','verified'])
-                ->domain(config('app.WHOLESALES_ADMIN'))
-                ->name(config('app.WHOLESALES_ADMIN_ROUTE_PREFIX'))
-                ->group(base_path("routes/admin_general.php"))
-                ->group(base_path("routes/wholesales.admin.php"));
+            /*
+            |--------------------------------------------------------------------------
+            | SAFE DOMAIN ROUTE REGISTRAR
+            |--------------------------------------------------------------------------
+            */
+            $registerDomainRoutes = function (
+                $domains,
+                array $middleware,
+                string $namePrefix,
+                array $files,
+                ?string $prefix = null,
+                ?string $namespace = null
+            ) {
+                // ensure it's always iterable
+                $domains = is_array($domains) ? $domains : [$domains];
 
+                foreach ($domains as $domain) {
+
+                    // skip invalid empty values (VERY IMPORTANT)
+                    if (!$domain) continue;
+
+                    foreach ($files as $file) {
+
+                        $route = Route::middleware($middleware)
+                            ->domain($domain)
+                            ->name($namePrefix);
+
+                        if ($prefix) {
+                            $route->prefix($prefix);
+                        }
+
+                        if ($namespace) {
+                            $route->namespace($namespace);
+                        }
+
+                        $route->group(base_path($file));
+                    }
+                }
+            };
+
+            /*
+            |--------------------------------------------------------------------------
+            | ADMIN (SUPERMARKET)
+            |--------------------------------------------------------------------------
+            */
+            $registerDomainRoutes(
+                config('app.SUPERMARKET_ADMIN'),
+                $webAuthMiddleware,
+                config('app.SUPERMARKET_ADMIN_ROUTE_PREFIX'),
+                [
+                    "routes/admin_general.php",
+                    "routes/supermaket.admin.php",
+                ]
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | ADMIN (WHOLESALES)
+            |--------------------------------------------------------------------------
+            */
+            $registerDomainRoutes(
+                config('app.WHOLESALES_ADMIN'),
+                $webAuthMiddleware,
+                config('app.WHOLESALES_ADMIN_ROUTE_PREFIX'),
+                [
+                    "routes/admin_general.php",
+                    "routes/wholesales.admin.php",
+                ]
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | UTILITIES
+            |--------------------------------------------------------------------------
+            */
             Route::middleware(['web'])
                 ->group(base_path("routes/utilities.php"));
 
-            /**  API ROUTE STATE HERE */
-            Route::middleware(['api',DetectApplicationEnvironment::class, ForceJsonResponse::class , DataPushApiMiddleware::class])
-                ->domain(config('app.PUSH_DOMAIN'))
-                ->group(base_path("routes/push.api.php"));
+            /*
+            |--------------------------------------------------------------------------
+            | PUSH API
+            |--------------------------------------------------------------------------
+            */
+            foreach (config('app.PUSH_DOMAIN') as $domain) {
 
-            Route::middleware([CustomSuperMarketMiddleware::class, DetectApplicationEnvironment::class, 'api', ForceJsonResponse::class])
-                ->prefix('api/v1')
-                ->domain(config('app.SUPERMARKET_DOMAIN'))
-                ->namespace('App\Http\Controllers\Api')
-                ->name(config('app.SUPERMARKET_DOMAIN_ROUTE_PREFIX'))
-                ->group(base_path("routes/api_general.php"))
-                ->group(base_path("routes/supermarket.api.php"));
+                if (!$domain) continue;
 
-            Route::middleware(['auth:sanctum', DetectWholesalesSalesRepresentativesImpersonation::class, DetectApplicationEnvironment::class,'api',ForceJsonResponse::class])
-                ->prefix('api/v1')
-                ->domain(config('app.WHOLESALES_DOMAIN'))
-                ->name(config('app.WHOLESALES_DOMAIN_ROUTE_PREFIX'))
-                ->namespace('App\Http\Controllers\Api')
-                ->group(base_path("routes/api_general.php"))
-                ->group(base_path("routes/wholesales.api.php"));
+                Route::middleware([
+                    'api',
+                    DetectApplicationEnvironment::class,
+                    ForceJsonResponse::class,
+                    DataPushApiMiddleware::class
+                ])
+                    ->domain($domain)
+                    ->group(base_path("routes/push.api.php"));
+            }
 
-            Route::middleware(['api', DetectApplicationEnvironment::class,ForceJsonResponse::class])
-                ->prefix('api/v1')
-                ->domain(config('app.SALES_REPRESENTATIVES'))
-                ->name(config('app.SALES_REPRESENTATIVES_ROUTE_PREFIX'))
-                ->namespace('App\Http\Controllers\Api')
-                ->group(base_path("routes/sales_rep.php"));
+            /*
+            |--------------------------------------------------------------------------
+            | SUPERMARKET API
+            |--------------------------------------------------------------------------
+            */
+            foreach (config('app.SUPERMARKET_DOMAIN') as $domain) {
 
+                if (!$domain) continue;
 
-            Route::middleware(['api',DetectApplicationEnvironment::class, ForceJsonResponse::class])
-                ->prefix('api/v1')
-                ->domain(config('app.AUTH_DOMAIN'))
-                ->namespace('App\Http\Controllers\Api')
-                ->group(base_path("routes/auth.api.php"));
+                Route::middleware([
+                    CustomSuperMarketMiddleware::class,
+                    DetectApplicationEnvironment::class,
+                    'api',
+                    ForceJsonResponse::class
+                ])
+                    ->prefix('api/v1')
+                    ->domain($domain)
+                    ->namespace('App\Http\Controllers\Api')
+                    ->name(config('app.SUPERMARKET_DOMAIN_ROUTE_PREFIX'))
+                    ->group(base_path("routes/api_general.php"));
+
+                Route::middleware([
+                    CustomSuperMarketMiddleware::class,
+                    DetectApplicationEnvironment::class,
+                    'api',
+                    ForceJsonResponse::class
+                ])
+                    ->prefix('api/v1')
+                    ->domain($domain)
+                    ->namespace('App\Http\Controllers\Api')
+                    ->name(config('app.SUPERMARKET_DOMAIN_ROUTE_PREFIX'))
+                    ->group(base_path("routes/supermarket.api.php"));
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | WHOLESALES API
+            |--------------------------------------------------------------------------
+            */
+            foreach (config('app.WHOLESALES_DOMAIN') as $domain) {
+
+                if (!$domain) continue;
+
+                Route::middleware([
+                    'auth:sanctum',
+                    DetectWholesalesSalesRepresentativesImpersonation::class,
+                    DetectApplicationEnvironment::class,
+                    'api',
+                    ForceJsonResponse::class
+                ])
+                    ->prefix('api/v1')
+                    ->domain($domain)
+                    ->namespace('App\Http\Controllers\Api')
+                    ->name(config('app.WHOLESALES_DOMAIN_ROUTE_PREFIX'))
+                    ->group(base_path("routes/api_general.php"));
+
+                Route::middleware([
+                    'auth:sanctum',
+                    DetectWholesalesSalesRepresentativesImpersonation::class,
+                    DetectApplicationEnvironment::class,
+                    'api',
+                    ForceJsonResponse::class
+                ])
+                    ->prefix('api/v1')
+                    ->domain($domain)
+                    ->namespace('App\Http\Controllers\Api')
+                    ->name(config('app.WHOLESALES_DOMAIN_ROUTE_PREFIX'))
+                    ->group(base_path("routes/wholesales.api.php"));
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | SALES REP API
+            |--------------------------------------------------------------------------
+            */
+            foreach (config('app.SALES_REPRESENTATIVES') as $domain) {
+
+                if (!$domain) continue;
+
+                Route::middleware([
+                    'api',
+                    DetectApplicationEnvironment::class,
+                    ForceJsonResponse::class
+                ])
+                    ->prefix('api/v1')
+                    ->domain($domain)
+                    ->namespace('App\Http\Controllers\Api')
+                    ->name(config('app.SALES_REPRESENTATIVES_ROUTE_PREFIX'))
+                    ->group(base_path("routes/sales_rep.php"));
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | AUTH API
+            |--------------------------------------------------------------------------
+            */
+            foreach (config('app.AUTH_DOMAIN') as $domain) {
+
+                if (!$domain) continue;
+
+                Route::middleware([
+                    'api',
+                    DetectApplicationEnvironment::class,
+                    ForceJsonResponse::class
+                ])
+                    ->prefix('api/v1')
+                    ->namespace('App\Http\Controllers\Api')
+                    ->domain($domain)
+                    ->group(base_path("routes/auth.api.php"));
+            }
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
