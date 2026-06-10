@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +19,7 @@
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#0A0A0A',
+                        darkBg: '#FFFFFF',
                         purple: {
                             500: '#8B5CF6',
                             600: '#7C3AED',
@@ -88,27 +88,27 @@
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0A0A0A;
+            background: #F4F4F5;
         }
         ::-webkit-scrollbar-thumb {
-            background: #262626;
+            background: #D4D4D8;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #404040;
+            background: #A1A1AA;
         }
         
-        /* Glassmorphism custom classes */
+        /* Glassmorphism custom classes (Light Mode) */
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         .glass-card:hover {
-            border-color: rgba(124, 58, 237, 0.3);
-            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(124, 58, 237, 0.2);
+            background: rgba(255, 255, 255, 0.85);
         }
         
         .glow-border {
@@ -120,12 +120,12 @@
             inset: 0;
             border-radius: inherit;
             padding: 1px;
-            background: linear-gradient(to bottom right, rgba(124, 58, 237, 0.4), rgba(37, 99, 235, 0.4), transparent);
+            background: linear-gradient(to bottom right, rgba(124, 58, 237, 0.25), rgba(37, 99, 235, 0.25), transparent);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
-            opacity: 0.5;
+            opacity: 0.7;
             transition: opacity 0.3s ease;
         }
         .glow-border:hover::before {
@@ -133,7 +133,7 @@
         }
     </style>
 </head>
-<body class="bg-darkBg text-white antialiased overflow-x-hidden font-sans selection:bg-purple-600 selection:text-white">
+<body class="bg-white text-neutral-900 antialiased overflow-x-hidden font-sans selection:bg-purple-600 selection:text-white">
     {{ $slot }}
     
     @livewireScripts
