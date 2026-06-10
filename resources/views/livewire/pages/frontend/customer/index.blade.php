@@ -62,7 +62,7 @@ new #[Layout('layout.blank')] class extends Component {
         </nav>
 
         <div>
-            <a href="#download"
+            <a href="https://play.google.com/store/apps/details?id=com.tokensoftict.psgdc&hl=en_GB"
                 class="relative group overflow-hidden px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 transition-all duration-300 block">
                 <span class="relative z-10 text-neutral-900 flex items-center gap-1.5">
                     Download App <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
