@@ -6,7 +6,7 @@ use Livewire\Volt\Volt;
 use App\Http\Middleware\LoginWithVerificationToken;
 
 foreach (config('app.AUTH_DOMAIN', []) as $domain) {
-    Route::domain(config($domain))->group(function () {
+    Route::domain($domain)->group(function () {
         Route::middleware([])->group(function () {
             Volt::route('/', 'pages.auth.login')->name('login');
             Volt::route('register', 'pages.auth.register')->name('register');
