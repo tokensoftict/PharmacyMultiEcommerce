@@ -464,7 +464,8 @@ new #[Layout('layout.blank')] class extends Component {
             <div>
                 <h5 class="text-xs uppercase font-extrabold tracking-wider text-neutral-500 mb-4">Product</h5>
                 <ul class="space-y-2.5 text-xs text-neutral-605">
-                    <li><a href="#download" class="hover:text-black transition-colors duration-200">Download app</a>
+                    <li><a href="https://play.google.com/store/apps/details?id=com.tokensoftict.psgdc&hl=en_GB"
+                            class="hover:text-black transition-colors duration-200">Download app</a>
                     </li>
                 </ul>
             </div>
