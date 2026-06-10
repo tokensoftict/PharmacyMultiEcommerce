@@ -19,7 +19,7 @@ new #[Layout('layout.blank')] class extends Component
         <!-- Main background glow -->
         <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-brandRed-100/40 blur-[120px] animate-pulse-slow"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[65%] h-[65%] rounded-full bg-red-100/40 blur-[130px] animate-pulse-slow" style="animation-delay: 2s;"></div>
-        <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full bg-red-50/30 blur-[100px] animate-pulse-slow" style="animation-delay: 4s;"></div>
+        <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full bg-red-5/30 blur-[100px] animate-pulse-slow" style="animation-delay: 4s;"></div>
         
         <!-- Floating Accent Orbs -->
         <div class="absolute top-[15%] left-[20%] w-72 h-72 rounded-full bg-gradient-to-tr from-brandRed-200/30 to-red-200/20 blur-[60px] animate-orb-float-1"></div>
@@ -44,7 +44,6 @@ new #[Layout('layout.blank')] class extends Component
         </div>
         
         <nav class="hidden md:flex items-center gap-8 text-sm text-neutral-600 font-medium">
-            <a href="#features" class="hover:text-black transition-colors duration-200">Features</a>
             <a href="#about-us" class="hover:text-black transition-colors duration-200">About Us</a>
             <a href="#contact-us" class="hover:text-black transition-colors duration-200">Contact Us</a>
             <a href="#privacy-policy" class="hover:text-black transition-colors duration-200">Privacy Policy</a>
@@ -140,84 +139,8 @@ new #[Layout('layout.blank')] class extends Component
                         <div class="w-2.5 h-2.5 rounded-full bg-neutral-900"></div>
                     </div>
                     <!-- Screen App Content -->
-                    <div class="w-full h-full rounded-[38px] bg-[#0C0C0E] overflow-hidden flex flex-col p-4 pt-8 text-left text-xs relative select-none text-white">
-                        <div class="flex justify-between items-center text-[10px] text-neutral-400 mb-4 px-2">
-                            <span>9:41</span>
-                            <div class="flex gap-1">
-                                <i data-lucide="wifi" class="w-3 h-3"></i>
-                                <i data-lucide="battery" class="w-3.5 h-3.5"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <div class="text-neutral-500 font-semibold text-[9px] uppercase">Online Supermarket</div>
-                                <div class="text-sm font-bold">PSGDC Store</div>
-                            </div>
-                            <div class="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                                <i data-lucide="shopping-cart" class="w-4 h-4 text-brandRed-500"></i>
-                            </div>
-                        </div>
-                        
-                        <!-- Promo Banner -->
-                        <div class="p-3.5 rounded-2xl bg-gradient-to-tr from-brandRed-600/30 to-blue-500/10 border border-brandRed-500/20 mb-4">
-                            <span class="text-brandRed-500 text-[9px] font-bold uppercase">Same-Day Delivery</span>
-                            <div class="text-xs font-black mt-0.5">Free delivery for orders above ₦20,000</div>
-                            <div class="text-[9px] text-neutral-400 font-semibold mt-1">Order groceries, drugs & provisions</div>
-                        </div>
-                        
-                        <!-- Categories Grid -->
-                        <span class="text-neutral-400 text-[9px] font-semibold uppercase mb-2">Shop Categories</span>
-                        <div class="grid grid-cols-2 gap-2 mb-4">
-                            <div class="p-2 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center gap-1.5">
-                                <i data-lucide="pill" class="w-4 h-4 text-brandRed-500"></i>
-                                <span class="text-[9px] font-bold">Pharmacy</span>
-                            </div>
-                            <div class="p-2 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center gap-1.5">
-                                <i data-lucide="apple" class="w-4 h-4 text-amber-400"></i>
-                                <span class="text-[9px] font-bold">Groceries</span>
-                            </div>
-                            <div class="p-2 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center gap-1.5">
-                                <i data-lucide="baby" class="w-4 h-4 text-blue-400"></i>
-                                <span class="text-[9px] font-bold">Baby Care</span>
-                            </div>
-                            <div class="p-2 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center gap-1.5">
-                                <i data-lucide="sparkles" class="w-4 h-4 text-pink-400"></i>
-                                <span class="text-[9px] font-bold">Cosmetics</span>
-                            </div>
-                        </div>
-
-                        <!-- Product List Widget -->
-                        <div class="p-2.5 rounded-xl bg-neutral-900/60 border border-white/5 flex justify-between items-center mb-4">
-                            <div class="flex items-center gap-2">
-                                <div class="w-7 h-7 bg-white/5 rounded-lg flex items-center justify-center text-xs">💊</div>
-                                <div>
-                                    <div class="font-bold">Multivitamins Tab</div>
-                                    <div class="text-[8px] text-neutral-500">NAFDAC Reg.</div>
-                                </div>
-                            </div>
-                            <span class="text-[10px] font-bold text-brandRed-500">₦2,500</span>
-                        </div>
-                        
-                        <!-- Nav menu bar -->
-                        <div class="flex justify-between pt-2 border-t border-white/5 text-neutral-500 text-[9px] mt-auto">
-                            <div class="flex flex-col items-center gap-0.5 text-brandRed-500">
-                                <i data-lucide="store" class="w-3.5 h-3.5"></i>
-                                <span>Shop</span>
-                            </div>
-                            <div class="flex flex-col items-center gap-0.5">
-                                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                                <span>Prescription</span>
-                            </div>
-                            <div class="flex flex-col items-center gap-0.5">
-                                <i data-lucide="truck" class="w-3.5 h-3.5"></i>
-                                <span>Orders</span>
-                            </div>
-                            <div class="flex flex-col items-center gap-0.5">
-                                <i data-lucide="user" class="w-3.5 h-3.5"></i>
-                                <span>Account</span>
-                            </div>
-                        </div>
+                    <div class="w-full h-full rounded-[38px] bg-[#0C0C0E] overflow-hidden relative select-none">
+                        <img src="{{ asset('logo/interface1.png') }}" alt="PSGDC Store Interface" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
@@ -227,135 +150,9 @@ new #[Layout('layout.blank')] class extends Component
                 <div class="w-[230px] h-[460px] sm:w-[270px] sm:h-[540px] rounded-[44px] p-3 bg-neutral-950 border-[6px] border-neutral-800 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)] relative overflow-hidden ring-1 ring-white/10">
                     <div class="absolute top-4 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-neutral-950 z-50 ring-2 ring-neutral-800"></div>
                     <!-- Screen App Content -->
-                    <div class="w-full h-full rounded-[34px] bg-[#0A0A0B] overflow-hidden flex flex-col p-4 pt-8 text-left text-xs relative select-none text-white">
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-sm font-bold">Upload Prescription</span>
-                            <div class="w-7 h-7 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                                <i data-lucide="file-plus" class="w-4 h-4 text-brandRed-500"></i>
-                            </div>
-                        </div>
-                        
-                        <!-- Upload Container -->
-                        <div class="border border-dashed border-white/10 rounded-2xl p-4 text-center mb-4 flex flex-col items-center justify-center bg-white/5">
-                            <i data-lucide="image" class="w-8 h-8 text-neutral-400 mb-2"></i>
-                            <span class="text-[9px] text-neutral-300 font-semibold">Select doctor note photo</span>
-                            <span class="text-[8px] text-neutral-500 mt-1">Supports PNG, JPG, PDF</span>
-                        </div>
-                        
-                        <div class="p-3 rounded-xl bg-neutral-900 border border-white/5 text-[9px] text-neutral-400 space-y-2 mb-4">
-                            <div class="flex justify-between">
-                                <span>Verified by</span>
-                                <span class="text-white font-bold">Licensed Pharmacist</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Dispensing time</span>
-                                <span class="text-white font-bold">Under 30 mins</span>
-                            </div>
-                        </div>
-
-                        <!-- Quick checkout button -->
-                        <div class="w-full bg-brandRed-600 py-3 rounded-xl text-center text-[10px] font-bold text-white mt-auto cursor-pointer hover:bg-brandRed-500 transition-colors flex items-center justify-center gap-1.5">
-                            <i data-lucide="shield-check" class="w-4 h-4"></i> Submit to Pharmacist
-                        </div>
+                    <div class="w-full h-full rounded-[34px] bg-[#0A0A0B] overflow-hidden relative select-none">
+                        <img src="{{ asset('logo/interface2.png') }}" alt="PSGDC Prescription Upload Interface" class="w-full h-full object-cover">
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FEATURES SECTION -->
-    <section id="features" class="relative z-20 max-w-7xl mx-auto px-6 py-24 border-t border-neutral-100">
-        <div class="text-center max-w-2xl mx-auto mb-20 section-header">
-            <h2 class="text-xs uppercase font-extrabold tracking-widest text-brandRed-600 mb-3">Core App Features</h2>
-            <p class="text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-950">A Better Way to Shop Health & Groceries</p>
-            <p class="text-neutral-600 text-base md:text-lg mt-4 leading-relaxed">
-                Skip long pharmacy lines. Get all your medical essentials and grocery provisions delivered securely using our mobile app.
-            </p>
-        </div>
-        
-        <!-- Feature Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-            <!-- 1. Smart Prescription Processing -->
-            <div class="md:col-span-7 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
-                <div class="mb-10">
-                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="file-plus" class="w-6 h-6 text-brandRed-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-3 text-neutral-950">Prescription Uploads</h3>
-                    <p class="text-neutral-600 leading-relaxed max-w-md">
-                        Take a quick photo of your medical prescription. Our licensed in-house pharmacists will verify, dispense, and pack your dosage details safely.
-                    </p>
-                </div>
-                
-                <div class="bg-neutral-50 border border-neutral-200/60 rounded-2xl p-6 relative w-full overflow-hidden self-end">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs font-semibold text-neutral-700">Submit prescription script</span>
-                        <span class="text-xs text-brandRed-650 bg-red-100 px-2 py-0.5 rounded-full font-bold">Pharmacist Active</span>
-                    </div>
-                    <div class="flex gap-4 items-center">
-                        <div class="w-12 h-12 bg-neutral-200 rounded-lg flex items-center justify-center text-xl text-neutral-500">📄</div>
-                        <div class="flex-1">
-                            <div class="text-xs font-bold text-neutral-800">prescription-note-v2.jpg</div>
-                            <div class="text-[10px] text-neutral-500">Uploaded 2 mins ago • 1.4 MB</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. Grocery & Provisions Catalog -->
-            <div class="md:col-span-5 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-105 to-transparent blur-3xl rounded-full pointer-events-none"></div>
-                <div class="mb-10">
-                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="apple" class="w-6 h-6 text-amber-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-3 text-neutral-950">20,000+ Supermarket items</h3>
-                    <p class="text-neutral-600 leading-relaxed">
-                        Access an extensive catalog including imported UK groceries, baby care items, home provisions, beverages, and personal cosmetics.
-                    </p>
-                </div>
-                <div class="bg-neutral-50 border border-neutral-200/60 rounded-2xl p-4 w-full mt-4 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="text-base">🍞</span>
-                        <span class="text-xs font-bold text-neutral-800">Premium sliced bread</span>
-                    </div>
-                    <span class="text-xs font-bold text-brandRed-600">In Stock</span>
-                </div>
-            </div>
-
-            <!-- 3. Cold Chain & Medical Storage -->
-            <div class="md:col-span-5 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-50 to-transparent blur-3xl rounded-full pointer-events-none"></div>
-                <div class="mb-10">
-                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="thermometer" class="w-6 h-6 text-brandRed-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-3 text-neutral-950">Cold Chain Storage</h3>
-                    <p class="text-neutral-600 leading-relaxed">
-                        Injectables and heat-sensitive vaccines are stored and shipped using strictly monitored cooling systems to ensure maximum efficacy.
-                    </p>
-                </div>
-            </div>
-
-            <!-- 4. Same-Day Home Delivery -->
-            <div class="md:col-span-7 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
-                <div class="mb-10">
-                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="truck" class="w-6 h-6 text-brandRed-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-3 text-neutral-950">Same-Day Courier Delivery</h3>
-                    <p class="text-neutral-600 leading-relaxed max-w-md">
-                        Get your orders delivered directly across Ilorin and other locations in Kwara state in a matter of hours. Fully trackable on the map.
-                    </p>
-                </div>
-                <div class="bg-neutral-50 border border-neutral-200/60 rounded-2xl p-4 flex justify-between items-center w-full">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-4.5 h-4.5 text-brandRed-600"></i>
-                        <span class="text-xs font-bold text-neutral-800">Lajorin junction delivery point</span>
-                    </div>
-                    <span class="text-[10px] bg-red-100 text-brandRed-605 px-2 py-0.5 rounded-full font-bold">Dispatched</span>
                 </div>
             </div>
         </div>
@@ -595,7 +392,6 @@ new #[Layout('layout.blank')] class extends Component
             <div>
                 <h5 class="text-xs uppercase font-extrabold tracking-wider text-neutral-500 mb-4">Product</h5>
                 <ul class="space-y-2.5 text-xs text-neutral-605">
-                    <li><a href="#features" class="hover:text-black transition-colors duration-200">Features</a></li>
                     <li><a href="#download" class="hover:text-black transition-colors duration-200">Download app</a></li>
                 </ul>
             </div>
@@ -726,18 +522,6 @@ new #[Layout('layout.blank')] class extends Component
                         duration: 1,
                         ease: "power2.out"
                     });
-                });
-                
-                gsap.from(".feature-card", {
-                    scrollTrigger: {
-                        trigger: "#features",
-                        start: "top 70%"
-                    },
-                    opacity: 0,
-                    y: 40,
-                    stagger: 0.15,
-                    duration: 1,
-                    ease: "power3.out"
                 });
             }
         };
