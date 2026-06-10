@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="https://generaldrugcentre.com/assets/logo.png">
-    <title>Take Your Business Anywhere | PSGDC Mobile App</title>
+    <title>PSGDC Pharmacy & Supermarket Mobile App</title>
     
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,10 +20,10 @@
                 extend: {
                     colors: {
                         darkBg: '#FFFFFF',
-                        purple: {
-                            500: '#8B5CF6',
-                            600: '#7C3AED',
-                            700: '#6D28D9'
+                        brandRed: {
+                            500: '#EF4444',
+                            600: '#DC2626',
+                            700: '#B91C1C'
                         },
                         blue: {
                             500: '#3B82F6',
@@ -107,7 +107,7 @@
         }
         
         .glass-card:hover {
-            border-color: rgba(124, 58, 237, 0.2);
+            border-color: rgba(220, 38, 38, 0.2);
             background: rgba(255, 255, 255, 0.85);
         }
         
@@ -120,7 +120,7 @@
             inset: 0;
             border-radius: inherit;
             padding: 1px;
-            background: linear-gradient(to bottom right, rgba(124, 58, 237, 0.25), rgba(37, 99, 235, 0.25), transparent);
+            background: linear-gradient(to bottom right, rgba(220, 38, 38, 0.25), rgba(37, 99, 235, 0.25), transparent);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
@@ -133,7 +133,7 @@
         }
     </style>
 </head>
-<body class="bg-white text-neutral-900 antialiased overflow-x-hidden font-sans selection:bg-purple-600 selection:text-white">
+<body class="bg-white text-neutral-900 antialiased overflow-x-hidden font-sans selection:bg-brandRed-600 selection:text-white">
     {{ $slot }}
     
     @livewireScripts

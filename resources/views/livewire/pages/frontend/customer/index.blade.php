@@ -17,29 +17,29 @@ new #[Layout('layout.blank')] class extends Component
     <!-- Background Animated Mesh Gradient & Floating Orbs -->
     <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <!-- Main background glow -->
-        <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-emerald-100/40 blur-[120px] animate-pulse-slow"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[65%] h-[65%] rounded-full bg-purple-100/40 blur-[130px] animate-pulse-slow" style="animation-delay: 2s;"></div>
-        <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full bg-blue-100/30 blur-[100px] animate-pulse-slow" style="animation-delay: 4s;"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-brandRed-100/40 blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[65%] h-[65%] rounded-full bg-red-100/40 blur-[130px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+        <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full bg-red-50/30 blur-[100px] animate-pulse-slow" style="animation-delay: 4s;"></div>
         
         <!-- Floating Accent Orbs -->
-        <div class="absolute top-[15%] left-[20%] w-72 h-72 rounded-full bg-gradient-to-tr from-emerald-200/30 to-teal-200/20 blur-[60px] animate-orb-float-1"></div>
-        <div class="absolute top-[60%] right-[15%] w-[350px] h-[350px] rounded-full bg-gradient-to-br from-purple-200/25 to-blue-200/20 blur-[80px] animate-orb-float-2"></div>
-        <div class="absolute bottom-[20%] left-[10%] w-80 h-80 rounded-full bg-gradient-to-tr from-blue-200/20 to-emerald-200/30 blur-[70px] animate-orb-float-3"></div>
+        <div class="absolute top-[15%] left-[20%] w-72 h-72 rounded-full bg-gradient-to-tr from-brandRed-200/30 to-red-200/20 blur-[60px] animate-orb-float-1"></div>
+        <div class="absolute top-[60%] right-[15%] w-[350px] h-[350px] rounded-full bg-gradient-to-br from-red-200/25 to-rose-200/20 blur-[80px] animate-orb-float-2"></div>
+        <div class="absolute bottom-[20%] left-[10%] w-80 h-80 rounded-full bg-gradient-to-tr from-rose-200/20 to-brandRed-200/30 blur-[70px] animate-orb-float-3"></div>
         
         <!-- Particle Grid Overlay -->
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.08),rgba(255,255,255,0))]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(220,38,38,0.08),rgba(255,255,255,0))]"></div>
         <div class="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:24px_24px]"></div>
     </div>
     
     <!-- Interactive Mouse-Follow Glow -->
-    <div class="absolute pointer-events-none z-10 w-[400px] h-[400px] rounded-full bg-emerald-500/5 blur-[100px] -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out hidden md:block"
+    <div class="absolute pointer-events-none z-10 w-[400px] h-[400px] rounded-full bg-brandRed-500/5 blur-[100px] -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out hidden md:block"
          :style="'left: ' + mouseX + 'px; top: ' + mouseY + 'px;'"></div>
 
     <!-- Navigation Header -->
     <header class="relative z-50 max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
         <div class="flex items-center gap-3">
             <a href="#" class="flex items-center gap-2">
-                <img src="{{ asset('logo/logo.png') }}" alt="PSGDC Logo" class="h-10 w-auto object-contain">
+                <img src="{{ asset('logo/logo.png') }}" alt="PSGDC Logo" class="h-16 w-auto object-contain">
             </a>
         </div>
         
@@ -64,17 +64,17 @@ new #[Layout('layout.blank')] class extends Component
         <!-- Hero Text content -->
         <div class="lg:col-span-7 flex flex-col items-start hero-text">
             <!-- Promo Badge -->
-            <div class="mb-6 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-xs font-semibold text-emerald-600 tracking-wide">
+            <div class="mb-6 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brandRed-200 bg-red-50 text-xs font-semibold text-brandRed-600 tracking-wide">
                 <span class="flex h-2 w-2 relative">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-brandRed-600"></span>
                 </span>
                 PSGDC Pharmacy & Supermarket App
             </div>
             
             <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.15] mb-6 text-neutral-950">
                 Your Pharmacy & <br/>
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-brandRed-600 via-rose-500 to-red-700">
                     Supermarket, Delivered
                 </span>
             </h1>
@@ -154,14 +154,14 @@ new #[Layout('layout.blank')] class extends Component
                                 <div class="text-neutral-500 font-semibold text-[9px] uppercase">Online Supermarket</div>
                                 <div class="text-sm font-bold">PSGDC Store</div>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                <i data-lucide="shopping-cart" class="w-4 h-4 text-emerald-400"></i>
+                            <div class="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                                <i data-lucide="shopping-cart" class="w-4 h-4 text-brandRed-500"></i>
                             </div>
                         </div>
                         
                         <!-- Promo Banner -->
-                        <div class="p-3.5 rounded-2xl bg-gradient-to-tr from-emerald-600/30 to-blue-500/10 border border-emerald-500/20 mb-4">
-                            <span class="text-emerald-400 text-[9px] font-bold uppercase">Same-Day Delivery</span>
+                        <div class="p-3.5 rounded-2xl bg-gradient-to-tr from-brandRed-600/30 to-blue-500/10 border border-brandRed-500/20 mb-4">
+                            <span class="text-brandRed-500 text-[9px] font-bold uppercase">Same-Day Delivery</span>
                             <div class="text-xs font-black mt-0.5">Free delivery for orders above ₦20,000</div>
                             <div class="text-[9px] text-neutral-400 font-semibold mt-1">Order groceries, drugs & provisions</div>
                         </div>
@@ -170,7 +170,7 @@ new #[Layout('layout.blank')] class extends Component
                         <span class="text-neutral-400 text-[9px] font-semibold uppercase mb-2">Shop Categories</span>
                         <div class="grid grid-cols-2 gap-2 mb-4">
                             <div class="p-2 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center gap-1.5">
-                                <i data-lucide="pill" class="w-4 h-4 text-emerald-400"></i>
+                                <i data-lucide="pill" class="w-4 h-4 text-brandRed-500"></i>
                                 <span class="text-[9px] font-bold">Pharmacy</span>
                             </div>
                             <div class="p-2 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center gap-1.5">
@@ -196,12 +196,12 @@ new #[Layout('layout.blank')] class extends Component
                                     <div class="text-[8px] text-neutral-500">NAFDAC Reg.</div>
                                 </div>
                             </div>
-                            <span class="text-[10px] font-bold text-emerald-400">₦2,500</span>
+                            <span class="text-[10px] font-bold text-brandRed-500">₦2,500</span>
                         </div>
                         
                         <!-- Nav menu bar -->
                         <div class="flex justify-between pt-2 border-t border-white/5 text-neutral-500 text-[9px] mt-auto">
-                            <div class="flex flex-col items-center gap-0.5 text-emerald-400">
+                            <div class="flex flex-col items-center gap-0.5 text-brandRed-500">
                                 <i data-lucide="store" class="w-3.5 h-3.5"></i>
                                 <span>Shop</span>
                             </div>
@@ -230,8 +230,8 @@ new #[Layout('layout.blank')] class extends Component
                     <div class="w-full h-full rounded-[34px] bg-[#0A0A0B] overflow-hidden flex flex-col p-4 pt-8 text-left text-xs relative select-none text-white">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm font-bold">Upload Prescription</span>
-                            <div class="w-7 h-7 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                <i data-lucide="file-plus" class="w-4 h-4 text-emerald-400"></i>
+                            <div class="w-7 h-7 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                                <i data-lucide="file-plus" class="w-4 h-4 text-brandRed-500"></i>
                             </div>
                         </div>
                         
@@ -254,7 +254,7 @@ new #[Layout('layout.blank')] class extends Component
                         </div>
 
                         <!-- Quick checkout button -->
-                        <div class="w-full bg-emerald-600 py-3 rounded-xl text-center text-[10px] font-bold text-white mt-auto cursor-pointer hover:bg-emerald-500 transition-colors flex items-center justify-center gap-1.5">
+                        <div class="w-full bg-brandRed-600 py-3 rounded-xl text-center text-[10px] font-bold text-white mt-auto cursor-pointer hover:bg-brandRed-500 transition-colors flex items-center justify-center gap-1.5">
                             <i data-lucide="shield-check" class="w-4 h-4"></i> Submit to Pharmacist
                         </div>
                     </div>
@@ -266,7 +266,7 @@ new #[Layout('layout.blank')] class extends Component
     <!-- FEATURES SECTION -->
     <section id="features" class="relative z-20 max-w-7xl mx-auto px-6 py-24 border-t border-neutral-100">
         <div class="text-center max-w-2xl mx-auto mb-20 section-header">
-            <h2 class="text-xs uppercase font-extrabold tracking-widest text-emerald-600 mb-3">Core App Features</h2>
+            <h2 class="text-xs uppercase font-extrabold tracking-widest text-brandRed-600 mb-3">Core App Features</h2>
             <p class="text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-950">A Better Way to Shop Health & Groceries</p>
             <p class="text-neutral-600 text-base md:text-lg mt-4 leading-relaxed">
                 Skip long pharmacy lines. Get all your medical essentials and grocery provisions delivered securely using our mobile app.
@@ -277,10 +277,10 @@ new #[Layout('layout.blank')] class extends Component
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
             <!-- 1. Smart Prescription Processing -->
             <div class="md:col-span-7 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-emerald-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
                 <div class="mb-10">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="file-plus" class="w-6 h-6 text-emerald-600"></i>
+                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+                        <i data-lucide="file-plus" class="w-6 h-6 text-brandRed-600"></i>
                     </div>
                     <h3 class="text-2xl font-bold mb-3 text-neutral-950">Prescription Uploads</h3>
                     <p class="text-neutral-600 leading-relaxed max-w-md">
@@ -291,7 +291,7 @@ new #[Layout('layout.blank')] class extends Component
                 <div class="bg-neutral-50 border border-neutral-200/60 rounded-2xl p-6 relative w-full overflow-hidden self-end">
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-xs font-semibold text-neutral-700">Submit prescription script</span>
-                        <span class="text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full font-bold">Pharmacist Active</span>
+                        <span class="text-xs text-brandRed-650 bg-red-100 px-2 py-0.5 rounded-full font-bold">Pharmacist Active</span>
                     </div>
                     <div class="flex gap-4 items-center">
                         <div class="w-12 h-12 bg-neutral-200 rounded-lg flex items-center justify-center text-xl text-neutral-500">📄</div>
@@ -305,10 +305,10 @@ new #[Layout('layout.blank')] class extends Component
 
             <!-- 2. Grocery & Provisions Catalog -->
             <div class="md:col-span-5 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-105 to-transparent blur-3xl rounded-full pointer-events-none"></div>
                 <div class="mb-10">
                     <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="apple" class="w-6 h-6 text-amber-650"></i>
+                        <i data-lucide="apple" class="w-6 h-6 text-amber-600"></i>
                     </div>
                     <h3 class="text-2xl font-bold mb-3 text-neutral-950">20,000+ Supermarket items</h3>
                     <p class="text-neutral-600 leading-relaxed">
@@ -320,16 +320,16 @@ new #[Layout('layout.blank')] class extends Component
                         <span class="text-base">🍞</span>
                         <span class="text-xs font-bold text-neutral-800">Premium sliced bread</span>
                     </div>
-                    <span class="text-xs font-bold text-emerald-600">In Stock</span>
+                    <span class="text-xs font-bold text-brandRed-600">In Stock</span>
                 </div>
             </div>
 
             <!-- 3. Cold Chain & Medical Storage -->
             <div class="md:col-span-5 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-50 to-transparent blur-3xl rounded-full pointer-events-none"></div>
                 <div class="mb-10">
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="thermometer" class="w-6 h-6 text-blue-600"></i>
+                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+                        <i data-lucide="thermometer" class="w-6 h-6 text-brandRed-600"></i>
                     </div>
                     <h3 class="text-2xl font-bold mb-3 text-neutral-950">Cold Chain Storage</h3>
                     <p class="text-neutral-600 leading-relaxed">
@@ -340,10 +340,10 @@ new #[Layout('layout.blank')] class extends Component
 
             <!-- 4. Same-Day Home Delivery -->
             <div class="md:col-span-7 glass-card rounded-3xl p-8 md:p-10 flex flex-col justify-between overflow-hidden relative group glow-border feature-card shadow-sm">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-purple-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-100 to-transparent blur-3xl rounded-full pointer-events-none"></div>
                 <div class="mb-10">
-                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6">
-                        <i data-lucide="truck" class="w-6 h-6 text-purple-600"></i>
+                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+                        <i data-lucide="truck" class="w-6 h-6 text-brandRed-600"></i>
                     </div>
                     <h3 class="text-2xl font-bold mb-3 text-neutral-950">Same-Day Courier Delivery</h3>
                     <p class="text-neutral-600 leading-relaxed max-w-md">
@@ -352,10 +352,10 @@ new #[Layout('layout.blank')] class extends Component
                 </div>
                 <div class="bg-neutral-50 border border-neutral-200/60 rounded-2xl p-4 flex justify-between items-center w-full">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-4.5 h-4.5 text-emerald-605"></i>
+                        <i data-lucide="map-pin" class="w-4.5 h-4.5 text-brandRed-600"></i>
                         <span class="text-xs font-bold text-neutral-800">Lajorin junction delivery point</span>
                     </div>
-                    <span class="text-[10px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full font-bold">Dispatched</span>
+                    <span class="text-[10px] bg-red-100 text-brandRed-605 px-2 py-0.5 rounded-full font-bold">Dispatched</span>
                 </div>
             </div>
         </div>
@@ -366,7 +366,7 @@ new #[Layout('layout.blank')] class extends Component
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             <!-- Left Column: Rich editorial details -->
             <div class="lg:col-span-7 space-y-6">
-                <h2 class="text-xs uppercase font-extrabold tracking-widest text-emerald-600">About Our Company</h2>
+                <h2 class="text-xs uppercase font-extrabold tracking-widest text-brandRed-600">About Our Company</h2>
                 <h3 class="text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-950 leading-tight">
                     Providing Access to Quality & Affordable Medicines
                 </h3>
@@ -378,7 +378,7 @@ new #[Layout('layout.blank')] class extends Component
                 </p>
                 <div class="p-6 rounded-3xl bg-neutral-50 border border-neutral-200/60 space-y-4">
                     <div class="flex items-center gap-3">
-                        <i data-lucide="shield-check" class="w-6 h-6 text-emerald-600 flex-shrink-0"></i>
+                        <i data-lucide="shield-check" class="w-6 h-6 text-brandRed-600 flex-shrink-0"></i>
                         <span class="text-sm font-bold text-neutral-900">NAFDAC Certified Products</span>
                     </div>
                     <p class="text-xs text-neutral-500 leading-relaxed pl-9">
@@ -387,12 +387,12 @@ new #[Layout('layout.blank')] class extends Component
                 </div>
             </div>
             
-            <!-- Right Column: Visual illustration connecting to manufacturing arm -->
+            <!-- Right Column: Visual Connection -->
             <div class="lg:col-span-5 space-y-6">
-                <div class="glass-card rounded-[32px] p-8 space-y-6 glow-border shadow-sm bg-gradient-to-br from-emerald-50/30 to-blue-50/20">
+                <div class="glass-card rounded-[32px] p-8 space-y-6 glow-border shadow-sm bg-gradient-to-br from-red-50/30 to-rose-50/20">
                     <h4 class="text-xs uppercase font-extrabold tracking-wider text-neutral-500">Manufacturing Connection</h4>
                     <div class="flex gap-4 items-center">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center text-brandRed-600">
                             <i data-lucide="factory" class="w-6 h-6"></i>
                         </div>
                         <div>
@@ -400,14 +400,14 @@ new #[Layout('layout.blank')] class extends Component
                             <span class="text-xs text-neutral-500">Our Parent Manufacturing Arm</span>
                         </div>
                     </div>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
+                    <p class="text-xs text-neutral-605 leading-relaxed">
                         PSGDC operates as a direct distribution subsidiary of Peace Standard Pharmaceutical Industries Ltd. This connection links our inventory directly to a state-of-the-art manufacturing arm formulating over 50 quality pharmaceutical products.
                     </p>
                 </div>
                 
                 <div class="glass-card rounded-[32px] p-8 space-y-4 glow-border shadow-sm">
                     <h4 class="text-xs uppercase font-extrabold tracking-wider text-neutral-500">Our Objective</h4>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
+                    <p class="text-xs text-neutral-605 leading-relaxed">
                         Promoting healthcare accessibility, security, and affordability across Kwara state and Nigeria at large.
                     </p>
                 </div>
@@ -418,7 +418,7 @@ new #[Layout('layout.blank')] class extends Component
     <!-- CONTACT US SECTION -->
     <section id="contact-us" class="relative z-20 max-w-7xl mx-auto px-6 py-24 border-t border-neutral-100">
         <div class="text-center max-w-2xl mx-auto mb-20 section-header">
-            <h2 class="text-xs uppercase font-extrabold tracking-widest text-blue-600 mb-3">Contact Support</h2>
+            <h2 class="text-xs uppercase font-extrabold tracking-widest text-brandRed-600 mb-3">Contact Support</h2>
             <p class="text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-950">Get In Touch With Us</p>
             <p class="text-neutral-600 text-base md:text-lg mt-4 leading-relaxed">
                 Have questions about prescriptions, deliveries, or wholesales? Reach our support team.
@@ -430,7 +430,7 @@ new #[Layout('layout.blank')] class extends Component
             <div class="lg:col-span-5 space-y-6">
                 <div class="glass-card rounded-3xl p-8 space-y-6 shadow-sm">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-brandRed-600 flex-shrink-0">
                             <i data-lucide="map-pin" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -442,7 +442,7 @@ new #[Layout('layout.blank')] class extends Component
                     </div>
                     
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-brandRed-600 flex-shrink-0">
                             <i data-lucide="phone" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -454,7 +454,7 @@ new #[Layout('layout.blank')] class extends Component
                     </div>
                     
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center text-cyan-600 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-brandRed-600 flex-shrink-0">
                             <i data-lucide="mail" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -466,7 +466,7 @@ new #[Layout('layout.blank')] class extends Component
                     </div>
                     
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-brandRed-600 flex-shrink-0">
                             <i data-lucide="clock" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -485,22 +485,22 @@ new #[Layout('layout.blank')] class extends Component
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-xs font-bold uppercase text-neutral-500 mb-2">First Name</label>
-                            <input type="text" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-emerald-600 text-sm">
+                            <input type="text" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-brandRed-600 text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-neutral-500 mb-2">Last Name</label>
-                            <input type="text" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-emerald-600 text-sm">
+                            <input type="text" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-brandRed-600 text-sm">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-neutral-500 mb-2">Email Address</label>
-                        <input type="email" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-emerald-600 text-sm">
+                        <input type="email" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-brandRed-600 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-neutral-500 mb-2">Message</label>
-                        <textarea rows="4" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-emerald-600 text-sm resize-none"></textarea>
+                        <textarea rows="4" required class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-brandRed-600 text-sm resize-none"></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider py-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all">
+                    <button type="submit" class="w-full bg-brandRed-600 hover:bg-brandRed-700 text-white text-xs font-bold uppercase tracking-wider py-4 rounded-xl shadow-lg shadow-brandRed-600/20 transition-all">
                         Send Message
                     </button>
                 </form>
@@ -511,12 +511,12 @@ new #[Layout('layout.blank')] class extends Component
     <!-- PRIVACY POLICY SECTION -->
     <section id="privacy-policy" class="relative z-20 max-w-4xl mx-auto px-6 py-24 border-t border-neutral-100">
         <div class="text-center mb-16 section-header">
-            <h2 class="text-xs uppercase font-extrabold tracking-widest text-purple-600 mb-3">Legal Guidelines</h2>
+            <h2 class="text-xs uppercase font-extrabold tracking-widest text-brandRed-600 mb-3">Legal Guidelines</h2>
             <p class="text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-950">Privacy Policy</p>
         </div>
         
         <div class="glass-card rounded-3xl p-8 md:p-10 shadow-sm border border-neutral-200 space-y-6 text-sm text-neutral-600 leading-relaxed">
-            <p class="font-bold text-neutral-805 text-xs uppercase tracking-wide">Last Updated: June 10, 2026</p>
+            <p class="font-bold text-neutral-800 text-xs uppercase tracking-wide">Last Updated: June 10, 2026</p>
             <p>
                 At PSGDC Pharmacy, we respect your privacy. This policy outlines how the PSGDC mobile multi-ecommerce app gathers, secures, and handles user account information and order histories.
             </p>
@@ -526,7 +526,7 @@ new #[Layout('layout.blank')] class extends Component
                     <span>1. Information We Collect</span>
                     <i data-lucide="plus" class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
                 </summary>
-                <p class="text-neutral-500 mt-2 pl-4 text-xs">
+                <p class="text-neutral-550 mt-2 pl-4 text-xs">
                     We collect your basic profile details (name, delivery address, phone) and photos of doctor prescriptions submitted for dispensing. Diagnostic logs are tracked anonymously to prevent crash issues.
                 </p>
             </details>
@@ -536,7 +536,7 @@ new #[Layout('layout.blank')] class extends Component
                     <span>2. Offline Storage & Synchronization</span>
                     <i data-lucide="plus" class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
                 </summary>
-                <p class="text-neutral-500 mt-2 pl-4 text-xs">
+                <p class="text-neutral-550 mt-2 pl-4 text-xs">
                     Draft order items and prescription records are stored securely in internal storage on your device. These details sync to our secure cloud pharmacy vault once cellular networks are online.
                 </p>
             </details>
@@ -546,7 +546,7 @@ new #[Layout('layout.blank')] class extends Component
                     <span>3. Security Protocols</span>
                     <i data-lucide="plus" class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
                 </summary>
-                <p class="text-neutral-500 mt-2 pl-4 text-xs">
+                <p class="text-neutral-550 mt-2 pl-4 text-xs">
                     Communication channels use TLS/SSL encryption. We do not distribute patient diagnostics or transaction data to external marketing services.
                 </p>
             </details>
@@ -555,15 +555,15 @@ new #[Layout('layout.blank')] class extends Component
 
     <!-- CALL TO ACTION (CTA) SECTION -->
     <section id="download" class="relative z-20 max-w-6xl mx-auto px-6 py-24 cta-section">
-        <div class="glass-card rounded-[40px] p-8 md:p-20 text-center relative overflow-hidden glow-border shadow-sm bg-gradient-to-tr from-emerald-50/50 to-blue-50/50">
+        <div class="glass-card rounded-[40px] p-8 md:p-20 text-center relative overflow-hidden glow-border shadow-sm bg-gradient-to-tr from-brandRed-50/50 to-rose-50/50">
             <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-neutral-950">
                 Order Medicines & Groceries. <br/>
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-brandRed-600 via-rose-500 to-red-700">
                     Grow Faster Tomorrow.
                 </span>
             </h2>
             
-            <p class="text-neutral-600 text-base md:text-lg max-w-lg mx-auto mb-12 leading-relaxed">
+            <p class="text-neutral-605 text-base md:text-lg max-w-lg mx-auto mb-12 leading-relaxed">
                 Available now on iPhone and Android. Create your store account and get started in less than two minutes.
             </p>
             
@@ -585,16 +585,16 @@ new #[Layout('layout.blank')] class extends Component
         <div class="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
             <div class="flex flex-col items-start gap-4">
                 <div class="flex items-center gap-2">
-                    <img src="{{ asset('logo/logo.png') }}" alt="PSGDC Logo" class="h-10 w-auto object-contain">
+                    <img src="{{ asset('logo/logo.png') }}" alt="PSGDC Logo" class="h-16 w-auto object-contain">
                 </div>
                 <p class="text-neutral-500 text-xs leading-relaxed max-w-[200px]">
-                    Manage invoices, operations, and customers from the palm of your hand.
+                    Manage medicines, operations, and orders from the palm of your hand.
                 </p>
             </div>
             
             <div>
                 <h5 class="text-xs uppercase font-extrabold tracking-wider text-neutral-500 mb-4">Product</h5>
-                <ul class="space-y-2.5 text-xs text-neutral-600">
+                <ul class="space-y-2.5 text-xs text-neutral-605">
                     <li><a href="#features" class="hover:text-black transition-colors duration-200">Features</a></li>
                     <li><a href="#download" class="hover:text-black transition-colors duration-200">Download app</a></li>
                 </ul>
@@ -602,7 +602,7 @@ new #[Layout('layout.blank')] class extends Component
             
             <div>
                 <h5 class="text-xs uppercase font-extrabold tracking-wider text-neutral-500 mb-4">Company</h5>
-                <ul class="space-y-2.5 text-xs text-neutral-600">
+                <ul class="space-y-2.5 text-xs text-neutral-605">
                     <li><a href="#about-us" class="hover:text-black transition-colors duration-200 font-medium">About Us</a></li>
                     <li><a href="#contact-us" class="hover:text-black transition-colors duration-200 font-medium">Contact Us</a></li>
                 </ul>
@@ -610,7 +610,7 @@ new #[Layout('layout.blank')] class extends Component
             
             <div>
                 <h5 class="text-xs uppercase font-extrabold tracking-wider text-neutral-500 mb-4">Legal</h5>
-                <ul class="space-y-2.5 text-xs text-neutral-600 mb-6">
+                <ul class="space-y-2.5 text-xs text-neutral-605 mb-6">
                     <li><a href="/coupon-terms" class="hover:text-black transition-colors duration-200">Terms of Service</a></li>
                     <li><a href="#privacy-policy" class="hover:text-black transition-colors duration-200">Privacy Policy</a></li>
                 </ul>
@@ -627,7 +627,7 @@ new #[Layout('layout.blank')] class extends Component
         
         <div class="max-w-7xl mx-auto px-6 py-6 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-neutral-500">
             <span>&copy; 2026 PS GENERAL DRUGS CENTRE PHARMACY. All rights reserved.</span>
-            <span>Made with precision for multi-ecommerce excellence.</span>
+            <span>Made with precision for pharmacy multi-ecommerce excellence.</span>
         </div>
     </footer>
 </div>
@@ -739,75 +739,6 @@ new #[Layout('layout.blank')] class extends Component
                     duration: 1,
                     ease: "power3.out"
                 });
-            }
-        };
-    }
-    
-    function carousel() {
-        return {
-            activeSlide: 0,
-            autoplayInterval: null,
-            
-            slides: [
-                {
-                    subtitle: "Supermarket Shop",
-                    title: "Add items to your cart",
-                    desc: "Explore 20,000+ provisions, fresh goods, UK imported products, and daily home groceries.",
-                    icon: "shopping-bag",
-                    color: "emerald-400"
-                },
-                {
-                    subtitle: "Digital Pharmacy",
-                    title: "NAFDAC Registered Drugs",
-                    desc: "Shop ethicals, injectables, cooling chain items, and standard OTC medicine.",
-                    icon: "pill",
-                    color: "purple-400"
-                },
-                {
-                    subtitle: "Upload Prescription",
-                    title: "Quick Pharmacist Review",
-                    desc: "Take a picture of doctor notes and let our medical team verify and pack them.",
-                    icon: "file-text",
-                    color: "blue-400"
-                },
-                {
-                    subtitle: "Real-time Shipping",
-                    title: "Same-Day Delivery",
-                    desc: "Enjoy trackable, rapid home courier services right to your local store address.",
-                    icon: "truck",
-                    color: "cyan-400"
-                },
-                {
-                    subtitle: "Bulk Trade Orders",
-                    title: "Medical Equipment Catalog",
-                    desc: "Place wholesale orders on surgical materials and healthcare instruments.",
-                    icon: "clipboard-list",
-                    color: "emerald-450"
-                }
-            ],
-            
-            nextSlide() {
-                this.activeSlide = (this.activeSlide + 1) % this.slides.length;
-            },
-            
-            prevSlide() {
-                this.activeSlide = (this.activeSlide - 1 + this.slides.length) % this.slides.length;
-            },
-            
-            setSlide(index) {
-                this.activeSlide = index;
-            },
-            
-            startAutoplay() {
-                this.autoplayInterval = setInterval(() => {
-                    this.nextSlide();
-                }, 4000);
-            },
-            
-            stopAutoplay() {
-                if (this.autoplayInterval) {
-                    clearInterval(this.autoplayInterval);
-                }
             }
         };
     }
