@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="https://generaldrugcentre.com/assets/logo.png">
-    <title>PSGDC Pharmacy & Supermarket Mobile App</title>
-    
+    <meta name="keywords"
+        content="generaldrugcentre.com, generaldrugs, drugs, prescription, supermarket, ilorin, nigeria, Kwara, state, retail, wholesales" />
+    <meta name="description"
+        content="Your #1 Online Supermarket. Shop Online From 20,000+ Groceries,drugs,beverages,provision,store. Same-Day Delivery in Kwara. Buy UK Groceries & Pay in Naira. Best Prices & Biggest Discounts." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@generaldrugcentre" />
+    <meta name="twitter:creator" content="@generaldrugcentre" />
+    <meta name="format-detection" content="telephone=no">
+    <title>PS General Drugs Centre - Your NO 1 Online Drugs & Supermarket</title>
+
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
     <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -71,33 +81,36 @@
             }
         }
     </script>
-    
+
     <!-- GSAP & ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     @livewireStyles
-    
+
     <style>
         /* Modern Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #F4F4F5;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #D4D4D8;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #A1A1AA;
         }
-        
+
         /* Glassmorphism custom classes (Light Mode) */
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
@@ -105,15 +118,16 @@
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
-        
+
         .glass-card:hover {
             border-color: rgba(220, 38, 38, 0.2);
             background: rgba(255, 255, 255, 0.85);
         }
-        
+
         .glow-border {
             position: relative;
         }
+
         .glow-border::before {
             content: '';
             position: absolute;
@@ -128,16 +142,19 @@
             opacity: 0.7;
             transition: opacity 0.3s ease;
         }
+
         .glow-border:hover::before {
             opacity: 1;
         }
     </style>
 </head>
-<body class="bg-white text-neutral-900 antialiased overflow-x-hidden font-sans selection:bg-brandRed-600 selection:text-white">
+
+<body
+    class="bg-white text-neutral-900 antialiased overflow-x-hidden font-sans selection:bg-brandRed-600 selection:text-white">
     {{ $slot }}
-    
+
     @livewireScripts
-    
+
     <script>
         // Initialize Lucide Icons
         document.addEventListener('DOMContentLoaded', () => {
@@ -145,4 +162,5 @@
         });
     </script>
 </body>
+
 </html>
