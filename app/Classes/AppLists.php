@@ -16,11 +16,11 @@ class AppLists
     public static function getApp(WholesalesUser|SalesRepresentative|SupermarketUser|WholesalesAdmin|SupermarketAdmin $model) : string
     {
         $apps = [
-            WholesalesUser::class => config('app.WHOLESALES_DOMAIN'),
-            SalesRepresentative::class => config('app.SALES_REPRESENTATIVES'),
-            SupermarketUser::class => config('app.SUPERMARKET_DOMAIN'),
-            WholesalesAdmin::class => config('app.WHOLESALES_ADMIN'),
-            SupermarketAdmin::class => config('app.SUPERMARKET_ADMIN'),
+            WholesalesUser::class => config('app.WHOLESALES_DOMAIN')[1],
+            SalesRepresentative::class => config('app.SALES_REPRESENTATIVES')[1],
+            SupermarketUser::class => config('app.SUPERMARKET_DOMAIN')[1],
+            WholesalesAdmin::class => config('app.WHOLESALES_ADMIN')[1],
+            SupermarketAdmin::class => config('app.SUPERMARKET_ADMIN')[1],
         ];
 
         return $apps[get_class($model)];
@@ -56,7 +56,7 @@ class AppLists
     public static function insertAppModelByDomain(string $domain, User $user)
     {
         return match ($domain) {
-            config('app.WHOLESALES_ADMIN') => WholesalesAdmin::create([
+            config('app.WHOLESALES_ADMIN')[1] => WholesalesAdmin::create([
                 'user_id' => $user->id,
                 'status' => $user->email_verified_at != NULL ? 1 : 0,
                 'invitation_status' => true,
@@ -64,7 +64,7 @@ class AppLists
                 'invitation_approval_date' => now()->format("Y-m-d"),
                 'added_by' => $user->id
             ]),
-            config('app.SUPERMARKET_ADMIN') => SupermarketAdmin::create([
+            config('app.SUPERMARKET_ADMIN')[1] => SupermarketAdmin::create([
                 'user_id' => $user->id,
                 'status' => $user->email_verified_at != NULL ? 1 : 0,
                 'invitation_status' => true,
@@ -72,19 +72,19 @@ class AppLists
                 'invitation_approval_date' => now()->format("Y-m-d"),
                 'added_by' => $user->id
             ]),
-            config('app.ADMIN_DOMAIN') => $user,
-            config('app.AUTH_DOMAIN') => $user,
-            config('app.PUSH_DOMAIN') => $user,
-            config('app.IMAGES_DOMAIN') => $user,
-            config('app.WHOLESALES_DOMAIN') => WholesalesUser::create([
+            config('app.ADMIN_DOMAIN')[1] => $user,
+            config('app.AUTH_DOMAIN')[1] => $user,
+            config('app.PUSH_DOMAIN')[1] => $user,
+            config('app.IMAGES_DOMAIN')[1] => $user,
+            config('app.WHOLESALES_DOMAIN')[1] => WholesalesUser::create([
                 'user_id' => $user->id,
                 'status' => $user->email_verified_at != NULL ? 1 : 0,
             ]),
-            config('app.SUPERMARKET_DOMAIN') => SupermarketUser::create([
+            config('app.SUPERMARKET_DOMAIN')[1] => SupermarketUser::create([
                 'user_id' => $user->id,
                 'status' => $user->email_verified_at != NULL ? 1 : 0,
             ]),
-            config('app.SALES_REPRESENTATIVES') => SalesRepresentative::create([
+            config('app.SALES_REPRESENTATIVES')[1] => SalesRepresentative::create([
                 'user_id' => $user->id,
                 'status' => $user->email_verified_at != NULL ? 1 : 0,
                 'invitation_status' => true,
