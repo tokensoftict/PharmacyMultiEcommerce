@@ -33,15 +33,15 @@ class AppLists
     public static function getAppModelByDomain(string $domain) : string
     {
         $apps = [
-            config('app.WHOLESALES_DOMAIN') => WholesalesUser::class,
-            config('app.SUPERMARKET_DOMAIN') => SupermarketUser::class,
-            config('app.SALES_REPRESENTATIVES') => SalesRepresentative::class,
-            config('app.WHOLESALES_ADMIN') => WholesalesAdmin::class,
-            config('app.SUPERMARKET_ADMIN') => SupermarketAdmin::class,
-            config('app.ADMIN_DOMAIN') => User::class,
-            config('app.AUTH_DOMAIN') => User::class,
-            config('app.PUSH_DOMAIN') => User::class,
-            config('app.IMAGES_DOMAIN') => User::class,
+            config('app.WHOLESALES_DOMAIN')[1] => WholesalesUser::class,
+            config('app.SUPERMARKET_DOMAIN')[1] => SupermarketUser::class,
+            config('app.SALES_REPRESENTATIVES')[1] => SalesRepresentative::class,
+            config('app.WHOLESALES_ADMIN')[1] => WholesalesAdmin::class,
+            config('app.SUPERMARKET_ADMIN')[1] => SupermarketAdmin::class,
+            config('app.ADMIN_DOMAIN')[1] => User::class,
+            config('app.AUTH_DOMAIN')[1] => User::class,
+            config('app.PUSH_DOMAIN')[1] => User::class,
+            config('app.IMAGES_DOMAIN')[1] => User::class,
         ];
 
         return $apps[$domain];
