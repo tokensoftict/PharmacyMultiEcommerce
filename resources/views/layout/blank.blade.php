@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="https://generaldrugcentre.com/assets/logo.png">
+    <link rel="icon" type="image/x-icon" href="https://auth.psgdc.store/logo/placholder.jpg">
     <meta name="keywords"
         content="generaldrugcentre.com, generaldrugs, drugs, prescription, supermarket, ilorin, nigeria, Kwara, state, retail, wholesales" />
     <meta name="description"
