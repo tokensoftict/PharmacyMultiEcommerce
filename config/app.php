@@ -135,7 +135,7 @@ return [
     'WHOLESALES_DOMAIN' => explode(",",env('WHOLESALES_DOMAIN', 'wholesales.generaldrugcentre.com,wholesales.psgdc.store')),
     'WHOLESALES_DOMAIN_ROUTE_PREFIX' => env('WHOLESALES_DOMAIN_ROUTE_PREFIX', 'wholesales.'),
 
-    'SUPERMARKET_DOMAIN' => explode(",",env('SUPERMARKET_DOMAIN', 'supermarkets.generaldrugcentre.com,supermarket.psgdc.store')),
+    'SUPERMARKET_DOMAIN' => explode(",",env('SUPERMARKET_DOMAIN', 'supermarket.generaldrugcentre.com,supermarket.psgdc.store')),
     'SUPERMARKET_DOMAIN_ROUTE_PREFIX' => env('SUPERMARKET_DOMAIN_ROUTE_PREFIX', 'supermarket.'),
 
 
