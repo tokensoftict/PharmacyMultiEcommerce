@@ -32,6 +32,11 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware([DetectApplicationEnvironment::class, 'web'])
                 ->group(base_path("routes/auth.php"));
 
+            Route::middleware([DetectApplicationEnvironment::class, 'web'])
+                ->group(base_path("routes/wholesales.php"));
+
+            Route::middleware([DetectApplicationEnvironment::class, 'web'])
+                ->group(base_path("routes/supermarket.php"));
             /*
             |--------------------------------------------------------------------------
             | SHARED MIDDLEWARE DEFINITIONS
