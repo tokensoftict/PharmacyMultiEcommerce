@@ -366,56 +366,169 @@ new #[Layout('layout.blank')] class extends Component {
     <section id="privacy-policy" class="relative z-20 max-w-4xl mx-auto px-6 py-24 border-t border-neutral-100">
         <div class="text-center mb-16 section-header">
             <h2 class="text-xs uppercase font-extrabold tracking-widest text-brandRed-600 mb-3">Legal Guidelines</h2>
-            <p class="text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-950">Privacy Policy</p>
+            <p class="text-3xl md:text-5xl font-extrabold tracking-tight text-neutral-950 font-sans">Privacy Policy</p>
         </div>
 
         <div
             class="glass-card rounded-3xl p-8 md:p-10 shadow-sm border border-neutral-200 space-y-6 text-sm text-neutral-600 leading-relaxed">
-            <p class="font-bold text-neutral-800 text-xs uppercase tracking-wide">Last Updated: June 10, 2026</p>
-            <p>
-                At PSGDC Pharmacy, we respect your privacy. This policy outlines how the PSGDC mobile multi-ecommerce
-                app gathers, secures, and handles user account information and order histories.
+            <p class="font-bold text-neutral-800 text-xs uppercase tracking-wide">Effective Date: June 15, 2026</p>
+            <p class="text-neutral-700 font-medium">
+                Thank you for using PS GDC (the "App"). PS General Drugs Centre ("we", "our", or "us") respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, share, and protect information when you use the PS GDC mobile application.
             </p>
 
-            <details class="group border-b border-neutral-200 pb-4">
-                <summary
-                    class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none">
-                    <span>1. Information We Collect</span>
-                    <i data-lucide="plus"
-                        class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-550 mt-2 pl-4 text-xs">
-                    We collect your basic profile details (name, delivery address, phone) and photos of doctor
-                    prescriptions submitted for dispensing. Diagnostic logs are tracked anonymously to prevent crash
-                    issues.
-                </p>
-            </details>
+            <div class="space-y-4 pt-4">
+                <!-- Section 1 -->
+                <details class="group border-b border-neutral-200 pb-4" open>
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>1. Information We Collect</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <div class="text-neutral-600 mt-3 pl-4 space-y-3 text-sm">
+                        <p>We collect the following types of information:</p>
+                        <ul class="list-disc pl-5 space-y-2 text-neutral-650">
+                            <li><strong>Information you provide:</strong> name, email address, phone number, delivery address, prescription information, and payment information when you place orders or contact customer support.</li>
+                            <li><strong>Device & usage data:</strong> information about your device (model, operating system), IP address, app crashes, analytics, and how you use the App to help improve functionality.</li>
+                            <li><strong>Location data:</strong> if you permit the App to access location services, we may collect your approximate or precise location to show nearby stores or provide delivery services.</li>
+                        </ul>
+                    </div>
+                </details>
 
-            <details class="group border-b border-neutral-200 pb-4">
-                <summary
-                    class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none">
-                    <span>2. Offline Storage & Synchronization</span>
-                    <i data-lucide="plus"
-                        class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-550 mt-2 pl-4 text-xs">
-                    Draft order items and prescription records are stored securely in internal storage on your device.
-                    These details sync to our secure cloud pharmacy vault once cellular networks are online.
-                </p>
-            </details>
+                <!-- Section 2 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>2. How We Use Your Information</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <div class="text-neutral-600 mt-3 pl-4 space-y-2 text-sm">
+                        <p>We use your information for the following purposes:</p>
+                        <ul class="list-disc pl-5 space-y-2 text-neutral-650">
+                            <li>To provide, maintain, and improve the App and our services (order processing, delivery, prescriptions management).</li>
+                            <li>To communicate with you about orders, updates, and marketing (where you consent).</li>
+                            <li>To detect fraud, enforce our terms, and comply with legal obligations.</li>
+                            <li>To perform analytics and usage monitoring to enhance the App experience.</li>
+                        </ul>
+                    </div>
+                </details>
 
-            <details class="group border-b border-neutral-200 pb-4">
-                <summary
-                    class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none">
-                    <span>3. Security Protocols</span>
-                    <i data-lucide="plus"
-                        class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-550 mt-2 pl-4 text-xs">
-                    Communication channels use TLS/SSL encryption. We do not distribute patient diagnostics or
-                    transaction data to external marketing services.
-                </p>
-            </details>
+                <!-- Section 3 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>3. Sharing & Disclosure</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <div class="text-neutral-600 mt-3 pl-4 space-y-2 text-sm">
+                        <p>We do not sell your personal information. We may share information with:</p>
+                        <ul class="list-disc pl-5 space-y-2 text-neutral-650">
+                            <li><strong>Service providers:</strong> third-party companies that help us run the App (payment processors, delivery partners, analytics providers).</li>
+                            <li><strong>Legal reasons:</strong> when required by law or to protect our rights and users' safety.</li>
+                            <li><strong>Business transfers:</strong> in connection with a merger, acquisition, or sale of assets.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <!-- Section 4 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>4. Third-Party Services</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-600 mt-3 pl-4 text-sm">
+                        The App may use third-party services (for example payment gateways, analytics, push notifications). These services have their own privacy policies — please review them to understand how they use your data.
+                    </p>
+                </details>
+
+                <!-- Section 5 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>5. Security</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-600 mt-3 pl-4 text-sm">
+                        We implement reasonable technical and organizational measures to protect personal data. However, no method of transmission over the internet is 100% secure. If you believe your account has been compromised, contact us immediately (see Contact section).
+                    </p>
+                </details>
+
+                <!-- Section 6 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>6. Data Retention</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-600 mt-3 pl-4 text-sm">
+                        We retain personal information only as long as necessary for the purposes outlined in this policy, or as required by law. When data is no longer needed, we will delete or anonymize it.
+                    </p>
+                </details>
+
+                <!-- Section 7 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>7. Children's Privacy</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-600 mt-3 pl-4 text-sm">
+                        The App is not intended for children under 13. We do not knowingly collect personal information from children under 13. If you believe we have collected such data, please contact us so we can delete it.
+                    </p>
+                </details>
+
+                <!-- Section 8 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>8. Your Rights</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-600 mt-3 pl-4 text-sm">
+                        Depending on your jurisdiction, you may have rights to access, correct, or delete your personal information, or to object to or restrict certain processing. To exercise any of these rights, contact us using the details below.
+                    </p>
+                </details>
+
+                <!-- Section 9 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>9. Changes to This Policy</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-600 mt-3 pl-4 text-sm">
+                        We may update this Privacy Policy from time to time. We will post the new policy in the App and update the Effective Date above. Significant changes will be communicated where appropriate.
+                    </p>
+                </details>
+
+                <!-- Section 10 -->
+                <details class="group border-b border-neutral-200 pb-4">
+                    <summary
+                        class="flex justify-between items-center font-bold text-neutral-900 cursor-pointer select-none list-none text-base">
+                        <span>10. Contact Us</span>
+                        <i data-lucide="plus"
+                            class="w-4 h-4 text-neutral-500 group-open:rotate-45 transition-transform"></i>
+                    </summary>
+                    <div class="text-neutral-600 mt-3 pl-4 space-y-2 text-sm">
+                        <p>If you have questions or concerns about this Privacy Policy or our data practices, please contact:</p>
+                        <div class="mt-2 p-4 rounded-2xl bg-neutral-50 border border-neutral-200 space-y-1 text-xs text-neutral-800">
+                            <p class="font-bold">PS General Drugs Centre</p>
+                            <p>Email: <a href="mailto:info@generaldrugcentre.com" class="text-brandRed-600 hover:underline">info@generaldrugcentre.com</a></p>
+                            <p class="mt-2 text-neutral-500">App name: PS GDC — Company: PS General Drugs Centre</p>
+                        </div>
+                        <p class="text-xs text-neutral-500 mt-2">If you need this policy in another format or language, please contact us.</p>
+                    </div>
+                </details>
+            </div>
         </div>
     </section>
 
