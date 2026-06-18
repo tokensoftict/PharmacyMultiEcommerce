@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="https://generaldrugcentre.com/assets/logo.png">
+    <link rel="icon" type="image/x-icon" href="https://generaldrugcentre.com/logo/logo.png">
     <title>404 - Page Not Found | PS General Drugs Centre</title>
 
     <!-- Google Fonts: Outfit -->
@@ -112,7 +112,7 @@
             
             <!-- Logo / Brand Header -->
             <div class="mb-8 flex items-center gap-2">
-                <img src="https://generaldrugcentre.com/assets/logo.png" alt="PSGDC Logo" class="h-10 w-auto">
+                <img src="https://generaldrugcentre.com/logo/logo.png" alt="PSGDC Logo" class="h-10 w-auto">
                 <span class="font-bold text-lg text-neutral-800 tracking-wide">PSGDC MYSTORE</span>
             </div>
 
