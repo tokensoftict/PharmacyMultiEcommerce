@@ -113,7 +113,7 @@
             <!-- Logo / Brand Header -->
             <div class="mb-8 flex items-center gap-2">
                 <img src="https://generaldrugcentre.com/logo/logo.png" alt="PSGDC Logo" class="h-10 w-auto">
-                <span class="font-bold text-lg text-neutral-800 tracking-wide">PSGDC MYSTORE</span>
+               
             </div>
 
             <!-- Error Code / Visual Representation -->
