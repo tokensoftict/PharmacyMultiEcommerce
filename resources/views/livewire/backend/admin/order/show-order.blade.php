@@ -172,7 +172,7 @@
                                     <div class="col-6 col-sm-12">
                                         <div class="d-flex align-items-center mb-1"><span class="me-2" data-feather="phone" style="stroke-width:2.5;">  </span>
                                             <h6 class="mb-0">Phone</h6>
-                                        </div><a class="d-block fs-9 ms-4" href="mailto:{{ $this->order->customer->user->phone }}">{{ $this->order->customer->user->phone }}</a>
+                                        </div><a class="d-block fs-9 ms-4" href="mailto:{{ $this->order->customer?->user?->phone }}">{{ $this->order->customer?->user?->phone }}</a>
                                     </div>
                                 </div>
                             </div>
@@ -187,7 +187,7 @@
                                     <div class="col-6 col-sm-12">
                                         <div class="d-flex align-items-center mb-1"><span class="me-2" data-feather="phone" style="stroke-width:2.5;">  </span>
                                             <h6 class="mb-0">Phone</h6>
-                                        </div><a class="d-block fs-9 ms-4" href="mailto:{{ $this->order->customer->user->phone }}">{{ $this->order->customer->user->phone }}</a>
+                                        </div><a class="d-block fs-9 ms-4" href="mailto:{{ $this->order->customer?->user?->phone }}">{{ $this->order->customer?->user?->phone }}</a>
                                     </div>
                                     <div class="col-6 col-sm-12 order-sm-1">
                                         <div class="d-flex align-items-center mb-1"><span class="me-2" data-feather="home" style="stroke-width:2.5;">  </span>
@@ -254,7 +254,7 @@
                             </div>
                             <div class="d-flex justify-content-between">
                                 <p class="text-body fs-9">Phone :</p>
-                                <p class="text-body-emphasis fw-semibold fs-9">{{ $this->order->customer->phone }}</p>
+                                <p class="text-body-emphasis fw-semibold fs-9">{{ $this->order->customer?->phone }}</p>
                             </div>
                             @if($this->order->customer_type === \App\Models\WholesalesUser::class)
                                 <div class="d-flex justify-content-between">
