@@ -784,6 +784,13 @@ enum Settings
             "label" => "Home Page Manager",
             "visibility" => "1",
             "guard_name" => "web",
+        ],
+        [
+            "name" => "backend.admin.settings.app_update_settings",
+            "module_id" => "1",
+            "label" => "App Update Settings",
+            "visibility" => "1",
+            "guard_name" => "web",
         ]
 
     ];
