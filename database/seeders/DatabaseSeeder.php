@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
             CustomerGroupSeeder::class,
             CustomerTypeSeeder::class,
             MedialibraryFolderSeeders::class,
-            OrderTotalSeeder::class
+            OrderTotalSeeder::class,
+            AppVersionSeeder::class
             //MeilisearchSeeder::class
         ]);
 

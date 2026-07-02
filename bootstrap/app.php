@@ -140,6 +140,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'api',
                     DetectApplicationEnvironment::class,
                     ForceJsonResponse::class,
+                    \App\Http\Middleware\AppUpdateMiddleware::class,
                     DataPushApiMiddleware::class
                 ])
                     ->domain($domain)
@@ -159,7 +160,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     CustomSuperMarketMiddleware::class,
                     DetectApplicationEnvironment::class,
                     'api',
-                    ForceJsonResponse::class
+                    ForceJsonResponse::class,
+                    \App\Http\Middleware\AppUpdateMiddleware::class
                 ])
                     ->prefix('api/v1')
                     ->domain($domain)
@@ -171,7 +173,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     CustomSuperMarketMiddleware::class,
                     DetectApplicationEnvironment::class,
                     'api',
-                    ForceJsonResponse::class
+                    ForceJsonResponse::class,
+                    \App\Http\Middleware\AppUpdateMiddleware::class
                 ])
                     ->prefix('api/v1')
                     ->domain($domain)
@@ -194,7 +197,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     DetectWholesalesSalesRepresentativesImpersonation::class,
                     DetectApplicationEnvironment::class,
                     'api',
-                    ForceJsonResponse::class
+                    ForceJsonResponse::class,
+                    \App\Http\Middleware\AppUpdateMiddleware::class
                 ])
                     ->prefix('api/v1')
                     ->domain($domain)
@@ -207,7 +211,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     DetectWholesalesSalesRepresentativesImpersonation::class,
                     DetectApplicationEnvironment::class,
                     'api',
-                    ForceJsonResponse::class
+                    ForceJsonResponse::class,
+                    \App\Http\Middleware\AppUpdateMiddleware::class
                 ])
                     ->prefix('api/v1')
                     ->domain($domain)
@@ -228,7 +233,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 Route::middleware([
                     'api',
                     DetectApplicationEnvironment::class,
-                    ForceJsonResponse::class
+                    ForceJsonResponse::class,
+                    \App\Http\Middleware\AppUpdateMiddleware::class
                 ])
                     ->prefix('api/v1')
                     ->domain($domain)
@@ -249,7 +255,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 Route::middleware([
                     'api',
                     DetectApplicationEnvironment::class,
-                    ForceJsonResponse::class
+                    ForceJsonResponse::class,
+                    \App\Http\Middleware\AppUpdateMiddleware::class
                 ])
                     ->prefix('api/v1')
                     ->namespace('App\Http\Controllers\Api')
