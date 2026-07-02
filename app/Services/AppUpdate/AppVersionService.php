@@ -47,6 +47,39 @@ class AppVersionService
             $latest = $this->getFallback($platform);
         }
 
+        // If the client reports a higher version code than what we currently have configured as the latest active,
+        // auto-register/update it in the database to match the client's version.
+        if ($clientVersionCode > $latest['latest_version_code']) {
+            try {
+                // Deactivate previous active records for this platform
+                AppVersion::where('app_type', $platform)->update(['is_active' => false]);
+
+                // Create or update the new highest active version record
+                $record = AppVersion::updateOrCreate(
+                    ['app_type' => $platform, 'version_code' => $clientVersionCode],
+                    [
+                        'version_name'   => $clientVersion,
+                        'force_update'   => false, // Default to false for auto-registered version updates
+                        'update_message' => 'A new version of the app is available. Please update to continue.',
+                        'store_url'      => $latest['store_url'] ?? null,
+                        'is_active'      => true,
+                    ]
+                );
+
+                $this->clearCache($platform);
+
+                $latest = [
+                    'latest_version'      => $record->version_name,
+                    'latest_version_code' => $record->version_code,
+                    'force_update'        => $record->force_update,
+                    'store_url'           => $record->store_url ?? '',
+                    'update_message'      => $record->update_message,
+                ];
+            } catch (Throwable $dbEx) {
+                Log::error("[AppVersionService] Auto-update of latest version failed: " . $dbEx->getMessage());
+            }
+        }
+
         $hasUpdate = $clientVersionCode < $latest['latest_version_code'];
 
         return [
