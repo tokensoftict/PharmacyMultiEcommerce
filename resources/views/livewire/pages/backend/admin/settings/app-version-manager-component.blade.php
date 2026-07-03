@@ -8,6 +8,14 @@
 @endpush
 
 <div>
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.settings.user_version_report') }}" class="btn btn-outline-primary">
+                <i class="fa fa-users me-2"></i>User Version Report
+            </a>
+        </div>
+    </div>
+
     <div class="row g-4 my-4">
         <!-- Android Settings -->
         <div class="col-md-6 col-12">

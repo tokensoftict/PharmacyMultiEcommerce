@@ -791,6 +791,13 @@ enum Settings
             "label" => "App Update Settings",
             "visibility" => "1",
             "guard_name" => "web",
+        ],
+        [
+            "name" => "backend.admin.settings.user_version_report",
+            "module_id" => "1",
+            "label" => "User Version Report",
+            "visibility" => "1",
+            "guard_name" => "web",
         ]
 
     ];

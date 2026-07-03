@@ -99,7 +99,10 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         'loyalty_points',
         'retail_loyalty_points',
         'member_group_id',
-        'retail_member_group_id'
+        'retail_member_group_id',
+        'device_type',
+        'version',
+        'version_code'
     ];
 
     protected $appends = ['cus_exist'];

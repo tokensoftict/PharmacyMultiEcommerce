@@ -106,4 +106,24 @@ class AppUpdateMiddlewareTest extends TestCase
             'is_active'    => false,
         ]);
     }
+
+    /** @test */
+    public function it_updates_user_version_details_if_authenticated()
+    {
+        $user = \App\Models\User::factory()->create([
+            'device_type'  => null,
+            'version'      => null,
+            'version_code' => null,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->getJson('/_test/mobile-api?device=mobile&deviceType=android&version=1.14.0&versionCode=114');
+
+        $response->assertStatus(200);
+
+        $user->refresh();
+        $this->assertEquals('android', $user->device_type);
+        $this->assertEquals('1.14.0', $user->version);
+        $this->assertEquals(114, $user->version_code);
+    }
 }

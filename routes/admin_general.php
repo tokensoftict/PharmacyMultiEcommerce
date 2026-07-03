@@ -10,6 +10,7 @@ Route::middleware([PermitTask::class])->group(function () {
     Route::prefix('settings')->group(function () {
         Route::get('/system_settings', ['uses' => 'App\Livewire\Backend\Admin\Settings\SystemSettingsComponent'])->name('backend.admin.settings.system_settings');
         Route::get('/app_update_settings', ['uses' => 'App\Livewire\Backend\Admin\Settings\AppVersionManagerComponent'])->name('backend.admin.settings.app_update_settings');
+        Route::get('/user_version_report', ['uses' => 'App\Livewire\Backend\Admin\Settings\UserVersionReportComponent'])->name('backend.admin.settings.user_version_report');
         Route::get('/manufacturer', ['uses' => 'App\Livewire\Backend\Admin\Settings\ManufacturerComponentDataTable'])->name('backend.admin.settings.manufacturer');
         Route::get('/classification', ['uses' => 'App\Livewire\Backend\Admin\Settings\ClassificationComponentDataTable'])->name('backend.admin.settings.classification');
         Route::get('/productcategory', ['uses' => 'App\Livewire\Backend\Admin\Settings\ProductCategoryComponentDataTable'])->name('backend.admin.settings.product_category');

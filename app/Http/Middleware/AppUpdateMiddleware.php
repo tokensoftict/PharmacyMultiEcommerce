@@ -44,6 +44,25 @@ class AppUpdateMiddleware
         }
 
         try {
+            $user = auth()->user() ?? auth('sanctum')->user();
+            if ($user) {
+                $platform    = strtolower((string) $request->query('deviceType', $request->input('deviceType', 'android')));
+                $version     = (string) $request->query('version', $request->input('version', '1.0.0'));
+                $versionCode = (int) $request->query('versionCode', $request->input('versionCode', 1));
+
+                if ($user->device_type !== $platform || $user->version !== $version || (int) $user->version_code !== $versionCode) {
+                    $user->update([
+                        'device_type'  => $platform,
+                        'version'      => $version,
+                        'version_code' => $versionCode,
+                    ]);
+                }
+            }
+        } catch (Throwable) {
+            // Ignore database write failures to prevent breaking request lifecycle
+        }
+
+        try {
             $response = $this->injectUpdateInfo($request, $response);
         } catch (Throwable) {
             // Never let a version-check failure affect the actual response
