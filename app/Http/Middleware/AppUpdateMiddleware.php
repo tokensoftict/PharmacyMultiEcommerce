@@ -46,16 +46,20 @@ class AppUpdateMiddleware
         try {
             $user = auth()->user() ?? auth('sanctum')->user();
             if ($user) {
-                $platform    = strtolower((string) $request->query('deviceType', $request->input('deviceType', 'android')));
-                $version     = (string) $request->query('version', $request->input('version', '1.0.0'));
+                $platform = strtolower((string) $request->query('deviceType', $request->input('deviceType', 'android')));
+                $version = (string) $request->query('version', $request->input('version', '1.0.0'));
                 $versionCode = (int) $request->query('versionCode', $request->input('versionCode', 1));
 
                 if ($user->device_type !== $platform || $user->version !== $version || (int) $user->version_code !== $versionCode) {
                     $user->update([
-                        'device_type'  => $platform,
-                        'version'      => $version,
+                        'device_type' => $platform,
+                        'version' => $version,
                         'version_code' => $versionCode,
                     ]);
+
+                    $user->updateLastSeen();
+                } else {
+                    $user->updateLastSeen();
                 }
             }
         } catch (Throwable) {
@@ -77,19 +81,19 @@ class AppUpdateMiddleware
     private function injectUpdateInfo(Request $request, Response $response): Response
     {
         // We can only inject into JSON responses
-        if (! $response instanceof JsonResponse) {
+        if (!$response instanceof JsonResponse) {
             $contentType = $response->headers->get('Content-Type', '');
-            if (! str_contains($contentType, 'application/json')) {
+            if (!str_contains($contentType, 'application/json')) {
                 return $response;
             }
         }
 
-        $platform    = strtolower((string) $request->query('deviceType', 'android'));
-        $version     = (string) $request->query('version', '1.0.0');
+        $platform = strtolower((string) $request->query('deviceType', 'android'));
+        $version = (string) $request->query('version', '1.0.0');
         $versionCode = (int) $request->query('versionCode', 1);
 
         // Normalise platform — only android or ios are valid
-        if (! in_array($platform, ['android', 'ios'], true)) {
+        if (!in_array($platform, ['android', 'ios'], true)) {
             $platform = 'android';
         }
 
@@ -98,7 +102,7 @@ class AppUpdateMiddleware
         // Decode current body
         $body = json_decode($response->getContent(), true);
 
-        if (! is_array($body)) {
+        if (!is_array($body)) {
             return $response; // Not a valid JSON object — leave untouched
         }
 
