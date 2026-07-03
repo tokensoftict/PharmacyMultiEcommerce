@@ -76,8 +76,6 @@ class UserVersionReportComponent extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Version", "version")
                 ->sortable(),
-            Column::make("Version Code", "version_code")
-                ->sortable(),
             Column::make("Last Seen", "last_seen")
                 ->format(fn($value) => $value ? $value->format('Y-m-d H:i:s') : 'Never')
                 ->sortable(),
@@ -86,6 +84,16 @@ class UserVersionReportComponent extends ExportDataTableComponent
 
     public function filters(): array
     {
+        $dbVersions = User::whereNotNull('version')->where('version', '<>', '')->distinct()->pluck('version')->toArray();
+        $defaultVersions = ['1.03', '1.04', '1.14', '1.15'];
+        $allVersions = array_unique(array_merge($defaultVersions, $dbVersions));
+        sort($allVersions, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $versionOptions = ['' => 'All'];
+        foreach ($allVersions as $v) {
+            $versionOptions[$v] = $v;
+        }
+
         return [
             SelectFilter::make('Device Type')
                 ->options([
@@ -98,19 +106,12 @@ class UserVersionReportComponent extends ExportDataTableComponent
                         $builder->where('device_type', $value);
                     }
                 }),
-            TextFilter::make('Version')
-                ->config([
-                    'placeholder' => 'Search Version',
-                ])
+            SelectFilter::make('Version')
+                ->options($versionOptions)
                 ->filter(function (Builder $builder, string $value) {
-                    $builder->where('version', 'like', '%' . $value . '%');
-                }),
-            TextFilter::make('Version Code')
-                ->config([
-                    'placeholder' => 'Search Version Code',
-                ])
-                ->filter(function (Builder $builder, string $value) {
-                    $builder->where('version_code', $value);
+                    if ($value !== '') {
+                        $builder->where('version', $value);
+                    }
                 }),
         ];
     }
