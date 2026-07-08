@@ -19,7 +19,7 @@ class DetectApplicationEnvironment
     public function handle(Request $request, Closure $next): Response
     {
         $domain = $request->getHost();
-        $domain = $this->parseDomain($domain);
+       // $domain = $this->parseDomain($domain);
         $app = App::where("domain", $domain)->first();
         if(!$app)  throw new UnexpectedValueException('Unable to create application environment');
         ApplicationEnvironment::createApplicationEnvironment($app);
