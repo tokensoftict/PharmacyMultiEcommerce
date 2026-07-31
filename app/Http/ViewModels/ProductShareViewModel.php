@@ -78,6 +78,25 @@ readonly class ProductShareViewModel
     }
 
     /**
+     * Returns the URL to use as the page favicon.
+     *
+     * Priority:
+     *   1. Product image (when the product has a real image uploaded)
+     *   2. Store logo — /logo/logo.png (fallback when no product image)
+     *
+     * We detect "no image" by checking whether the URL points to the
+     * placeholder filename set in StockModelTrait / StockSeoService.
+     */
+    public function faviconUrl(): string
+    {
+        if (str_contains($this->image, 'no-image')) {
+            return asset('logo/logo.png');
+        }
+
+        return $this->image;
+    }
+
+    /**
      * Returns the formatted price string, e.g. "₦1,500.00".
      */
     public function formattedPrice(): string|null

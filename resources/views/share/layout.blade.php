@@ -16,7 +16,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap" rel="stylesheet">
 
-    <link rel="icon" type="image/png" href="https://generaldrugcentre.com/logo/logo.png">
+    {{-- ── Favicon: product image → store logo fallback ──────────────────── --}}
+    {{-- $viewModel is available in the layout because Blade shares all view data --}}
+    <link rel="icon"       type="image/png" href="{{ $viewModel->faviconUrl() }}">
+    <link rel="shortcut icon"               href="{{ $viewModel->faviconUrl() }}">
+    <link rel="apple-touch-icon"            href="{{ $viewModel->faviconUrl() }}">
 
     {{-- ── Critical inline CSS ─────────────────────────────────────────
          No external CSS files → zero render-blocking resources.
