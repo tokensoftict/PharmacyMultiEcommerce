@@ -6,8 +6,15 @@ use Livewire\Volt\Volt;
 use LivewireFilemanager\Filemanager\Http\Controllers\Files\FileController;
 
 
+/*
+|--------------------------------------------------------------------------
+| Product Share Routes
+|--------------------------------------------------------------------------
+*/
+require __DIR__ . '/share.php';
 
 foreach (config('app.MAIN_DOMAIN', []) as $domain) {
+
     Route::domain($domain)->middleware(['web'])->group(function () {
         Route::view('/coupon-terms', 'coupon_terms')->name('coupon.terms');
         Volt::route('/', 'pages.frontend.customer.index')->name('customer.index');
