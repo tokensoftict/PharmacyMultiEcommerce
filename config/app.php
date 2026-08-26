@@ -56,6 +56,18 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Product Share URL
+     |--------------------------------------------------------------------------
+     |
+     | The base URL for the dedicated product sharing subdomain. This is used
+     | to generate SEO-friendly product URLs in API responses.
+     |
+     */
+
+    'share_url' => env('SHARE_URL', 'https://share.generaldrugcentre.com'),
+
+    /*
+     |--------------------------------------------------------------------------
      | Application Timezone
      |--------------------------------------------------------------------------
      |

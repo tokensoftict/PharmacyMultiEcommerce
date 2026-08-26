@@ -65,9 +65,10 @@ class StockSeoService
     /**
      * Build the complete, public SEO URL for a product.
      *
-     * Uses the named routes defined in routes/share.php:
-     *   share.wholesales.product → /wholesales/p/{slug}
-     *   share.retail.product     → /retail/p/{slug}
+     * The share pages live on a dedicated subdomain
+     * (share.generaldrugcentre.com), matching the routes in routes/share.php:
+     *   /wholesales/p/{slug}
+     *   /retail/p/{slug}
      *
      * @param  string|null $slug  The product's SEO slug (from the `seo` column).
      * @return string|null        Full URL, or null when no slug is available.
@@ -78,10 +79,12 @@ class StockSeoService
             return null;
         }
 
-        $routeName = ApplicationEnvironment::$stock_model_string === 'supermarkets_stock_prices'
-            ? 'share.retail.product'
-            : 'share.wholesales.product';
+        $storeType = ApplicationEnvironment::$stock_model_string === 'supermarkets_stock_prices'
+            ? 'retail'
+            : 'wholesales';
 
-        return route($routeName, ['slug' => $slug]);
+        $baseUrl = rtrim(config('app.share_url', 'https://share.generaldrugcentre.com'), '/');
+
+        return "{$baseUrl}/{$storeType}/p/{$slug}";
     }
 }

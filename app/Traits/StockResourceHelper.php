@@ -19,12 +19,13 @@ trait StockResourceHelper
     /**
      * Build the complete public SEO URL for a product.
      *
-     * Uses the named routes defined in routes/share.php:
-     *   share.wholesales.product → /wholesales/p/{slug}
-     *   share.retail.product     → /retail/p/{slug}
+     * The share pages live on a dedicated subdomain
+     * (share.generaldrugcentre.com), matching the routes in routes/share.php:
+     *   /wholesales/p/{slug}
+     *   /retail/p/{slug}
      *
      * @param  string|null $slug  The product's SEO slug.
-     * @return string|null        Full URL, e.g. https://domain.com/wholesales/p/slug-123
+     * @return string|null        Full URL, e.g. https://share.generaldrugcentre.com/wholesales/p/slug-123
      */
     protected function seoUrl(?string $slug): ?string
     {
@@ -32,11 +33,9 @@ trait StockResourceHelper
             return null;
         }
 
-        $routeName = $this->getDepartment() === 'retail'
-            ? 'share.retail.product'
-            : 'share.wholesales.product';
+        $baseUrl = rtrim(config('app.share_url', 'https://share.generaldrugcentre.com'), '/');
 
-        return route($routeName, ['slug' => $slug]);
+        return "{$baseUrl}/{$this->getDepartment()}/p/{$slug}";
     }
 
     /**
