@@ -57,7 +57,7 @@ class GenerateProductSeo extends Command
 
         $updated = 0;
 
-        $query->orderBy('id')->chunk(100, function ($stocks) use ($bar, &$updated) {
+        $query->chunkById(100, function ($stocks) use ($bar, &$updated) {
             foreach ($stocks as $stock) {
                 $slug = StockSeoService::generateSlug($stock->name, $stock->id);
 
