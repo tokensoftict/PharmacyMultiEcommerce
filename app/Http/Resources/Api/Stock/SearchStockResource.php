@@ -23,6 +23,7 @@ class SearchStockResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "seo" => $this->seoUrl($this->seo),
             "image" => $this->product_image,
             "wholesales" => $wholesales ? [
                 "price" => money($wholesales->price),

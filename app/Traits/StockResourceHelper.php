@@ -17,6 +17,21 @@ trait StockResourceHelper
     }
 
     /**
+     * Build the complete public SEO URL for a product.
+     *
+     * @param  string|null $slug  The product's SEO slug.
+     * @return string|null        Full URL, e.g. https://domain.com/wholesales/p/slug-123
+     */
+    protected function seoUrl(?string $slug): ?string
+    {
+        if (!$slug) {
+            return null;
+        }
+
+        return url($this->getDepartment() . '/p/' . $slug);
+    }
+
+    /**
      * Filter custom prices for the current department.
      *
      * @param mixed $stock

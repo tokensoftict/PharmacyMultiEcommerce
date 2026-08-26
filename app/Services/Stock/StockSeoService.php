@@ -2,6 +2,7 @@
 
 namespace App\Services\Stock;
 
+use App\Classes\ApplicationEnvironment;
 use App\Models\Stock;
 
 class StockSeoService
@@ -59,5 +60,32 @@ class StockSeoService
 
         // Use updateQuietly so we don't trigger further model events
         $stock->updateQuietly(['seo' => $slug]);
+    }
+
+    /**
+     * Build the complete, public SEO URL for a product.
+     *
+     * Uses the current ApplicationEnvironment store type to pick the
+     * correct route prefix (wholesales or retail), matching the share
+     * routes defined in routes/share.php:
+     *   /{storeType}/p/{slug}
+     *
+     * Example:
+     *   https://domain.com/wholesales/p/paracetamol-500mg-tablet-42
+     *
+     * @param  string|null $slug  The product's SEO slug (from the `seo` column).
+     * @return string|null        Full URL, or null when no slug is available.
+     */
+    public static function generateUrl(?string $slug): ?string
+    {
+        if (!$slug) {
+            return null;
+        }
+
+        $storeType = ApplicationEnvironment::$stock_model_string === 'supermarkets_stock_prices'
+            ? 'retail'
+            : 'wholesales';
+
+        return url("{$storeType}/p/{$slug}");
     }
 }

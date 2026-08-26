@@ -20,6 +20,7 @@ class StockListResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "seo" => $this->seoUrl($this->seo),
             "price" => money($this->{ApplicationEnvironment::$stock_model_string}?->price),
             "price_not_formatted" => $this->{ApplicationEnvironment::$stock_model_string}?->price,
             "image" => $this->product_image,

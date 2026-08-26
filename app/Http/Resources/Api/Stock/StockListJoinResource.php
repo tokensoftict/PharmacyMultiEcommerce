@@ -20,6 +20,7 @@ class StockListJoinResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "seo" => $this->seoUrl($this->seo),
             "price" => money($this->price),
             "price_not_formatted" => $this->price,
             "image" => $this->product_image,

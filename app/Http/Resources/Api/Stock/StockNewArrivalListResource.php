@@ -21,6 +21,7 @@ class StockNewArrivalListResource extends JsonResource
         return [
             "id" => $this->stock->id,
             "name" => $this->stock->name,
+            "seo" => $this->seoUrl($this->stock->seo),
             "price" => money($this->stock->{ApplicationEnvironment::$stock_model_string}?->price),
             "price_not_formatted" => $this->stock->{ApplicationEnvironment::$stock_model_string}?->price,
             "image" => $this->stock->product_image,

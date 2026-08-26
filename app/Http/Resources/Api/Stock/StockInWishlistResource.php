@@ -22,6 +22,7 @@ class StockInWishlistResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "seo" => $this->seoUrl($this->seo),
             "description" => $this->description,
             "price" => money($this->{ApplicationEnvironment::$stock_model_string}->price),
             "price_not_formatted" => $this->{ApplicationEnvironment::$stock_model_string}->price,
