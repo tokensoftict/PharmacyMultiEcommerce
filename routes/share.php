@@ -18,6 +18,31 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
 
+    // ── Well-Known App Links & Universal Links ────────────────────────────
+    Route::get('/.well-known/assetlinks.json', function () {
+        $path = public_path('.well-known/assetlinks.json');
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        return response()->file($path, [
+            'Content-Type' => 'application/json',
+            'Access-Control-Allow-Origin' => '*',
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
+    });
+
+    Route::get('/.well-known/apple-app-site-association', function () {
+        $path = public_path('.well-known/apple-app-site-association');
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        return response()->file($path, [
+            'Content-Type' => 'application/json',
+            'Access-Control-Allow-Origin' => '*',
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
+    });
+
     Route::prefix('wholesales')->name('share.wholesales.')->group(function () {
         Route::get('/p/{slug}', ProductShareController::class)
             ->name('product')
@@ -31,3 +56,4 @@ Route::middleware('web')->group(function () {
     });
 
 });
+

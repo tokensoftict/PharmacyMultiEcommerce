@@ -58,7 +58,7 @@ class ProductShareService
             ? 'wholessales_stock_prices'
             : 'supermarkets_stock_prices';
 
-        $stock = Stock::withoutGlobalScopes()
+        $query = Stock::withoutGlobalScopes()
             ->without(array_keys((new Stock())->getRelations()))  // strip default with()
             ->with([
                 'manufacturer:id,name',
@@ -68,14 +68,22 @@ class ProductShareService
             ])
             ->select([
                 'id', 'local_stock_id', 'name', 'seo',
-                'description', 'admin_status',
+                'description', 'admin_status', 'is_wholesales',
                 'manufacturer_id', 'productcategory_id',
             ])
             ->where('seo', $slug)
-            ->where('admin_status', true)
-            ->first();
+            ->where('admin_status', true);
 
-        return $stock;
+        if ($storeType === 'wholesales') {
+            $query->where(function ($q) {
+                $q->where('is_wholesales', true)
+                  ->orWhereHas('wholessales_stock_prices', function ($sub) {
+                      $sub->where('status', true);
+                  });
+            });
+        }
+
+        return $query->first();
     }
 
     /**

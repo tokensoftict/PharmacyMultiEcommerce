@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.tokensoftict.psgdc",
+      "sha256_cert_fingerprints": [
+        "15:00:A8:20:83:96:73:BE:88:14:84:0E:1B:9C:4C:41:07:9D:19:3E:C5:C5:8B:4E:F2:FC:BF:3B:EF:C5:15:FC",
+        "FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C"
+      ]
+    }
+  }
+]

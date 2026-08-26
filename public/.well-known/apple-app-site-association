@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "7L4QDAL5X4.com.tokensoftict.psgdc",
+        "paths": [
+          "/wholesales/p/*",
+          "/retail/p/*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "7L4QDAL5X4.com.tokensoftict.psgdc"
+    ]
+  }
+}

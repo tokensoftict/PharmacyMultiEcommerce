@@ -231,4 +231,26 @@ class Stock extends Model
     {
         return $this->hasMany(Stockbarcode::class);
     }
+
+    /**
+     * Retrieve the model for a bound value.
+     * Supports resolving either by numeric ID (e.g. 42) or by SEO slug (e.g. 'paracetamol-500mg-42').
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($field) {
+            return parent::resolveRouteBinding($value, $field);
+        }
+
+        if (is_numeric($value)) {
+            return $this->where('id', (int) $value)->first();
+        }
+
+        return $this->where('seo', $value)->first();
+    }
 }
+

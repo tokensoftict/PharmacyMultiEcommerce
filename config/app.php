@@ -68,6 +68,19 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | App Store Download URLs
+     |--------------------------------------------------------------------------
+     |
+     | Download URLs for the native mobile applications on Android Play Store
+     | and Apple App Store.
+     |
+     */
+
+    'android_app_store_url' => env('ANDROID_APP_STORE_URL', 'https://play.google.com/store/apps/details?id=com.tokensoftict.psgdc'),
+    'ios_app_store_url' => env('IOS_APP_STORE_URL', 'https://apps.apple.com/us/app/ps-gdc/id6741708076'),
+
+    /*
+     |--------------------------------------------------------------------------
      | Application Timezone
      |--------------------------------------------------------------------------
      |

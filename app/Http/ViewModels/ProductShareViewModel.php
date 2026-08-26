@@ -24,6 +24,8 @@ readonly class ProductShareViewModel
     public string $storeType;   // 'retail' or 'wholesales'
     public string $priceLabel;  // human-friendly label
     public int $localStockId;
+    public string $playStoreUrl;
+    public string $appStoreUrl;
 
     public function __construct(Stock $stock, string $storeType, string $currentUrl)
     {
@@ -45,6 +47,8 @@ readonly class ProductShareViewModel
         // ── URLs ─────────────────────────────────────────────────────────────
         $this->url          = $currentUrl;
         $this->canonicalUrl = $currentUrl;
+        $this->playStoreUrl = config('app.android_app_store_url', 'https://play.google.com/store/apps/details?id=com.tokensoftict.psgdc');
+        $this->appStoreUrl  = config('app.ios_app_store_url', 'https://apps.apple.com/us/app/ps-gdc/id6741708076');
 
         // ── Taxonomy ─────────────────────────────────────────────────────────
         $this->brand    = $stock->manufacturer?->name;

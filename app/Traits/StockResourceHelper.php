@@ -35,7 +35,7 @@ trait StockResourceHelper
 
         $baseUrl = rtrim(config('app.share_url', 'https://share.generaldrugcentre.com'), '/');
 
-        return "{$baseUrl}/{$this->getDepartment()}/p/{$slug}";
+        return $slug;  //"{$baseUrl}/{$this->getDepartment()}/p/{$slug}";
     }
 
     /**

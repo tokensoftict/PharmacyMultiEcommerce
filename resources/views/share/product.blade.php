@@ -155,16 +155,30 @@
         margin-left: 2px;
     }
 
-    /* CTA buttons */
-    .cta-group { display: flex; flex-direction: column; gap: 10px; }
+    /* CTA section */
+    .cta-section { display: flex; flex-direction: column; gap: 12px; }
+    .cta-headline {
+        font-size: .8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        text-align: center;
+        margin-bottom: 2px;
+    }
+    .cta-stores {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
 
     .btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
         border-radius: 10px;
-        padding: 13px 18px;
+        padding: 11px 16px;
         font-size: .9rem;
         font-weight: 700;
         cursor: pointer;
@@ -172,17 +186,47 @@
         transition: opacity .15s, transform .1s;
         text-align: center;
         width: 100%;
+        text-decoration: none;
     }
     .btn:active { transform: scale(.98); opacity: .9; }
 
-    .btn--primary {
-        background: linear-gradient(135deg, #D32F2F, #B71C1C);
+    .btn--store {
+        background: #0f172a;
         color: #fff;
-        box-shadow: 0 4px 14px rgba(211,47,47,.35);
+        box-shadow: 0 4px 12px rgba(15,23,42,.2);
+        padding: 8px 16px;
+        min-height: 48px;
     }
+    .btn--playstore {
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+    }
+    .btn--appstore {
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+    }
+    .store-svg { flex-shrink: 0; }
+    .store-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1.15;
+    }
+    .store-sub {
+        font-size: .62rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        opacity: .85;
+    }
+    .store-main {
+        font-size: .95rem;
+        font-weight: 700;
+        letter-spacing: -.01em;
+    }
+
     .btn--ghost {
         background: var(--red-light);
         color: var(--red-dark);
+        margin-top: 4px;
     }
     .btn__icon { font-size: 1.1rem; }
 
@@ -202,8 +246,8 @@
         .card-wrap { padding: 40px 24px 60px; }
         .product-name { font-size: 1.4rem; }
         .price-value { font-size: 2rem; }
-        .cta-group { flex-direction: row; }
-        .btn { width: auto; flex: 1; }
+        .cta-stores { flex-direction: row; }
+        .btn--store { flex: 1; }
     }
 </style>
 
@@ -294,25 +338,52 @@
                 @endif
 
                 {{-- CTA Buttons --}}
-                <div class="cta-group">
-                    <a
-                        href="https://generaldrugcentre.com/app"
-                        class="btn btn--primary"
-                        id="btn-download-app"
-                        aria-label="Download the PS GDC app to order {{ $viewModel->title }}"
-                    >
-                        <span class="btn__icon" aria-hidden="true">📱</span>
-                        Order on the App
-                    </a>
+                <div class="cta-section">
+                    <p class="cta-headline">Get the App to Order Now</p>
+                    <div class="cta-stores">
+                        <a
+                            href="{{ $viewModel->playStoreUrl }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn--store btn--playstore"
+                            id="btn-playstore"
+                            aria-label="Download PS GDC on Google Play Store"
+                        >
+                            <svg class="store-svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M3.609 1.814L13.792 12 3.61 22.186c-.365-.365-.61-.926-.61-1.606V3.42c0-.68.245-1.241.61-1.606zM15.207 13.414l2.457-2.457-12.78-7.38 10.323 9.837zm0-2.828L4.884 20.423l12.78-7.38-2.457-2.457zm1.414 1.414l3.195 1.845c.783.452.783 1.189 0 1.641l-3.195 1.845-2.043-2.043 2.043-2.043z"/>
+                            </svg>
+                            <div class="store-text">
+                                <span class="store-sub">GET IT ON</span>
+                                <span class="store-main">Google Play</span>
+                            </div>
+                        </a>
+
+                        <a
+                            href="{{ $viewModel->appStoreUrl }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn--store btn--appstore"
+                            id="btn-appstore"
+                            aria-label="Download PS GDC on Apple App Store"
+                        >
+                            <svg class="store-svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.38c.62-.75 1.04-1.8 1.01-2.85-.92.04-2.03.62-2.69 1.38-.58.67-1.1 1.74-1.01 2.78 1.03.08 2.07-.56 2.69-1.31z"/>
+                            </svg>
+                            <div class="store-text">
+                                <span class="store-sub">Download on the</span>
+                                <span class="store-main">App Store</span>
+                            </div>
+                        </a>
+                    </div>
 
                     <a
                         href="https://generaldrugcentre.com"
                         class="btn btn--ghost"
                         id="btn-visit-store"
-                        aria-label="Visit PS General Drugs Centre website"
+                        aria-label="Visit PS General Drugs Centre online store"
                     >
                         <span class="btn__icon" aria-hidden="true">🏪</span>
-                        Visit Store
+                        Visit Online Store
                     </a>
                 </div>
 
