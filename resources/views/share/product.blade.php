@@ -296,7 +296,7 @@
                 {{-- CTA Buttons --}}
                 <div class="cta-group">
                     <a
-                        href="{{ url('/app') }}"
+                        href="https://generaldrugcentre.com/app"
                         class="btn btn--primary"
                         id="btn-download-app"
                         aria-label="Download the PS GDC app to order {{ $viewModel->title }}"
