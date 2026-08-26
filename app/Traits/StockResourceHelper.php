@@ -19,6 +19,10 @@ trait StockResourceHelper
     /**
      * Build the complete public SEO URL for a product.
      *
+     * Uses the named routes defined in routes/share.php:
+     *   share.wholesales.product → /wholesales/p/{slug}
+     *   share.retail.product     → /retail/p/{slug}
+     *
      * @param  string|null $slug  The product's SEO slug.
      * @return string|null        Full URL, e.g. https://domain.com/wholesales/p/slug-123
      */
@@ -28,7 +32,11 @@ trait StockResourceHelper
             return null;
         }
 
-        return url($this->getDepartment() . '/p/' . $slug);
+        $routeName = $this->getDepartment() === 'retail'
+            ? 'share.retail.product'
+            : 'share.wholesales.product';
+
+        return route($routeName, ['slug' => $slug]);
     }
 
     /**

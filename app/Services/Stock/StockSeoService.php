@@ -65,13 +65,9 @@ class StockSeoService
     /**
      * Build the complete, public SEO URL for a product.
      *
-     * Uses the current ApplicationEnvironment store type to pick the
-     * correct route prefix (wholesales or retail), matching the share
-     * routes defined in routes/share.php:
-     *   /{storeType}/p/{slug}
-     *
-     * Example:
-     *   https://domain.com/wholesales/p/paracetamol-500mg-tablet-42
+     * Uses the named routes defined in routes/share.php:
+     *   share.wholesales.product → /wholesales/p/{slug}
+     *   share.retail.product     → /retail/p/{slug}
      *
      * @param  string|null $slug  The product's SEO slug (from the `seo` column).
      * @return string|null        Full URL, or null when no slug is available.
@@ -82,10 +78,10 @@ class StockSeoService
             return null;
         }
 
-        $storeType = ApplicationEnvironment::$stock_model_string === 'supermarkets_stock_prices'
-            ? 'retail'
-            : 'wholesales';
+        $routeName = ApplicationEnvironment::$stock_model_string === 'supermarkets_stock_prices'
+            ? 'share.retail.product'
+            : 'share.wholesales.product';
 
-        return url("{$storeType}/p/{$slug}");
+        return route($routeName, ['slug' => $slug]);
     }
 }
