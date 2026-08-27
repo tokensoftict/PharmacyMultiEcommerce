@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\User\AppUserService;
 use App\Services\User\Supermarket\SupermarketCustomerService;
 use App\Services\User\UserAccountService;
+use App\Services\Referral\ReferralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -20,12 +21,14 @@ class SignupController extends ApiController
     public SupermarketCustomerService $supermarketCustomerService;
 
     public AppUserService $appUserService;
+    public ReferralService $referralService;
 
-    public function __construct(UserAccountService $userAccountService, SupermarketCustomerService $supermarketCustomerService, AppUserService $appUserService)
+    public function __construct(UserAccountService $userAccountService, SupermarketCustomerService $supermarketCustomerService, AppUserService $appUserService, ReferralService $referralService)
     {
         $this->userAccountService = $userAccountService;
         $this->supermarketCustomerService = $supermarketCustomerService;
         $this->appUserService = $appUserService;
+        $this->referralService = $referralService;
     }
 
     /**
@@ -61,6 +64,16 @@ class SignupController extends ApiController
 
             $this->appUserService->createAppUser($user, $superMarketUser);
             //link the supermarket account app users so the user can be assign to supermarket customer
+
+            // ── Referral System: establish relationship if referral code provided ──
+            $referralCode = $request->get('referral_code');
+            if (!empty($referralCode)) {
+                $this->referralService->createReferralRelationship(
+                    $user,
+                    strtoupper(trim($referralCode)),
+                    'supermarket'
+                );
+            }
 
             $user->updateDeviceKey($request->get("deviceKey", false));
             //update the user device key for push notification

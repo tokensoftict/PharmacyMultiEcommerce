@@ -13,6 +13,7 @@ use App\Services\User\AppUserService;
 use App\Services\User\Supermarket\SupermarketCustomerService;
 use App\Services\User\UserAccountService;
 use App\Services\User\Wholesales\WholeSalesCustomerService;
+use App\Services\Referral\ReferralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -25,12 +26,20 @@ class WholesalesRegistrationController extends ApiController
     public AppUserService $appUserService;
 
     public AddressService $addressService;
-    public function __construct(UserAccountService $userAccountService, WholeSalesCustomerService $wholesalesCustomerService, AppUserService $appUserService, AddressService $addressService)
-    {
+    public ReferralService $referralService;
+
+    public function __construct(
+        UserAccountService $userAccountService,
+        WholeSalesCustomerService $wholesalesCustomerService,
+        AppUserService $appUserService,
+        AddressService $addressService,
+        ReferralService $referralService
+    ) {
         $this->userAccountService = $userAccountService;
         $this->wholesalesCustomerService = $wholesalesCustomerService;
         $this->appUserService = $appUserService;
         $this->addressService = $addressService;
+        $this->referralService = $referralService;
     }
 
 
@@ -49,6 +58,16 @@ class WholesalesRegistrationController extends ApiController
 
             $address = $this->addressService->createAddress($user, $request->all());
             $this->wholesalesCustomerService->attachDefaultAddressToCustomer($address, $wholesale);
+
+            // ── Referral System: establish relationship if referral code provided ──
+            $referralCode = $request->get('referral_code');
+            if (!empty($referralCode)) {
+                $this->referralService->createReferralRelationship(
+                    $user,
+                    strtoupper(trim($referralCode)),
+                    'wholesales'
+                );
+            }
 
             return $this->sendSuccessMessageResponse('Business account has been created successfully');
         });

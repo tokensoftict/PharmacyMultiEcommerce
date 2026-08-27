@@ -45,7 +45,14 @@ class SystemSettingsComponent extends Component
                 'delivery_tariff' => NULL,
                 'logo' => 'placholder.jpg',
                 'footer_notes' => NULL,
+                // ── Referral Bonus Defaults ──────────────────────────────────
+                'retail_referral_bonus'    => 10,
+                'wholesale_referral_bonus' => 20,
             ];
+        } else {
+            // Ensure referral bonus keys exist even on existing settings stores
+            $this->store['retail_referral_bonus']    = $this->store['retail_referral_bonus'] ?? 10;
+            $this->store['wholesale_referral_bonus'] = $this->store['wholesale_referral_bonus'] ?? 20;
         }
     }
 

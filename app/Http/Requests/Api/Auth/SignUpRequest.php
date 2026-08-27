@@ -39,6 +39,8 @@ class SignUpRequest extends FormRequest
                     $query->whereNull('deleted_at')->whereNotNull('phone_verified_at');
                 }),
             ],
+            // Optional referral code — validated to exist only when provided
+            'referral_code' => 'nullable|string|max:10',
         ];
     }
 

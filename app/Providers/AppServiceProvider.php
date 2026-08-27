@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Classes\Settings;
+use App\Events\Auth\PhoneVerified;
 use App\Http\Middleware\DetectApplicationEnvironment;
+use App\Listeners\Auth\ProcessReferralRewardListener;
 use App\Listeners\PushNotificationFailedListener;
 use App\Listeners\PushNotificationSentListener;
 use App\Models\Old\RetailCustomer;
@@ -55,6 +57,12 @@ class AppServiceProvider extends ServiceProvider
         \Event::listen(
             NotificationSent::class ,
             PushNotificationSentListener::class
+        );
+
+        // ── Referral System: award bonus when referred user verifies phone ──
+        \Event::listen(
+            PhoneVerified::class,
+            ProcessReferralRewardListener::class
         );
     }
 }

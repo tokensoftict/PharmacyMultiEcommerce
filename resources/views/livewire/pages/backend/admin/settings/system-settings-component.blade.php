@@ -81,6 +81,48 @@
                             </div>
                         </div>
 
+                        {{-- ── REFERRAL BONUS SETTINGS ───────────────────────────────── --}}
+                        <div class="mb-4 mt-4">
+                            <h4 class="mb-3">REFERRAL BONUS SETTINGS</h4>
+                            <p class="text-muted mb-3" style="font-size:0.85rem;">
+                                Loyalty points credited to the referrer when the referred user
+                                completes phone verification. Retail and Wholesale bonuses are
+                                credited to their respective loyalty-point wallets.
+                            </p>
+
+                            <div class="mb-3">
+                                <label class="form-label">Retail Referral Bonus (Loyalty Points)</label>
+                                <input
+                                    type="number"
+                                    wire:model="store.retail_referral_bonus"
+                                    class="form-control"
+                                    name="retail_referral_bonus"
+                                    placeholder="e.g. 10"
+                                    min="0"
+                                    step="0.01"
+                                >
+                                <small class="text-muted">
+                                    Credited to <strong>retail_loyalty_points</strong> (Retail Referral Wallet).
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Wholesale Referral Bonus (Loyalty Points)</label>
+                                <input
+                                    type="number"
+                                    wire:model="store.wholesale_referral_bonus"
+                                    class="form-control"
+                                    name="wholesale_referral_bonus"
+                                    placeholder="e.g. 20"
+                                    min="0"
+                                    step="0.01"
+                                >
+                                <small class="text-muted">
+                                    Credited to <strong>loyalty_points</strong> (Wholesale Referral Wallet).
+                                </small>
+                            </div>
+                        </div>
+
                         @if(userCanView('backend.admin.settings.system_settings.update'))
                             <div align="center">
                                 <button type="button" wire:click="update" class="btn btn-lg btn-phoenix-primary btn-block">

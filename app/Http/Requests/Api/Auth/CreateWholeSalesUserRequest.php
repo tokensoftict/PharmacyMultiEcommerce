@@ -30,6 +30,8 @@ class CreateWholeSalesUserRequest extends FormRequest
             'address_1' => 'required',
             'state_id' => 'required',
             'town_id' => 'required',
+            // Optional referral code provided when the user was referred
+            'referral_code' => 'nullable|string|max:10',
         ];
     }
 }

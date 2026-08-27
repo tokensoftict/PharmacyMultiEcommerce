@@ -878,6 +878,24 @@ function generateUniqueReferralCode()
     return $code;
 }
 
+/**
+ * Generate a unique referral code for a User account.
+ *
+ * Format: GDC + 7 random alphanumeric uppercase characters.
+ * Example: GDC7F82K9
+ *
+ * This is SEPARATE from generateUniqueReferralCode() which is for Sales Representatives.
+ * Sales Rep codes use the 'SR' prefix; User referral codes use the 'GDC' prefix.
+ */
+function generateUserReferralCode(): string
+{
+    do {
+        $code = 'GDC' . strtoupper(Str::random(7));
+    } while (\App\Models\User::where('referral_code', $code)->exists());
+
+    return $code;
+}
+
 function proof_of_payment()
 {
     $proofOfPayment = Folder::where("slug", "proof-of-payment")->first();

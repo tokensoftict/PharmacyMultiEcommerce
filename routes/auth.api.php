@@ -23,6 +23,16 @@ Route::prefix("account")->namespace("Account")->group(function(){
 
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::post("/change-password", ["as" => "account.change-password", "uses" => "ChangePasswordController"]);
+
+        // ── Referral System ───────────────────────────────────────────────────────
+        Route::get("/referral-code", [
+            "as"   => "account.referral-code",
+            "uses" => "ReferralController@referralCode",
+        ]);
+        Route::get("/referrals/me", [
+            "as"   => "account.referrals.me",
+            "uses" => "ReferralController@myReferrals",
+        ]);
     });
 });
 

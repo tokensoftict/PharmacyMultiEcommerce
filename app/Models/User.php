@@ -54,6 +54,8 @@ use Illuminate\Database\Eloquent\Collection;
  * @property Collection|VoucherCode[] $voucher_codes
  * @property Collection|Voucher[] $vouchers
  * @property Collection|WholesalesUser[] $wholesales_users
+ * @property Collection|Referral[] $referrals         — referrals this user has initiated as referrer
+ * @property Referral|null $referredBy                — the referral record where this user was referred
  *
  * @package App\Models
  */
@@ -102,7 +104,8 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
         'retail_member_group_id',
         'device_type',
         'version',
-        'version_code'
+        'version_code',
+        'referral_code',
     ];
 
     protected $appends = ['cus_exist'];
@@ -219,5 +222,34 @@ class User extends Authenticatable implements CanResetPasswordByTokenInterface, 
     public function retailMemberGroup()
     {
         return $this->belongsTo(MemberGroup::class, 'retail_member_group_id');
+    }
+
+    /**
+     * Referrals initiated by this user (this user is the referrer).
+     */
+    public function referrals()
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
+    }
+
+    /**
+     * The referral record where this user was the referred user.
+     */
+    public function referredBy()
+    {
+        return $this->hasOne(Referral::class, 'referred_user_id');
+    }
+
+    /**
+     * Returns the user's referral code, generating one if it does not yet exist.
+     * Safe to call multiple times — idempotent.
+     */
+    public function getReferralCode(): string
+    {
+        if (!$this->referral_code) {
+            $this->referral_code = generateUserReferralCode();
+            $this->save();
+        }
+        return $this->referral_code;
     }
 }
