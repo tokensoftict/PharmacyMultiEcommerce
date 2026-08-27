@@ -30,9 +30,11 @@ class ReferralController extends ApiController
         $user = auth('sanctum')->user();
         $code = $user->getReferralCode();
 
+        $baseUrl = rtrim(config('app.referral_url', 'https://referral.generaldrugcentre.com'), '/');
+
         return $this->sendSuccessResponse([
             'referral_code' => $code,
-            'referral_url'  => 'http://referral.generaldrugcentre.com/ref/' . $code,
+            'referral_url'  => "{$baseUrl}/ref/{$code}",
         ]);
     }
 

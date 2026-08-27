@@ -68,6 +68,19 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Referral URL
+     |--------------------------------------------------------------------------
+     |
+     | The base URL for the dedicated referral subdomain and the Detour redirect
+     | destination.
+     |
+     */
+
+    'referral_url' => env('REFERRAL_URL', 'https://referral.generaldrugcentre.com'),
+    'detour_referral_base_url' => env('DETOUR_REFERRAL_BASE_URL', 'https://psgdc.godetour.link/PrdRthERNv/ref/'),
+
+    /*
+     |--------------------------------------------------------------------------
      | App Store Download URLs
      |--------------------------------------------------------------------------
      |

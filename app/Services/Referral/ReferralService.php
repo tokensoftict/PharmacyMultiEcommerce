@@ -205,9 +205,11 @@ class ReferralService
             ->get()
             ->keyBy('store_type');
 
+        $baseUrl = rtrim(config('app.referral_url', 'https://referral.generaldrugcentre.com'), '/');
+
         return [
             'referral_code' => $referralCode,
-            'referral_url'  => 'http://referral.generaldrugcentre.com/ref/' . $referralCode,
+            'referral_url'  => "{$baseUrl}/ref/{$referralCode}",
             'supermarket'   => [
                 'successful_referrals' => (int) ($stats->get('supermarket')?->successful ?? 0),
                 'pending_referrals'    => (int) ($stats->get('supermarket')?->pending    ?? 0),

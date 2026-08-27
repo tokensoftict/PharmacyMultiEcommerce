@@ -8,10 +8,11 @@ use LivewireFilemanager\Filemanager\Http\Controllers\Files\FileController;
 
 /*
 |--------------------------------------------------------------------------
-| Product Share Routes
+| Product Share & Referral Routes
 |--------------------------------------------------------------------------
 */
 require __DIR__ . '/share.php';
+require __DIR__ . '/referral.php';
 
 foreach (config('app.MAIN_DOMAIN', []) as $domain) {
 
