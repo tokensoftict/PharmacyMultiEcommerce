@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 /**
  * Class Campaign
@@ -57,6 +58,15 @@ class Campaign extends Model
     use SoftDeletes;
 
     protected $table = 'campaigns';
+
+    protected static function booted(): void
+    {
+        static::creating(function (Campaign $campaign) {
+            if (empty($campaign->slug)) {
+                $campaign->slug = Str::slug($campaign->name . '-' . Str::random(6));
+            }
+        });
+    }
 
     protected $casts = [
         'starts_at'              => 'datetime',
