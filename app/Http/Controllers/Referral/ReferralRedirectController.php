@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Referral;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
+use App\Http\ViewModels\ReferralShareViewModel;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * ReferralRedirectController
  *
- * Handles incoming traffic to https://referral.generaldrugcentre.com/ref/{code}
- * and redirects users to the Detour deferred deep link:
- * https://psgdc.godetour.link/PrdRthERNv/ref/{code}
+ * Renders the rich social preview landing page and OpenGraph metadata when a user shares
+ * their referral link (e.g. https://referral.generaldrugcentre.com/ref/{code}).
  */
 class ReferralRedirectController extends Controller
 {
@@ -19,29 +20,34 @@ class ReferralRedirectController extends Controller
      * Handle the incoming request.
      *
      * @param Request $request
-     * @param string $code
-     * @return RedirectResponse
+     * @param string|null $code
+     * @return Response
      */
-    public function __invoke(Request $request, string $code): RedirectResponse
+    public function __invoke(Request $request, ?string $code = null): Response
     {
-        $cleanCode = strtoupper(trim($code));
+        $cleanCode = $code ? strtoupper(trim($code)) : '';
 
-        $detourBaseUrl = rtrim(
-            config('app.detour_referral_base_url', 'https://psgdc.godetour.link/PrdRthERNv/ref/'),
-            '/'
-        );
-
-        $targetUrl = "{$detourBaseUrl}/{$cleanCode}";
-
-        // Preserve any incoming query parameters
-        if ($query = $request->getQueryString()) {
-            $targetUrl .= "?{$query}";
+        // Find referrer user by referral code
+        $referrer = null;
+        if (!empty($cleanCode)) {
+            $referrer = User::where('referral_code', $cleanCode)->first();
         }
 
-        return redirect()->away($targetUrl, 302, [
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Pragma' => 'no-cache',
-            'Expires' => '0',
-        ]);
+        $viewModel = new ReferralShareViewModel(
+            referralCode: $cleanCode,
+            referrer: $referrer,
+            currentUrl: $request->url()
+        );
+
+        $response = response()->view('referral.invite', compact('viewModel'));
+
+        // Cache headers for CDNs and crawlers (5 min browser, 10 min CDN)
+        $response->headers->set(
+            'Cache-Control',
+            'public, max-age=300, s-maxage=600, stale-while-revalidate=86400'
+        );
+
+        return $response;
     }
 }
+

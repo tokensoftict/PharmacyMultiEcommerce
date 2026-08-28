@@ -19,8 +19,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
 
-    Route::get('/ref/{code}', ReferralRedirectController::class)
+    Route::get('/ref/{code?}', ReferralRedirectController::class)
         ->name('referral.redirect')
         ->where('code', '[a-zA-Z0-9]+');
+
+    Route::get('/referral', ReferralRedirectController::class)
+        ->name('referral.index');
 
 });
