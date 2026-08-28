@@ -178,27 +178,37 @@
                                 <label class="form-label fw-bold">Button CTA Text</label>
                                 <input type="text" class="form-control" wire:model="cta_text">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-3" x-data="{ localPreview: null }">
                                 <label class="form-label fw-bold">Campaign Image (Optional)</label>
                                 
-                                @if ($image_upload && method_exists($image_upload, 'temporaryUrl'))
+                                <template x-if="localPreview">
                                     <div class="mb-2 p-2 bg-light border rounded text-center position-relative">
-                                        <img src="{{ $image_upload->temporaryUrl() }}" alt="New Image Preview" class="img-thumbnail" style="max-height: 100px;">
+                                        <img :src="localPreview" alt="New Image Preview" class="img-thumbnail" style="max-height: 120px;">
                                         <small class="text-success d-block fw-bold mt-1"><i class="fa fa-check"></i> New image selected (will be saved upon update)</small>
                                     </div>
-                                @elseif($existing_image)
-                                    <div class="mb-2 p-2 bg-light border rounded text-center position-relative">
-                                        <img src="{{ asset('storage/' . $existing_image) }}" alt="Current Image" class="img-thumbnail" style="max-height: 100px;">
-                                        <small class="text-muted d-block mt-1">Current active image</small>
-                                        <button type="button" class="btn btn-sm btn-outline-danger mt-1" wire:click="removeExistingImage">
-                                            <i class="fa fa-trash me-1"></i> Remove Image
-                                        </button>
-                                    </div>
-                                @endif
+                                </template>
 
-                                <input type="file" class="form-control @error('image_upload') is-invalid @enderror" wire:model="image_upload" accept="image/*">
+                                <template x-if="!localPreview">
+                                    <div>
+                                        @if($existing_image)
+                                            <div class="mb-2 p-2 bg-light border rounded text-center position-relative">
+                                                <img src="{{ asset('storage/' . $existing_image) }}" alt="Current Image" class="img-thumbnail" style="max-height: 120px;">
+                                                <small class="text-muted d-block mt-1">Current active image</small>
+                                                <button type="button" class="btn btn-sm btn-outline-danger mt-1" wire:click="removeExistingImage">
+                                                    <i class="fa fa-trash me-1"></i> Remove Image
+                                                </button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </template>
+
+                                <input type="file" 
+                                       class="form-control @error('image_upload') is-invalid @enderror" 
+                                       wire:model="image_upload" 
+                                       accept="image/*"
+                                       @change="localPreview = $event.target.files.length ? URL.createObjectURL($event.target.files[0]) : null">
                                 <div wire:loading wire:target="image_upload" class="text-primary small mt-1">
-                                    <i class="fa fa-spinner fa-spin me-1"></i> Uploading image preview...
+                                    <i class="fa fa-spinner fa-spin me-1"></i> Uploading to server...
                                 </div>
                                 @error('image_upload') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>

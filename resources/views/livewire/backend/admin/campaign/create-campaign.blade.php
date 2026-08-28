@@ -171,19 +171,23 @@
                                 <label class="form-label fw-bold">Button CTA Text</label>
                                 <input type="text" class="form-control" wire:model="cta_text" placeholder="e.g. Claim Discount Now">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-3" x-data="{ localPreview: null }">
                                 <label class="form-label fw-bold">Campaign Image (Optional)</label>
 
-                                @if ($image_upload && method_exists($image_upload, 'temporaryUrl'))
+                                <template x-if="localPreview">
                                     <div class="mb-2 p-2 bg-light border rounded text-center position-relative">
-                                        <img src="{{ $image_upload->temporaryUrl() }}" alt="New Image Preview" class="img-thumbnail" style="max-height: 100px;">
+                                        <img :src="localPreview" alt="Selected Preview" class="img-thumbnail" style="max-height: 120px;">
                                         <small class="text-success d-block fw-bold mt-1"><i class="fa fa-check"></i> Image selected (ready to upload)</small>
                                     </div>
-                                @endif
+                                </template>
 
-                                <input type="file" class="form-control @error('image_upload') is-invalid @enderror" wire:model="image_upload" accept="image/*">
+                                <input type="file" 
+                                       class="form-control @error('image_upload') is-invalid @enderror" 
+                                       wire:model="image_upload" 
+                                       accept="image/*"
+                                       @change="localPreview = $event.target.files.length ? URL.createObjectURL($event.target.files[0]) : null">
                                 <div wire:loading wire:target="image_upload" class="text-primary small mt-1">
-                                    <i class="fa fa-spinner fa-spin me-1"></i> Uploading image preview...
+                                    <i class="fa fa-spinner fa-spin me-1"></i> Uploading to server...
                                 </div>
                                 @error('image_upload') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>
