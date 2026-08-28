@@ -172,7 +172,6 @@ class EditCampaign extends Component
 
     public function render()
     {
-        return view('livewire.backend.admin.campaign.edit-campaign')
-            ->layout('layouts.app');
+        return view('livewire.backend.admin.campaign.edit-campaign');
     }
 }
