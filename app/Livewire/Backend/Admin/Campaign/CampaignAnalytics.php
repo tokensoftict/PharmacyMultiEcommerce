@@ -4,7 +4,6 @@ namespace App\Livewire\Backend\Admin\Campaign;
 
 use App\Models\Campaign;
 use App\Models\CampaignActivity;
-use Jantinnerezo\LivewireAlert\Concerns\SweetAlert2 as LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,7 +15,7 @@ use Livewire\WithPagination;
  */
 class CampaignAnalytics extends Component
 {
-    use WithPagination, LivewireAlert;
+    use WithPagination;
 
     public Campaign $campaign;
 
