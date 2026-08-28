@@ -145,7 +145,7 @@ class CampaignDatatable extends ExportDataTableComponent
      */
     public function edit($id): void
     {
-        $this->redirect(route('backend.admin.campaign.edit', $id));
+        $this->redirect(route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.campaign.edit', $id));
     }
 
     /**
