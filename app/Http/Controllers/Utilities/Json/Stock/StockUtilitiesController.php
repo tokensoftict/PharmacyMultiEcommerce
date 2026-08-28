@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Utilities\Json\Stock;
 
+use App\Classes\ApplicationEnvironment;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Utilities\Json\Stock\Select2Resource;
 use App\Models\Stock;
@@ -21,6 +22,7 @@ class StockUtilitiesController extends Controller
     {
         $searchTerm  = $request->get('searchTerm') ?? $request->get('s');
         if($searchTerm == "") return response()->json([], 200);
+        dd(ApplicationEnvironment::$stock_model_string);
         return Select2Resource::collection(
             Stock::query()->select('id', 'name')
                 ->where('name', 'like', "%$searchTerm%")->get()
