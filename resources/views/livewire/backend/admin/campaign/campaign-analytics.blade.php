@@ -18,10 +18,10 @@
                     <i class="fa fa-play me-1"></i> Activate Campaign
                 </button>
             @endif
-            <a href="{{ route('backend.admin.campaign.edit', $campaign->id) }}" class="btn btn-outline-primary btn-sm">
+            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix .'backend.admin.campaign.edit', $campaign->id) }}" class="btn btn-outline-primary btn-sm">
                 <i class="fa fa-pencil me-1"></i> Edit Setup
             </a>
-            <a href="{{ route('backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
+            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix .'backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fa fa-arrow-left me-1"></i> Back
             </a>
         </div>

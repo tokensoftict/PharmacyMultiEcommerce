@@ -132,6 +132,24 @@ class CampaignDatatable extends ExportDataTableComponent
     }
 
     /**
+     * Override create to redirect to the full create campaign page
+     * instead of the limited quick-create modal.
+     */
+    public function create()
+    {
+        return $this->redirect(route('backend.admin.campaign.create'));
+    }
+
+    /**
+     * Override edit to redirect to the full edit campaign page
+     * instead of the limited quick-edit modal.
+     */
+    public function edit($id): void
+    {
+        $this->redirect(route('backend.admin.campaign.edit', $id));
+    }
+
+    /**
      * Toggle campaign active ↔ paused from the list view.
      */
     public function toggleStatus(Campaign $campaign): void
