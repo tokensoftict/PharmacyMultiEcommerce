@@ -18,33 +18,46 @@
     $wireModelName = $attributes->wire('model')->value() ?: $model;
     $hasWireModel = !empty($wireModelName);
     $isLive = $live || ($attributes->wire('model') && $attributes->wire('model')->hasModifier('live'));
-    $optionsHash = md5(json_encode($options));
     
+    // Normalize options into a standard array format: [['id' => '...', 'name' => '...']]
+    $normalizedOptions = [];
+    if (!empty($options)) {
+        foreach ($options as $key => $opt) {
+            if (is_array($opt) || is_object($opt)) {
+                $opt = (array)$opt;
+                $optId = $opt['id'] ?? $opt['value'] ?? $opt['code'] ?? $key;
+                $optName = $opt['name'] ?? $opt['text'] ?? $opt['label'] ?? (string)$optId;
+                $normalizedOptions[] = ['id' => (string)$optId, 'name' => (string)$optName];
+            } else {
+                $normalizedOptions[] = ['id' => (string)$key, 'name' => (string)$opt];
+            }
+        }
+    }
+
     // Safely get initial value from wire:model or value prop
     $initialValue = ($attributes->wire('model') ? $attributes->wire('model')->value() : null) ?? $value;
 
+    // Resolve initial label
     $initialLabel = $placeholder;
     if ($multiple) {
-        $initialLabel = '0 selected';
-        if ($initialValue && is_array($initialValue) && count($initialValue) > 0) {
-            $initialLabel = count($initialValue) . ' selected';
-        }
-    } elseif ($initialValue) {
-        if (!empty($options)) {
-            foreach ($options as $option) {
-                $option = (array)$option;
-                if ($option['id'] == $initialValue) {
-                    $initialLabel = $option['text'] ?? $option['name'] ?? $placeholder;
-                    break;
-                }
+        $count = is_array($initialValue) ? count($initialValue) : 0;
+        $initialLabel = $count > 0 ? "{$count} selected" : $placeholder;
+    } elseif ($initialValue !== null && $initialValue !== '') {
+        $matched = false;
+        foreach ($normalizedOptions as $opt) {
+            if ((string)$opt['id'] === (string)$initialValue) {
+                $initialLabel = $opt['name'];
+                $matched = true;
+                break;
             }
-        } elseif ($editModel && class_exists($editModel)) {
+        }
+        if (!$matched && $editModel && class_exists($editModel)) {
             try {
                 $record = $editModel::find($initialValue);
                 if ($record) {
                     $initialLabel = $record->{$editColumn} ?? $placeholder;
                 }
-            } catch (\Exception $e) {}
+            } catch (\Throwable $e) {}
         }
     }
 @endphp
@@ -52,18 +65,18 @@
 <div x-data="{
     open: false,
     search: '',
-    options: @js((array)$options),
+    options: @js($normalizedOptions),
     selected: {{ $hasWireModel ? '$wire.entangle(\'' . $wireModelName . '\')' . ($isLive ? '.live' : '') : '@js($initialValue)' }},
     label: @js($initialLabel),
     placeholder: @js($placeholder),
     isAjax: @js(!empty($ajax)),
     ajaxUrl: @js($ajax),
     loading: false,
-    multiple: @js($multiple),
+    multiple: @js((bool)$multiple),
+    abortCtrl: null,
 
     init() {
         this.updateLabel();
-        
         this.$watch('selected', () => {
             this.updateLabel();
         });
@@ -71,61 +84,65 @@
 
     updateLabel() {
         if (this.multiple) {
-            if (!Array.isArray(this.selected) || this.selected.length === 0) {
-                this.label = '0 selected';
-            } else {
-                this.label = this.selected.length + ' selected';
-            }
+            const count = Array.isArray(this.selected) ? this.selected.length : 0;
+            this.label = count > 0 ? count + ' selected' : this.placeholder;
             return;
         }
 
-        if (!this.selected) {
+        if (this.selected === null || this.selected === undefined || this.selected === '') {
             this.label = this.placeholder;
             return;
         }
 
-        if (!this.isAjax && Array.isArray(this.options)) {
-            const found = this.options.find(o => o.id == this.selected);
+        if (Array.isArray(this.options) && this.options.length > 0) {
+            const found = this.options.find(o => String(o.id) === String(this.selected));
             if (found) {
-                this.label = found.text || found.name;
-            } else if (!this.label || this.label === this.placeholder) {
-                this.label = 'Selected (#' + this.selected + ')';
+                this.label = found.name;
+                return;
             }
+        }
+
+        if (!this.label || this.label === this.placeholder) {
+            this.label = 'Selected (#' + this.selected + ')';
         }
     },
 
     toggle() {
         this.open = !this.open;
         if (this.open) {
-            this.$nextTick(() => { this.$refs.searchInput.focus() });
+            this.$nextTick(() => {
+                if (this.$refs.searchInput) {
+                    this.$refs.searchInput.focus();
+                }
+            });
         }
     },
 
     select(option) {
+        const optId = String(option.id);
         if (this.multiple) {
             if (!Array.isArray(this.selected)) this.selected = [];
-            const index = this.selected.findIndex(s => s == option.id);
-            if (index > -1) {
-                this.selected.splice(index, 1);
+            const idx = this.selected.findIndex(s => String(s) === optId);
+            if (idx > -1) {
+                this.selected.splice(idx, 1);
             } else {
                 this.selected.push(option.id);
             }
             this.updateLabel();
-            this.$dispatch('input', this.selected);
         } else {
             this.selected = option.id;
-            this.label = option.text || option.name;
+            this.label = option.name;
             this.open = false;
             this.search = '';
-            this.$dispatch('input', option.id);
         }
     },
 
     isSelected(id) {
+        const optId = String(id);
         if (this.multiple) {
-            return Array.isArray(this.selected) && this.selected.some(s => s == id);
+            return Array.isArray(this.selected) && this.selected.some(s => String(s) === optId);
         }
-        return this.selected == id;
+        return String(this.selected) === optId;
     },
 
     clear() {
@@ -133,43 +150,54 @@
         this.label = this.placeholder;
         this.open = false;
         this.search = '';
-        this.$dispatch('input', this.selected);
     },
 
     fetchOptions() {
         if (!this.isAjax) return;
         const q = (this.search || '').trim();
-        if (q.length < 2) return;
-        
+        if (q.length < 1) {
+            this.options = [];
+            this.loading = false;
+            return;
+        }
+
+        if (this.abortCtrl) {
+            this.abortCtrl.abort();
+        }
+        this.abortCtrl = new AbortController();
         this.loading = true;
-        const glue = this.ajaxUrl.includes('?') ? '&' : '?';
-        fetch(`${this.ajaxUrl}${glue}searchTerm=${encodeURIComponent(q)}&s=${encodeURIComponent(q)}`)
+
+        const separator = this.ajaxUrl.includes('?') ? '&' : '?';
+        const url = `${this.ajaxUrl}${separator}searchTerm=${encodeURIComponent(q)}&s=${encodeURIComponent(q)}`;
+
+        fetch(url, { signal: this.abortCtrl.signal })
             .then(res => res.json())
             .then(data => {
-                const results = Array.isArray(data) ? data : (data.data || []);
-                this.options = Array.isArray(results) ? results : [];
+                const list = Array.isArray(data) ? data : (data.data || []);
+                this.options = (Array.isArray(list) ? list : []).map(item => ({
+                    id: String(item.id !== undefined ? item.id : (item.value !== undefined ? item.value : item)),
+                    name: String(item.name || item.text || item.label || item.id || '')
+                }));
                 this.loading = false;
             })
-            .catch(() => {
-                this.loading = false;
+            .catch(err => {
+                if (err.name !== 'AbortError') {
+                    this.loading = false;
+                }
             });
     },
 
-    filteredOptions() {
+    get displayList() {
         if (!Array.isArray(this.options)) return [];
         if (this.isAjax) return this.options;
         const q = (this.search || '').toLowerCase().trim();
         if (!q) return this.options;
-        return this.options.filter(o => {
-            const text = (o.text || o.name || '').toLowerCase();
-            return text.includes(q);
-        });
+        return this.options.filter(o => o.name.toLowerCase().includes(q));
     }
 }" 
 wire:ignore.self
 class="dropdown {{ $class }}" 
 id="{{ $actualId }}"
-wire:key="{{ $actualId }}-{{ $optionsHash }}"
 @click.away="open = false">
     
     <button 
@@ -180,7 +208,10 @@ wire:key="{{ $actualId }}-{{ $optionsHash }}"
     >
         <span x-text="label" class="text-truncate flex-grow-1 me-2"></span>
         <div class="d-flex align-items-center ms-auto">
-            <span x-show="selected" @click.stop="clear" class="fa-solid fa-xmark fs-9 me-2 text-400 hover-text-danger transition-base" style="cursor: pointer; padding: 2px;"></span>
+            <span x-show="selected !== null && selected !== '' && (!Array.isArray(selected) || selected.length > 0)" 
+                  @click.stop="clear" 
+                  class="fa-solid fa-xmark fs-9 me-2 text-400 hover-text-danger transition-base" 
+                  style="cursor: pointer; padding: 2px;"></span>
             <span class="fas fa-chevron-down fs-10 text-400"></span>
         </div>
     </button>
@@ -196,7 +227,7 @@ wire:key="{{ $actualId }}-{{ $optionsHash }}"
             <input 
                 x-ref="searchInput"
                 x-model="search"
-                @keyup.debounce.500ms="fetchOptions"
+                @input.debounce.300ms="fetchOptions"
                 type="text" 
                 class="form-control form-control-sm" 
                 placeholder="Type to search..."
@@ -205,27 +236,26 @@ wire:key="{{ $actualId }}-{{ $optionsHash }}"
         </div>
         
         <div class="overflow-auto border-top pt-2" style="max-height: 250px;">
-            <template x-if="loading">
-                <div class="text-center p-3">
-                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                </div>
-            </template>
+            <div x-show="loading" class="text-center p-3">
+                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                <div class="text-muted fs-10 mt-1">Searching...</div>
+            </div>
             
-            <template x-for="option in filteredOptions()" :key="option.id">
+            <template x-for="(option, index) in displayList" :key="option.id + '-' + index">
                 <button 
                     type="button"
                     class="dropdown-item rounded-2 py-2 d-flex justify-content-between align-items-center"
                     :class="isSelected(option.id) ? 'active' : ''"
                     @click="select(option)"
                 >
-                    <span x-text="option.text || option.name"></span>
+                    <span x-text="option.name"></span>
                     <span x-show="isSelected(option.id)" class="fas fa-check fs-11"></span>
                 </button>
             </template>
             
-            <template x-if="filteredOptions().length === 0 && !loading">
-                <div class="text-center p-2 text-muted fs-9 italic">No results found</div>
-            </template>
+            <div x-show="!loading && displayList.length === 0" class="text-center p-2 text-muted fs-9 italic">
+                No results found
+            </div>
         </div>
     </div>
 </div>
@@ -233,8 +263,8 @@ wire:key="{{ $actualId }}-{{ $optionsHash }}"
 <style>
     [x-cloak] { display: none !important; }
     .dropdown-item.active {
-        background-color: var(--phoenix-primary-bg-subtle);
-        color: var(--phoenix-primary-text-emphasis);
+        background-color: var(--phoenix-primary-bg-subtle, #e0f2fe) !important;
+        color: var(--phoenix-primary-text-emphasis, #0369a1) !important;
     }
     .custom-select-button::after {
         display: none !important;
