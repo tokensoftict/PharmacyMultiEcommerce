@@ -37,9 +37,10 @@ class CartAbandonmentService
     /**
      * Update the tracker whenever a cart item is added, updated, or removed.
      */
-    public function touchCart(User $user, string $storeType, array $cartItems, float $total): void
+    public function touchCart($user, string $storeType, array $cartItems, float $total): void
     {
-        CartAbandonmentTracker::recordCartState($user->id, $storeType, $cartItems, $total);
+        $userId = is_numeric($user) ? (int) $user : $user->id;
+        CartAbandonmentTracker::recordCartState($userId, $storeType, $cartItems, $total);
     }
 
     /**

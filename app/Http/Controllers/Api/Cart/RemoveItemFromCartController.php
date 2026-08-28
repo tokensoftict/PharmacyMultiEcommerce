@@ -48,6 +48,9 @@ class RemoveItemFromCartController extends ApiController
 
         $application->update();
 
+        // Campaign: update cart abandonment tracker when item is removed
+        \App\Http\Controllers\Api\Campaign\CartAbandonmentHookController::touchCartFromApplication($application);
+
         return $this->sendSuccessResponse($application->getShoppingCartItems());
     }
 }

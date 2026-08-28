@@ -85,11 +85,9 @@ class AddItemToCartController extends ApiController
         $application->cart = $cart;
         $application->update();
 
-        // Campaign: update cart abandonment tracker
-        $cartItems = $application->getShoppingCartItems();
-        $cartTotal = collect($cartItems)->sum(fn($item) => ($item['price'] ?? 0) * ($item['quantity'] ?? 1));
-        CartAbandonmentHookController::touchCart($request, array_values((array) $cart), (float) $cartTotal);
+        // Campaign: update cart abandonment tracker with exact cart total
+        CartAbandonmentHookController::touchCartFromApplication($application);
 
-        return $this->sendSuccessResponse($cartItems);
+        return $this->sendSuccessResponse($application->getShoppingCartItems());
     }
 }
