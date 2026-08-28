@@ -328,7 +328,7 @@
                         <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
                             <i class="fa fa-check-circle me-2"></i> Save & Launch Campaign
                         </button>
-                        <a href="{{ route('backend.admin.campaign.list') }}" class="btn btn-link text-muted btn-sm">Cancel</a>
+                        <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.campaign.list') }}" class="btn btn-link text-muted btn-sm">Cancel</a>
                     </div>
                 </div>
             </div>
