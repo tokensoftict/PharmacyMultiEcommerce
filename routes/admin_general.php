@@ -89,4 +89,16 @@ Route::middleware([PermitTask::class])->group(function () {
         Volt::route('/staff-reports', 'backend.admin.feedback.staff-reports')->name('backend.admin.feedback.staff-reports');
     });
 
+    // ── Campaign Manager ─────────────────────────────────────────────────────────
+    Route::prefix('campaign_manager')->group(function () {
+        Route::get('/list', ['uses' => 'App\Livewire\Backend\Admin\Campaign\CampaignDatatable'])
+            ->name('backend.admin.campaign.list');
+        Route::get('/create', ['uses' => 'App\Livewire\Backend\Admin\Campaign\CreateCampaign'])
+            ->name('backend.admin.campaign.create');
+        Route::get('/{campaign}/edit', ['uses' => 'App\Livewire\Backend\Admin\Campaign\EditCampaign'])
+            ->name('backend.admin.campaign.edit');
+        Route::get('/{campaign}/analytics', ['uses' => 'App\Livewire\Backend\Admin\Campaign\CampaignAnalytics'])
+            ->name('backend.admin.campaign.analytics');
+    });
+
 });

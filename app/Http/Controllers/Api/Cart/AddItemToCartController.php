@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cart;
 
 use App\Classes\ApplicationEnvironment;
+use App\Http\Controllers\Api\Campaign\CartAbandonmentHookController;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\Cart\AddItemRequest;
 use Illuminate\Http\JsonResponse;
@@ -84,6 +85,11 @@ class AddItemToCartController extends ApiController
         $application->cart = $cart;
         $application->update();
 
-        return $this->sendSuccessResponse($application->getShoppingCartItems());
+        // Campaign: update cart abandonment tracker
+        $cartItems = $application->getShoppingCartItems();
+        $cartTotal = collect($cartItems)->sum(fn($item) => ($item['price'] ?? 0) * ($item['quantity'] ?? 1));
+        CartAbandonmentHookController::touchCart($request, array_values((array) $cart), (float) $cartTotal);
+
+        return $this->sendSuccessResponse($cartItems);
     }
 }

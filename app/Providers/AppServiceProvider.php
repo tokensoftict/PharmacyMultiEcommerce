@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Services\Campaign\CampaignConditionsService;
+use App\Services\Campaign\CampaignDeliveryService;
+use App\Services\Campaign\CampaignEligibilityService;
+use App\Services\Campaign\CampaignPushService;
+use App\Services\Campaign\CartAbandonmentService;
 use App\Classes\Settings;
 use App\Events\Auth\PhoneVerified;
 use App\Http\Middleware\DetectApplicationEnvironment;
@@ -17,6 +22,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire;
 
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -28,8 +34,14 @@ class AppServiceProvider extends ServiceProvider
             return Settings::make(storage_path('app/settings.json'));
         });
 
-
+        // Campaign services
+        $this->app->singleton(CampaignConditionsService::class);
+        $this->app->singleton(CampaignPushService::class);
+        $this->app->singleton(CampaignEligibilityService::class);
+        $this->app->singleton(CartAbandonmentService::class);
+        $this->app->singleton(CampaignDeliveryService::class);
     }
+
 
     /**
      * Bootstrap any application services.

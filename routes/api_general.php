@@ -103,4 +103,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post("{order}/upload-proof", ["as" => "order.upload_proof", "uses" => "OrderUploadController@uploadProofOfPayment"]);
     });
 
+    // ── Campaign Routes ─────────────────────────────────────────────────────────
+    Route::prefix("campaign")->group(function () {
+        // Fetch eligible in-app campaigns for a trigger event
+        Route::get("eligible", [\App\Http\Controllers\Api\Campaign\CampaignsController::class, "eligible"])
+            ->name("campaign.eligible");
+
+        // Record user interaction (impression, click, dismiss, conversion, push_opened)
+        Route::post("interaction", \App\Http\Controllers\Api\Campaign\CampaignInteractionController::class)
+            ->name("campaign.interaction");
+    });
+
 });
+

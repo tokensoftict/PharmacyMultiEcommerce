@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Cart;
 
 use App\Classes\ApplicationEnvironment;
+use App\Http\Controllers\Api\Campaign\CartAbandonmentHookController;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,6 +25,9 @@ class ClearAllItemsInCartController extends ApiController
 
         $application->cart = [];
         $application->update();
+
+        // Campaign: reset cart abandonment tracker
+        CartAbandonmentHookController::onCartCleared($request);
 
         return $this->sendSuccessResponse($application->getShoppingCartItems());
     }
