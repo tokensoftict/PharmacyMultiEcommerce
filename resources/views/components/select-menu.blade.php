@@ -14,8 +14,9 @@
 
 @php
     $id = $id ?? 'select-' . Str::random(8);
-    // Suffix the ID to prevent legacy scripts (Select2) from targeting this component
     $actualId = $id . '-custom';
+    $wireModelName = $attributes->wire('model')->value() ?: $model;
+    $hasWireModel = !empty($wireModelName);
     $isLive = $live || ($attributes->wire('model') && $attributes->wire('model')->hasModifier('live'));
     $optionsHash = md5(json_encode($options));
     
@@ -52,7 +53,7 @@
     open: false,
     search: '',
     options: @js((array)$options),
-    selected: @entangle($attributes->wire('model')){{ $isLive ? '.live' : '' }},
+    selected: {{ $hasWireModel ? '$wire.entangle(\'' . $wireModelName . '\')' . ($isLive ? '.live' : '') : '@js($initialValue)' }},
     label: @js($initialLabel),
     placeholder: @js($placeholder),
     isAjax: @js(!empty($ajax)),
@@ -61,16 +62,9 @@
     multiple: @js($multiple),
 
     init() {
-        // Initial label sync
         this.updateLabel();
         
-        // Watch for changes in selected value
-        this.$watch('selected', value => {
-            this.updateLabel();
-        });
-
-        // Watch for changes in options from Livewire
-        this.$watch('options', () => {
+        this.$watch('selected', () => {
             this.updateLabel();
         });
     },
@@ -90,14 +84,12 @@
             return;
         }
 
-        if (!this.isAjax) {
+        if (!this.isAjax && Array.isArray(this.options)) {
             const found = this.options.find(o => o.id == this.selected);
             if (found) {
                 this.label = found.text || found.name;
-            } else {
-                if (this.label === this.placeholder) {
-                     this.label = 'Selected...';
-                }
+            } else if (!this.label || this.label === this.placeholder) {
+                this.label = 'Selected (#' + this.selected + ')';
             }
         }
     },
@@ -112,7 +104,6 @@
     select(option) {
         if (this.multiple) {
             if (!Array.isArray(this.selected)) this.selected = [];
-            // Use loose equality for finding index
             const index = this.selected.findIndex(s => s == option.id);
             if (index > -1) {
                 this.selected.splice(index, 1);
@@ -139,19 +130,24 @@
 
     clear() {
         this.selected = this.multiple ? [] : null;
-        this.updateLabel();
+        this.label = this.placeholder;
         this.open = false;
         this.search = '';
         this.$dispatch('input', this.selected);
     },
 
     fetchOptions() {
-        if (!this.isAjax || this.search.length < 2) return;
+        if (!this.isAjax) return;
+        const q = (this.search || '').trim();
+        if (q.length < 2) return;
+        
         this.loading = true;
-        fetch(`${this.ajaxUrl}${this.ajaxUrl.includes('?') ? '&' : '?'}s=${this.search}`)
+        const glue = this.ajaxUrl.includes('?') ? '&' : '?';
+        fetch(`${this.ajaxUrl}${glue}searchTerm=${encodeURIComponent(q)}&s=${encodeURIComponent(q)}`)
             .then(res => res.json())
             .then(data => {
-                this.options = data.data || data;
+                const results = Array.isArray(data) ? data : (data.data || []);
+                this.options = Array.isArray(results) ? results : [];
                 this.loading = false;
             })
             .catch(() => {
@@ -160,14 +156,16 @@
     },
 
     filteredOptions() {
+        if (!Array.isArray(this.options)) return [];
         if (this.isAjax) return this.options;
+        const q = (this.search || '').toLowerCase().trim();
+        if (!q) return this.options;
         return this.options.filter(o => {
             const text = (o.text || o.name || '').toLowerCase();
-            return text.includes(this.search.toLowerCase());
+            return text.includes(q);
         });
     }
 }" 
-x-effect="options = @js((array)$options)"
 wire:ignore.self
 class="dropdown {{ $class }}" 
 id="{{ $actualId }}"
