@@ -71,12 +71,20 @@ class CampaignDatatable extends ExportDataTableComponent
         $this->data = [
             'name'             => ['type' => 'text',     'label' => 'Name',            'required' => true],
             'status'           => ['type' => 'select',   'label' => 'Status',          'required' => true,
-                                   'options' => array_combine(CampaignStatus::all(), array_map('ucfirst', CampaignStatus::all()))],
+                                   'options' => array_map(fn($s) => ['id' => $s, 'name' => ucfirst($s)], CampaignStatus::all())],
             'trigger_event'    => ['type' => 'text',     'label' => 'Trigger Event',   'required' => false],
             'delivery_channel' => ['type' => 'select',   'label' => 'Delivery Channel', 'required' => true,
-                                   'options' => ['in_app' => 'In-App', 'push' => 'Push', 'both' => 'Both']],
+                                   'options' => [
+                                       ['id' => 'in_app', 'name' => 'In-App'],
+                                       ['id' => 'push', 'name' => 'Push'],
+                                       ['id' => 'both', 'name' => 'Both'],
+                                   ]],
             'store_type'       => ['type' => 'select',   'label' => 'Store Type',      'required' => true,
-                                   'options' => ['both' => 'Both', 'retail' => 'Retail', 'wholesale' => 'Wholesale']],
+                                   'options' => [
+                                       ['id' => 'both', 'name' => 'Both'],
+                                       ['id' => 'retail', 'name' => 'Retail'],
+                                       ['id' => 'wholesale', 'name' => 'Wholesale'],
+                                   ]],
             'starts_at'        => ['type' => 'datetime-local', 'label' => 'Starts At', 'required' => false],
             'ends_at'          => ['type' => 'datetime-local', 'label' => 'Ends At',   'required' => false],
         ];
