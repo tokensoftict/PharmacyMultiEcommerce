@@ -54,7 +54,7 @@ class CampaignAnalytics extends Component
             'stats'            => $stats,
             'recentActivities' => $recentActivities,
             'dailyImpressions' => $dailyImpressions,
-        ])->layout('layouts.app');
+        ]);
     }
 
     public function activateCampaign(): void
