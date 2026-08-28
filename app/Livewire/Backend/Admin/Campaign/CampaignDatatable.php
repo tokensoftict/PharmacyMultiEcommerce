@@ -91,7 +91,7 @@ class CampaignDatatable extends ExportDataTableComponent
             'ends_at'          => ['type' => 'datetime-local', 'label' => 'Ends At',   'required' => false],
         ];
 
-        $this->newValidateRules    = ['data.name' => ['required', 'string', 'min:3']];
+        $this->newValidateRules    = ['name' => ['required', 'string', 'min:3']];
         $this->updateValidateRules = $this->newValidateRules;
 
         $this->initControls();
