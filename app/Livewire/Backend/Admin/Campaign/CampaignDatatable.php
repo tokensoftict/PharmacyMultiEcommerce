@@ -6,6 +6,8 @@ use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
 use App\Enums\CampaignStatus;
 use App\Models\Campaign;
+use App\Traits\DynamicDataTableExport;
+use App\Traits\DynamicDataTableFormModal;
 use App\Traits\SimpleDatatableComponentTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Jantinnerezo\LivewireAlert\Concerns\SweetAlert2 as LivewireAlert;
@@ -19,7 +21,7 @@ use Rappasoft\LaravelLivewireTables\Views\Column;
  */
 class CampaignDatatable extends ExportDataTableComponent
 {
-    use SimpleDatatableComponentTrait, LivewireAlert;
+    use SimpleDatatableComponentTrait, DynamicDataTableExport, DynamicDataTableFormModal, LivewireAlert;
 
     protected $model = Campaign::class;
 
