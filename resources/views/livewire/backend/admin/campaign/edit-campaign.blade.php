@@ -5,10 +5,10 @@
             <p class="text-muted small mb-0">Update settings, creative content, targeting rules, or CTA action.</p>
         </div>
         <div>
-            <a href="{{ route('backend.admin.campaign.analytics', $campaign->id) }}" class="btn btn-outline-info btn-sm me-2">
+            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix .'backend.admin.campaign.analytics', $campaign->id) }}" class="btn btn-outline-info btn-sm me-2">
                 <i class="fa fa-bar-chart me-1"></i> Analytics
             </a>
-            <a href="{{ route('backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
+            <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix .'backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fa fa-arrow-left me-1"></i> Back to Campaigns
             </a>
         </div>
