@@ -798,7 +798,21 @@ enum Settings
             "label" => "User Version Report",
             "visibility" => "1",
             "guard_name" => "web",
-        ]
+        ],
+        [
+            "name" => "backend.admin.campaign.list",
+            "module_id" => "1",
+            "label" => "Campaigns",
+            "visibility" => "1",
+            "guard_name" => "web",
+        ],
+        [
+            "name" => "backend.admin.campaign.analytic",
+            "module_id" => "1",
+            "label" => "Campaigns Analytics",
+            "visibility" => "1",
+            "guard_name" => "web",
+        ],
 
     ];
 

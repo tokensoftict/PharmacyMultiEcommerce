@@ -123,9 +123,13 @@ class Campaign extends Model
 
     public function scopeForStore($query, string $storeType)
     {
-        return $query->where(function ($q) use ($storeType) {
-            $q->where('store_type', 'both')->orWhere('store_type', $storeType);
-        });
+        $normalized = match ($storeType) {
+            'wholesales', 'wholesale' => ['both', 'wholesale', 'wholesales'],
+            'supermarket', 'retail'   => ['both', 'retail', 'supermarket'],
+            default                  => ['both', $storeType],
+        };
+
+        return $query->whereIn('store_type', $normalized);
     }
 
     public function scopeForTrigger($query, string $triggerEvent)
