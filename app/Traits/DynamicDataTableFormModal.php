@@ -186,7 +186,6 @@ trait DynamicDataTableFormModal
     public function save()
     {
         DB::transaction(function () {
-            dd($this->newValidateRules);
             $this->validate($this->newValidateRules);
             $model = new $this->model();
             $this->parseData($model);
