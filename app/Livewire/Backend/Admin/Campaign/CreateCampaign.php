@@ -223,8 +223,7 @@ class CreateCampaign extends Component
 
     public function render()
     {
-        return view('livewire.backend.admin.campaign.create-campaign')
-            ->layout('layouts.app');
+        return view('livewire.backend.admin.campaign.create-campaign');
     }
 }
 
