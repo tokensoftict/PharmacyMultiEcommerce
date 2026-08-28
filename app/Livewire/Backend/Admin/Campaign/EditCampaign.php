@@ -134,6 +134,12 @@ class EditCampaign extends Component
         $this->actionTypes    = CampaignActionType::all();
     }
 
+    public function removeExistingImage(): void
+    {
+        $this->existing_image = null;
+        $this->image_upload = null;
+    }
+
     public function addConditionRule(): void
     {
         $this->condition_rules[] = [
@@ -161,7 +167,7 @@ class EditCampaign extends Component
             'action_type'      => ['required', 'string'],
             'title'            => ['nullable', 'string', 'max:255'],
             'message'          => ['nullable', 'string'],
-            'image_upload'     => ['nullable', 'image', 'max:2048'],
+            'image_upload'     => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:5120'],
         ];
     }
 
@@ -170,7 +176,7 @@ class EditCampaign extends Component
         $this->validate();
 
         $imagePath = $this->existing_image;
-        if ($this->image_upload) {
+        if ($this->image_upload && method_exists($this->image_upload, 'store')) {
             $imagePath = $this->image_upload->store('campaigns', 'public');
         }
 

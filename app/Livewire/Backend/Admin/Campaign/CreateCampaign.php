@@ -112,7 +112,7 @@ class CreateCampaign extends Component
             'action_type'      => ['required', 'string'],
             'title'            => ['nullable', 'string', 'max:255'],
             'message'          => ['nullable', 'string'],
-            'image_upload'     => ['nullable', 'image', 'max:2048'],
+            'image_upload'     => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:5120'],
         ];
     }
 
@@ -121,7 +121,7 @@ class CreateCampaign extends Component
         $this->validate();
 
         $imagePath = null;
-        if ($this->image_upload) {
+        if ($this->image_upload && method_exists($this->image_upload, 'store')) {
             $imagePath = $this->image_upload->store('campaigns', 'public');
         }
 
