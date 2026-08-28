@@ -207,7 +207,7 @@ class EditCampaign extends Component
         ]);
 
         $this->alert('success', 'Campaign updated successfully!');
-        $this->redirect(route('backend.admin.campaign.list'));
+        $this->redirect(route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.campaign.list'));
     }
 
     private function buildConditionsData(): array
