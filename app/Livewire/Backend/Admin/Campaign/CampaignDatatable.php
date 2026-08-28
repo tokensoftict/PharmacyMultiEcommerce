@@ -4,6 +4,7 @@ namespace App\Livewire\Backend\Admin\Campaign;
 
 use App\Classes\ApplicationEnvironment;
 use App\Classes\ExportDataTableComponent;
+use App\Enums\CampaignEvent;
 use App\Enums\CampaignStatus;
 use App\Models\Campaign;
 use App\Traits\DynamicDataTableExport;
@@ -72,7 +73,8 @@ class CampaignDatatable extends ExportDataTableComponent
             'name'             => ['type' => 'text',     'label' => 'Name',            'required' => true],
             'status'           => ['type' => 'select',   'label' => 'Status',          'required' => true,
                                    'options' => array_map(fn($s) => ['id' => $s, 'name' => ucfirst($s)], CampaignStatus::all())],
-            'trigger_event'    => ['type' => 'text',     'label' => 'Trigger Event',   'required' => false],
+            'trigger_event'    => ['type' => 'select',   'label' => 'Trigger Event',   'required' => true,
+                                   'options' => array_map(fn($e) => ['id' => $e, 'name' => $e], CampaignEvent::all())],
             'delivery_channel' => ['type' => 'select',   'label' => 'Delivery Channel', 'required' => true,
                                    'options' => [
                                        ['id' => 'in_app', 'name' => 'In-App'],
