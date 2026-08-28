@@ -4,7 +4,7 @@
             <h1 class="h3 mb-0 text-gray-800">Create Campaign</h1>
             <p class="text-muted small mb-0">Build high-converting in-app and push campaigns with custom targeting rules.</p>
         </div>
-        <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
+        <a href="{{ route('backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
             <i class="fa fa-arrow-left me-1"></i> Back to Campaigns
         </a>
     </div>
@@ -33,11 +33,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Status</label>
-                                <select class="form-select" wire:model="status">
-                                    <option value="draft">Draft</option>
-                                    <option value="active">Active</option>
-                                    <option value="paused">Paused</option>
-                                </select>
+                                <x-select-menu :options="$statusOptions" wire:model="status" id="campaign_status" placeholder="Select Status" />
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Priority (0 = Low, 100 = High)</label>
@@ -45,11 +41,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Store Audience</label>
-                                <select class="form-select" wire:model="store_type">
-                                    <option value="both">Both Retail & Wholesale</option>
-                                    <option value="retail">Supermarket Retail Only</option>
-                                    <option value="wholesale">Wholesale Only</option>
-                                </select>
+                                <x-select-menu :options="$storeTypeOptions" wire:model="store_type" id="campaign_store_type" placeholder="Select Store Audience" />
                             </div>
                         </div>
                     </div>
@@ -64,22 +56,12 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Trigger Event <span class="text-danger">*</span></label>
-                                <select class="form-select" wire:model="trigger_event">
-                                    @foreach($triggerEvents as $evt)
-                                        <option value="{{ $evt }}">{{ $evt }}</option>
-                                    @endforeach
-                                </select>
+                                <x-select-menu :options="$triggerEvents" wire:model="trigger_event" id="campaign_trigger_event" placeholder="Select Trigger Event" />
                                 <small class="text-muted">When in the user journey this campaign should be evaluated.</small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Frequency Rule</label>
-                                <select class="form-select" wire:model="frequency_rule">
-                                    <option value="once_ever">Once Ever Per User</option>
-                                    <option value="once_per_session">Once Per App Session</option>
-                                    <option value="once_per_day">Once Per Day</option>
-                                    <option value="cooldown">Cooldown Period</option>
-                                    <option value="unlimited">Unlimited (Show Every Trigger)</option>
-                                </select>
+                                <x-select-menu :options="$frequencyRuleOptions" wire:model="frequency_rule" id="campaign_frequency_rule" placeholder="Select Frequency Rule" />
                                 <small class="text-muted">Controls how often eligible users can see this popup.</small>
                             </div>
                         </div>
@@ -218,21 +200,12 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Delivery Channel</label>
-                            <select class="form-select" wire:model="delivery_channel">
-                                <option value="both">In-App & Push Notification</option>
-                                <option value="in_app">In-App Popup Only</option>
-                                <option value="push">Push Notification Only</option>
-                            </select>
+                            <x-select-menu :options="$deliveryChannelOptions" wire:model="delivery_channel" id="campaign_delivery_channel" placeholder="Select Delivery Channel" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">In-App Display Type</label>
-                            <select class="form-select" wire:model="display_type">
-                                <option value="modal">Center Modal Popup</option>
-                                <option value="bottom_sheet">Slide-up Bottom Sheet</option>
-                                <option value="fullscreen">Full Screen Overlay</option>
-                                <option value="banner">Top Banner</option>
-                            </select>
+                            <x-select-menu :options="$displayTypeOptions" wire:model="display_type" id="campaign_display_type" placeholder="Select Display Type" />
                         </div>
 
                         <div class="mb-3">
@@ -255,68 +228,46 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Action Type</label>
-                            <select class="form-select" wire:model.live="action_type">
-                                <option value="none">None (Dismiss popup only)</option>
-                                <option value="open_product">Open Specific Product</option>
-                                <option value="open_category">Open Specific Category</option>
-                                <option value="open_cart">Open Shopping Cart</option>
-                                <option value="open_checkout">Open Checkout Screen</option>
-                                <option value="open_store">Open Store Selector</option>
-                                <option value="open_url">Open External Web Link</option>
-                                <option value="apply_coupon">Apply Coupon Code</option>
-                                <option value="open_order">Open Specific Order</option>
-                            </select>
+                            <x-select-menu :options="$actionTypes" wire:model.live="action_type" id="campaign_action_type" placeholder="Select Action Type" />
                         </div>
 
                         {{-- Dynamic Action Configuration Fields --}}
                         @if($action_type === 'open_product')
                             <div class="mb-3 p-3 bg-light rounded-3 border">
-                                <label class="form-label fw-bold small">Select Product or Enter Product ID</label>
-                                <select class="form-select form-select-sm mb-2" wire:model="action_product_id">
-                                    <option value="">-- Choose from available products --</option>
-                                    @foreach($products as $prod)
-                                        <option value="{{ $prod['id'] }}">{{ $prod['name'] }} (ID: #{{ $prod['id'] }})</option>
-                                    @endforeach
-                                </select>
-                                <input type="number" class="form-control form-control-sm" placeholder="Or enter Product / Stock ID manually" wire:model="action_product_id">
-                                <small class="text-muted">Tapping the button will take the user directly to this product's detail page.</small>
+                                <label class="form-label fw-bold small">Search and Select Product</label>
+                                <x-utilities.general.stock-search-component 
+                                    :value="$action_product_id" 
+                                    placeholder="Search for product by name..." 
+                                    :classname="''" 
+                                    wireModel="action_product_id" 
+                                    id="campaign_action_product_id" 
+                                />
+                                <small class="text-muted mt-1 d-block">Tapping the button will take the user directly to this product's detail page.</small>
                             </div>
                         @elseif($action_type === 'open_category')
                             <div class="mb-3 p-3 bg-light rounded-3 border">
                                 <label class="form-label fw-bold small">Select Category</label>
-                                <select class="form-select form-select-sm" wire:model="action_category_id">
-                                    <option value="">-- Choose a category --</option>
-                                    @foreach($categories as $cat)
-                                        <option value="{{ $cat['id'] }}">{{ $cat['name'] }}</option>
-                                    @endforeach
-                                </select>
-                                <small class="text-muted">Tapping the button will open the product catalog filtered to this category.</small>
+                                <x-select-menu :options="$categories" wire:model="action_category_id" id="campaign_action_category" placeholder="Select Category" />
+                                <small class="text-muted mt-1 d-block">Tapping the button will open the product catalog filtered to this category.</small>
                             </div>
                         @elseif(in_array($action_type, ['open_url', 'open_deep_link']))
                             <div class="mb-3 p-3 bg-light rounded-3 border">
                                 <label class="form-label fw-bold small">Web Link / URL</label>
                                 <input type="url" class="form-control form-control-sm" placeholder="https://generaldrugcentre.com/..." wire:model="action_url">
-                                <small class="text-muted">Will open this link in the user's default browser or in-app browser.</small>
+                                <small class="text-muted mt-1 d-block">Will open this link in the user's default browser or in-app browser.</small>
                             </div>
                         @elseif($action_type === 'apply_coupon')
                             <div class="mb-3 p-3 bg-light rounded-3 border">
-                                <label class="form-label fw-bold small">Coupon Code</label>
-                                @if(count($coupons) > 0)
-                                    <select class="form-select form-select-sm mb-2" wire:model="action_coupon_code">
-                                        <option value="">-- Select from existing coupons --</option>
-                                        @foreach($coupons as $coup)
-                                            <option value="{{ $coup['code'] }}">{{ $coup['name'] }} (Code: {{ $coup['code'] }})</option>
-                                        @endforeach
-                                    </select>
-                                @endif
-                                <input type="text" class="form-control form-control-sm" placeholder="Or enter coupon code (e.g. SAVE20)" wire:model="action_coupon_code">
-                                <small class="text-muted">Will navigate user to checkout with this discount code ready.</small>
+                                <label class="form-label fw-bold small">Select or Enter Coupon Code</label>
+                                <x-select-menu :options="$coupons" wire:model="action_coupon_code" id="campaign_action_coupon" placeholder="Select Coupon" />
+                                <input type="text" class="form-control form-control-sm mt-2" placeholder="Or enter custom coupon code (e.g. SAVE20)" wire:model="action_coupon_code">
+                                <small class="text-muted mt-1 d-block">Will navigate user to checkout with this discount code ready.</small>
                             </div>
                         @elseif($action_type === 'open_order')
                             <div class="mb-3 p-3 bg-light rounded-3 border">
                                 <label class="form-label fw-bold small">Order ID</label>
                                 <input type="number" class="form-control form-control-sm" placeholder="Enter Order ID (e.g. 1042)" wire:model="action_order_id">
-                                <small class="text-muted">Navigates user to view order details for this specific order.</small>
+                                <small class="text-muted mt-1 d-block">Navigates user to view order details for this specific order.</small>
                             </div>
                         @elseif($action_type === 'open_cart')
                             <div class="alert alert-info py-2 px-3 small mb-0">
@@ -344,11 +295,10 @@
                         <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
                             <i class="fa fa-check-circle me-2"></i> Save & Launch Campaign
                         </button>
-                        <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.campaign.list') }}" class="btn btn-link text-muted btn-sm">Cancel</a>
+                        <a href="{{ route('backend.admin.campaign.list') }}" class="btn btn-link text-muted btn-sm">Cancel</a>
                     </div>
                 </div>
             </div>
         </div>
     </form>
 </div>
-

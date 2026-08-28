@@ -69,12 +69,16 @@ class EditCampaign extends Component
     public ?string $action_order_id    = '';
 
     // ── UI options ──────────────────────────────────────────────────────────────
-    public array  $customerGroups   = [];
-    public array  $categories       = [];
-    public array  $coupons          = [];
-    public array  $products         = [];
-    public array  $triggerEvents    = [];
-    public array  $actionTypes      = [];
+    public array  $customerGroups        = [];
+    public array  $categories            = [];
+    public array  $coupons               = [];
+    public array  $statusOptions         = [];
+    public array  $triggerEvents         = [];
+    public array  $storeTypeOptions      = [];
+    public array  $frequencyRuleOptions  = [];
+    public array  $deliveryChannelOptions = [];
+    public array  $displayTypeOptions    = [];
+    public array  $actionTypes           = [];
 
     public function mount(Campaign $campaign): void
     {
@@ -126,12 +130,45 @@ class EditCampaign extends Component
             $this->condition_rules = [];
         }
 
-        $this->customerGroups = CustomerGroup::orderBy('name')->get(['id', 'name'])->toArray();
-        $this->categories     = Productcategory::orderBy('name')->get(['id', 'name'])->toArray();
-        $this->coupons        = Coupon::orderBy('name')->get(['id', 'name', 'code'])->toArray();
-        $this->products       = Stock::select(['id', 'name'])->orderBy('name')->take(250)->get()->toArray();
-        $this->triggerEvents  = CampaignEvent::all();
-        $this->actionTypes    = CampaignActionType::all();
+        $this->customerGroups         = CustomerGroup::orderBy('name')->get(['id', 'name'])->toArray();
+        $this->categories             = Productcategory::orderBy('name')->get(['id', 'name'])->toArray();
+        $this->coupons                = Coupon::orderBy('name')->get(['id', 'name', 'code'])->map(fn($c) => ['id' => $c->code, 'name' => $c->name . ' (' . $c->code . ')'])->toArray();
+        $this->statusOptions          = array_map(fn($s) => ['id' => $s, 'name' => ucfirst($s)], CampaignStatus::all());
+        $this->triggerEvents          = array_map(fn($e) => ['id' => $e, 'name' => $e], CampaignEvent::all());
+        $this->storeTypeOptions       = [
+            ['id' => 'both',      'name' => 'Both Retail & Wholesale'],
+            ['id' => 'retail',    'name' => 'Supermarket Retail Only'],
+            ['id' => 'wholesale', 'name' => 'Wholesale Only'],
+        ];
+        $this->frequencyRuleOptions   = [
+            ['id' => 'once_ever',        'name' => 'Once Ever Per User'],
+            ['id' => 'once_per_session', 'name' => 'Once Per App Session'],
+            ['id' => 'once_per_day',     'name' => 'Once Per Day'],
+            ['id' => 'cooldown',         'name' => 'Cooldown Period'],
+            ['id' => 'unlimited',        'name' => 'Unlimited (Show Every Trigger)'],
+        ];
+        $this->deliveryChannelOptions = [
+            ['id' => 'both',   'name' => 'In-App & Push Notification'],
+            ['id' => 'in_app', 'name' => 'In-App Popup Only'],
+            ['id' => 'push',   'name' => 'Push Notification Only'],
+        ];
+        $this->displayTypeOptions     = [
+            ['id' => 'modal',        'name' => 'Center Modal Popup'],
+            ['id' => 'bottom_sheet', 'name' => 'Slide-up Bottom Sheet'],
+            ['id' => 'fullscreen',   'name' => 'Full Screen Overlay'],
+            ['id' => 'banner',       'name' => 'Top Banner'],
+        ];
+        $this->actionTypes            = [
+            ['id' => 'none',          'name' => 'None (Dismiss popup only)'],
+            ['id' => 'open_product',  'name' => 'Open Specific Product'],
+            ['id' => 'open_category', 'name' => 'Open Specific Category'],
+            ['id' => 'open_cart',     'name' => 'Open Shopping Cart'],
+            ['id' => 'open_checkout', 'name' => 'Open Checkout Screen'],
+            ['id' => 'open_store',    'name' => 'Open Store Selector'],
+            ['id' => 'open_url',      'name' => 'Open External Web Link'],
+            ['id' => 'apply_coupon',  'name' => 'Apply Coupon Code'],
+            ['id' => 'open_order',    'name' => 'Open Specific Order'],
+        ];
     }
 
     public function removeExistingImage(): void
