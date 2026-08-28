@@ -136,7 +136,7 @@ class CampaignDatatable extends ExportDataTableComponent
      */
     public function create()
     {
-        return $this->redirect(route('backend.admin.campaign.create'));
+        return $this->redirect(route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.campaign.create'));
     }
 
     /**
