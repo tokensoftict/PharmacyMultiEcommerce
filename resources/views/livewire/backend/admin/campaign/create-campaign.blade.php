@@ -4,7 +4,7 @@
             <h1 class="h3 mb-0 text-gray-800">Create Campaign</h1>
             <p class="text-muted small mb-0">Build high-converting in-app and push campaigns with custom targeting rules.</p>
         </div>
-        <a href="{{ route('backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
+        <a href="{{ route(\App\Classes\ApplicationEnvironment::$storePrefix.'backend.admin.campaign.list') }}" class="btn btn-outline-secondary btn-sm">
             <i class="fa fa-arrow-left me-1"></i> Back to Campaigns
         </a>
     </div>
