@@ -22,7 +22,6 @@ class StockUtilitiesController extends Controller
     {
         $searchTerm  = $request->get('searchTerm') ?? $request->get('s');
         if($searchTerm == "") return response()->json([], 200);
-        echo ApplicationEnvironment::$stock_model_string. "hellomworld";
         return Select2Resource::collection(
             Stock::query()->select('id', 'name')
                 ->where('name', 'like', "%$searchTerm%")->get()

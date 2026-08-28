@@ -101,6 +101,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 [
                     "routes/admin_general.php",
                     "routes/supermaket.admin.php",
+                    "routes/utilities.php"
                 ]
             );
 
@@ -116,6 +117,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 [
                     "routes/admin_general.php",
                     "routes/wholesales.admin.php",
+                    "routes/utilities.php"
                 ]
             );
 
@@ -124,8 +126,7 @@ return Application::configure(basePath: dirname(__DIR__))
             | UTILITIES
             |--------------------------------------------------------------------------
             */
-            Route::middleware(['web'])
-                ->group(base_path("routes/utilities.php"));
+           // Route::middleware(['web'])->group(base_path("routes/utilities.php"));
 
             /*
             |--------------------------------------------------------------------------
