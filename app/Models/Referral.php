@@ -14,8 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $referred_user_id
  * @property string $referral_code
  * @property string $store_type          — 'supermarket' | 'wholesales'
- * @property string $status              — 'pending' | 'registered' | 'verified' | 'rewarded' | 'invalid'
+ * @property string $status              — 'pending' | 'registered' | 'verified' | 'store_approved' | 'rewarded' | 'invalid'
  * @property Carbon|null $phone_verified_at
+ * @property Carbon|null $store_approved_at
  * @property Carbon|null $rewarded_at
  * @property float|null $reward_amount
  * @property Carbon|null $created_at
@@ -29,11 +30,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Referral extends Model
 {
     // ─── Status Constants ────────────────────────────────────────────────────
-    const STATUS_PENDING    = 'pending';
-    const STATUS_REGISTERED = 'registered';
-    const STATUS_VERIFIED   = 'verified';
-    const STATUS_REWARDED   = 'rewarded';
-    const STATUS_INVALID    = 'invalid';
+    const STATUS_PENDING        = 'pending';
+    const STATUS_REGISTERED     = 'registered';
+    const STATUS_VERIFIED       = 'verified';
+    const STATUS_STORE_APPROVED = 'store_approved'; // Wholesale only — store approved; reward pending
+    const STATUS_REWARDED       = 'rewarded';
+    const STATUS_INVALID        = 'invalid';
 
     // ─── Store Type Constants ────────────────────────────────────────────────
     const STORE_SUPERMARKET = 'supermarket';
@@ -42,11 +44,12 @@ class Referral extends Model
     protected $table = 'referrals';
 
     protected $casts = [
-        'referrer_id'      => 'int',
-        'referred_user_id' => 'int',
-        'reward_amount'    => 'float',
+        'referrer_id'       => 'int',
+        'referred_user_id'  => 'int',
+        'reward_amount'     => 'float',
         'phone_verified_at' => 'datetime',
-        'rewarded_at'      => 'datetime',
+        'store_approved_at' => 'datetime',
+        'rewarded_at'       => 'datetime',
     ];
 
     protected $fillable = [
@@ -56,6 +59,7 @@ class Referral extends Model
         'store_type',
         'status',
         'phone_verified_at',
+        'store_approved_at',
         'rewarded_at',
         'reward_amount',
     ];
@@ -90,13 +94,32 @@ class Referral extends Model
 
     /**
      * Whether this referral is in a state that can be rewarded.
+     *
+     * For retail ('supermarket'), the reward fires right after phone verification.
+     * For wholesale, the reward fires after store approval (STATUS_STORE_APPROVED).
      */
     public function isRewardable(): bool
     {
+        if ($this->store_type === self::STORE_WHOLESALES) {
+            // Wholesale referrals are only rewardable once the store is approved
+            return $this->status === self::STATUS_STORE_APPROVED;
+        }
+
+        // Retail referrals are rewardable once registered or verified
         return in_array($this->status, [
             self::STATUS_REGISTERED,
             self::STATUS_VERIFIED,
         ]);
+    }
+
+    /**
+     * Whether this is a wholesale referral that has been phone-verified
+     * but is still waiting for store approval before the reward is issued.
+     */
+    public function isAwaitingStoreApproval(): bool
+    {
+        return $this->store_type === self::STORE_WHOLESALES
+            && in_array($this->status, [self::STATUS_REGISTERED, self::STATUS_VERIFIED]);
     }
 
     /**

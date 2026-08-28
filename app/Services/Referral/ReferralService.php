@@ -108,7 +108,7 @@ class ReferralService
     {
         DB::transaction(function () use ($referredUser) {
 
-            // ── Load and lock the referral record ────────────────────────────
+            // ── Load and lock the referral record ────────────────────────────────────
             $referral = Referral::where('referred_user_id', $referredUser->id)
                 ->lockForUpdate()
                 ->first();
@@ -118,7 +118,7 @@ class ReferralService
                 return;
             }
 
-            // ── Idempotency guard ────────────────────────────────────────────
+            // ── Idempotency guard ─────────────────────────────────────────────────
             if ($referral->isRewarded()) {
                 Log::info('ReferralService: referral already rewarded — skipping', [
                     'referral_id' => $referral->id,
@@ -126,7 +126,21 @@ class ReferralService
                 return;
             }
 
-            // ── Validate referral is in a rewardable state ───────────────────
+            // ── WHOLESALE: phone verification only advances to 'verified'; reward fires on store approval ──
+            if ($referral->store_type === Referral::STORE_WHOLESALES) {
+                if (in_array($referral->status, [Referral::STATUS_REGISTERED, Referral::STATUS_PENDING])) {
+                    $referral->update([
+                        'status'           => Referral::STATUS_VERIFIED,
+                        'phone_verified_at' => now(),
+                    ]);
+                    Log::info('ReferralService: wholesale referral advanced to verified — awaiting store approval', [
+                        'referral_id' => $referral->id,
+                    ]);
+                }
+                return; // Reward will be issued in processWholesaleApprovalReward()
+            }
+
+            // ── RETAIL: validate the referral is in a rewardable state ───────────────────────
             if (!$referral->isRewardable()) {
                 Log::warning('ReferralService: referral not in rewardable state', [
                     'referral_id' => $referral->id,
@@ -135,52 +149,109 @@ class ReferralService
                 return;
             }
 
-            // ── Validate referrer still exists ───────────────────────────────
-            $referrer = User::lockForUpdate()->find($referral->referrer_id);
-            if (!$referrer) {
-                $referral->update(['status' => Referral::STATUS_INVALID]);
+            $this->issueReward($referral);
+        });
+    }
+
+    /**
+     * Process the wholesale referral reward after the referred user's store is approved.
+     *
+     * Called from WholeSalesCustomerService::activateBusiness() when status flips to true.
+     * IDEMPOTENT — safe to call multiple times; will never double-credit.
+     *
+     * @param User $referredUser  The wholesale customer whose store was just approved
+     */
+    public function processWholesaleApprovalReward(User $referredUser): void
+    {
+        DB::transaction(function () use ($referredUser) {
+
+            $referral = Referral::where('referred_user_id', $referredUser->id)
+                ->where('store_type', Referral::STORE_WHOLESALES)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$referral) {
                 return;
             }
 
-            // ── Determine the correct bonus amount from store settings ────────
-            $settings   = Settings::getSetting();
-            $settingKey = Referral::bonusSettingKeyForStoreType($referral->store_type);
-            $bonus      = (float) ($settings->get($settingKey) ?? 0);
-
-            if ($bonus <= 0) {
-                Log::warning('ReferralService: referral bonus is zero or not configured', [
-                    'setting_key' => $settingKey,
-                    'store_type'  => $referral->store_type,
+            if ($referral->isRewarded()) {
+                Log::info('ReferralService: wholesale referral already rewarded — skipping', [
+                    'referral_id' => $referral->id,
                 ]);
-                // Still mark as rewarded with 0 to prevent infinite retry loops
+                return;
             }
 
-            // ── Determine which loyalty points column to credit ───────────────
-            // 'supermarket' → retail_loyalty_points  (Retail Referral Wallet)
-            // 'wholesales'  → loyalty_points          (Wholesale Referral Wallet)
-            $loyaltyColumn = Referral::loyaltyColumnForStoreType($referral->store_type);
-
-            // ── Credit the referrer's loyalty points ─────────────────────────
-            if ($bonus > 0) {
-                User::where('id', $referrer->id)->increment($loyaltyColumn, $bonus);
+            // Advance to store_approved if the store was verified but not yet approved
+            if ($referral->isAwaitingStoreApproval()) {
+                $referral->update([
+                    'status'            => Referral::STATUS_STORE_APPROVED,
+                    'store_approved_at' => now(),
+                ]);
+                $referral->refresh();
             }
 
-            // ── Mark the referral as rewarded ────────────────────────────────
-            $referral->update([
-                'status'           => Referral::STATUS_REWARDED,
-                'phone_verified_at' => now(),
-                'rewarded_at'      => now(),
-                'reward_amount'    => $bonus,
-            ]);
+            if (!$referral->isRewardable()) {
+                Log::warning('ReferralService: wholesale referral not rewardable after store activation', [
+                    'referral_id' => $referral->id,
+                    'status'      => $referral->status,
+                ]);
+                return;
+            }
 
-            Log::info('ReferralService: referral reward processed', [
-                'referral_id'    => $referral->id,
-                'referrer_id'    => $referrer->id,
-                'store_type'     => $referral->store_type,
-                'loyalty_column' => $loyaltyColumn,
-                'bonus'          => $bonus,
-            ]);
+            $this->issueReward($referral);
         });
+    }
+
+    /**
+     * Issue the actual loyalty point reward to the referrer.
+     *
+     * Must be called from within a DB transaction with the referral row already locked.
+     * Marks the referral as STATUS_REWARDED after crediting.
+     *
+     * @param Referral $referral  Locked referral record in a rewardable state
+     */
+    private function issueReward(Referral $referral): void
+    {
+        // ── Validate referrer still exists ──────────────────────────────────
+        $referrer = User::lockForUpdate()->find($referral->referrer_id);
+        if (!$referrer) {
+            $referral->update(['status' => Referral::STATUS_INVALID]);
+            return;
+        }
+
+        // ── Determine bonus from store settings ──────────────────────────────
+        $settings   = Settings::getSetting();
+        $settingKey = Referral::bonusSettingKeyForStoreType($referral->store_type);
+        $bonus      = (float) ($settings->get($settingKey) ?? 0);
+
+        if ($bonus <= 0) {
+            Log::warning('ReferralService: referral bonus is zero or not configured', [
+                'setting_key' => $settingKey,
+                'store_type'  => $referral->store_type,
+            ]);
+            // Still mark as rewarded with 0 to prevent infinite retry loops
+        }
+
+        // ── Credit the referrer's loyalty points ─────────────────────────────
+        $loyaltyColumn = Referral::loyaltyColumnForStoreType($referral->store_type);
+        if ($bonus > 0) {
+            User::where('id', $referrer->id)->increment($loyaltyColumn, $bonus);
+        }
+
+        // ── Mark the referral as rewarded ────────────────────────────────────
+        $referral->update([
+            'status'        => Referral::STATUS_REWARDED,
+            'rewarded_at'   => now(),
+            'reward_amount' => $bonus,
+        ]);
+
+        Log::info('ReferralService: referral reward processed', [
+            'referral_id'    => $referral->id,
+            'referrer_id'    => $referrer->id,
+            'store_type'     => $referral->store_type,
+            'loyalty_column' => $loyaltyColumn,
+            'bonus'          => $bonus,
+        ]);
     }
 
     /**
@@ -198,7 +269,7 @@ class ReferralService
                 store_type,
                 COUNT(*) as total,
                 SUM(CASE WHEN status = 'rewarded' THEN 1 ELSE 0 END) as successful,
-                SUM(CASE WHEN status IN ('registered','verified') THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status IN ('registered','verified','store_approved') THEN 1 ELSE 0 END) as pending,
                 COALESCE(SUM(CASE WHEN status = 'rewarded' THEN reward_amount ELSE 0 END), 0) as bonus_earned
             ")
             ->groupBy('store_type')

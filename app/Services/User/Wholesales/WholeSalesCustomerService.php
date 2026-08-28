@@ -9,7 +9,9 @@ use App\Models\Address;
 use App\Models\SalesRepresentative;
 use App\Models\User;
 use App\Models\WholesalesUser;
+use App\Services\Referral\ReferralService;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -113,8 +115,20 @@ class WholeSalesCustomerService
         $user->save();
         $user->fresh();
 
-        if($user->status and !app()->runningInConsole()) {
+        if ($user->status && !app()->runningInConsole()) {
             Mail::to($user->user->email)->send(new SendActivationEmail($user));
+
+            // Trigger wholesale referral reward now that the store is approved
+            try {
+                app(ReferralService::class)->processWholesaleApprovalReward($user->user);
+            } catch (\Throwable $e) {
+                // Referral reward failure must not block store activation
+                Log::error('WholeSalesCustomerService: failed to process wholesale referral reward on approval', [
+                    'wholesales_user_id' => $user->id,
+                    'user_id'            => $user->user_id,
+                    'error'              => $e->getMessage(),
+                ]);
+            }
         }
 
         return $user;
