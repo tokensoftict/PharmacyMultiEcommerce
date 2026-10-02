@@ -5,6 +5,7 @@ namespace App\Services\Kafka;
 use App\Enums\KafkaAction;
 use App\Enums\PushNotificationAction;
 use App\Models\Classification;
+use App\Models\CustomerGroup;
 use App\Models\LocalCustomer;
 use App\Models\Manufacturer;
 use App\Models\MemberGroup;
@@ -80,6 +81,15 @@ class ProcessGeneralService
                 break;
             case KafkaAction::SYNC_STAFF:
                 self::syncStaff($data);
+                break;
+            case KafkaAction::CREATE_CUSTOMER_GROUP:
+                self::createCustomerGroup($data);
+                break;
+            case KafkaAction::UPDATE_CUSTOMER_GROUP:
+                self::updateCustomerGroup($data);
+                break;
+            case KafkaAction::DELETE_CUSTOMER_GROUP:
+                self::deleteCustomerGroup($data);
                 break;
         }
 
@@ -518,6 +528,49 @@ class ProcessGeneralService
                 'usergroup_id' => $data['usergroup_id'] ?? null
             ]
         );
+    }
+
+    /**
+     * @param array $data
+     * @return CustomerGroup|bool
+     */
+    public static function createCustomerGroup(array $data): CustomerGroup|bool
+    {
+        if (isset($data[1])) {
+            Schema::disableForeignKeyConstraints();
+            DB::table("customer_groups")->truncate();
+            $result = DB::table("customer_groups")->insert($data);
+            Schema::enableForeignKeyConstraints();
+            return $result;
+        } else {
+            return CustomerGroup::create($data);
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return bool|int
+     */
+    public static function updateCustomerGroup(array $data): bool|int
+    {
+        $customerGroup = CustomerGroup::where("id", $data['id'])->first();
+        if (!$customerGroup) {
+            return self::createCustomerGroup($data) ? 1 : 0;
+        }
+        return $customerGroup->update($data);
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    public static function deleteCustomerGroup(array $data): bool
+    {
+        $customerGroup = CustomerGroup::where("id", $data['id'])->first();
+        if ($customerGroup) {
+            return $customerGroup->delete();
+        }
+        return false;
     }
 
 }
