@@ -1,13 +1,20 @@
 {
   "applinks": {
-    "apps": [],
     "details": [
       {
-        "appID": "7L4QDAL5X4.com.tokensoftict.psgdc",
-        "paths": [
-          "/wholesales/p/*",
-          "/retail/p/*",
-          "/ref/*"
+        "appIDs": [
+          "7L4QDAL5X4.com.tokensoftict.psgdc"
+        ],
+        "components": [
+          {
+            "/": "/wholesales/p/*"
+          },
+          {
+            "/": "/retail/p/*"
+          },
+          {
+            "/": "/ref/*"
+          }
         ]
       }
     ]
