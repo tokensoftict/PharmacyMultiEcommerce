@@ -19,16 +19,24 @@ class ProductManufacturerController extends ApiController
      */
     public function __invoke(Request $request) : JsonResponse
     {
-        $manufacturers = Manufacturer::query()->with([
-            'stocks' => fn ($query) => $query
-                ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
-                    $query->where('quantity', ">", "1");
-                })
-                ->where('admin_status', '1')
-                ->limit(3)
-        ])
-            ->has('stocks', '>', 2)
-            ->select("id", "name")->where("status", 1);
+        $manufacturers = Manufacturer::query()
+            ->where('status', 1)
+            ->whereHas('stocks', function ($query) {
+                $query
+                    ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
+                        $query->where('quantity', '>', 1);
+                    })
+                    ->where('admin_status', 1);
+            }, '>', 2)
+            ->with([
+                'stocks' => fn ($query) => $query
+                    ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
+                        $query->where('quantity', '>', 1);
+                    })
+                    ->where('admin_status', 1)
+                    ->limit(3),
+            ])
+            ->select('id', 'name');
         if($request->has('s')) {
             $manufacturers->where('name', 'like', '%'.$request->get('s').'%');
         }
