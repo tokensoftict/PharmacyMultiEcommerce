@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\General;
 
+use App\Classes\ApplicationEnvironment;
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\Api\General\GeneralResource;
 use App\Http\Resources\Api\Stock\StockListResource;
@@ -19,7 +20,12 @@ class ProductManufacturerController extends ApiController
     public function __invoke(Request $request) : JsonResponse
     {
         $manufacturers = Manufacturer::query()->with([
-            'stocks' => fn ($query) => $query->limit(3)
+            'stocks' => fn ($query) => $query
+                ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
+                    $query->where('quantity', ">", "1");
+                })
+                ->where('admin_status', '1')
+                ->limit(3)
         ])
             ->has('stocks', '>', 2)
             ->select("id", "name")->where("status", 1);
