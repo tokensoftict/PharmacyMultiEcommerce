@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 /**
- * Populates the Wholesale Provisions store.
+ * Populates the Wholesale Provisions store with component-based structure.
  *
  * A product qualifies only when its classification.major_classification is SUPERMARKET
  * AND it has a row in wholessales_stock_prices.
@@ -25,6 +25,16 @@ class WholesalesProvisionsController extends ApiController
     {
         $perPage = min(max((int)$request->query('per_page', 20), 1), 50);
         $category = $request->query('category'); // optional classification id filter
+
+        // ---- Categories list ----
+        $categories = Classification::query()
+            ->where('major_classification', self::MAJOR_CLASSIFICATION)
+            ->where('status', true)
+            ->whereHas('stocks', fn($q) => $q->whereHas('wholessales_stock_prices'))
+            ->inRandomOrder()
+            ->limit(10)
+            ->get(['id', 'name', 'seo'])
+            ->map(fn($c) => ['id' => (string)$c->id, 'name' => $c->name, 'seo' => $c->seo]);
 
         // ---- Popular picks: best selling provisions in wholesales ----
         $topIds = OrderProduct::query()
@@ -51,23 +61,63 @@ class WholesalesProvisionsController extends ApiController
             ->limit(12)
             ->get();
 
-        // ---- Shop by category: random SUPERMARKET classifications ----
-        $categories = Classification::query()
-            ->where('major_classification', self::MAJOR_CLASSIFICATION)
-            ->where('status', true)
-            ->whereHas('stocks', fn($q) => $q->whereHas('wholessales_stock_prices'))
-            ->inRandomOrder()
-            ->limit(8)
-            ->get(['id', 'name', 'seo'])
-            ->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'seo' => $c->seo]);
-
         // ---- All provisions (paginated) ----
         $all = $this->baseQuery()
             ->when($category, fn($q) => $q->where('stocks.classification_id', $category))
             ->orderBy('stocks.name')
             ->paginate($perPage);
 
+        // ---- Build Component Structure (Backend Driven UI) ----
+        $components = [
+            [
+                "component" => "CategoryChips",
+                "type" => "categories",
+                "data" => $categories,
+            ],
+        ];
+
+        if (count($popular) > 0) {
+            $components[] = [
+                "component" => "Horizontal_List",
+                "type" => "popular_picks",
+                "label" => "Popular Wholesale Picks",
+                "data" => StockListResource::collection($popular),
+            ];
+        }
+
+        if (count($deals) > 0) {
+            $components[] = [
+                "component" => "FlashDeals",
+                "type" => "deals",
+                "label" => "Wholesale Deals",
+                "data" => StockListResource::collection($deals),
+            ];
+        }
+
+        if (count($categories) > 0) {
+            $components[] = [
+                "component" => "CategoryGrid",
+                "type" => "shop_by_category",
+                "label" => "Shop by Category",
+                "data" => $categories,
+            ];
+        }
+
+        $components[] = [
+            "component" => "Grid_List",
+            "type" => "all_products",
+            "label" => "All Provisions",
+            "data" => StockListResource::collection($all->getCollection()),
+            "pagination" => [
+                "current_page" => $all->currentPage(),
+                "last_page" => $all->lastPage(),
+                "total" => $all->total(),
+                "has_more" => $all->hasMorePages(),
+            ],
+        ];
+
         return $this->sendSuccessResponse([
+            'components' => $components,
             'popular_picks' => StockListResource::collection($popular),
             'deals' => StockListResource::collection($deals),
             'categories' => $categories,
