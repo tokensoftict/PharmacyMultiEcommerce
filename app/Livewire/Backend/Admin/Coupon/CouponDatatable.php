@@ -104,6 +104,20 @@ class CouponDatatable extends ExportDataTableComponent
         $this->data = [
             'name' => ['label' => 'Coupon Name', 'type' => 'text'],
             'code' => ['label' => 'Coupon Code', 'type' => 'text', 'default' => $this->couponCode],
+            'coupon_type' => [
+                'label' => 'Coupon Type',
+                'type' => 'select',
+                'options' => [
+                    [
+                        'id' => 'General',
+                        'text' => 'General Coupon'
+                    ],
+                    [
+                        'id' => 'OrderBased',
+                        'text' => 'Ordered Based Coupon'
+                    ]
+                ]
+            ],
             'valid_from' => ['label' => 'Valid From', 'type' => 'datepicker'],
             'valid_to' => ['label' => 'Valid To', 'type' => 'datepicker'],
             'order_valid_from' => ['label' => 'Order Valid From', 'type' => 'datepicker'],
@@ -120,20 +134,6 @@ class CouponDatatable extends ExportDataTableComponent
                     [
                         'id' => 'Percentage',
                         'text' => 'Percentage (%)'
-                    ]
-                ]
-            ],
-            'coupon_type' => [
-                'label' => 'Coupon Type',
-                'type' => 'select',
-                'options' => [
-                    [
-                        'id' => 'General',
-                        'text' => 'General Coupon'
-                    ],
-                    [
-                        'id' => 'OrderBased',
-                        'text' => 'Ordered Based Coupon'
                     ]
                 ]
             ],
@@ -159,6 +159,7 @@ class CouponDatatable extends ExportDataTableComponent
 
         $this->newValidateRules = [
             'name' => 'required|min:3',
+            'coupon_type' => 'required',
             'code' => 'required|min:3|unique:coupons,code,NULL,id,app_id,' . ApplicationEnvironment::$model_id,
             'valid_from' => 'required',
             'valid_to' => 'required',

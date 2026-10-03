@@ -160,6 +160,7 @@ class VoucherDatatable extends ExportDataTableComponent
             'valid_to' => 'required',
             'noofvoucher' => 'required',
             'type' => 'required',
+            'coupon_type' => 'required',
             'domain' => 'required',
             'type_value' => 'required',
             'created_by' => 'required'
