@@ -544,7 +544,7 @@ class ProcessGeneralService
             Schema::enableForeignKeyConstraints();
             return $result;
         } else {
-            return CustomerGroup::create($data);
+            return CustomerType::create($data);
         }
     }
 
