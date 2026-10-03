@@ -6,6 +6,7 @@ use App\Enums\KafkaAction;
 use App\Enums\PushNotificationAction;
 use App\Models\Classification;
 use App\Models\CustomerGroup;
+use App\Models\CustomerType;
 use App\Models\LocalCustomer;
 use App\Models\Manufacturer;
 use App\Models\MemberGroup;
@@ -538,8 +539,8 @@ class ProcessGeneralService
     {
         if (isset($data[1])) {
             Schema::disableForeignKeyConstraints();
-            DB::table("customer_groups")->truncate();
-            $result = DB::table("customer_groups")->insert($data);
+            DB::table("customer_types")->truncate();
+            $result = DB::table("customer_types")->insert($data);
             Schema::enableForeignKeyConstraints();
             return $result;
         } else {
@@ -553,11 +554,11 @@ class ProcessGeneralService
      */
     public static function updateCustomerGroup(array $data): bool|int
     {
-        $customerGroup = CustomerGroup::where("id", $data['id'])->first();
-        if (!$customerGroup) {
+        $customerType = CustomerType::where("id", $data['id'])->first();
+        if (!$customerType) {
             return self::createCustomerGroup($data) ? 1 : 0;
         }
-        return $customerGroup->update($data);
+        return $customerType->update($data);
     }
 
     /**
@@ -566,9 +567,9 @@ class ProcessGeneralService
      */
     public static function deleteCustomerGroup(array $data): bool
     {
-        $customerGroup = CustomerGroup::where("id", $data['id'])->first();
-        if ($customerGroup) {
-            return $customerGroup->delete();
+        $customerType = CustomerType::where("id", $data['id'])->first();
+        if ($customerType) {
+            return $customerType->delete();
         }
         return false;
     }
