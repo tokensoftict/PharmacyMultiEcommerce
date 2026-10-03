@@ -153,7 +153,7 @@ class HomePageApiParser
         foreach ($specialClassifications as $specialClassification) {
 
             $stock = $specialClassification->stocks()
-                ->where('admin_status', false)
+                ->where('admin_status', '1')
                 ->with(ApplicationEnvironment::$stock_model_string)
                 ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
                     $query->where('quantity', ">", "1");
@@ -192,7 +192,7 @@ class HomePageApiParser
         foreach ($specialClassifications as $specialClassification) {
 
             $stock = $specialClassification->stocks()
-                ->where('admin_status', false)
+                ->where('admin_status', '1')
                 ->with(ApplicationEnvironment::$stock_model_string)
                 ->whereHas(ApplicationEnvironment::$stock_model_string, function ($query) {
                     $query->where('quantity', ">", "1");
