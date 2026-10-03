@@ -14,11 +14,11 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 class ApplyCouponCodeController extends ApiController
 {
 
-    public function __invoke(Request $request) : JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $checkoutUser = getApplicationModel();
 
-        if(!$checkoutUser) {
+        if (!$checkoutUser) {
             return $this->sendErrorResponse("Application user error, Please restart the application to complete your checkout", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -33,11 +33,11 @@ class ApplyCouponCodeController extends ApiController
         $coupon = Coupon::where('app_id', ApplicationEnvironment::$id)->where('code', $request->get('code'));
 
 
-        if($voucher->count() > 0){
+        if ($voucher->count() > 0) {
             $discountType = "Voucher";
             $discount = $voucher->first();
 
-        } elseif ($coupon->count() > 0){
+        } elseif ($coupon->count() > 0) {
             $discountType = "Coupon";
             $discount = $coupon->first();
 
@@ -45,17 +45,17 @@ class ApplyCouponCodeController extends ApiController
             return $this->sendErrorResponse("Invalid Coupon or Voucher Code, Please check code and try again", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if(!$discount) {
+        if (!$discount) {
             return $this->sendErrorResponse("Invalid Coupon or Voucher Code, Please check code and try again", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if($discount->status_id == status("Pending")){
+        if ($discount->status_id == status("Pending")) {
             return $this->sendErrorResponse("Invalid Coupon or Voucher Code, Please check code and try again", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if($discount->customer_type_id != NULL){
+        if ($discount->customer_type_id != NULL) {
 
-            if($discount->customer_type_id != $userType){
+            if ($discount->customer_type_id != $userType) {
 
                 return $this->sendErrorResponse("Invalid Coupon or Voucher Code, Please check code and try again", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
@@ -63,11 +63,11 @@ class ApplyCouponCodeController extends ApiController
         }
 
 
-        if($discount->customer_group_id != NULL){
+        if ($discount->customer_group_id != NULL) {
 
-            if($discount->customer_group_id != $userGroup){
+            if ($discount->customer_group_id != $userGroup) {
 
-                return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->sendErrorResponse('Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
             }
         }
@@ -79,31 +79,31 @@ class ApplyCouponCodeController extends ApiController
         $valid_to = \Carbon\Carbon::parse($discount->valid_to)->startOfDay();
 
         if ($now->lt($valid_from)) {
-            return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->sendErrorResponse('Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if ($now->gt($valid_to)) {
-            return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->sendErrorResponse('Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
 
         //check if the coupon is for specific customer
         $targetedUserId = ($discountType === "Voucher") ? $discount->customer_id : $discount->users_id;
 
-        if($discount->customer_type_id != NULL && $targetedUserId != NULL) {
-            if($checkoutUser->id != $targetedUserId){
-                return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        if ($discount->customer_type_id != NULL && $targetedUserId != NULL) {
+            if ($checkoutUser->id != $targetedUserId) {
+                return $this->sendErrorResponse('Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
         }
 
 
-        if($discountType === "Voucher"){
-            if($discount->usage_status !="NOT-USED"){
-                return $this->sendErrorResponse( 'Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        if ($discountType === "Voucher") {
+            if ($discount->usage_status != "NOT-USED") {
+                return $this->sendErrorResponse('Invalid Coupon or Voucher Code, Please check code and try again', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             // Minimum Amount Validation
-            if ($discount->minimum_amount > 0) {
+            if ($discount->minimum_amount > 0 && $discount->coupon_type !== 'OrderBased') {
                 if ($cartTotal < $discount->minimum_amount) {
                     return $this->sendErrorResponse('Your shopping cart total must be ' . money($discount->minimum_amount) . ' or more to use this voucher.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
                 }
@@ -127,15 +127,16 @@ class ApplyCouponCodeController extends ApiController
         }
 
 
-        if($discountType == "Coupon"){
+        if ($discountType == "Coupon") {
 
             // Minimum Amount Validation
-            if($discount->minimum_amount > 0) {
+            if ($discount->minimum_amount > 0 && $discount->coupon_type !== 'OrderBased') {
 
-                if($cartTotal === 0) return $this->sendErrorResponse( 'Your Shopping cart is empty!', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                if ($cartTotal === 0)
+                    return $this->sendErrorResponse('Your Shopping cart is empty!', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
                 if ($cartTotal < $discount->minimum_amount) {
-                    return $this->sendErrorResponse( 'Your shopping cart total must be ' . money($discount->minimum_amount) . ' or more to use this coupon.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+                    return $this->sendErrorResponse('Your shopping cart total must be ' . money($discount->minimum_amount) . ' or more to use this coupon.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
                 }
             }
 
@@ -155,17 +156,44 @@ class ApplyCouponCodeController extends ApiController
                 }
             }
 
-            $count = $discount->couponUsageHistories()->where('user_type_id',$checkoutUser->id)->where('user_type_type', get_class($checkoutUser))->count();
+            $count = $discount->couponUsageHistories()->where('user_type_id', $checkoutUser->id)->where('user_type_type', get_class($checkoutUser))->count();
 
-            if($count > 0 and $count >= $discount->noofuse) {
+            if ($count > 0 and $count >= $discount->noofuse) {
                 return $this->sendErrorResponse("You have reached the maximum usage allowed for this coupon $count >= $discount->noofuse", ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
             }
 
         }
 
+        // Total Orders Sum Condition Validation (OrderBased Coupon / Voucher)
+        if ($discount->coupon_type === 'OrderBased') {
+            $orderFrom = $discount->order_valid_from;
+            $orderTo = $discount->order_valid_to;
+
+            $fromDate = \Carbon\Carbon::parse($orderFrom)->startOfDay();
+            $toDate = \Carbon\Carbon::parse($orderTo)->endOfDay();
+
+            $customerOrdersSum = \App\Models\Order::query()
+                ->where('customer_type', get_class($checkoutUser))
+                ->where('customer_id', $checkoutUser->id)
+                ->where('app_id', ApplicationEnvironment::$id)
+                ->where(function ($query) use ($fromDate, $toDate) {
+                    $query->whereBetween('created_at', [$fromDate, $toDate])
+                        ->orWhereBetween('order_date', [$fromDate, $toDate]);
+                })
+                ->whereIn('status_id', [status('Dispatched'), status('Complete')])
+                ->sum('total');
+
+            if ($customerOrdersSum < $discount->minimum_amount) {
+                return $this->sendErrorResponse(
+                    'To apply this ' . strtolower($discountType) . ', your total order purchases between ' . $fromDate->format('Y-m-d') . ' and ' . $toDate->format('Y-m-d') . ' must be at least ' . money($discount->minimum_amount) . '. Your total order purchases so far is ' . money($customerOrdersSum) . '.',
+                    ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+        }
+
 
         //all validation has been check lets apply the coupon
-        if($discount->type == 'Percentage'){
+        if ($discount->type == 'Percentage') {
             $value = ($discount->type_value / 100) * $cartTotal;
             $value = ceil($value);
             $value = -$value;
@@ -178,18 +206,18 @@ class ApplyCouponCodeController extends ApiController
             $value = -$value;
         }
 
-        $append_name = ($discount->type =="Percentage" ? $discount->type_value."%" : money($discount->type_value));
+        $append_name = ($discount->type == "Percentage" ? $discount->type_value . "%" : money($discount->type_value));
 
         $order_total = [
-            'name'=> $discount->name.'['.$discount->code.'] '.$append_name,
-            'id'=>$discount->id,
-            'disabled'=>true,
-            'autocheck'=>true,
-            'amount'=>$value,
-            'amount_formatted'=>money($value),
-            'type'=>'Discount',
-            'discount_id'=>$discount->id,
-            'discount_type'=>$discountType
+            'name' => $discount->name . '[' . $discount->code . '] ' . $append_name,
+            'id' => $discount->id,
+            'disabled' => true,
+            'autocheck' => true,
+            'amount' => $value,
+            'amount_formatted' => money($value),
+            'type' => 'Discount',
+            'discount_id' => $discount->id,
+            'discount_type' => $discountType
         ];
 
         $checkoutUser->saveCouponData($order_total);

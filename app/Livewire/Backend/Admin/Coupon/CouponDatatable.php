@@ -105,19 +105,35 @@ class CouponDatatable extends ExportDataTableComponent
             'name' => ['label' => 'Coupon Name', 'type' => 'text'],
             'code' => ['label' => 'Coupon Code', 'type' => 'text', 'default' => $this->couponCode],
             'valid_from' => ['label' => 'Valid From', 'type' => 'datepicker'],
-            'valid_to' => ['label' => 'Valid From', 'type' => 'datepicker'],
+            'valid_to' => ['label' => 'Valid To', 'type' => 'datepicker'],
+            'order_valid_from' => ['label' => 'Order Valid From', 'type' => 'datepicker'],
+            'order_valid_to' => ['label' => 'Order Valid To', 'type' => 'datepicker'],
             'noofuse' => ['label' => 'Number of Usage', 'type' => 'number'],
             'type' => [
-                'label' => 'Coupon Type',
+                'label' => 'Discount Type',
                 'type' => 'select',
                 'options' => [
                     [
                         'id' => 'Fixed',
-                        'text' => 'Fixed'
+                        'text' => 'Fixed Amount'
                     ],
                     [
                         'id' => 'Percentage',
-                        'text' => 'Percentage'
+                        'text' => 'Percentage (%)'
+                    ]
+                ]
+            ],
+            'coupon_type' => [
+                'label' => 'Coupon Type',
+                'type' => 'select',
+                'options' => [
+                    [
+                        'id' => 'General',
+                        'text' => 'General Coupon'
+                    ],
+                    [
+                        'id' => 'OrderBased',
+                        'text' => 'Ordered Based Coupon'
                     ]
                 ]
             ],
@@ -238,15 +254,27 @@ class CouponDatatable extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Valid from", "valid_from")
                 ->format(function ($value, $row, Column $column) {
-                    return $value->format("Y-m-d");
+                    return $value ? $value->format("Y-m-d") : '';
                 })
                 ->sortable(),
             Column::make("Valid to", "valid_to")
                 ->format(function ($value, $row, Column $column) {
-                    return $value->format("Y-m-d");
+                    return $value ? $value->format("Y-m-d") : '';
                 })
                 ->sortable(),
-            Column::make("Type", "type")
+            Column::make("Order Valid From", "order_valid_from")
+                ->format(function ($value, $row, Column $column) {
+                    return $value ? $value->format("Y-m-d") : '';
+                })
+                ->sortable(),
+            Column::make("Order Valid To", "order_valid_to")
+                ->format(function ($value, $row, Column $column) {
+                    return $value ? $value->format("Y-m-d") : '';
+                })
+                ->sortable(),
+            Column::make("Discount Type", "type")
+                ->sortable(),
+            Column::make("Coupon Type", "coupon_type")
                 ->sortable(),
             Column::make("Type value", "type_value")
                 ->sortable(),

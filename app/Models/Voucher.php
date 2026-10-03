@@ -46,6 +46,8 @@ class Voucher extends Model
 	protected $casts = [
 		'valid_from' => 'datetime',
 		'valid_to' => 'datetime',
+		'order_valid_from' => 'datetime',
+		'order_valid_to' => 'datetime',
 		'type_value' => 'float',
 		'app_id' => 'int',
 		'noofvoucher' => 'int',
@@ -61,6 +63,8 @@ class Voucher extends Model
 		'name',
 		'valid_from',
 		'valid_to',
+		'order_valid_from',
+		'order_valid_to',
 		'type',
 		'type_value',
 		'app_id',
@@ -71,7 +75,8 @@ class Voucher extends Model
 		'customer_group_id',
 		'status_id',
 		'created_by',
-        'minimum_amount'
+        'minimum_amount',
+        'coupon_type'
 	];
 
 	public function app()

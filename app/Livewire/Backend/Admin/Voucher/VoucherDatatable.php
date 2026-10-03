@@ -102,17 +102,33 @@ class VoucherDatatable extends ExportDataTableComponent
         $this->data = [
             'name' => ['label' => 'Voucher Name', 'type'=>'text'],
             'valid_from' => ['label' => 'Valid From', 'type' =>'datepicker'],
-            'valid_to' => ['label' => 'Valid From', 'type' =>'datepicker'],
-            'type' => ['label' => 'Voucher Type', 'type' =>'select', 'options' => [
+            'valid_to' => ['label' => 'Valid To', 'type' =>'datepicker'],
+            'order_valid_from' => ['label' => 'Order Valid From', 'type' => 'datepicker'],
+            'order_valid_to' => ['label' => 'Order Valid To', 'type' => 'datepicker'],
+            'type' => ['label' => 'Discount Type', 'type' =>'select', 'options' => [
                 [
                     'id' => 'Fixed',
-                    'text' => 'Fixed'
+                    'text' => 'Fixed Amount'
                 ],
                 [
                     'id' => 'Percentage',
-                    'text' => 'Percentage'
+                    'text' => 'Percentage (%)'
                 ]
             ]],
+            'coupon_type' => [
+                'label' => 'Voucher Type',
+                'type' => 'select',
+                'options' => [
+                    [
+                        'id' => 'General',
+                        'text' => 'General Voucher'
+                    ],
+                    [
+                        'id' => 'OrderBased',
+                        'text' => 'Ordered Based Voucher'
+                    ]
+                ]
+            ],
             'type_value' =>['label' => 'Voucher Value', 'type' =>'number'],
             'minimum_amount' =>['label' => 'Minimum Order Amount', 'type' =>'number'],
             'noofvoucher' =>['label' => 'Number of Voucher', 'type' =>'number'],
@@ -216,15 +232,27 @@ class VoucherDatatable extends ExportDataTableComponent
                 ->sortable(),
             Column::make("Valid from", "valid_from")
                 ->format(function($value, $row, Column $column){
-                    return $value->format("Y-m-d");
+                    return $value ? $value->format("Y-m-d") : '';
                 })
                 ->sortable(),
             Column::make("Valid to", "valid_to")
                 ->format(function($value, $row, Column $column){
-                    return $value->format("Y-m-d");
+                    return $value ? $value->format("Y-m-d") : '';
                 })
                 ->sortable(),
-            Column::make("Voucher Type", "type")
+            Column::make("Order Valid From", "order_valid_from")
+                ->format(function($value, $row, Column $column){
+                    return $value ? $value->format("Y-m-d") : '';
+                })
+                ->sortable(),
+            Column::make("Order Valid To", "order_valid_to")
+                ->format(function($value, $row, Column $column){
+                    return $value ? $value->format("Y-m-d") : '';
+                })
+                ->sortable(),
+            Column::make("Discount Type", "type")
+                ->sortable(),
+            Column::make("Voucher Type", "coupon_type")
                 ->sortable(),
             Column::make("Voucher value", "type_value")
                 ->sortable(),
@@ -249,6 +277,7 @@ class VoucherDatatable extends ExportDataTableComponent
             $voucherCodes[] = new VoucherCode([
                 'name' => $voucher->name,
                 'type' => $voucher->type,
+                'coupon_type' => $voucher->coupon_type,
                 'app_id' => $voucher->app_id,
                 'code' => strtoupper(generateRandom(8)),
                 'domain' => $voucher->domain,
@@ -260,6 +289,8 @@ class VoucherDatatable extends ExportDataTableComponent
                 'usage_status' => "NOT-USED",
                 'valid_from' => $voucher->valid_from,
                 'valid_to' => $voucher->valid_to,
+                'order_valid_from' => $voucher->order_valid_from,
+                'order_valid_to' => $voucher->order_valid_to,
                 'user_id' => $voucher->user_id,
                 'user_type' =>$voucher->user_type,
                 'voucher_id' => $voucher->id,
@@ -280,6 +311,7 @@ class VoucherDatatable extends ExportDataTableComponent
             $voucherCodes[] = new VoucherCode([
                 'name' => $voucher->name,
                 'type' => $voucher->type,
+                'coupon_type' => $voucher->coupon_type,
                 'app_id' => $voucher->app_id,
                 'code' => strtoupper(generateRandom(8)),
                 'domain' => $voucher->domain,
@@ -291,6 +323,8 @@ class VoucherDatatable extends ExportDataTableComponent
                 'usage_status' => "NOT-USED",
                 'valid_from' => $voucher->valid_from,
                 'valid_to' => $voucher->valid_to,
+                'order_valid_from' => $voucher->order_valid_from,
+                'order_valid_to' => $voucher->order_valid_to,
                 'user_id' => $voucher->user_id,
                 'user_type' =>$voucher->user_type,
                 'voucher_id' => $voucher->id,

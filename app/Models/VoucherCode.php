@@ -48,6 +48,8 @@ class VoucherCode extends Model
 		'type_value' => 'float',
 		'valid_from' => 'datetime',
 		'valid_to' => 'datetime',
+		'order_valid_from' => 'datetime',
+		'order_valid_to' => 'datetime',
 		'voucher_id' => 'int',
 		'app_id' => 'int',
 		'user_id' => 'int',
@@ -65,6 +67,8 @@ class VoucherCode extends Model
 		'type_value',
 		'valid_from',
 		'valid_to',
+		'order_valid_from',
+		'order_valid_to',
 		'usage_status',
 		'voucher_id',
 		'app_id',
@@ -74,7 +78,8 @@ class VoucherCode extends Model
 		'customer_group_id',
 		'status_id',
 		'created_by',
-        'minimum_amount'
+        'minimum_amount',
+        'coupon_type'
 	];
 
 	public function app()
