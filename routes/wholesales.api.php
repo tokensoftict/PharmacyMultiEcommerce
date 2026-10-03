@@ -2,6 +2,7 @@
 
 Route::prefix("general")->namespace("General")->group(function(){
     Route::get("/home", ["as" => "home.list", "uses" => "WholesalesHomeController"]);
+    Route::get("/provisions", ["as" => "provisions.list", "uses" => "WholesalesProvisionsController"]);
 });
 
 Route::middleware(['auth:sanctum'])->group(function(){
