@@ -25,21 +25,23 @@ class WholesalesProvisionsController extends ApiController
 
     public function __invoke(Request $request)
     {
-        $perPage = min(max((int)$request->query('per_page', 20), 1), 50);
+        $perPage = min(max((int) $request->query('per_page', 20), 1), 50);
         $category = $request->query('category'); // optional classification id filter
 
         // ---- Categories list ----
         $categories = Classification::query()
             ->where('major_classification', self::MAJOR_CLASSIFICATION)
             ->where('status', true)
-            ->whereHas('stocks', fn($q) => $q
-                ->where('admin_status', true)
-                ->whereHas('wholessales_stock_prices', fn($sq) => $sq->where('status', true))
+            ->whereHas(
+                'stocks',
+                fn($q) => $q
+                    ->where('admin_status', true)
+                    ->whereHas('wholessales_stock_prices', fn($sq) => $sq->where('status', true))
             )
             ->inRandomOrder()
             ->limit(10)
             ->get(['id', 'name', 'seo'])
-            ->map(fn($c) => ['id' => (string)$c->id, 'name' => $c->name, 'seo' => $c->seo]);
+            ->map(fn($c) => ['id' => (string) $c->id, 'name' => $c->name, 'seo' => $c->seo]);
 
         // ---- Popular picks: best selling provisions in wholesales ----
         $topIds = OrderProduct::query()
@@ -111,7 +113,7 @@ class WholesalesProvisionsController extends ApiController
         $components[] = [
             "component" => "Grid_List",
             "type" => "all_products",
-            "label" => "All Provisions",
+            "label" => "All Products",
             "data" => StockListResource::collection($all->getCollection()),
             "pagination" => [
                 "current_page" => $all->currentPage(),
