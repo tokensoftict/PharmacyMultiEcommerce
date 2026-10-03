@@ -14,8 +14,10 @@ use Illuminate\Http\Request;
 /**
  * Populates the Wholesale Provisions store with component-based structure.
  *
- * A product qualifies only when its classification.major_classification is SUPERMARKET
- * AND it has a row in wholessales_stock_prices.
+ * Eligibility Criteria:
+ * 1. Stock admin_status = 1 (active)
+ * 2. Stock classification.major_classification = SUPERMARKET and status = 1
+ * 3. Stock has wholessales_stock_prices with status = 1
  */
 class WholesalesProvisionsController extends ApiController
 {
@@ -30,7 +32,10 @@ class WholesalesProvisionsController extends ApiController
         $categories = Classification::query()
             ->where('major_classification', self::MAJOR_CLASSIFICATION)
             ->where('status', true)
-            ->whereHas('stocks', fn($q) => $q->whereHas('wholessales_stock_prices'))
+            ->whereHas('stocks', fn($q) => $q
+                ->where('admin_status', true)
+                ->whereHas('wholessales_stock_prices', fn($sq) => $sq->where('status', true))
+            )
             ->inRandomOrder()
             ->limit(10)
             ->get(['id', 'name', 'seo'])
@@ -57,7 +62,7 @@ class WholesalesProvisionsController extends ApiController
 
         // ---- Deals: stock with special price ----
         $deals = $this->baseQuery()
-            ->whereHas('wholessales_stock_prices', fn($q) => $q->where('special_offer', 1))
+            ->whereHas('wholessales_stock_prices', fn($q) => $q->where('special_offer', 1)->where('status', true))
             ->limit(12)
             ->get();
 
@@ -132,14 +137,18 @@ class WholesalesProvisionsController extends ApiController
     }
 
     /**
-     * Base eligibility: SUPERMARKET classification + has wholesales price.
+     * Base eligibility:
+     * - Stock admin_status = true (1)
+     * - Classification major_classification = SUPERMARKET and status = true (1)
+     * - Wholesales price status = true (1)
      */
     private function baseQuery(): Builder
     {
         return Stock::query()
+            ->where('admin_status', true)
             ->whereHas('classification', fn($q) => $q
                 ->where('major_classification', self::MAJOR_CLASSIFICATION)
                 ->where('status', true))
-            ->whereHas('wholessales_stock_prices');
+            ->whereHas('wholessales_stock_prices', fn($q) => $q->where('status', true));
     }
 }
