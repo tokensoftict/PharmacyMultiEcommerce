@@ -28,7 +28,7 @@ class SpecialOfferStockController extends ApiController
     {
         return $this->sendPaginatedSuccessResponse(
             StockNewArrivalListResource::collection(
-                $this->service->getSpecialOffers($request->input('search', $request->input('query')))
+                $this->service->getSpecialOffers($request->input('search', $request->input('query')), $request->input('sort'))
             )->response()->getData(true)
         );
     }

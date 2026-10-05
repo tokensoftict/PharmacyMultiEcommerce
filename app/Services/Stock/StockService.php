@@ -18,7 +18,7 @@ class StockService
     /**
      * @return LengthAwarePaginator
      */
-    public final function getBestSellers(?string $search = null): LengthAwarePaginator
+    public final function getBestSellers(?string $search = null, ?string $sort = null): LengthAwarePaginator
     {
         $bestSellingProduct = OrderProduct::query()->select("stock_id")
             ->where('app_id', ApplicationEnvironment::$model_id)
@@ -30,6 +30,7 @@ class StockService
 
         $builder = Stock::query()->whereIn("id", $bestSellingProduct);
         $this->applySearch($builder, $search);
+        $this->applySort($builder, $sort, 'stock');
 
         return $builder->paginate(config("app.PAGINATE_NUMBER"));
     }
@@ -39,7 +40,7 @@ class StockService
      * @param int $manufacturer_id
      * @return LengthAwarePaginator
      */
-    public final function getByManufacturer(Manufacturer|int $manufacturer, ?string $search = null): LengthAwarePaginator
+    public final function getByManufacturer(Manufacturer|int $manufacturer, ?string $search = null, ?string $sort = null): LengthAwarePaginator
     {
         if (!$manufacturer instanceof Manufacturer) {
             $manufacturer = Manufacturer::findOrFail($manufacturer);
@@ -48,6 +49,7 @@ class StockService
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string . ".stock_id", "=", "stocks.id")
             ->where("manufacturer_id", $manufacturer->id)
             ->when($search, fn($q) => $this->applySearch($q, $search, "stocks."))
+            ->when($sort, fn($q) => $this->applySort($q, $sort, 'joined'))
             ->orderBy(ApplicationEnvironment::$stock_model_string . ".quantity", "desc")
             ->paginate(config("app.PAGINATE_NUMBER"));
 
@@ -57,7 +59,7 @@ class StockService
      * @param Productcategory|int $productcategory
      * @return LengthAwarePaginator
      */
-    public final function getByProductCategories(Productcategory|int $productcategory, ?string $search = null): LengthAwarePaginator
+    public final function getByProductCategories(Productcategory|int $productcategory, ?string $search = null, ?string $sort = null): LengthAwarePaginator
     {
         if (!$productcategory instanceof Productcategory) {
             $productcategory = Productcategory::findOrFail($productcategory);
@@ -66,6 +68,7 @@ class StockService
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string . ".stock_id", "=", "stocks.id")
             ->where("productcategory_id", $productcategory->id)
             ->when($search, fn($q) => $this->applySearch($q, $search, "stocks."))
+            ->when($sort, fn($q) => $this->applySort($q, $sort, 'joined'))
             ->orderBy(ApplicationEnvironment::$stock_model_string . ".quantity", "desc")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
@@ -74,7 +77,7 @@ class StockService
      * @param Classification|int $classification
      * @return LengthAwarePaginator
      */
-    public final function getByClassifications(Classification|int $classification, ?string $search = null): LengthAwarePaginator
+    public final function getByClassifications(Classification|int $classification, ?string $search = null, ?string $sort = null): LengthAwarePaginator
     {
         if (!$classification instanceof Classification) {
             $classification = Classification::findOrFail($classification);
@@ -83,6 +86,7 @@ class StockService
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string . ".stock_id", "=", "stocks.id")
             ->where("classification_id", $classification->id)
             ->when($search, fn($q) => $this->applySearch($q, $search, "stocks."))
+            ->when($sort, fn($q) => $this->applySort($q, $sort, 'joined'))
             ->orderBy(ApplicationEnvironment::$stock_model_string . ".quantity", "desc")
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
@@ -101,11 +105,12 @@ class StockService
     /**
      * @return LengthAwarePaginator
      */
-    public final function getSpecialOffers(?string $search = null): LengthAwarePaginator
+    public final function getSpecialOffers(?string $search = null, ?string $sort = null): LengthAwarePaginator
     {
         return ApplicationEnvironment::$stock_model::query()->with('stock')
             ->where('special_offer', 1)
             ->when($search, fn($q) => $q->whereHas('stock', fn($sq) => $this->applySearch($sq, $search)))
+            ->when($sort, fn($q) => $this->applySort($q, $sort, 'price_table'))
             ->orderBy("price")
             ->paginate(config("app.PAGINATE_NUMBER"));
 
@@ -128,10 +133,11 @@ class StockService
     /**
      * @return LengthAwarePaginator
      */
-    public final function getPromotionalStock(?string $search = null): LengthAwarePaginator
+    public final function getPromotionalStock(?string $search = null, ?string $sort = null): LengthAwarePaginator
     {
         return PromotionItem::query()->where("status_id", status("Approved"))->with(['stock'])
             ->when($search, fn($q) => $q->whereHas('stock', fn($sq) => $this->applySearch($sq, $search)))
+            ->when($sort, fn($q) => $this->applySort($q, $sort, 'relation'))
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
 
@@ -139,7 +145,7 @@ class StockService
     /**
      * @return LengthAwarePaginator
      */
-    public final function getNewArrivalsStock(?string $search = null): LengthAwarePaginator
+    public final function getNewArrivalsStock(?string $search = null, ?string $sort = null): LengthAwarePaginator
     {
         $latestArrivals = NewStockArrival::selectRaw('MAX(id) as id')
             ->where('app_id', ApplicationEnvironment::$id)
@@ -152,6 +158,7 @@ class StockService
             ->whereHas('stock.' . ApplicationEnvironment::$stock_model_string, function ($query) {
                 $query->where("quantity", ">", 0);
             })
+            ->when($sort, fn($q) => $this->applySort($q, $sort, 'relation'))
             ->orderBy('id', 'DESC')
             ->paginate(config("app.PAGINATE_NUMBER"));
     }
@@ -206,6 +213,48 @@ class StockService
                 ->orWhere($prefix . 'description', 'LIKE', '%' . $search . '%')
                 ->orWhere($prefix . 'seo', 'LIKE', '%' . $search . '%');
         });
+    }
+
+    /**
+     * Apply a user selected sort (price_asc, price_desc, name_asc, newest).
+     * Unknown values are ignored.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder $builder
+     * @param string|null $sort
+     * @param string $base 'stock' (plain Stock query), 'joined' (Stock joined with price table),
+     *                     'price_table' (price table model with stock relation),
+     *                     'relation' (model with stock_id + stock relation)
+     * @return void
+     */
+    public final function applySort($builder, ?string $sort, string $base): void
+    {
+        if (!in_array($sort, ['price_asc', 'price_desc', 'name_asc', 'newest'], true)) {
+            return;
+        }
+
+        $priceTable = ApplicationEnvironment::$stock_model_string;
+        $outer = $builder->getModel()->getTable();
+        $stockIdCol = $base === 'stock' ? 'stocks.id' : $outer . '.stock_id';
+
+        $priceSub = fn() => \Illuminate\Support\Facades\DB::table($priceTable)->select('price')
+            ->whereColumn($priceTable . '.stock_id', $stockIdCol)->limit(1);
+        $nameSub = fn() => \Illuminate\Support\Facades\DB::table('stocks')->select('name')
+            ->whereColumn('stocks.id', $stockIdCol)->limit(1);
+
+        $price = match ($base) {
+            'joined' => $priceTable . '.price',
+            'price_table' => $outer . '.price',
+            default => $priceSub(),
+        };
+        $name = in_array($base, ['stock', 'joined'], true) ? 'stocks.name' : $nameSub();
+        $newest = in_array($base, ['stock', 'joined'], true) ? 'stocks.id' : $outer . '.id';
+
+        match ($sort) {
+            'price_asc' => $builder->orderBy($price, 'asc'),
+            'price_desc' => $builder->orderBy($price, 'desc'),
+            'name_asc' => $builder->orderBy($name, 'asc'),
+            'newest' => $builder->orderBy($newest, 'desc'),
+        };
     }
 
 }

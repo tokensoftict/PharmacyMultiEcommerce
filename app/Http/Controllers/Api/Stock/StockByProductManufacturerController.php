@@ -29,7 +29,7 @@ class StockByProductManufacturerController extends ApiController
     {
         return $this->sendPaginatedSuccessResponse(
             StockListJoinResource::collection(
-                $this->service->getByManufacturer($manufacturer, $request->input('search', $request->input('query')))
+                $this->service->getByManufacturer($manufacturer, $request->input('search', $request->input('query')), $request->input('sort'))
             )->response()->getData(true)
         );
     }

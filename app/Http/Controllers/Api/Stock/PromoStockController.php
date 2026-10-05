@@ -27,7 +27,7 @@ class PromoStockController extends ApiController
     {
         return $this->sendPaginatedSuccessResponse(
             StockListResource::collection(
-                $this->service->getPromotionalStock($request->input('search', $request->input('query')))
+                $this->service->getPromotionalStock($request->input('search', $request->input('query')), $request->input('sort'))
             )->response()->getData(true)
         );
     }

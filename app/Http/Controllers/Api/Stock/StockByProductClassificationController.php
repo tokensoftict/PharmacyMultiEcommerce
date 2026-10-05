@@ -29,7 +29,7 @@ class StockByProductClassificationController extends ApiController
     {
         return $this->sendPaginatedSuccessResponse(
             StockListJoinResource::collection(
-                $this->service->getByClassifications($classification, $request->input('search', $request->input('query')))
+                $this->service->getByClassifications($classification, $request->input('search', $request->input('query')), $request->input('sort'))
             )->response()->getData(true)
         );
     }

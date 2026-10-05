@@ -33,6 +33,16 @@ class StockByPromotionController extends ApiController
                         ->orWhere("stocks.seo", "LIKE", "%" . $search . "%");
                 });
             })
+            ->when($request->input('sort'), function ($q, $sort) {
+                $price = ApplicationEnvironment::$stock_model_string . ".price";
+                match ($sort) {
+                    'price_asc' => $q->orderBy($price, 'asc'),
+                    'price_desc' => $q->orderBy($price, 'desc'),
+                    'name_asc' => $q->orderBy('stocks.name', 'asc'),
+                    'newest' => $q->orderBy('stocks.id', 'desc'),
+                    default => null,
+                };
+            })
             ->orderBy(ApplicationEnvironment::$stock_model_string . ".price", "asc")->paginate(config("app.PAGINATE_NUMBER"));
 
         return $this->sendPaginatedSuccessResponse(
