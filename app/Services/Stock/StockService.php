@@ -185,7 +185,9 @@ class StockService
         }
 
         if (ApplicationEnvironment::$stock_model_string === "wholessales_stock_prices") {
-            $builder->where('is_wholesales', true);
+            if ($storeType !== 'SUPERMARKET') {
+                $builder->where('is_wholesales', true);
+            }
         }
 
         return $builder->whereHas(ApplicationEnvironment::$stock_model_string, function ($q) {
