@@ -148,6 +148,7 @@ class WholesalesProvisionsController extends ApiController
     {
         return Stock::query()
             ->where('admin_status', true)
+            ->where('store_type', self::MAJOR_CLASSIFICATION)
             ->whereHas('classification', fn($q) => $q
                 ->where('major_classification', self::MAJOR_CLASSIFICATION)
                 ->where('status', true))
