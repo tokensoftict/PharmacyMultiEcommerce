@@ -27,7 +27,7 @@ class BestSellerController extends ApiController
     {
         return $this->sendPaginatedSuccessResponse(
             BestSellerStockResource::collection(
-                $this->service->getBestSellers()
+                $this->service->getBestSellers($request->input('search', $request->input('query')))
             )->response()->getData(true)
         );
     }

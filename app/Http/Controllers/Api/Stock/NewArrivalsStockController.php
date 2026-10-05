@@ -28,7 +28,7 @@ class NewArrivalsStockController extends ApiController
     {
         return $this->sendPaginatedSuccessResponse(
             StockNewArrivalListResource::collection(
-                $this->service->getNewArrivalsStock()
+                $this->service->getNewArrivalsStock($request->input('search', $request->input('query')))
             )->response()->getData(true)
         );
     }

@@ -26,6 +26,13 @@ class StockByPromotionController extends ApiController
         $stocks = Stock::query()->select("stocks.*", ApplicationEnvironment::$stock_model_string . ".price", ApplicationEnvironment::$stock_model_string . ".quantity as quantity", ApplicationEnvironment::$stock_model_string . ".expiry_date as expiry_date")->withoutGlobalScope('filter_stocks')
             ->join(ApplicationEnvironment::$stock_model_string, ApplicationEnvironment::$stock_model_string . ".stock_id", "=", "stocks.id")
             ->whereIn("stocks.id", $stockIds)
+            ->when($request->input('search', $request->input('query')), function ($q, $search) {
+                $q->where(function ($sq) use ($search) {
+                    $sq->where("stocks.name", "LIKE", "%" . $search . "%")
+                        ->orWhere("stocks.description", "LIKE", "%" . $search . "%")
+                        ->orWhere("stocks.seo", "LIKE", "%" . $search . "%");
+                });
+            })
             ->orderBy(ApplicationEnvironment::$stock_model_string . ".price", "asc")->paginate(config("app.PAGINATE_NUMBER"));
 
         return $this->sendPaginatedSuccessResponse(
