@@ -11,13 +11,150 @@ use App\Models\Stock;
 use App\Repositories\DsdRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 trait ApplicationUserCheckoutTrait
 {
     /**
+     * Validate the cart. Tries the local Cloudflare tunnel service first; if it is
+     * unavailable (or returns an unusable response) falls back to the local check.
+     *
      * @return array
      */
     public final function validateInventory(): array
+    {
+        $cart = $this->cart ?? [];
+        if (count($cart) == 0) return ['status' => true];
+
+        $tunnelResult = $this->validateInventoryViaTunnel($cart);
+
+        if ($tunnelResult !== null) {
+            return $tunnelResult;
+        }
+
+        return $this->validateInventoryLocally();
+    }
+
+    /**
+     * Call the tunnel validation endpoint.
+     *
+     * @param array $cart
+     * @return array|null Result in validateInventory format, or null when the tunnel cannot be used.
+     */
+    protected function validateInventoryViaTunnel(array $cart): ?array
+    {
+        $config = config('services.invoice_validation', []);
+        $url = $config['url'] ?? null;
+
+        if (empty($config['enabled']) || empty($url)) {
+            return null;
+        }
+
+        // The tunnel (local system) knows stocks by local_stock_id, not mystore's id
+        $localIds = Stock::withoutGlobalScopes()
+            ->whereIn('id', array_keys($cart))
+            ->pluck('local_stock_id', 'id')
+            ->toArray();
+
+        $items = [];
+        $localToCartId = [];
+        foreach ($cart as $stockId => $item) {
+            $localId = $localIds[$stockId] ?? null;
+            if (empty($localId)) {
+                // Cannot map this product to the local system => use local validation
+                return null;
+            }
+            $localToCartId[(int) $localId] = $stockId;
+            $items[] = [
+                'stock_id' => (int) $localId,
+                'quantity' => (int) ($item['quantity'] ?? 0),
+            ];
+        }
+
+        $payload = [
+            'department' => ApplicationEnvironment::$stock_model_string == 'supermarkets_stock_prices' ? 'retail' : 'wholesales',
+            'customer_id' => $this->local_customer_id ?? null,
+            'check_purchase_limit' => true,
+            'items' => $items,
+        ];
+
+        try {
+            $request = Http::acceptJson()
+                ->asJson()
+                ->connectTimeout($config['connect_timeout'] ?? 3)
+                ->timeout($config['timeout'] ?? 8);
+
+            if (!empty($config['api_key'])) {
+                $request = $request->withHeaders(['X-API-KEY' => $config['api_key']]);
+            }
+
+            $response = $request->post($url, $payload);
+        } catch (\Throwable $e) {
+            Log::warning('Invoice validation tunnel unavailable, using local validation: ' . $e->getMessage());
+            return null;
+        }
+
+        // Server errors, auth problems, or tunnel errors (e.g. Cloudflare 52x) => fall back
+        if ($response->serverError() || in_array($response->status(), [401, 403, 404, 429])) {
+            Log::warning('Invoice validation tunnel returned HTTP ' . $response->status() . ', using local validation.');
+            return null;
+        }
+
+        $body = $response->json();
+
+        // Must be a proper validation result: boolean `valid` and, for failures, a `data` block
+        if (!is_array($body) || !array_key_exists('valid', $body) || !is_bool($body['valid'])) {
+            Log::warning('Invoice validation tunnel returned an unexpected response, using local validation.');
+            return null;
+        }
+
+        if ($body['valid'] === true) {
+            return ['status' => true];
+        }
+
+        // Structural/payload errors (no `data`) are not stock verdicts => fall back
+        if (!isset($body['data']) || !is_array($body['data']) || empty($body['errors']) || !is_array($body['errors'])) {
+            Log::warning('Invoice validation tunnel rejected the payload, using local validation.');
+            return null;
+        }
+
+        $tunnelItems = collect($body['data']['items'] ?? [])->keyBy('stock_id');
+        $errors = [];
+
+        foreach ($body['errors'] as $localStockId => $message) {
+            $tunnelItem = $tunnelItems->get((int) $localStockId, []);
+            $cartId = $localToCartId[(int) $localStockId] ?? null;
+            if ($cartId === null) {
+                continue;
+            }
+            $errors[] = [
+                'id' => (int) $cartId,
+                'name' => $tunnelItem['name'] ?? null,
+                'available' => $tunnelItem['available_qty'] ?? null,
+                'requested' => $cart[$cartId]['quantity'] ?? ($tunnelItem['quantity'] ?? null),
+                'message' => is_array($message) ? implode(' ', $message) : $message,
+            ];
+        }
+
+        // Errors we cannot attribute to a cart item => don't trust the verdict, fall back
+        if (count($errors) === 0) {
+            return null;
+        }
+
+        return [
+            'status' => false,
+            'errors' => $errors,
+            'message' => "Some items in your cart are out of stock or have insufficient inventory."
+        ];
+    }
+
+    /**
+     * Original local inventory validation (fallback when the tunnel is unavailable).
+     *
+     * @return array
+     */
+    public final function validateInventoryLocally(): array
     {
         $cart = $this->cart ?? [];
         if (count($cart) == 0) return ['status' => true];

@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'invoice_validation' => [
+        'enabled' => env('INVOICE_VALIDATION_TUNNEL_ENABLED', true),
+        'url' => env('INVOICE_VALIDATION_TUNNEL_URL', 'https://local.generaldrugcentre.com/api/invoice/validate'),
+        'api_key' => env('INVOICE_VALIDATION_TUNNEL_API_KEY'),
+        'timeout' => (int) env('INVOICE_VALIDATION_TUNNEL_TIMEOUT', 8),
+        'connect_timeout' => (int) env('INVOICE_VALIDATION_TUNNEL_CONNECT_TIMEOUT', 3),
+    ],
+
 ];
