@@ -78,7 +78,7 @@ trait ApplicationUserCheckoutTrait
             'check_purchase_limit' => true,
             'items' => $items,
         ];
-
+        Log::info(json_encode($payload));
         try {
             $request = Http::acceptJson()
                 ->asJson()
