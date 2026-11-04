@@ -99,7 +99,7 @@ class PaymentMethod extends Model
         if($this->id == "1") {
             $settingsValue = json_decode('[{"bank": "SQUAD PSPIL GENERAL DRUG", "name": "GT BANK", "number": "9002038672"}]',true);
         } else {
-            $settingsValue = json_decode('[{"bank": "SQUAD PSPIL GENERAL DRUG", "name": "GT BANK", "number": "9001676385"}]', true);
+            $settingsValue = json_decode('[{"bank": "PS GENERAL DRUG CENTRE PHARMACY", "name": "Opay", "number": "6151576968"}]', true);
         }
         $html = "";
         foreach($settingsValue as $setting) {
