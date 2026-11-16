@@ -58,7 +58,7 @@ class WholesalesProvisionsController extends ApiController
         if (count($topIds)) {
             $popular = $this->baseQuery()
                 ->whereIn('stocks.id', $topIds)
-                ->orderByRaw('CASE WHEN stocks.quantity > 0 THEN 0 ELSE 1 END')
+                ->orderByRaw('CASE WHEN wsp.quantity > 0 THEN 0 ELSE 1 END')
                 ->orderByRaw('FIELD(stocks.id, ' . implode(',', array_map('intval', $topIds)) . ')')
                 ->get();
         }
@@ -66,14 +66,14 @@ class WholesalesProvisionsController extends ApiController
         // ---- Deals: stock with special price ----
         $deals = $this->baseQuery()
             ->whereHas('wholessales_stock_prices', fn($q) => $q->where('special_offer', 1)->where('status', true))
-            ->orderByRaw('CASE WHEN stocks.quantity > 0 THEN 0 ELSE 1 END')
+            ->orderByRaw('CASE WHEN wsp.quantity > 0 THEN 0 ELSE 1 END')
             ->limit(12)
             ->get();
 
         // ---- All provisions (paginated) ----
         $all = $this->baseQuery()
             ->when($category, fn($q) => $q->where('stocks.classification_id', $category))
-            ->orderByRaw('CASE WHEN stocks.quantity > 0 THEN 0 ELSE 1 END')
+            ->orderByRaw('CASE WHEN wsp.quantity > 0 THEN 0 ELSE 1 END')
             ->orderBy('stocks.name')
             ->paginate($perPage);
 
@@ -156,6 +156,11 @@ class WholesalesProvisionsController extends ApiController
                 ->where('major_classification', self::MAJOR_CLASSIFICATION)
                 ->where('status', true))
             ->whereHas('wholessales_stock_prices', fn($q) => $q->where('status', true))
-            ->orderByRaw('CASE WHEN stocks.quantity > 0 THEN 0 ELSE 1 END');
+            ->leftJoin('wholessales_stock_prices as wsp', function ($join) {
+                $join->on('wsp.stock_id', '=', 'stocks.id')
+                     ->where('wsp.status', true);
+            })
+            ->select('stocks.*')
+            ->orderByRaw('CASE WHEN wsp.quantity > 0 THEN 0 ELSE 1 END');
     }
 }
