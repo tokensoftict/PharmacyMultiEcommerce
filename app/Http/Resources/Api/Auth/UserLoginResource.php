@@ -92,6 +92,9 @@ class UserLoginResource extends JsonResource
                 "domain" => $app->domain,
                 "description" => $app->app->description,
                 "info" => $app->user_type,
+                "customer_type_name" => $app->user_type?->customer_type_id
+                    ? \App\Models\CustomerType::find($app->user_type->customer_type_id)?->name
+                    : null,
                 "logo" => $app->app->logo,
                 "name" => strtolower($app->app->name),
                 "link" => $app->app->link,
