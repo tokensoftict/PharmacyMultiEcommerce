@@ -20,6 +20,8 @@ return new class extends Migration
             $table->date('end_date')->nullable();                          // inclusive, through 23:59:59 in `timezone`
             $table->string('timezone', 64)->default('Africa/Lagos');
             $table->integer('priority')->default(0);                       // highest wins when campaigns overlap
+            $table->string('audience_type', 24)->default('all_users');     // all_users | specific_users
+            $table->json('target_user_ids')->nullable();                   // [12, 45, ...] when audience_type = specific_users
 
             // ── Logo ─────────────────────────────────────────────────────────
             $table->boolean('show_santa_hat')->default(false);

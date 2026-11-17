@@ -224,4 +224,70 @@ class SeasonalCampaignTest extends TestCase
             ->assertJsonPath('data.start_date', '2026-12-01')
             ->assertJsonPath('data.end_date', '2026-12-25');
     }
+
+    public function test_specific_users_campaign_only_shows_for_targeted_users(): void
+    {
+        $this->make([
+            'campaign_name' => 'VIP Christmas',
+            'audience_type' => 'specific_users',
+            'target_user_ids' => [42, 99],
+        ]);
+        $this->freeze('2026-12-10 12:00:00');
+
+        // Guest sees disabled
+        $this->assertFalse($this->config()['enabled']);
+
+        // Non-targeted user sees disabled
+        $otherUser = $this->getJson('/api/app/seasonal-theme?user_id=7')->assertOk()->json('data');
+        $this->assertFalse($otherUser['enabled']);
+
+        // Targeted user #42 sees VIP Christmas
+        $vipUser = $this->getJson('/api/app/seasonal-theme?user_id=42')->assertOk()->json('data');
+        $this->assertTrue($vipUser['enabled']);
+        $this->assertSame('VIP Christmas', $vipUser['campaign_name']);
+        $this->assertSame('specific_users', $vipUser['audience_type']);
+    }
+
+    public function test_specific_user_campaign_takes_precedence_over_all_users_at_equal_priority(): void
+    {
+        $this->make([
+            'campaign_name' => 'General Christmas',
+            'audience_type' => 'all_users',
+            'priority' => 5,
+        ]);
+        $this->make([
+            'campaign_name' => 'Personal New Year Preview',
+            'theme' => 'new_year',
+            'audience_type' => 'specific_users',
+            'target_user_ids' => [42],
+            'priority' => 5,
+        ]);
+        $this->freeze('2026-12-10 12:00:00');
+
+        // Guest and other users get General Christmas
+        $this->assertSame('General Christmas', $this->config()['campaign_name']);
+        $this->assertSame(
+            'General Christmas',
+            $this->getJson('/api/app/seasonal-theme?user_id=10')->assertOk()->json('data.campaign_name')
+        );
+
+        // User 42 gets their personal campaign
+        $this->assertSame(
+            'Personal New Year Preview',
+            $this->getJson('/api/app/seasonal-theme?user_id=42')->assertOk()->json('data.campaign_name')
+        );
+    }
+
+    public function test_contact_info_endpoint_returns_defaults_and_custom_settings(): void
+    {
+        $res = $this->getJson('/api/app/contact-info')->assertOk();
+        $res->assertJsonPath('status', true)
+            ->assertJsonStructure([
+                'status', 'success',
+                'data' => [
+                    'store_title', 'store_address', 'phone_number', 'email', 'whatsapp_number',
+                    'store_location' => ['latitude', 'longitude', 'latitudeDelta', 'longitudeDelta'],
+                ],
+            ]);
+    }
 }

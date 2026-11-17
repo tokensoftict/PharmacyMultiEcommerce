@@ -26,6 +26,7 @@ Route::prefix("general")->namespace("General")->group(function () {
     Route::get("/payment_method", ["as" => "payment_method.list", "uses" => "PaymentMethodListController"]);
     Route::get("/delivery_method", ["as" => "delivery_method.list", "uses" => "DeliveryMethodListController"]);
     Route::get("/customer_types", ["as" => "customer_types.list", "uses" => "CustomerTypeController"]);
+    Route::get("/contact_info", ["as" => "contact_info.show", "uses" => "ContactInfoController"]);
 });
 
 

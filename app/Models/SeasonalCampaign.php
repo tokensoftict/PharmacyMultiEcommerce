@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 class SeasonalCampaign extends Model
 {
     public const THEMES = ['christmas', 'new_year', 'custom'];
+    public const AUDIENCE_TYPES = ['all_users', 'specific_users'];
     public const INTENSITIES = ['low', 'medium', 'high'];
     public const SPEEDS = ['slow', 'normal', 'fast'];
     public const ALIGNMENTS = ['left', 'center', 'right'];
@@ -43,6 +44,7 @@ class SeasonalCampaign extends Model
         'show_gold_particles' => 'boolean',
         'show_countdown' => 'boolean',
         'background_effect_opacity' => 'float',
+        'target_user_ids' => 'array',
         'extra_effects' => 'array',
     ];
 
@@ -94,9 +96,27 @@ class SeasonalCampaign extends Model
             && (! $end || $now->lessThanOrEqualTo($end));
     }
 
-    public function isActiveAt(CarbonImmutable $now): bool
+    public function isActiveAt(CarbonImmutable $now, ?int $userId = null): bool
     {
-        return $this->enabled && $this->isScheduledAt($now);
+        return $this->enabled && $this->isScheduledAt($now) && $this->matchesUser($userId);
+    }
+
+    /**
+     * Checks whether this campaign targets all users or includes the given user ID.
+     */
+    public function matchesUser(?int $userId): bool
+    {
+        if (($this->audience_type ?? 'all_users') !== 'specific_users') {
+            return true;
+        }
+
+        if ($userId === null) {
+            return false;
+        }
+
+        $ids = array_map('intval', (array) ($this->target_user_ids ?? []));
+
+        return in_array($userId, $ids, true);
     }
 
     public function scopeEnabled(Builder $query): Builder

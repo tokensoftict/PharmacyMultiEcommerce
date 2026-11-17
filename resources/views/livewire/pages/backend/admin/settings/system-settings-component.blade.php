@@ -123,6 +123,59 @@
                             </div>
                         </div>
 
+                        {{-- ── MOBILE APP CONTACT & STORE LOCATION SETTINGS ─────────── --}}
+                        <div class="mb-4 mt-4">
+                            <h4 class="mb-3">MOBILE APP CONTACT &amp; STORE LOCATION SETTINGS</h4>
+                            <p class="text-muted mb-3" style="font-size:0.85rem;">
+                                Controls the Contact Us modal and interactive map location in the React Native mobile app.
+                            </p>
+
+                            <div class="mb-3">
+                                <label class="form-label">Store Modal Title</label>
+                                <input type="text" wire:model="store.store_title" class="form-control" placeholder="📍 Our Store">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Store Display Address</label>
+                                <textarea wire:model="store.contact_address" class="form-control" rows="2" placeholder="Muritala Muhamed Way, opposite Forte Oil, Ilorin 240101, Kwara State"></textarea>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Phone Number (Call)</label>
+                                    <input type="text" wire:model="store.contact_phone" class="form-control" placeholder="+2349095950088">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">WhatsApp Number</label>
+                                    <input type="text" wire:model="store.contact_whatsapp" class="form-control" placeholder="2349095950088">
+                                    <small class="text-muted">Digits only (country code included, e.g. 2349095950088)</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Support Email</label>
+                                    <input type="email" wire:model="store.contact_email" class="form-control" placeholder="info@generaldrugcentre.com">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-3">
+                                    <label class="form-label">Latitude</label>
+                                    <input type="number" step="any" wire:model="store.store_latitude" class="form-control" placeholder="8.4915319">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Longitude</label>
+                                    <input type="number" step="any" wire:model="store.store_longitude" class="form-control" placeholder="4.566907">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Latitude Delta (Zoom)</label>
+                                    <input type="number" step="any" wire:model="store.store_latitude_delta" class="form-control" placeholder="0.005">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Longitude Delta (Zoom)</label>
+                                    <input type="number" step="any" wire:model="store.store_longitude_delta" class="form-control" placeholder="0.005">
+                                </div>
+                            </div>
+                        </div>
+
                         @if(userCanView('backend.admin.settings.system_settings.update'))
                             <div align="center">
                                 <button type="button" wire:click="update" class="btn btn-lg btn-phoenix-primary btn-block">

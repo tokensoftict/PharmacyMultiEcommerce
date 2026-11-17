@@ -3,8 +3,10 @@
 namespace App\Livewire\Backend\Admin\Settings;
 
 use App\Models\SeasonalCampaign;
+use App\Models\User;
 use App\Services\Seasonal\SeasonalCampaignService;
 use DateTimeZone;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -28,6 +30,7 @@ class SeasonalCampaignManagerComponent extends Component
     public $bannerUpload = null;
     public ?string $existingBanner = null;
     public bool $removeBanner = false;
+    public string $userSearch = '';
 
     public const FLAGS = [
         'Logo' => ['show_santa_hat' => 'Santa hat on logo'],
@@ -62,11 +65,43 @@ class SeasonalCampaignManagerComponent extends Component
         $service = app(SeasonalCampaignService::class);
         $active = $service->resolveActive();
 
+        $selectedUsers = collect();
+        $searchResults = collect();
+
+        if ($this->showForm && ($this->form['audience_type'] ?? 'all_users') === 'specific_users' && Schema::hasTable('users')) {
+            $ids = array_values(array_unique(array_map('intval', (array) ($this->form['target_user_ids'] ?? []))));
+            if (! empty($ids)) {
+                $selectedUsers = User::query()
+                    ->whereIn('id', $ids)
+                    ->get(['id', 'firstname', 'lastname', 'email', 'phone']);
+            }
+
+            $q = trim($this->userSearch);
+            if (mb_strlen($q) >= 1) {
+                $searchResults = User::query()
+                    ->when(! empty($ids), fn ($query) => $query->whereNotIn('id', $ids))
+                    ->where(function ($query) use ($q) {
+                        if (is_numeric($q)) {
+                            $query->orWhere('id', (int) $q);
+                        }
+                        $like = '%' . $q . '%';
+                        $query->orWhere('firstname', 'like', $like)
+                            ->orWhere('lastname', 'like', $like)
+                            ->orWhere('email', 'like', $like)
+                            ->orWhere('phone', 'like', $like);
+                    })
+                    ->limit(8)
+                    ->get(['id', 'firstname', 'lastname', 'email', 'phone']);
+            }
+        }
+
         return view('livewire.pages.backend.admin.settings.seasonal-campaign-manager-component', [
             'campaigns' => SeasonalCampaign::query()->orderByDesc('priority')->orderByDesc('start_date')->get(),
             'activeId' => $active?->id,
             'timezones' => DateTimeZone::listIdentifiers(),
             'flags' => self::FLAGS,
+            'selectedUsers' => $selectedUsers,
+            'searchResults' => $searchResults,
         ]);
     }
 
@@ -125,8 +160,29 @@ class SeasonalCampaignManagerComponent extends Component
         $data['end_date'] = $c->getRawOriginal('end_date') ? substr($c->getRawOriginal('end_date'), 0, 10) : '';
         $data['countdown_target_date'] = $c->getRawOriginal('countdown_target_date')
             ? str_replace(' ', 'T', substr($c->getRawOriginal('countdown_target_date'), 0, 16)) : '';
+        $data['audience_type'] = $c->audience_type ?: 'all_users';
+        $data['target_user_ids'] = array_values(array_unique(array_map('intval', (array) ($c->target_user_ids ?? []))));
         $this->form = array_merge($this->defaults(), array_filter($data, fn ($v) => $v !== null));
         $this->showForm = true;
+    }
+
+    public function addTargetUser(int $userId): void
+    {
+        if ($userId <= 0) {
+            return;
+        }
+        $ids = array_map('intval', (array) ($this->form['target_user_ids'] ?? []));
+        if (! in_array($userId, $ids, true)) {
+            $ids[] = $userId;
+        }
+        $this->form['target_user_ids'] = array_values($ids);
+        $this->userSearch = '';
+    }
+
+    public function removeTargetUser(int $userId): void
+    {
+        $ids = array_map('intval', (array) ($this->form['target_user_ids'] ?? []));
+        $this->form['target_user_ids'] = array_values(array_filter($ids, fn (int $id) => $id !== $userId));
     }
 
     public function cancel(): void
@@ -137,7 +193,17 @@ class SeasonalCampaignManagerComponent extends Component
 
     public function save(): void
     {
-        $this->validate($this->rules(), [], ['form.campaign_name' => 'campaign name']);
+        $this->form['target_user_ids'] = array_values(
+            array_filter(array_unique(array_map('intval', (array) ($this->form['target_user_ids'] ?? []))), fn (int $id) => $id > 0)
+        );
+        if (($this->form['audience_type'] ?? 'all_users') !== 'specific_users') {
+            $this->form['target_user_ids'] = [];
+        }
+
+        $this->validate($this->rules(), [
+            'form.target_user_ids.required_if' => 'Please select at least one user when targeting specific users.',
+            'form.target_user_ids.min' => 'Please select at least one user when targeting specific users.',
+        ], ['form.campaign_name' => 'campaign name']);
 
         $data = $this->form;
         foreach (['start_date', 'end_date', 'countdown_target_date'] as $k) {
@@ -197,6 +263,12 @@ class SeasonalCampaignManagerComponent extends Component
             'form.end_date' => ['nullable', 'date', 'after_or_equal:form.start_date'],
             'form.timezone' => ['required', Rule::in(DateTimeZone::listIdentifiers())],
             'form.priority' => ['required', 'integer', 'between:-1000,1000'],
+            'form.audience_type' => ['required', Rule::in(SeasonalCampaign::AUDIENCE_TYPES)],
+            'form.target_user_ids' => [
+                'array',
+                Rule::requiredIf(fn () => ($this->form['audience_type'] ?? 'all_users') === 'specific_users'),
+            ],
+            'form.target_user_ids.*' => ['integer', 'min:1'],
             'form.logo_decoration' => ['nullable', 'string', 'max:40'],
             'form.snowfall_intensity' => $intensity,
             'form.snowfall_speed' => ['required', Rule::in(SeasonalCampaign::SPEEDS)],
@@ -231,6 +303,7 @@ class SeasonalCampaignManagerComponent extends Component
             'theme' => 'christmas', 'campaign_name' => '', 'campaign_description' => '',
             'enabled' => true, 'start_date' => '', 'end_date' => '',
             'timezone' => config('app.timezone', 'Africa/Lagos'), 'priority' => 0,
+            'audience_type' => 'all_users', 'target_user_ids' => [],
             'show_santa_hat' => false, 'logo_decoration' => '',
             'show_snowfall' => false, 'snowfall_intensity' => 'medium', 'snowfall_speed' => 'normal', 'snowfall_opacity' => 0.85,
             'show_decorations' => false, 'show_christmas_lights' => false, 'show_sparkles' => false,
@@ -253,6 +326,7 @@ class SeasonalCampaignManagerComponent extends Component
         $this->bannerUpload = null;
         $this->existingBanner = null;
         $this->removeBanner = false;
+        $this->userSearch = '';
         $this->resetValidation();
     }
 }

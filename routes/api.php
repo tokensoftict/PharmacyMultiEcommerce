@@ -15,3 +15,8 @@ Route::get('/staffs', \App\Http\Controllers\Api\General\StaffController::class);
 Route::get('/app/seasonal-theme', \App\Http\Controllers\Api\General\SeasonalThemeController::class)
     ->middleware(['throttle:60,1', \App\Http\Middleware\ForceJsonResponse::class])
     ->name('api.app.seasonal-theme');
+
+// Public, backend-controlled Contact Us & Store Location configuration
+Route::get('/app/contact-info', \App\Http\Controllers\Api\General\ContactInfoController::class)
+    ->middleware(['throttle:60,1', \App\Http\Middleware\ForceJsonResponse::class])
+    ->name('api.app.contact-info');

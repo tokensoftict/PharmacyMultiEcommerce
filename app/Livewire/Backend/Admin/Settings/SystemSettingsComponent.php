@@ -48,11 +48,31 @@ class SystemSettingsComponent extends Component
                 // ── Referral Bonus Defaults ──────────────────────────────────
                 'retail_referral_bonus'    => 10,
                 'wholesale_referral_bonus' => 20,
+                // ── Mobile App Contact & Store Location Defaults ─────────────
+                'store_title'              => '📍 Our Store',
+                'contact_address'          => 'Muritala Muhamed Way, opposite Forte Oil, Ilorin 240101, Kwara State',
+                'contact_phone'            => '+2349095950088',
+                'contact_email'            => 'info@generaldrugcentre.com',
+                'contact_whatsapp'         => '2349095950088',
+                'store_latitude'           => 8.4915319,
+                'store_longitude'          => 4.566907,
+                'store_latitude_delta'     => 0.005,
+                'store_longitude_delta'    => 0.005,
             ];
         } else {
             // Ensure referral bonus keys exist even on existing settings stores
             $this->store['retail_referral_bonus']    = $this->store['retail_referral_bonus'] ?? 10;
             $this->store['wholesale_referral_bonus'] = $this->store['wholesale_referral_bonus'] ?? 20;
+            // Ensure contact & store location keys exist on existing settings stores
+            $this->store['store_title']              = $this->store['store_title'] ?? '📍 Our Store';
+            $this->store['contact_address']          = $this->store['contact_address'] ?? ($this->store['first_address'] ?: 'Muritala Muhamed Way, opposite Forte Oil, Ilorin 240101, Kwara State');
+            $this->store['contact_phone']            = $this->store['contact_phone'] ?? ($this->store['contact_number'] ?: '+2349095950088');
+            $this->store['contact_email']            = $this->store['contact_email'] ?? 'info@generaldrugcentre.com';
+            $this->store['contact_whatsapp']         = $this->store['contact_whatsapp'] ?? '2349095950088';
+            $this->store['store_latitude']           = $this->store['store_latitude'] ?? 8.4915319;
+            $this->store['store_longitude']          = $this->store['store_longitude'] ?? 4.566907;
+            $this->store['store_latitude_delta']     = $this->store['store_latitude_delta'] ?? 0.005;
+            $this->store['store_longitude_delta']    = $this->store['store_longitude_delta'] ?? 0.005;
         }
     }
 
@@ -90,6 +110,7 @@ class SystemSettingsComponent extends Component
         }
 
         $this->settings->put($this->store);
+        \Illuminate\Support\Facades\Cache::forget(\App\Http\Controllers\Api\General\ContactInfoController::CACHE_KEY);
         $this->alert( 'success',
             'Settings has been saved successfully!"',
         );

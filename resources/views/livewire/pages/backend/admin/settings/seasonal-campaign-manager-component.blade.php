@@ -36,7 +36,7 @@
                 <table class="table align-middle mb-0">
                     <thead class="bg-body-tertiary">
                         <tr>
-                            <th>Campaign</th><th>Theme</th><th>Schedule</th><th class="text-center">Priority</th><th>Status</th><th class="text-end">Actions</th>
+                            <th>Campaign</th><th>Theme</th><th>Audience</th><th>Schedule</th><th class="text-center">Priority</th><th>Status</th><th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,6 +47,15 @@
                                 <div class="text-muted small">{{ \Illuminate\Support\Str::limit($c->campaign_description, 60) }}</div>
                             </td>
                             <td><span class="badge bg-info text-dark">{{ str_replace('_', ' ', $c->theme) }}</span></td>
+                            <td>
+                                @if(($c->audience_type ?? 'all_users') === 'specific_users')
+                                    <span class="badge bg-primary">
+                                        <i class="fa fa-user me-1"></i>Specific ({{ count((array) ($c->target_user_ids ?? [])) }} {{ \Illuminate\Support\Str::plural('user', count((array) ($c->target_user_ids ?? []))) }})
+                                    </span>
+                                @else
+                                    <span class="badge bg-light text-dark border"><i class="fa fa-users me-1"></i>All users</span>
+                                @endif
+                            </td>
                             <td class="small">
                                 {{ $c->startsAt()?->format('d M Y') ?? 'No start' }} → {{ $c->endsAt()?->format('d M Y') ?? 'No end' }}
                                 <div class="text-muted">{{ $c->tz() }}</div>
@@ -76,7 +85,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted py-5">No campaigns yet. Create your first seasonal campaign.</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-5">No campaigns yet. Create your first seasonal campaign.</td></tr>
                     @endforelse
                     </tbody>
                 </table>
@@ -140,6 +149,90 @@
                                     <input class="form-check-input" type="checkbox" id="scEnabled" wire:model="form.enabled">
                                     <label class="form-check-label fw-bold" for="scEnabled">Campaign active (still follows the schedule)</label>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-none border mb-4">
+                        <div class="card-header bg-body-tertiary"><h5 class="mb-0"><i class="fa fa-users me-2"></i>Target audience</h5></div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-5">
+                                    <label class="form-label">Who should see this experience?</label>
+                                    <select class="form-select" wire:model.live="form.audience_type">
+                                        <option value="all_users">All users (Everyone)</option>
+                                        <option value="specific_users">Specific user(s) only</option>
+                                    </select>
+                                    @error('form.audience_type') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+
+                                @if(($f['audience_type'] ?? 'all_users') === 'specific_users')
+                                    <div class="col-md-7">
+                                        <label class="form-label">Search &amp; add user (by name, email, phone or ID)</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               wire:model.live.debounce.300ms="userSearch"
+                                               placeholder="Type a customer name, email, phone number or ID...">
+
+                                        @if($searchResults->isNotEmpty())
+                                            <div class="list-group mt-2 shadow-sm">
+                                                @foreach($searchResults as $u)
+                                                    <button type="button"
+                                                            wire:key="sr-{{ $u->id }}"
+                                                            wire:click="addTargetUser({{ $u->id }})"
+                                                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2">
+                                                        <div>
+                                                            <span class="fw-bold">{{ trim($u->firstname . ' ' . $u->lastname) ?: 'User #' . $u->id }}</span>
+                                                            <span class="text-muted small ms-2">{{ $u->email }} {{ $u->phone ? '· ' . $u->phone : '' }}</span>
+                                                        </div>
+                                                        <span class="badge bg-primary">+ Add (#{{ $u->id }})</span>
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        @elseif(mb_strlen(trim($userSearch)) >= 1)
+                                            <div class="text-muted small mt-2">No matching users found.</div>
+                                        @endif
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold small text-uppercase text-muted">
+                                            Selected user(s) ({{ count((array) ($f['target_user_ids'] ?? [])) }})
+                                        </label>
+                                        @error('form.target_user_ids') <div class="text-danger small mb-2">{{ $message }}</div> @enderror
+
+                                        @if(! empty($f['target_user_ids']))
+                                            <div class="d-flex flex-wrap gap-2">
+                                                @foreach((array) $f['target_user_ids'] as $uid)
+                                                    @php $matched = $selectedUsers->firstWhere('id', (int) $uid); @endphp
+                                                    <span wire:key="sel-u-{{ $uid }}" class="badge bg-light text-dark border d-inline-flex align-items-center gap-2 py-2 px-3">
+                                                        <i class="fa fa-user text-primary"></i>
+                                                        @if($matched)
+                                                            <span>
+                                                                <strong>{{ trim($matched->firstname . ' ' . $matched->lastname) }}</strong>
+                                                                <span class="text-muted">({{ $matched->email ?: $matched->phone ?: '#' . $matched->id }})</span>
+                                                            </span>
+                                                        @else
+                                                            <span>User #{{ $uid }}</span>
+                                                        @endif
+                                                        <button type="button"
+                                                                class="btn-close"
+                                                                style="font-size: 0.65rem;"
+                                                                aria-label="Remove"
+                                                                wire:click="removeTargetUser({{ (int) $uid }})"></button>
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="text-muted small">No users selected yet. Search above and click a user to add them.</div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="col-md-7 d-flex align-items-end">
+                                        <span class="text-muted small">
+                                            This seasonal experience will be displayed to all customers (including guests) while active.
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

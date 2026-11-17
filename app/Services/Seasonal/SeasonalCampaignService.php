@@ -10,21 +10,19 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Resolves which seasonal campaign (if any) is live and caches the public payload.
+ * Resolves which seasonal campaign (if any) is live for a given user (or guest) and caches the payload.
  *
  * Resolution rules
  *  1. The master switch must be ON.
- *  2. The campaign must be `enabled` and inside its start/end window (evaluated in the campaign's timezone).
- *  3. When several campaigns overlap, highest `priority` wins; ties go to the most recently
- *     started campaign, then to the newest record.
- *
- * Caching: the payload is cached until the earliest upcoming schedule boundary (a campaign
- * starting or expiring) or MAX_TTL seconds, whichever is sooner, so scheduling is automatic and
- * stays accurate. Any admin write flushes the cache via the model events and the master switch.
+ *  2. The campaign must be `enabled`, inside its start/end window (in the campaign's timezone),
+ *     and match the audience (`all_users` or `specific_users` containing `$userId`).
+ *  3. When several campaigns overlap, highest `priority` wins; ties prefer `specific_users`
+ *     campaigns over `all_users`, then the most recently started campaign, then the newest record.
  */
 class SeasonalCampaignService
 {
     public const CACHE_KEY = 'seasonal_theme:payload';
+    public const VERSION_KEY = 'seasonal_theme:version';
     public const MASTER_KEY = 'seasonal_theme:master_enabled';
     public const MAX_TTL = 300;
 
@@ -44,9 +42,9 @@ class SeasonalCampaignService
     // ── Resolution ──────────────────────────────────────────────────────────
 
     /**
-     * The campaign that should be live at $now, or null.
+     * The campaign that should be live at $now for $userId (or guest when null), or null.
      */
-    public function resolveActive(?CarbonImmutable $now = null): ?SeasonalCampaign
+    public function resolveActive(?CarbonImmutable $now = null, ?int $userId = null): ?SeasonalCampaign
     {
         $now ??= CarbonImmutable::now();
 
@@ -57,33 +55,37 @@ class SeasonalCampaignService
         return SeasonalCampaign::query()
             ->enabled()
             ->get()
-            ->filter(fn (SeasonalCampaign $c) => $c->isScheduledAt($now))
+            ->filter(fn (SeasonalCampaign $c) => $c->isScheduledAt($now) && $c->matchesUser($userId))
             ->sort(function (SeasonalCampaign $a, SeasonalCampaign $b) {
-                return [$b->priority, $b->startsAt()?->getTimestamp() ?? 0, $b->id]
-                    <=> [$a->priority, $a->startsAt()?->getTimestamp() ?? 0, $a->id];
+                $aSpecific = ($a->audience_type ?? 'all_users') === 'specific_users' ? 1 : 0;
+                $bSpecific = ($b->audience_type ?? 'all_users') === 'specific_users' ? 1 : 0;
+
+                return [$b->priority, $bSpecific, $b->startsAt()?->getTimestamp() ?? 0, $b->id]
+                    <=> [$a->priority, $aSpecific, $a->startsAt()?->getTimestamp() ?? 0, $a->id];
             })
             ->first();
     }
 
     /**
-     * Public configuration payload (cached). Always returns a complete array;
+     * Public configuration payload (cached per audience). Always returns a complete array;
      * when nothing is active it is the disabled configuration.
      */
-    public function getPublicConfig(): array
+    public function getPublicConfig(?int $userId = null): array
     {
-        $cached = Cache::get(self::CACHE_KEY);
+        $cacheKey = $this->cacheKeyFor($userId);
+        $cached = Cache::get($cacheKey);
         if (is_array($cached)) {
             return $cached;
         }
 
         try {
             $now = CarbonImmutable::now();
-            $active = $this->resolveActive($now);
+            $active = $this->resolveActive($now, $userId);
             $payload = $active
                 ? (new SeasonalCampaignResource($active))->resolve()
                 : SeasonalCampaignResource::disabled();
 
-            Cache::put(self::CACHE_KEY, $payload, $this->ttlFor($now));
+            Cache::put($cacheKey, $payload, $this->ttlFor($now));
 
             return $payload;
         } catch (Throwable $e) {
@@ -97,9 +99,19 @@ class SeasonalCampaignService
     public function flushCache(): void
     {
         Cache::forget(self::CACHE_KEY);
+        $version = (int) Cache::get(self::VERSION_KEY, 1);
+        Cache::forever(self::VERSION_KEY, $version + 1);
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────
+
+    protected function cacheKeyFor(?int $userId): string
+    {
+        $version = (int) Cache::get(self::VERSION_KEY, 1);
+        $suffix = $userId !== null ? "u:{$userId}" : 'guest';
+
+        return self::CACHE_KEY . ":v{$version}:{$suffix}";
+    }
 
     /**
      * Seconds until the next schedule boundary (never more than MAX_TTL, never less than 1).
@@ -119,4 +131,3 @@ class SeasonalCampaignService
         return max(1, $ttl);
     }
 }
-

@@ -37,6 +37,7 @@ class SeasonalCampaignResource extends JsonResource
             'theme' => self::oneOf($c->theme, SeasonalCampaign::THEMES, 'custom'),
             'campaign_name' => self::text($c->campaign_name, 120),
             'campaign_description' => self::text($c->campaign_description, 500),
+            'audience_type' => self::oneOf($c->audience_type, SeasonalCampaign::AUDIENCE_TYPES, 'all_users'),
             'priority' => (int) $c->priority,
             'timezone' => $tz,
             'start_date' => $c->startsAt()?->format('Y-m-d'),

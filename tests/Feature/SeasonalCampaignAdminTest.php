@@ -95,4 +95,28 @@ class SeasonalCampaignAdminTest extends TestCase
             ->call('save')
             ->assertHasErrors(['form.countdown_target_date']);
     }
+
+    public function test_admin_can_target_specific_users_and_requires_at_least_one_user(): void
+    {
+        Livewire::test(SeasonalCampaignManagerComponent::class)
+            ->call('create')
+            ->set('form.campaign_name', 'VIP Campaign')
+            ->set('form.audience_type', 'specific_users')
+            ->call('save')
+            ->assertHasErrors(['form.target_user_ids']);
+
+        Livewire::test(SeasonalCampaignManagerComponent::class)
+            ->call('create')
+            ->set('form.campaign_name', 'VIP Campaign')
+            ->set('form.audience_type', 'specific_users')
+            ->call('addTargetUser', 15)
+            ->call('addTargetUser', 28)
+            ->call('removeTargetUser', 15)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $saved = SeasonalCampaign::firstOrFail();
+        $this->assertSame('specific_users', $saved->audience_type);
+        $this->assertSame([28], $saved->target_user_ids);
+    }
 }
