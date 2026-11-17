@@ -232,7 +232,7 @@ class SeasonalCampaignManagerComponent extends Component
             'enabled' => true, 'start_date' => '', 'end_date' => '',
             'timezone' => config('app.timezone', 'Africa/Lagos'), 'priority' => 0,
             'show_santa_hat' => false, 'logo_decoration' => '',
-            'show_snowfall' => false, 'snowfall_intensity' => 'medium', 'snowfall_speed' => 'normal', 'snowfall_opacity' => 0.5,
+            'show_snowfall' => false, 'snowfall_intensity' => 'medium', 'snowfall_speed' => 'normal', 'snowfall_opacity' => 0.85,
             'show_decorations' => false, 'show_christmas_lights' => false, 'show_sparkles' => false,
             'show_ornaments' => false, 'decoration_intensity' => 'medium', 'lights_intensity' => 'medium',
             'show_greeting' => false, 'greeting_message' => '', 'greeting_subtitle' => '',
