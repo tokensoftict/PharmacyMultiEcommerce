@@ -817,7 +817,7 @@ enum Settings
             "name" => "backend.admin.campaign.analytics",
             "module_id" => "1",
             "label" => "Campaigns Analytics",
-            "visibility" => "1",
+            "visibility" => "0",
             "guard_name" => "web",
         ],
 
