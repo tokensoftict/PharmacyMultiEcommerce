@@ -793,6 +793,13 @@ enum Settings
             "guard_name" => "web",
         ],
         [
+            "name" => "backend.admin.settings.seasonal_experience",
+            "module_id" => "1",
+            "label" => "Seasonal Experience",
+            "visibility" => "1",
+            "guard_name" => "web",
+        ],
+        [
             "name" => "backend.admin.settings.user_version_report",
             "module_id" => "1",
             "label" => "User Version Report",

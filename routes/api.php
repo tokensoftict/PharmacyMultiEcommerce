@@ -10,3 +10,8 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/feedback', [FeedbackController::class, 'store']);
 Route::get('/staffs', \App\Http\Controllers\Api\General\StaffController::class);
+
+// Public, backend-controlled seasonal / festive configuration (Christmas, New Year, ...)
+Route::get('/app/seasonal-theme', \App\Http\Controllers\Api\General\SeasonalThemeController::class)
+    ->middleware(['throttle:60,1', \App\Http\Middleware\ForceJsonResponse::class])
+    ->name('api.app.seasonal-theme');
