@@ -14,6 +14,15 @@ use LivewireFilemanager\Filemanager\Http\Controllers\Files\FileController;
 require __DIR__ . '/share.php';
 require __DIR__ . '/referral.php';
 
+foreach (array_unique(array_filter([
+    parse_url((string) config('app.share_url'), PHP_URL_HOST) ?: 'share.generaldrugcentre.com',
+    parse_url((string) config('app.referral_url'), PHP_URL_HOST) ?: 'referral.generaldrugcentre.com',
+])) as $deepLinkDomain) {
+    Route::domain($deepLinkDomain)->middleware(['web'])->group(function () use ($deepLinkDomain) {
+        Volt::route('/', 'pages.frontend.customer.index')->name($deepLinkDomain . '.customer.index');
+    });
+}
+
 foreach (config('app.MAIN_DOMAIN', []) as $domain) {
 
     Route::domain($domain)->middleware(['web'])->group(function () {
