@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Backend\Admin\Campaign;
 
+use App\Classes\ApplicationEnvironment;
 use App\Enums\CampaignActionType;
 use App\Enums\CampaignEvent;
 use App\Enums\CampaignStatus;
@@ -197,7 +198,7 @@ class CreateCampaign extends Component
         ]);
 
         $this->alert('success', 'Campaign created successfully!');
-        $this->redirect(route('backend.admin.campaign.list'));
+        $this->redirect(route(ApplicationEnvironment::$storePrefix.'backend.admin.campaign.list'));
     }
 
     private function buildConditionsData(): array
