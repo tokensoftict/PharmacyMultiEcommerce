@@ -9,6 +9,7 @@ Route::middleware([PermitTask::class])->group(function () {
 
     Route::prefix('settings')->group(function () {
         Route::get('/system_settings', ['uses' => 'App\Livewire\Backend\Admin\Settings\SystemSettingsComponent'])->name('backend.admin.settings.system_settings');
+        Route::get('/opay_settings', ['uses' => 'App\Livewire\Backend\Admin\Settings\OpaySettingsComponent'])->name('backend.admin.settings.opay_settings');
         Route::get('/app_update_settings', ['uses' => 'App\Livewire\Backend\Admin\Settings\AppVersionManagerComponent'])->name('backend.admin.settings.app_update_settings');
         Route::get('/seasonal_experience', ['uses' => 'App\Livewire\Backend\Admin\Settings\SeasonalCampaignManagerComponent'])->name('backend.admin.settings.seasonal_experience');
         Route::get('/user_version_report', ['uses' => 'App\Livewire\Backend\Admin\Settings\UserVersionReportComponent'])->name('backend.admin.settings.user_version_report');

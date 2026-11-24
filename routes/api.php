@@ -20,3 +20,8 @@ Route::get('/app/seasonal-theme', \App\Http\Controllers\Api\General\SeasonalThem
 Route::get('/app/contact-info', \App\Http\Controllers\Api\General\ContactInfoController::class)
     ->middleware(['throttle:60,1', \App\Http\Middleware\ForceJsonResponse::class])
     ->name('api.app.contact-info');
+
+// OPay Offline / General Payment Webhook receiver
+Route::post('/opay/webhook', \App\Http\Controllers\Api\Opay\OpayWebhookController::class)
+    ->middleware([\App\Http\Middleware\ForceJsonResponse::class])
+    ->name('api.opay.webhook');

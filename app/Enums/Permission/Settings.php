@@ -807,6 +807,20 @@ enum Settings
             "guard_name" => "web",
         ],
         [
+            "name" => "backend.admin.settings.opay_settings",
+            "module_id" => "1",
+            "label" => "OPay Settings",
+            "visibility" => "1",
+            "guard_name" => "web",
+        ],
+        [
+            "name" => "backend.admin.settings.opay_settings.update",
+            "module_id" => "1",
+            "label" => "Update OPay Settings",
+            "visibility" => "0",
+            "guard_name" => "web",
+        ],
+        [
             "name" => "backend.admin.campaign.list",
             "module_id" => "1",
             "label" => "Campaigns",

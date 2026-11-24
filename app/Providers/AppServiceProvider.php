@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Opay\OpayClient;
+use App\Services\Opay\OpayRsaCrypto;
 use App\Services\Campaign\CampaignConditionsService;
 use App\Services\Campaign\CampaignDeliveryService;
 use App\Services\Campaign\CampaignEligibilityService;
@@ -40,6 +42,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CampaignEligibilityService::class);
         $this->app->singleton(CartAbandonmentService::class);
         $this->app->singleton(CampaignDeliveryService::class);
+
+        // OPay Offline API services
+        $this->app->singleton(OpayRsaCrypto::class);
+        $this->app->bind(OpayClient::class, function ($app) {
+            return new OpayClient($app->make(OpayRsaCrypto::class));
+        });
     }
 
 
