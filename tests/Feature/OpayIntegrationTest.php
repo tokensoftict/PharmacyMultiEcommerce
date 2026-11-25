@@ -3,17 +3,23 @@
 namespace Tests\Feature;
 
 use App\Classes\ApplicationEnvironment;
+use App\Enums\KafkaAction;
+use App\Enums\KafkaTopics;
 use App\Enums\Permission\Settings as SettingsPermissions;
 use App\Events\Opay\OpayWebhookReceived;
 use App\Livewire\Backend\Admin\Settings\OpaySettingsComponent;
 use App\Models\OpaySetting;
 use App\Models\OpayWebhookLog;
+use App\Services\Kafka\ProcessOrderService;
 use App\Services\Opay\OpayClient;
 use App\Services\Opay\OpayRsaCrypto;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Junges\Kafka\Facades\Kafka;
+use Junges\Kafka\Message\ConsumedMessage;
+use Junges\Kafka\Message\Message;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -27,6 +33,9 @@ class OpayIntegrationTest extends TestCase
 
         $this->artisan('migrate', [
             '--path' => 'database/migrations/2026_11_24_120000_create_opay_settings_table.php',
+        ]);
+        $this->artisan('migrate', [
+            '--path' => 'database/migrations/2026_11_24_131500_add_kafka_tracking_to_opay_webhook_logs_table.php',
         ]);
 
         config(['cache.default' => 'array']);
@@ -345,5 +354,72 @@ class OpayIntegrationTest extends TestCase
             ->map(fn ($id) => (int) $id)
             ->all();
         $this->assertSame([2, 3], $mappedApps);
+    }
+
+    public function test_every_received_opay_webhook_is_forwarded_to_kafka_and_marked_sent(): void
+    {
+        Kafka::fake();
+
+        $this->postJson('/api/opay/webhook', [
+            'data' => [
+                'outOrderNo' => 'ORD-KAFKA-555',
+                'orderNo' => '202611240000555555',
+                'payNo' => 'PAY-555',
+                'headMerchantId' => '256622022480363',
+                'merchantId' => '256622022480364',
+                'status' => 'SUCCESS',
+                'amount' => '4500.00',
+                'fee' => '25.00',
+                'currency' => 'NGN',
+                'payMethod' => 'BankCard',
+                'senderName' => 'JANE DOE',
+                'sn' => 'SN-990011',
+            ],
+        ], [
+            'X-Opay-Tranid' => 'TRAN-KAFKA-555',
+            'merchantId' => '256622022480364',
+        ])->assertOk()->assertExactJson([
+            'code' => '00000',
+            'message' => 'SUCCESSFUL',
+        ]);
+
+        Kafka::assertPublishedOn(
+            KafkaTopics::OPAY_KAFKA_TOPIC,
+            null,
+            function (Message $message): bool {
+                $body = $message->getBody();
+
+                return ($body['action'] ?? null) === KafkaAction::OPAY_WEBHOOK
+                    && ($body['webhook']['out_order_no'] ?? null) === 'ORD-KAFKA-555'
+                    && ($body['webhook']['order_no'] ?? null) === '202611240000555555'
+                    && ($body['webhook']['transaction_id'] ?? null) === 'TRAN-KAFKA-555'
+                    && ($body['webhook']['amount'] ?? null) === '4500.00'
+                    && ($body['webhook']['terminal_sn'] ?? null) === 'SN-990011'
+                    && is_int($body['webhook']['mystore_webhook_log_id'] ?? null);
+            }
+        );
+
+        $log = OpayWebhookLog::where('out_order_no', 'ORD-KAFKA-555')->firstOrFail();
+        $this->assertSame('sent', $log->kafka_status);
+        $this->assertSame(KafkaTopics::OPAY_KAFKA_TOPIC, $log->kafka_topic);
+        $this->assertNotNull($log->kafka_forwarded_at);
+        $this->assertNull($log->kafka_error);
+
+        // Ensure mystore's own ORDERS consumer safely ignores outbound OPAY_WEBHOOK messages
+        $consumed = new ConsumedMessage(
+            topicName: KafkaTopics::ORDERS,
+            partition: 0,
+            headers: [],
+            body: ['action' => KafkaAction::OPAY_WEBHOOK, 'webhook' => ['out_order_no' => 'ORD-KAFKA-555']],
+            key: 'PSGDC',
+            offset: 1,
+            timestamp: time(),
+        );
+        ProcessOrderService::handle($consumed);
+
+        // Resend button in Settings UI republishes cleanly
+        Livewire::test(OpaySettingsComponent::class)
+            ->call('resendWebhookToKafka', $log->id)
+            ->assertHasNoErrors();
     }
 }

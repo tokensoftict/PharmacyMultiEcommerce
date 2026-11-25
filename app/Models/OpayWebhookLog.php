@@ -22,6 +22,10 @@ class OpayWebhookLog extends Model
         'headers',
         'payload',
         'processed_at',
+        'kafka_topic',
+        'kafka_status',
+        'kafka_forwarded_at',
+        'kafka_error',
     ];
 
     protected function casts(): array
@@ -31,6 +35,7 @@ class OpayWebhookLog extends Model
             'headers' => 'array',
             'payload' => 'array',
             'processed_at' => 'datetime',
+            'kafka_forwarded_at' => 'datetime',
         ];
     }
 }

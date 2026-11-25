@@ -46,4 +46,9 @@ return [
     'ip_whitelisting' => env('OPAY_IP_WHITELISTING'),
 
     'webhook_url' => env('OPAY_WEBHOOK_URL'),
+
+    'kafka' => [
+        'enabled' => (bool) env('OPAY_KAFKA_FORWARD_ENABLED', true),
+        'topic' => \App\Enums\KafkaTopics::OPAY_KAFKA_TOPIC,
+    ],
 ];

@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\Opay\OpayWebhookReceived;
+use App\Listeners\Opay\ForwardOpayWebhookToKafkaListener;
 use App\Services\Opay\OpayClient;
 use App\Services\Opay\OpayRsaCrypto;
+use App\Services\Opay\OpayWebhookKafkaPublisher;
 use App\Services\Campaign\CampaignConditionsService;
 use App\Services\Campaign\CampaignDeliveryService;
 use App\Services\Campaign\CampaignEligibilityService;
@@ -45,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
 
         // OPay Offline API services
         $this->app->singleton(OpayRsaCrypto::class);
+        $this->app->singleton(OpayWebhookKafkaPublisher::class);
         $this->app->bind(OpayClient::class, function ($app) {
             return new OpayClient($app->make(OpayRsaCrypto::class));
         });
@@ -91,6 +95,12 @@ class AppServiceProvider extends ServiceProvider
         \Event::listen(
             PhoneVerified::class,
             ProcessReferralRewardListener::class
+        );
+
+        // ── OPay Webhooks: forward every received webhook to PSGeneralDrugCentreKafka via Kafka ──
+        \Event::listen(
+            OpayWebhookReceived::class,
+            ForwardOpayWebhookToKafkaListener::class
         );
     }
 }

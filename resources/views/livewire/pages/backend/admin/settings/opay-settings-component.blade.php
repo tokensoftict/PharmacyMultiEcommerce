@@ -369,6 +369,7 @@
                         <th>Amount</th>
                         <th>Status</th>
                         <th>Signature</th>
+                        <th>Kafka Forward</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -397,10 +398,29 @@
                                     <span class="text-muted">Plaintext</span>
                                 @endif
                             </td>
+                            <td class="text-nowrap">
+                                @if($log->kafka_status === 'sent')
+                                    <span class="badge bg-success">Sent</span>
+                                @elseif($log->kafka_status === 'failed')
+                                    <span class="badge bg-danger" title="{{ $log->kafka_error }}">Failed</span>
+                                @else
+                                    <span class="badge bg-secondary">Pending</span>
+                                @endif
+                                @if($canEditOpay)
+                                    <button
+                                        type="button"
+                                        wire:click="resendWebhookToKafka({{ $log->id }})"
+                                        class="btn btn-sm btn-outline-secondary py-0 px-1 ms-1"
+                                        title="Resend this webhook to PSGeneralDrugCentreKafka via Kafka"
+                                    >
+                                        <i class="fa fa-redo"></i>
+                                    </button>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
+                            <td colspan="8" class="text-center text-muted py-4">
                                 No OPay webhooks received yet. Configure the Webhook URL above in your OPay Dashboard to begin receiving notifications.
                             </td>
                         </tr>

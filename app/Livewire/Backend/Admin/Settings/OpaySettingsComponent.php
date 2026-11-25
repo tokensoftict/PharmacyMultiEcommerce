@@ -7,6 +7,7 @@ use App\Models\OpaySetting;
 use App\Models\OpayWebhookLog;
 use App\Services\Opay\OpayClient;
 use App\Services\Opay\OpayRsaCrypto;
+use App\Services\Opay\OpayWebhookKafkaPublisher;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -412,6 +413,21 @@ class OpaySettingsComponent extends Component
     public function resetWebhookUrl(): void
     {
         $this->webhook_url = OpaySetting::defaultWebhookUrl();
+    }
+
+    public function resendWebhookToKafka(int $logId): void
+    {
+        $this->authorizeUpdate();
+
+        $log = OpayWebhookLog::findOrFail($logId);
+        $sent = app(OpayWebhookKafkaPublisher::class)->republish($log);
+
+        $this->alert(
+            $sent ? 'success' : 'error',
+            $sent
+                ? "Webhook #{$log->id} forwarded to Kafka successfully."
+                : "Failed to forward webhook #{$log->id} to Kafka. Check logs for details."
+        );
     }
 
     public function appendDetectedServerIp(): void

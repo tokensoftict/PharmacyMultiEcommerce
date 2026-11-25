@@ -14,13 +14,20 @@ class ProcessOrderService
     public static function handle(ConsumedMessage $message): void
     {
         $body = $message->getBody();
-        if (isset($body['order']))
+        if (! is_array($body) || isset($body['order'])) {
             return;
+        }
 
-        $action = $body['action'];
-        $data = $body[0];
-        if ($action === KafkaAction::PROCESS_ORDER)
+        $action = $body['action'] ?? null;
+        if ($action === null || $action === KafkaAction::PROCESS_ORDER || $action === KafkaAction::OPAY_WEBHOOK) {
             return;
+        }
+
+        if (! isset($body[0])) {
+            return;
+        }
+
+        $data = $body[0];
 
         if ($action === KafkaAction::SYNC_LOCAL_ORDER) {
             $createOrderService = new CreateOrderService();
